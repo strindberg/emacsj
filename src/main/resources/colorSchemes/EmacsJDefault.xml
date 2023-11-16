@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+<list>
+    <option name="EMACSJ_PRIMARY">
+        <value>
+            <option name="FOREGROUND" value="111111"/>
+            <option name="BACKGROUND" value="FFAAAA"/>
+            <option name="EFFECT_COLOR" value="000000"/>
+            <option name="EFFECT_TYPE" value="0"/>
+        </value>
+    </option>
+    <option name="EMACSJ_SECONDARY">
+        <value>
+            <option name="BACKGROUND" value="DDDDDD"/>
+            <option name="EFFECT_COLOR" value="000000"/>
+            <option name="EFFECT_TYPE" value="0"/>
+        </value>
+    </option>
+</list>
