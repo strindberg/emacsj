@@ -3,9 +3,6 @@ package com.github.strindberg.emacsj.rectangle
 import java.awt.datatransfer.DataFlavor
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 const val FILE = "file.txt"
 
@@ -14,11 +11,9 @@ private const val ACTION_CUT_RECTANGLE = "com.github.strindberg.emacsj.actions.r
 private const val ACTION_OPEN_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.openrectangle"
 private const val ACTION_CLEAR_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.clearrectangle"
 
-@RunWith(JUnit4::class)
 class RectangleTest : BasePlatformTestCase() {
 
-    @Test
-    fun `copy works 01`() {
+    fun `testCopy works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
@@ -27,8 +22,7 @@ class RectangleTest : BasePlatformTestCase() {
         myFixture.checkResult("foo<caret>")
     }
 
-    @Test
-    fun `copy works 02`() {
+    fun `testCopy works 02`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection>")
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
@@ -37,8 +31,7 @@ class RectangleTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>foo")
     }
 
-    @Test
-    fun `copy works 03`() {
+    fun `testCopy works 03`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -65,8 +58,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `copy works 04`() {
+    fun `testCopy works 04`() {
         myFixture.configureByText(
             FILE,
             """foo<selection>bar
@@ -89,8 +81,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `copy works 05`() {
+    fun `testCopy works 05`() {
         myFixture.configureByText(
             FILE,
             """foo<selection>
@@ -114,8 +105,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `copy works 06`() {
+    fun `testCopy works 06`() {
         myFixture.configureByText(
             FILE,
             """<selection>foo
@@ -141,8 +131,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `copy works 07`() {
+    fun `testCopy works 07`() {
         myFixture.configureByText(
             FILE,
             """a<selection>foo
@@ -168,8 +157,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `copy works 08`() {
+    fun `testCopy works 08`() {
         myFixture.configureByText(
             FILE,
             """<selection>fooa
@@ -195,8 +183,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `copy works 09`() {
+    fun `testCopy works 09`() {
         myFixture.configureByText(
             FILE,
             """   <selection>foo
@@ -222,8 +209,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `cut works 01`() {
+    fun `testCut works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
@@ -232,8 +218,7 @@ class RectangleTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>")
     }
 
-    @Test
-    fun `cut works 02`() {
+    fun `testCut works 02`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection>")
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
@@ -242,8 +227,7 @@ class RectangleTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>")
     }
 
-    @Test
-    fun `cut works 03`() {
+    fun `testCut works 03`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -270,8 +254,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `cut works 04`() {
+    fun `testCut works 04`() {
         myFixture.configureByText(
             FILE,
             """foo<selection>bar
@@ -294,8 +277,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `cut works 05`() {
+    fun `testCut works 05`() {
         myFixture.configureByText(
             FILE,
             """foo<selection>
@@ -319,8 +301,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `cut works 06`() {
+    fun `testCut works 06`() {
         myFixture.configureByText(
             FILE,
             """<selection>foo
@@ -347,8 +328,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `cut works 07`() {
+    fun `testCut works 07`() {
         myFixture.configureByText(
             FILE,
             """a<selection>foo
@@ -374,8 +354,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `cut works 08`() {
+    fun `testCut works 08`() {
         myFixture.configureByText(
             FILE,
             """<selection>fooa
@@ -401,8 +380,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `cut works 09`() {
+    fun `testCut works 09`() {
         myFixture.configureByText(
             FILE,
             """   <selection>foo
@@ -429,8 +407,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `open works 01`() {
+    fun `testOpen works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
@@ -438,8 +415,7 @@ class RectangleTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>   foo")
     }
 
-    @Test
-    fun `open works 02`() {
+    fun `testOpen works 02`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection>")
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
@@ -447,8 +423,7 @@ class RectangleTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>   foo")
     }
 
-    @Test
-    fun `open works 03`() {
+    fun `testOpen works 03`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -469,8 +444,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `open works 04`() {
+    fun `testOpen works 04`() {
         myFixture.configureByText(
             FILE,
             """foo<selection>bar
@@ -487,8 +461,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `open works 05`() {
+    fun `testOpen works 05`() {
         myFixture.configureByText(
             FILE,
             """foo<selection>
@@ -505,8 +478,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `open works 06`() {
+    fun `testOpen works 06`() {
         myFixture.configureByText(
             FILE,
             """<selection>foo
@@ -525,8 +497,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `open works 07`() {
+    fun `testOpen works 07`() {
         myFixture.configureByText(
             FILE,
             """a<selection>foo
@@ -545,8 +516,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `open works 08`() {
+    fun `testOpen works 08`() {
         myFixture.configureByText(
             FILE,
             """<selection>fooa
@@ -565,8 +535,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `open works 09`() {
+    fun `testOpen works 09`() {
         myFixture.configureByText(
             FILE,
             """   <selection>foo
@@ -585,8 +554,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `clear works 01`() {
+    fun `testClear works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
@@ -594,8 +562,7 @@ class RectangleTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>   ")
     }
 
-    @Test
-    fun `clear works 02`() {
+    fun `testClear works 02`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection>")
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
@@ -603,8 +570,7 @@ class RectangleTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>   ")
     }
 
-    @Test
-    fun `clear works 03`() {
+    fun `testClear works 03`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -625,8 +591,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `clear works 04`() {
+    fun `testClear works 04`() {
         myFixture.configureByText(
             FILE,
             """foo<selection>bar
@@ -643,8 +608,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `clear works 05`() {
+    fun `testClear works 05`() {
         myFixture.configureByText(
             FILE,
             """foo<selection>
@@ -661,8 +625,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `clear works 06`() {
+    fun `testClear works 06`() {
         myFixture.configureByText(
             FILE,
             """<selection>foo
@@ -681,8 +644,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `clear works 07`() {
+    fun `testClear works 07`() {
         myFixture.configureByText(
             FILE,
             """a<selection>foo
@@ -701,8 +663,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `clear works 08`() {
+    fun `testClear works 08`() {
         myFixture.configureByText(
             FILE,
             """<selection>fooa
@@ -721,8 +682,7 @@ class RectangleTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `clear works 09`() {
+    fun `testClear works 09`() {
         myFixture.configureByText(
             FILE,
             """   <selection>foo

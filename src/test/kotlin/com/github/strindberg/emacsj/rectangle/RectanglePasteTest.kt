@@ -3,17 +3,12 @@ package com.github.strindberg.emacsj.rectangle
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jdesktop.swingx.plaf.basic.core.BasicTransferable
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 private const val ACTION_PASTE_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.rectanglepaste"
 
-@RunWith(JUnit4::class)
 class RectanglePasteTest : BasePlatformTestCase() {
 
-    @Test
-    fun `paste works 01`() {
+    fun `testPaste works 01`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -22,8 +17,7 @@ class RectanglePasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    @Test
-    fun `paste works 02`() {
+    fun `testPaste works 02`() {
         myFixture.configureByText(
             FILE,
             """<caret>foo
@@ -51,8 +45,7 @@ class RectanglePasteTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `paste works 03`() {
+    fun `testPaste works 03`() {
         myFixture.configureByText(
             FILE,
             """aaa
@@ -84,8 +77,7 @@ class RectanglePasteTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `paste works 04`() {
+    fun `testPaste works 04`() {
         myFixture.configureByText(
             FILE,
             """<caret>a
@@ -114,8 +106,7 @@ class RectanglePasteTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `paste works 05`() {
+    fun `testPaste works 05`() {
         myFixture.configureByText(
             FILE,
             """aa<caret>aaa

@@ -7,25 +7,19 @@ import javax.swing.JComponent
 import com.github.strindberg.emacsj.movement.MarkHandler
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.junit.After
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 private const val ACTION_REPLACE_REGEXP = "com.github.strindberg.emacsj.actions.search.replaceregexp"
 private const val ACTION_REPLACE_TEXT = "com.github.strindberg.emacsj.actions.search.replacetext"
 private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.movement.popmark"
 
-@RunWith(JUnit4::class)
 class ReplaceTest : BasePlatformTestCase() {
 
-    @After
-    fun `reset search`() {
+    override fun tearDown() {
         ReplaceHandler.delegate?.hide()
+        super.tearDown()
     }
 
-    @Test
-    fun `simple text replace works`() {
+    fun `testSimple text replace works`() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -43,8 +37,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar<caret>")
     }
 
-    @Test
-    fun `yes and no while replacing works`() {
+    fun `testYes and no while replacing works`() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -64,8 +57,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult(""""label" () "label" () null<caret>""")
     }
 
-    @Test
-    fun `space and no while replacing works`() {
+    fun `testSpace and no while replacing works`() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -85,8 +77,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult(""""label" () "label" () null<caret>""")
     }
 
-    @Test
-    fun `different order of yes and no works`() {
+    fun `testDifferent order of yes and no works`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -106,8 +97,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar foo bar<caret>")
     }
 
-    @Test
-    fun `replacement is only done within selection`() {
+    fun `testReplacement is only done within selection`() {
         myFixture.configureByText(FILE, "<caret><selection>foo foo</selection> foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -128,8 +118,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar bar<caret> foo")
     }
 
-    @Test
-    fun `replacement is over after period`() {
+    fun `testReplacement is over after period`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -148,8 +137,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar bar<caret> foo")
     }
 
-    @Test
-    fun `exclamation mark replaces everything and with correct case`() {
+    fun `testExclamation mark replaces everything and with correct case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -167,8 +155,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar Bar BAR<caret>")
     }
 
-    @Test
-    fun `upper case in replacement does not affect case sensitivity`() {
+    fun `testUpper case in replacement does not affect case sensitivity`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -186,8 +173,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar Bar BAR<caret>")
     }
 
-    @Test
-    fun `an upper case letter in source makes replacement dependent on case`() {
+    fun `testAn upper case letter in source makes replacement dependent on case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -205,8 +191,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("foo Bar<caret> FOO")
     }
 
-    @Test
-    fun `regexp replace with back references java style works`() {
+    fun `testRegexp replace with back references java style works`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -224,8 +209,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("båt<caret>")
     }
 
-    @Test
-    fun `regexp replace with back references traditional style works`() {
+    fun `testRegexp replace with back references traditional style works`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -243,8 +227,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("båt<caret>")
     }
 
-    @Test
-    fun `replace whole regexp match java style works`() {
+    fun `testReplace whole regexp match java style works`() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -263,8 +246,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("baaaa<caret>t")
     }
 
-    @Test
-    fun `replace whole regexp match traditional style works`() {
+    fun `testReplace whole regexp match traditional style works`() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -283,8 +265,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("baaaa<caret>t")
     }
 
-    @Test
-    fun `replace whole regexp match traditional style and exclamation mark works`() {
+    fun `testReplace whole regexp match traditional style and exclamation mark works`() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -303,8 +284,7 @@ class ReplaceTest : BasePlatformTestCase() {
         ReplaceHandler.delegate = null
     }
 
-    @Test
-    fun `regexp replace works with simple text replace`() {
+    fun `testRegexp replace works with simple text replace`() {
         myFixture.configureByText(FILE, "<caret>aa")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -322,8 +302,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bb<caret>")
     }
 
-    @Test
-    fun `mark is set when replace starts`() {
+    fun `testMark is set when replace starts`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)

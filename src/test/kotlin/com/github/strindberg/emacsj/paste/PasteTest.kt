@@ -5,20 +5,15 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIG
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jdesktop.swingx.plaf.basic.core.BasicTransferable
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 const val FILE = "file.txt"
 
 private const val ACTION_PREFIX_PASTE = "com.github.strindberg.emacsj.actions.paste.pasteprefix"
 private const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.paste.pastehistory"
 
-@RunWith(JUnit4::class)
 class PasteTest : BasePlatformTestCase() {
 
-    @Test
-    fun `paste works`() {
+    fun `testPaste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -27,8 +22,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    @Test
-    fun `paste works with selection`() {
+    fun `testPaste works with selection`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -37,8 +31,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("BARbar<caret>BAZ")
     }
 
-    @Test
-    fun `prefix paste works`() {
+    fun `testPrefix paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -47,8 +40,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foo<caret>bar")
     }
 
-    @Test
-    fun `prefix paste works with selection`() {
+    fun `testPrefix paste works with selection`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -57,8 +49,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("BAR<caret>barBAZ")
     }
 
-    @Test
-    fun `paste history after paste works`() {
+    fun `testPaste history after paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
@@ -70,8 +61,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    @Test
-    fun `paste history after prefix paste works`() {
+    fun `testPaste history after prefix paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
@@ -83,8 +73,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foo<caret>bar")
     }
 
-    @Test
-    fun `paste history is cleared of duplicates`() {
+    fun `testPaste history is cleared of duplicates`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
@@ -97,8 +86,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    @Test
-    fun `paste history is rotated`() {
+    fun `testPaste history is rotated`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("zed", null))
         Thread.sleep(100)
@@ -122,8 +110,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobaz<caret>")
     }
 
-    @Test
-    fun `paste history is not invoked after movement`() {
+    fun `testPaste history is not invoked after movement`() {
         myFixture.configureByText(FILE, "foo<caret>BAZ")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))

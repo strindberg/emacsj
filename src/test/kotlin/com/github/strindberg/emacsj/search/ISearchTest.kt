@@ -11,10 +11,6 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jdesktop.swingx.plaf.basic.core.BasicTransferable
-import org.junit.After
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 const val FILE = "file.txt"
 
@@ -28,16 +24,14 @@ private const val ACTION_ISEARCH_CHAR = "com.github.strindberg.emacsj.actions.se
 private const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions.search.isearchnewline"
 private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.movement.popmark"
 
-@RunWith(JUnit4::class)
 class ISearchTest : BasePlatformTestCase() {
 
-    @After
-    fun `reset search`() {
+    override fun tearDown() {
         ISearchHandler.delegate?.hide()
+        super.tearDown()
     }
 
-    @Test
-    fun `simple search works`() {
+    fun `testSimple search works`() {
         myFixture.configureByText(FILE, "<caret>foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -52,8 +46,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertNull(ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `simple search works 2`() {
+    fun `testSimple search works 2`() {
         myFixture.configureByText(FILE, "<caret>foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -67,8 +60,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("o", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `finding second match works`() {
+    fun `testFinding second match works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -86,8 +78,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `search - adding letters after finding matches works`() {
+    fun `testSearch - adding letters after finding matches works`() {
         myFixture.configureByText(FILE, "<caret>foop bar foop baz")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -104,8 +95,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `reverse search - adding letters after finding matches works`() {
+    fun `testReverse search - adding letters after finding matches works`() {
         myFixture.configureByText(FILE, "foop bar foop baz foo<caret>p")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -122,8 +112,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `wrap-around search works`() {
+    fun `testWrap-around search works`() {
         myFixture.configureByText(FILE, "foo <caret>bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -148,8 +137,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `wrap-around search works 2`() {
+    fun `testWrap-around search works 2`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -184,8 +172,7 @@ class ISearchTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `using previous search works after finishing with enter`() {
+    fun `testUsing previous search works after finishing with enter`() {
         myFixture.configureByText(FILE, "<caret>foo foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -207,8 +194,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertNull(ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `using previous search works after finishing with escape`() {
+    fun `testUsing previous search works after finishing with escape`() {
         myFixture.configureByText(FILE, "<caret>foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -230,8 +216,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertNull(ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `escape returns to original start`() {
+    fun `testEscape returns to original start`() {
         myFixture.configureByText(FILE, "foo<caret> bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -248,8 +233,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo<caret> bar foo")
     }
 
-    @Test
-    fun `previous searches can be re-used`() {
+    fun `testPrevious searches can be re-used`() {
         myFixture.configureByText(FILE, "<caret>foo foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -271,8 +255,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `previous searches are offered in most recently used order`() {
+    fun `testPrevious searches are offered in most recently used order`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz baz")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -334,8 +317,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo<caret> bar baz baz")
     }
 
-    @Test
-    fun `search current char works`() {
+    fun `testSearch current char works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -350,8 +332,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `search current char works at end of document`() {
+    fun `testSearch current char works at end of document`() {
         myFixture.configureByText(FILE, "foo bar foo<caret>")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -360,8 +341,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `search current word works`() {
+    fun `testSearch current word works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -375,8 +355,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `search current word works several times`() {
+    fun `testSearch current word works several times`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo bar")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -406,8 +385,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `search current word works several times 2`() {
+    fun `testSearch current word works several times 2`() {
         myFixture.configureByText(FILE, "<caret>foo.bar(foo)bar")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -428,8 +406,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("foo.bar(foo)bar", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `search current word works with late second invocation`() {
+    fun `testSearch current word works with late second invocation`() {
         myFixture.configureByText(FILE, "<caret>foo.bar foo.bar bar")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -456,8 +433,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `search current word shortcut with reverse search works`() {
+    fun `testSearch current word shortcut with reverse search works`() {
         myFixture.configureByText(FILE, "foo bar <caret>foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -477,8 +453,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo bar <caret>foo")
     }
 
-    @Test
-    fun `search current word with reverse search works several times`() {
+    fun `testSearch current word with reverse search works several times`() {
         myFixture.configureByText(FILE, "foo bar <caret>foo bar")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -507,8 +482,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `search current word with camel case works as expected`() {
+    fun `testSearch current word with camel case works as expected`() {
         myFixture.configureByText(FILE, "<caret>fooBarFoo")
         myFixture.editor.settings.isCamelWords = true
 
@@ -530,8 +504,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `combination of typed letters and current word search works as expected`() {
+    fun `testCombination of typed letters and current word search works as expected`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -545,8 +518,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("fo", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `combination of typed letters and current word reverse search works as expected`() {
+    fun `testCombination of typed letters and current word reverse search works as expected`() {
         myFixture.configureByText(FILE, "bar foo bar <caret>foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -581,8 +553,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `backspace works as expected`() {
+    fun `testBackspace works as expected`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -604,8 +575,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `changing direction works 1`() {
+    fun `testChanging direction works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -626,8 +596,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `changing direction works 2`() {
+    fun `testChanging direction works 2`() {
         myFixture.configureByText(FILE, "foo bar foo<caret>")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -647,8 +616,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `regexp search works`() {
+    fun `testRegexp search works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -658,8 +626,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `regexp backward search works`() {
+    fun `testRegexp backward search works`() {
         myFixture.configureByText(FILE, "foo bar foo<caret>")
 
         myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_BACKWARD)
@@ -669,8 +636,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `changing direction in regexp search works`() {
+    fun `testChanging direction in regexp search works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -691,8 +657,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `pasting from clipboard works`() {
+    fun `testPasting from clipboard works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -706,8 +671,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `pasting with plugin paste works`() {
+    fun `testPasting with plugin paste works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -721,8 +685,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `pasting from clipboard works 2`() {
+    fun `testPasting from clipboard works 2`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
         CopyPasteManager.getInstance().setContents(BasicTransferable("ar", null))
 
@@ -740,8 +703,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("b", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `text iSearch key binding works during regexp search`() {
+    fun `testText iSearch key binding works during regexp search`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -753,8 +715,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("o{2}", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `breadcrumb works as expected when changing direction`() {
+    fun `testBreadcrumb works as expected when changing direction`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -799,8 +760,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `breadcrumb works as expected when changing direction 2`() {
+    fun `testBreadcrumb works as expected when changing direction 2`() {
         myFixture.configureByText(FILE, "<caret>foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -817,8 +777,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `simple reverse search works`() {
+    fun `testSimple reverse search works`() {
         myFixture.configureByText(FILE, "foo foo<caret>")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -828,8 +787,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `simple reverse search works 2`() {
+    fun `testSimple reverse search works 2`() {
         myFixture.configureByText(FILE, "foo foo<caret> ")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -838,8 +796,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `search starts at prompt`() {
+    fun `testSearch starts at prompt`() {
         myFixture.configureByText(FILE, "foo<caret>foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -853,8 +810,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `reverse search starts at prompt`() {
+    fun `testReverse search starts at prompt`() {
         myFixture.configureByText(FILE, "foo<caret>foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -868,8 +824,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `change direction happens at prompt`() {
+    fun `testChange direction happens at prompt`() {
         myFixture.configureByText(FILE, "<caret>foofoo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -883,8 +838,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `simple reverse search works when not at end of document`() {
+    fun `testSimple reverse search works when not at end of document`() {
         myFixture.configureByText(FILE, "foo<caret> bar")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -893,8 +847,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("oo", ISearchHandler.delegate?.text)
     }
 
-    @Test
-    fun `search with new line works`() {
+    fun `testSearch with new line works`() {
         myFixture.configureByText(
             FILE,
             """<caret>foo
@@ -918,8 +871,7 @@ class ISearchTest : BasePlatformTestCase() {
         )
     }
 
-    @Test
-    fun `multiple reverse searches work`() {
+    fun `testMultiple reverse searches work`() {
         myFixture.configureByText(FILE, "foo bar foo<caret>")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -938,8 +890,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `multiple caret search works over same texts`() {
+    fun `testMultiple caret search works over same texts`() {
         myFixture.configureByText(
             FILE,
             """<caret>foo bar foo
@@ -967,8 +918,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(0, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `multiple caret search works over different texts`() {
+    fun `testMultiple caret search works over different texts`() {
         myFixture.configureByText(
             FILE,
             """(<caret>foo bar) baz
@@ -988,8 +938,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(0, 2), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `multiple caret search works over overlapping texts`() {
+    fun `testMultiple caret search works over overlapping texts`() {
         myFixture.configureByText(
             FILE,
             """<caret>foo bar baz
@@ -1027,8 +976,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `reverse multiple caret search works over overlapping texts`() {
+    fun `testReverse multiple caret search works over overlapping texts`() {
         myFixture.configureByText(
             FILE,
             """foo bar baz
@@ -1066,8 +1014,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
     }
 
-    @Test
-    fun `mark is set when search starts`() {
+    fun `testMark is set when search starts`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(
             FILE,

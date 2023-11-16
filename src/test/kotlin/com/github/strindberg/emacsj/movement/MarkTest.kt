@@ -4,9 +4,6 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOW
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_END
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 const val FILE = "file.txt"
 
@@ -14,11 +11,9 @@ private const val ACTION_EXCHANGE_MARK = "com.github.strindberg.emacsj.actions.m
 private const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.movement.pushmark"
 private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.movement.popmark"
 
-@RunWith(JUnit4::class)
 class MarkTest : BasePlatformTestCase() {
 
-    @Test
-    fun `set mark and pop mark works`() {
+    fun `testSet mark and pop mark works`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
@@ -32,8 +27,7 @@ class MarkTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>foo bar baz")
     }
 
-    @Test
-    fun `exchange mark and point works`() {
+    fun `testExchange mark and point works`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "A<caret>foo bar bazB")
 
@@ -48,8 +42,7 @@ class MarkTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret><selection>Afoo bar baz</selection>B")
     }
 
-    @Test
-    fun `exchange mark and point reactivates selection`() {
+    fun `testExchange mark and point reactivates selection`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(
             FILE,
