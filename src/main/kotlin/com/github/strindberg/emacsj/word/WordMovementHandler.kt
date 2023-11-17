@@ -7,12 +7,12 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
-@Suppress("unused")
-private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
-
 enum class MovementType { NEXT, PREVIOUS }
 
 class WordMovementHandler(private val type: MovementType) : EditorActionHandler.ForEachCaret() {
+
+    @Suppress("unused")
+    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun doExecute(editor: Editor, caret: Caret, dataContext: DataContext?) {
         val offset = when (type) {

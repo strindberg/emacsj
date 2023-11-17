@@ -17,12 +17,12 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 
-@Suppress("unused")
-private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
-
 enum class ChangeType { UPPER, LOWER, CAPITAL, UPPER_PREVIOUS, LOWER_PREVIOUS, CAPITAL_PREVIOUS, DELETE, DELETE_PREVIOUS }
 
 class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler.ForEachCaret() {
+
+    @Suppress("unused")
+    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val (start, end) =

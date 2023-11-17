@@ -8,85 +8,85 @@ const val FILE = "file.txt"
 
 class DeleteSpaceTest : BasePlatformTestCase() {
 
-    fun `testNothing to delete`() {
+    fun `test Nothing to delete`() {
         myFixture.configureByText(FILE, "foo<caret>bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `testDelete one space forward`() {
+    fun `test Delete one space forward`() {
         myFixture.configureByText(FILE, "foo<caret> bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `testDelete several spaces forward`() {
+    fun `test Delete several spaces forward`() {
         myFixture.configureByText(FILE, "foo<caret>  bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `testDelete one space backward`() {
+    fun `test Delete one space backward`() {
         myFixture.configureByText(FILE, "foo <caret>bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `testDelete several spaces backward`() {
+    fun `test Delete several spaces backward`() {
         myFixture.configureByText(FILE, "foo  <caret>bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `testDelete spaces in both directions`() {
+    fun `test Delete spaces in both directions`() {
         myFixture.configureByText(FILE, "foo  <caret>  bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `testDelete spaces at end of file`() {
+    fun `test Delete spaces at end of file`() {
         myFixture.configureByText(FILE, "foo<caret>  ")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `testDelete no space at end of file`() {
+    fun `test Delete no space at end of file`() {
         myFixture.configureByText(FILE, "foo<caret>")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `testDelete in both directions at end of file`() {
+    fun `test Delete in both directions at end of file`() {
         myFixture.configureByText(FILE, "foo  <caret>  ")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `testDelete spaces at beginning of file`() {
+    fun `test Delete spaces at beginning of file`() {
         myFixture.configureByText(FILE, "  <caret>foo")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("<caret>foo")
     }
 
-    fun `testDelete no space at beginning of file`() {
+    fun `test Delete no space at beginning of file`() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("<caret>foo")
     }
 
-    fun `testDelete in both directions at beginning of file`() {
+    fun `test Delete in both directions at beginning of file`() {
         myFixture.configureByText(FILE, "  <caret>  foo")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("<caret>foo")
     }
 
-    fun `testStop at end of line`() {
+    fun `test Stop at end of line`() {
         myFixture.configureByText(FILE, "foo<caret>  \n  bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo<caret>\n  bar")
     }
 
-    fun `testStop at beginning of line`() {
+    fun `test Stop at beginning of line`() {
         myFixture.configureByText(FILE, "foo  \n  <caret>bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo  \n<caret>bar")

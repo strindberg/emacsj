@@ -13,7 +13,7 @@ private const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.p
 
 class PasteTest : BasePlatformTestCase() {
 
-    fun `testPaste works`() {
+    fun `test Paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -22,7 +22,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `testPaste works with selection`() {
+    fun `test Paste works with selection`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -31,7 +31,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("BARbar<caret>BAZ")
     }
 
-    fun `testPrefix paste works`() {
+    fun `test Prefix paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -40,7 +40,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `testPrefix paste works with selection`() {
+    fun `test Prefix paste works with selection`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -49,7 +49,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("BAR<caret>barBAZ")
     }
 
-    fun `testPaste history after paste works`() {
+    fun `test Paste history after paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
@@ -61,7 +61,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `testPaste history after prefix paste works`() {
+    fun `test Paste history after prefix paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
@@ -73,7 +73,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `testPaste history is cleared of duplicates`() {
+    fun `test Paste history is cleared of duplicates`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
@@ -86,7 +86,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `testPaste history is rotated`() {
+    fun `test Paste history is rotated`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("zed", null))
         Thread.sleep(100)
@@ -110,7 +110,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobaz<caret>")
     }
 
-    fun `testPaste history is not invoked after movement`() {
+    fun `test Paste history is not invoked after movement`() {
         myFixture.configureByText(FILE, "foo<caret>BAZ")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))

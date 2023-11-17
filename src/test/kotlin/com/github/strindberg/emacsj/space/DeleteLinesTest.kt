@@ -6,7 +6,7 @@ private const val ACTION_DELETE_LINES = "com.github.strindberg.emacsj.actions.sp
 
 class DeleteLinesTest : BasePlatformTestCase() {
 
-    fun `testDo nothing on non-empty lines`() {
+    fun `test Do nothing on non-empty lines`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -23,7 +23,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testDo nothing on non-empty lines 2`() {
+    fun `test Do nothing on non-empty lines 2`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -40,7 +40,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testDelete all empty lines after non-empty line`() {
+    fun `test Delete all empty lines after non-empty line`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -59,7 +59,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testOnly empty lines are deleted, not all whitespace`() {
+    fun `test Only empty lines are deleted, not all whitespace`() {
         myFixture.configureByText(
             FILE,
             """foo<caret> bar
@@ -76,7 +76,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testEmpty lines at document end are deleted`() {
+    fun `test Empty lines at document end are deleted`() {
         myFixture.configureByText(
             FILE,
             """foo bar<caret>
@@ -89,7 +89,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         myFixture.checkResult("foo bar<caret>\n")
     }
 
-    fun `testIsolated blank line is deleted`() {
+    fun `test Isolated blank line is deleted`() {
         myFixture.configureByText(
             FILE,
             """foo bar
@@ -105,7 +105,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testIsolated blank line at document end is not deleted (mimic Emacs)`() {
+    fun `test Isolated blank line at document end is not deleted (mimic Emacs)`() {
         myFixture.configureByText(
             FILE,
             """foo bar
@@ -120,7 +120,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testIsolated blank line at document start is deleted`() {
+    fun `test Isolated blank line at document start is deleted`() {
         myFixture.configureByText(
             FILE,
             """<caret>
@@ -134,7 +134,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testConsecutive blank lines are reduced 1`() {
+    fun `test Consecutive blank lines are reduced 1`() {
         myFixture.configureByText(
             FILE,
             """foo bar
@@ -153,7 +153,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testConsecutive blank lines are reduced 2`() {
+    fun `test Consecutive blank lines are reduced 2`() {
         myFixture.configureByText(
             FILE,
             """foo bar
@@ -172,7 +172,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testConsecutive blank lines are reduced 3`() {
+    fun `test Consecutive blank lines are reduced 3`() {
         myFixture.configureByText(
             FILE,
             """foo bar
@@ -191,7 +191,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testConsecutive blank lines at document end are reduced`() {
+    fun `test Consecutive blank lines at document end are reduced`() {
         myFixture.configureByText(
             FILE,
             """foo bar
@@ -208,7 +208,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testConsecutive blank lines at document end are reduced 2`() {
+    fun `test Consecutive blank lines at document end are reduced 2`() {
         myFixture.configureByText(
             FILE,
             """foo bar
@@ -225,7 +225,7 @@ class DeleteLinesTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testConsecutive blank lines at document start are reduced`() {
+    fun `test Consecutive blank lines at document start are reduced`() {
         myFixture.configureByText(
             FILE,
             """<caret>

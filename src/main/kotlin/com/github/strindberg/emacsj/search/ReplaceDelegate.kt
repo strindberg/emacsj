@@ -25,10 +25,10 @@ import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
-@Suppress("unused")
-private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
-
 internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val selection: IntRange?, lastSearch: Replace?) {
+
+    @Suppress("unused")
+    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -116,14 +116,17 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                     findAllAndHighlight(editor, ui.text, type, type == REGEXP || caseSensitive(ui.text), selection)
                 }
             }
+
             ReplaceState.GET_REPLACE_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED) {
                     replaceArg = ui.text
                     startSearch()
                 }
             }
+
             ReplaceState.SEARCHING -> {
             }
+
             ReplaceState.SEARCH_FOUND -> {
                 if (e.id == KeyEvent.KEY_TYPED) {
                     when (e.keyChar.lowercaseChar()) {
@@ -135,9 +138,11 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                                 handleReplacementError()
                             }
                         }
+
                         'n' -> {
                             searchForReplacement(true)
                         }
+
                         '.' -> {
                             try {
                                 replaceInEditor()
@@ -146,6 +151,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                             }
                             ui.popup.cancel()
                         }
+
                         '!' -> {
                             try {
                                 do {
@@ -157,12 +163,14 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                             }
                             editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
                         }
+
                         else -> {
                             ui.popup.cancel()
                         }
                     }
                 }
             }
+
             ReplaceState.REPLACE_DONE, ReplaceState.REPLACE_FAILED -> {
                 if (e.id == KeyEvent.KEY_PRESSED) {
                     ui.popup.cancel()

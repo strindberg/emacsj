@@ -10,10 +10,10 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
-@Suppress("unused")
-private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
-
 class ISearchHandler(private val direction: Direction, private val type: SearchType) : EditorActionHandler() {
+
+    @Suppress("unused")
+    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val current = delegate

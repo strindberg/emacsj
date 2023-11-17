@@ -27,10 +27,10 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.VisibleForTesting
 
-@Suppress("unused")
-private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
-
 internal class CommonUI(val editor: Editor, keyEventHandler: (KeyEvent) -> Boolean, cancelCallback: () -> Boolean, var writeable: Boolean) {
+
+    @Suppress("unused")
+    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     private val standardFont = UIUtil.getLabelFont()
 

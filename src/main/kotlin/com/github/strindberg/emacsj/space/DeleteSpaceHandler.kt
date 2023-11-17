@@ -11,12 +11,12 @@ import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.util.DocumentUtil
 
-@Suppress("unused")
-private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
-
 enum class Type { SINGLE, MULTIPLE }
 
 class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret() {
+
+    @Suppress("unused")
+    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         if (type == Type.SINGLE) {

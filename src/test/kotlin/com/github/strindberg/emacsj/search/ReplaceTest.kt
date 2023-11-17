@@ -19,7 +19,7 @@ class ReplaceTest : BasePlatformTestCase() {
         super.tearDown()
     }
 
-    fun `testSimple text replace works`() {
+    fun `test Simple text replace works`() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -37,7 +37,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar<caret>")
     }
 
-    fun `testYes and no while replacing works`() {
+    fun `test Yes and no while replacing works`() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -57,7 +57,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult(""""label" () "label" () null<caret>""")
     }
 
-    fun `testSpace and no while replacing works`() {
+    fun `test Space and no while replacing works`() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -77,7 +77,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult(""""label" () "label" () null<caret>""")
     }
 
-    fun `testDifferent order of yes and no works`() {
+    fun `test Different order of yes and no works`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -97,7 +97,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar foo bar<caret>")
     }
 
-    fun `testReplacement is only done within selection`() {
+    fun `test Replacement is only done within selection`() {
         myFixture.configureByText(FILE, "<caret><selection>foo foo</selection> foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -118,7 +118,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar bar<caret> foo")
     }
 
-    fun `testReplacement is over after period`() {
+    fun `test Replacement is over after period`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -137,7 +137,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar bar<caret> foo")
     }
 
-    fun `testExclamation mark replaces everything and with correct case`() {
+    fun `test Exclamation mark replaces everything and with correct case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -155,7 +155,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar Bar BAR<caret>")
     }
 
-    fun `testUpper case in replacement does not affect case sensitivity`() {
+    fun `test Upper case in replacement does not affect case sensitivity`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -173,7 +173,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar Bar BAR<caret>")
     }
 
-    fun `testAn upper case letter in source makes replacement dependent on case`() {
+    fun `test An upper case letter in source makes replacement dependent on case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -191,7 +191,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("foo Bar<caret> FOO")
     }
 
-    fun `testRegexp replace with back references java style works`() {
+    fun `test Regexp replace with back references java style works`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -209,7 +209,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("båt<caret>")
     }
 
-    fun `testRegexp replace with back references traditional style works`() {
+    fun `test Regexp replace with back references traditional style works`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -227,7 +227,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("båt<caret>")
     }
 
-    fun `testReplace whole regexp match java style works`() {
+    fun `test Replace whole regexp match java style works`() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -246,7 +246,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("baaaa<caret>t")
     }
 
-    fun `testReplace whole regexp match traditional style works`() {
+    fun `test Replace whole regexp match traditional style works`() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -265,7 +265,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("baaaa<caret>t")
     }
 
-    fun `testReplace whole regexp match traditional style and exclamation mark works`() {
+    fun `test Replace whole regexp match traditional style and exclamation mark works`() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -284,7 +284,7 @@ class ReplaceTest : BasePlatformTestCase() {
         ReplaceHandler.delegate = null
     }
 
-    fun `testRegexp replace works with simple text replace`() {
+    fun `test Regexp replace works with simple text replace`() {
         myFixture.configureByText(FILE, "<caret>aa")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -302,7 +302,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bb<caret>")
     }
 
-    fun `testMark is set when replace starts`() {
+    fun `test Mark is set when replace starts`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)

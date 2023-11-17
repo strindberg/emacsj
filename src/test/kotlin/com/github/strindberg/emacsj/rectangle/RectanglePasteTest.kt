@@ -8,7 +8,7 @@ private const val ACTION_PASTE_RECTANGLE = "com.github.strindberg.emacsj.actions
 
 class RectanglePasteTest : BasePlatformTestCase() {
 
-    fun `testPaste works 01`() {
+    fun `test Paste works 01`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
 
@@ -17,7 +17,7 @@ class RectanglePasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `testPaste works 02`() {
+    fun `test Paste works 02`() {
         myFixture.configureByText(
             FILE,
             """<caret>foo
@@ -45,7 +45,7 @@ class RectanglePasteTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testPaste works 03`() {
+    fun `test Paste works 03`() {
         myFixture.configureByText(
             FILE,
             """aaa
@@ -77,7 +77,7 @@ class RectanglePasteTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testPaste works 04`() {
+    fun `test Paste works 04`() {
         myFixture.configureByText(
             FILE,
             """<caret>a
@@ -106,7 +106,7 @@ class RectanglePasteTest : BasePlatformTestCase() {
         )
     }
 
-    fun `testPaste works 05`() {
+    fun `test Paste works 05`() {
         myFixture.configureByText(
             FILE,
             """aa<caret>aaa

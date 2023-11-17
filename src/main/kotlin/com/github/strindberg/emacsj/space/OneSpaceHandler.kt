@@ -8,10 +8,10 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 
-@Suppress("unused")
-private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
-
 class OneSpaceHandler : EditorWriteActionHandler.ForEachCaret() {
+
+    @Suppress("unused")
+    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val start = previousNonWhiteSpace(editor.text, caret.offset)

@@ -11,10 +11,10 @@ import com.intellij.openapi.editor.actions.DuplicateAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.DocumentUtil
 
-@Suppress("unused")
-private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
-
 class DuplicateAndCommentHandler : EditorWriteActionHandler.ForEachCaret() {
+
+    @Suppress("unused")
+    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         editor.project?.let { project ->

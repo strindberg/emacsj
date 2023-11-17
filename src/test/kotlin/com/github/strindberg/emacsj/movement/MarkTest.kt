@@ -13,7 +13,7 @@ private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.moveme
 
 class MarkTest : BasePlatformTestCase() {
 
-    fun `testSet mark and pop mark works`() {
+    fun `test Set mark and pop mark works`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
@@ -27,7 +27,7 @@ class MarkTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>foo bar baz")
     }
 
-    fun `testExchange mark and point works`() {
+    fun `test Exchange mark and point works`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "A<caret>foo bar bazB")
 
@@ -42,7 +42,7 @@ class MarkTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret><selection>Afoo bar baz</selection>B")
     }
 
-    fun `testExchange mark and point reactivates selection`() {
+    fun `test Exchange mark and point reactivates selection`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(
             FILE,
