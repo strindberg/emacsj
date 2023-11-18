@@ -89,13 +89,13 @@ class PasteTest : BasePlatformTestCase() {
     fun `test Paste history is rotated`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(BasicTransferable("zed", null))
-        Thread.sleep(50)
+        Thread.sleep(100)
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null)) // discarded duplicate
-        Thread.sleep(50)
+        Thread.sleep(100)
         CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
-        Thread.sleep(50)
+        Thread.sleep(100)
         CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
-        Thread.sleep(50)
+        Thread.sleep(100)
 
         myFixture.performEditorAction(ACTION_PASTE)
         Thread.sleep(100)
