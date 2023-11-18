@@ -50,7 +50,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     private fun Editor.pasteAndMove(allContents: List<Transferable>) {
         clipboardContents(allContents)?.let { contents ->
-            paste(contents)?.let { range ->
+            pasteTransferable(contents)?.let { range ->
                 putUserData(EditorEx.LAST_PASTED_REGION, range)
                 caretModel.primaryCaret.moveToOffset(if (pasteType == STANDARD) range.endOffset else range.startOffset)
             }
@@ -71,6 +71,6 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             }
             .distinctBy { it.getTransferData(DataFlavor.stringFlavor) as String }
 
-    private fun Editor.paste(contents: Transferable): TextRange? =
+    private fun Editor.pasteTransferable(contents: Transferable): TextRange? =
         EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.takeUnless { it.isEmpty() }?.get(0)
 }

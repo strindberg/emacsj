@@ -68,25 +68,23 @@ class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret
     }
 
     private fun getEmptySuccessorLines(document: Document, lineNum: Int): Pair<Int, Int?> {
-        val start = document.getLineStartOffset(lineNum + 1)
-        var end: Int? = null
-        var currentLine = lineNum + 1
-        while (currentLine < document.lineCount && DocumentUtil.isLineEmpty(document, currentLine)) {
-            end = document.getLineEndOffset(currentLine) + 1
-            currentLine++
-        }
-        return Pair(start, end)
+        tailrec fun findEnd(lineNum: Int, end: Int?): Int? =
+            if (lineNum < document.lineCount && DocumentUtil.isLineEmpty(document, lineNum)) {
+                findEnd(lineNum + 1, document.getLineEndOffset(lineNum) + 1)
+            } else {
+                end
+            }
+        return Pair(document.getLineStartOffset(lineNum + 1), findEnd(lineNum + 1, null))
     }
 
     private fun getEmptyPrecedingLines(document: Document, lineNum: Int): Pair<Int?, Int> {
-        val end = document.getLineEndOffset(lineNum - 1) + 1
-        var start: Int? = null
-        var currentLine = lineNum - 1
-        while (currentLine > 0 && DocumentUtil.isLineEmpty(document, currentLine)) {
-            start = document.getLineStartOffset(currentLine)
-            currentLine--
-        }
-        return Pair(start, end)
+        tailrec fun findStart(lineNum: Int, start: Int?): Int? =
+            if (lineNum > 0 && DocumentUtil.isLineEmpty(document, lineNum)) {
+                findStart(lineNum - 1, document.getLineStartOffset(lineNum))
+            } else {
+                start
+            }
+        return Pair(findStart(lineNum, null), document.getLineEndOffset(lineNum - 1) + 1)
     }
 }
 

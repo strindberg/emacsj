@@ -11,9 +11,9 @@ import com.intellij.openapi.ide.CopyPasteManager
 
 class RectanglePasteHandler : EditorWriteActionHandler() {
 
-    override fun executeWriteAction(editor: Editor, editorCaret: Caret?, dataContext: DataContext) {
-        val caret = editor.caretModel.primaryCaret
-        val startPosition = caret.visualPosition
+    override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
+        val primary = caret ?: editor.caretModel.primaryCaret
+        val startPosition = primary.visualPosition
 
         CopyPasteManager.getInstance().contents?.let { contents ->
             val lines = contents.getTransferData(DataFlavor.stringFlavor).toString().split('\n')
@@ -42,7 +42,7 @@ class RectanglePasteHandler : EditorWriteActionHandler() {
             }
 
             val newPosition = VisualPosition(startPosition.line + lines.size - 1, startPosition.column + maxLength)
-            caret.moveToOffset(editor.visualPositionToOffset(newPosition))
+            primary.moveToOffset(editor.visualPositionToOffset(newPosition))
         }
     }
 }
