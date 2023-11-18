@@ -292,6 +292,12 @@
             <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="ctrl SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="ctrl SPACE" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.kill.kill"
+                class="com.github.strindberg.emacsj.actions.kill.KillAction"
+                text="Kill Line">
+            <keyboard-shortcut first-keystroke="ctrl k" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="ctrl k" keymap="Emacs"/>
+        </action>
     </actions>
 
 </idea-plugin>
