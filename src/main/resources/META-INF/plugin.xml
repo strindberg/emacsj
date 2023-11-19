@@ -14,62 +14,61 @@
     <actions>
         <action id="com.github.strindberg.emacsj.actions.search.isearchtextforward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchTextForwardAction"
-                text="Isearch Forward">
+                text="Isearch Forward Text">
             <keyboard-shortcut first-keystroke="ctrl s" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl s" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchregexpforward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchRegexpForwardAction"
-                text="Regexp Search Forward">
+                text="Isearch Forward Regexp">
             <keyboard-shortcut first-keystroke="alt s" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt s" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchtextbackward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchTextBackwardAction"
-                text="Isearch Backward">
+                text="Isearch Backward Text">
             <keyboard-shortcut first-keystroke="ctrl r" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl r" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchRegexpBackwardAction"
-                text="Regexp Search Backward">
+                text="Isearch Backward Regexp">
             <keyboard-shortcut first-keystroke="alt r" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt r" keymap="Emacs"/>
         </action>
-        <!-- TODO: dålig beskrivning av dessa tre -->
         <action id="com.github.strindberg.emacsj.actions.search.isearchword"
                 class="com.github.strindberg.emacsj.actions.search.ISearchWordAction"
-                text="Isearch Word">
+                text="Isearch: Add Word at Point to Search">
             <keyboard-shortcut first-keystroke="ctrl w" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl w" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchline"
                 class="com.github.strindberg.emacsj.actions.search.ISearchLineAction"
-                text="Isearch Line">
+                text="Isearch: Add Rest of Line to Search">
             <keyboard-shortcut first-keystroke="ctrl alt e" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl alt e" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchchar"
                 class="com.github.strindberg.emacsj.actions.search.ISearchCharAction"
-                text="Isearch Character">
+                text="Isearch: Add Character at Point to Search">
             <keyboard-shortcut first-keystroke="ctrl alt y" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl alt y" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchnewline"
                 class="com.github.strindberg.emacsj.actions.search.ISearchNewLineAction"
-                text="Isearch New Line">
+                text="Isearch: Add New Line Character to Search">
             <keyboard-shortcut first-keystroke="ctrl shift ENTER" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl shift ENTER" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchprevious"
                 class="com.github.strindberg.emacsj.actions.search.ISearchPreviousAction"
-                text="Previous Search">
+                text="Isearch: Previous Item in Search History">
             <keyboard-shortcut first-keystroke="alt p" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt p" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchnext"
                 class="com.github.strindberg.emacsj.actions.search.ISearchNextAction"
-                text="Next Search">
+                text="Isearch: Next Item in Search History">
             <keyboard-shortcut first-keystroke="alt n" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt n" keymap="Emacs"/>
         </action>
@@ -87,26 +86,26 @@
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.replaceprevious"
                 class="com.github.strindberg.emacsj.actions.search.ReplacePreviousAction"
-                text="Previous Replace">
+                text="Search and Replace: Previous Item in Search History">
             <keyboard-shortcut first-keystroke="alt p" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt p" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.replacenex"
                 class="com.github.strindberg.emacsj.actions.search.ReplaceNexAction"
-                text="Next Replace">
+                text="Search and Replace: Next Item in Search History">
             <keyboard-shortcut first-keystroke="alt n" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt n" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.replacenewline"
                 class="com.github.strindberg.emacsj.actions.search.ReplaceNewLineAction"
-                text="Replace New Line">
+                text="Search and Replace: Add New Line Character to Search">
             <keyboard-shortcut first-keystroke="ctrl shift ENTER" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl shift ENTER" keymap="Emacs"/>
         </action>
 
         <action id="com.github.strindberg.emacsj.actions.word.uppercase"
                 class="com.github.strindberg.emacsj.actions.word.UpperCaseAction"
-                text="Upper Case Word">
+                text="Upper Case Next Word">
             <keyboard-shortcut first-keystroke="alt u" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt u" keymap="Emacs"/>
         </action>
@@ -118,7 +117,7 @@
         </action>
         <action id="com.github.strindberg.emacsj.actions.word.lowercase"
                 class="com.github.strindberg.emacsj.actions.word.LowerCaseAction"
-                text="Lower Case Word">
+                text="Lower Case Next Word">
             <keyboard-shortcut first-keystroke="alt l" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt l" keymap="Emacs"/>
         </action>
@@ -130,7 +129,7 @@
         </action>
         <action id="com.github.strindberg.emacsj.actions.word.capitalcase"
                 class="com.github.strindberg.emacsj.actions.word.CapitalCaseAction"
-                text="Capital Case Word">
+                text="Capital Case Next Word">
             <keyboard-shortcut first-keystroke="alt c" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt c" keymap="Emacs"/>
         </action>
@@ -143,13 +142,13 @@
 
         <action id="com.github.strindberg.emacsj.actions.word.movenextword"
                 class="com.github.strindberg.emacsj.actions.word.MoveNextWordAction"
-                text="Move to Next Word">
+                text="Move Caret to Next Word">
             <keyboard-shortcut first-keystroke="alt f" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt f" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.word.movepreviousword"
                 class="com.github.strindberg.emacsj.actions.word.MovePreviousWordAction"
-                text="Move to Previous Word">
+                text="Move Caret to Previous Word">
             <keyboard-shortcut first-keystroke="alt b" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt b" keymap="Emacs"/>
         </action>
@@ -169,38 +168,38 @@
 
         <action id="com.github.strindberg.emacsj.actions.word.transposewords"
                 class="com.github.strindberg.emacsj.actions.word.TransposeWordsAction"
-                text="Transpose Words">
+                text="Transpose Current and Next Word">
             <keyboard-shortcut first-keystroke="alt t" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt t" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.word.transposewordsreverse"
                 class="com.github.strindberg.emacsj.actions.word.TransposeWordsReverseAction"
-                text="Transpose Words Reverse">
+                text="Transpose Previous and Current Word">
             <keyboard-shortcut first-keystroke="shift alt t" keymap="$default"/>
             <keyboard-shortcut first-keystroke="shift alt t" keymap="Emacs"/>
         </action>
 
         <action id="com.github.strindberg.emacsj.actions.space.deletespace"
                 class="com.github.strindberg.emacsj.actions.space.DeleteSpaceAction"
-                text="Delete All Whitespace">
+                text="Delete All Whitespace Around Point">
             <keyboard-shortcut first-keystroke="ctrl BACK_SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl BACK_SPACE" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.space.deletelines"
                 class="com.github.strindberg.emacsj.actions.space.DeleteLinesAction"
-                text="Delete Whitespace Lines">
+                text="Delete Blank Lines">
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl o" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl o" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.space.onespace"
                 class="com.github.strindberg.emacsj.actions.space.OneSpaceAction"
-                text="Leave One Space">
+                text="Leave One Space at Point">
             <keyboard-shortcut first-keystroke="alt SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt SPACE" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.space.openline"
                 class="com.github.strindberg.emacsj.actions.space.OpenLineAction"
-                text="Open Current Line">
+                text="Open Current Line at Point">
             <keyboard-shortcut first-keystroke="ctrl o" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl o" keymap="Emacs"/>
         </action>
@@ -214,57 +213,57 @@
 
         <action id="com.github.strindberg.emacsj.actions.rectangle.copyrectangle"
                 class="com.github.strindberg.emacsj.actions.rectangle.CopyRectangleAction"
-                text="Copy Rectangle">
+                text="Rectangle: Copy">
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt w" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt w" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.rectangle.cutrectangle"
                 class="com.github.strindberg.emacsj.actions.rectangle.CutRectangleAction"
-                text="Cut Rectangle">
+                text="Rectangle: Cut">
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt k" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt k" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.rectangle.openrectangle"
                 class="com.github.strindberg.emacsj.actions.rectangle.OpenRectangleAction"
-                text="Open Rectangle">
+                text="Rectangle: Open">
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt o" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt o" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.rectangle.clearrectangle"
                 class="com.github.strindberg.emacsj.actions.rectangle.ClearRectangleAction"
-                text="Clear Rectangle">
+                text="Rectangle: Clear">
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt c" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt c" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.rectangle.rectanglepaste"
                 class="com.github.strindberg.emacsj.actions.rectangle.RectanglePasteAction"
-                text="Paste Rectangle">
+                text="Rectangle: Paste">
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt y" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="alt y" keymap="Emacs"/>
         </action>
 
         <action id="com.github.strindberg.emacsj.actions.paste.pasteprefix"
                 class="com.github.strindberg.emacsj.actions.paste.PastePrefixAction"
-                text="Prefix Paste">
+                text="Paste and Leave Caret at Point">
             <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="ctrl y" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="ctrl y" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.paste.paste"
                 class="com.github.strindberg.emacsj.actions.paste.PasteAction"
-                text="Paste Start">
+                text="Paste">
             <keyboard-shortcut first-keystroke="ctrl y" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl y" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.paste.pastehistory"
                 class="com.github.strindberg.emacsj.actions.paste.PasteHistoryAction"
-                text="Paste History">
+                text="Paste: Previous Item in History">
             <keyboard-shortcut first-keystroke="alt y" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt y" keymap="Emacs"/>
         </action>
 
         <action id="com.github.strindberg.emacsj.actions.movement.recenter"
                 class="com.github.strindberg.emacsj.actions.movement.RecenterAction"
-                text="Recenter">
+                text="Recenter Caret">
             <keyboard-shortcut first-keystroke="ctrl l" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl l" keymap="Emacs"/>
         </action>
@@ -282,7 +281,7 @@
         </action>
         <action id="com.github.strindberg.emacsj.actions.movement.pushmark"
                 class="com.github.strindberg.emacsj.actions.movement.PushMarkAction"
-                text="Set Mark for Sticky Selection">
+                text="Set/Push Mark for Sticky Selection">
             <keyboard-shortcut first-keystroke="ctrl SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl SPACE" keymap="Emacs"/>
         </action>
