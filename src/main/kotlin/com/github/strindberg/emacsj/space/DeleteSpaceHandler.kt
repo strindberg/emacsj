@@ -89,19 +89,15 @@ class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret
 }
 
 internal fun previousNonWhiteSpace(text: CharSequence, offset: Int): Int {
-    var currentOffset = offset
-    while (currentOffset > 0 && text[currentOffset - 1].isTrueWhitespace()) {
-        currentOffset -= 1
-    }
-    return currentOffset
+    tailrec fun previous(offset: Int): Int =
+        if (offset <= 0) 0 else if (text[offset].isTrueWhitespace()) previous(offset - 1) else offset + 1
+    return previous(offset - 1)
 }
 
 internal fun nextNonWhiteSpace(text: CharSequence, offset: Int): Int {
-    var currentOffset = offset
-    while (currentOffset <= text.lastIndex && text[currentOffset].isTrueWhitespace()) {
-        currentOffset += 1
-    }
-    return currentOffset
+    tailrec fun next(offset: Int): Int =
+        if (offset >= text.length) text.length else if (text[offset].isTrueWhitespace()) next(offset + 1) else offset
+    return next(offset)
 }
 
 private fun Char.isTrueWhitespace() = isWhitespace() && this != '\n'
