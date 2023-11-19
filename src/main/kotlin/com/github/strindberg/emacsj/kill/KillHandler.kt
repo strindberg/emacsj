@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.actions.KillRingUtil
 import com.intellij.util.DocumentUtil
 import com.intellij.util.text.CharArrayUtil
 
-
 class KillHandler : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
@@ -29,5 +28,4 @@ class KillHandler : EditorWriteActionHandler.ForEachCaret() {
             }
         )
     }
-
 }

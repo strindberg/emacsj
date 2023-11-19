@@ -165,8 +165,8 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         val actionManager = ActionManager.getInstance()
         return actionManager.getActionIdList("").filter { actionId ->
             !actionManager.isGroup(actionId) &&
-                    actionManager.getAction(actionId)?.let { it is EditorAction && it !is ISearchAction } ?: false &&
-                    actionId !in listOf(ACTION_EDITOR_BACKSPACE, ACTION_EDITOR_ENTER, ACTION_EDITOR_PASTE, ACTION_PASTE)
+                actionManager.getAction(actionId)?.let { it is EditorAction && it !is ISearchAction } ?: false &&
+                actionId !in listOf(ACTION_EDITOR_BACKSPACE, ACTION_EDITOR_ENTER, ACTION_EDITOR_PASTE, ACTION_PASTE)
         }
     }
 

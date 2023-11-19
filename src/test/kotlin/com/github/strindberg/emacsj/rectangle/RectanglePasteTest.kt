@@ -1,8 +1,8 @@
 package com.github.strindberg.emacsj.rectangle
 
+import java.awt.datatransfer.StringSelection
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jdesktop.swingx.plaf.basic.core.BasicTransferable
 
 private const val ACTION_PASTE_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.rectanglepaste"
 
@@ -10,7 +10,7 @@ class RectanglePasteTest : BasePlatformTestCase() {
 
     fun `test Paste works 01`() {
         myFixture.configureByText(FILE, "foo<caret>")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
         myFixture.performEditorAction(ACTION_PASTE_RECTANGLE)
 
@@ -26,12 +26,11 @@ class RectanglePasteTest : BasePlatformTestCase() {
             """.trimMargin()
         )
         CopyPasteManager.getInstance().setContents(
-            BasicTransferable(
+            StringSelection(
                 """FOO
                   |BAR
                   |TAZ
-                """.trimMargin(),
-                null
+                """.trimMargin()
             )
         )
 
@@ -56,12 +55,11 @@ class RectanglePasteTest : BasePlatformTestCase() {
             """.trimMargin()
         )
         CopyPasteManager.getInstance().setContents(
-            BasicTransferable(
+            StringSelection(
                 """bbb
                   |bbb
                   |bbb
-                """.trimMargin(),
-                null
+                """.trimMargin()
             )
         )
 
@@ -85,13 +83,12 @@ class RectanglePasteTest : BasePlatformTestCase() {
             """.trimMargin()
         )
         CopyPasteManager.getInstance().setContents(
-            BasicTransferable(
+            StringSelection(
                 """bbb
                   |bbb
                   |bbb
                   |bbb
-                """.trimMargin(),
-                null
+                """.trimMargin()
             )
         )
 
@@ -116,13 +113,12 @@ class RectanglePasteTest : BasePlatformTestCase() {
             """.trimMargin()
         )
         CopyPasteManager.getInstance().setContents(
-            BasicTransferable(
+            StringSelection(
                 """bbb
                   |bbb
                   |bbb
                   |bbb
-                """.trimMargin(),
-                null
+                """.trimMargin()
             )
         )
 

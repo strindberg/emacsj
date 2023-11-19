@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.search
 
+import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
@@ -10,7 +11,6 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jdesktop.swingx.plaf.basic.core.BasicTransferable
 
 const val FILE = "file.txt"
 
@@ -659,7 +659,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Pasting from clipboard works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_EDITOR_PASTE)
@@ -673,7 +673,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Pasting with plugin paste works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_PASTE)
@@ -687,7 +687,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Pasting from clipboard works 2`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("ar", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("ar"))
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("b")

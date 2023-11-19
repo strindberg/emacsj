@@ -13,7 +13,8 @@ class DuplicateAndCommentTest : BasePlatformTestCase() {
             """<foo>
               |bar
               |<caret><baz>content</baz>
-              |</foo>""".trimMargin()
+              |</foo>
+            """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COMMENT)
@@ -23,9 +24,9 @@ class DuplicateAndCommentTest : BasePlatformTestCase() {
               |bar
               |<!--<baz>content</baz>-->
               |<caret><baz>content</baz>
-              |</foo>""".trimMargin()
+              |</foo>
+            """.trimMargin()
         )
-
     }
 
     fun `test Duplicated region is commented`() {
@@ -34,7 +35,8 @@ class DuplicateAndCommentTest : BasePlatformTestCase() {
             """<foo>
               |<selection>bar
               |<baz>content</baz>
-              |</selection><caret></foo>""".trimMargin()
+              |</selection><caret></foo>
+            """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COMMENT)
@@ -45,9 +47,9 @@ class DuplicateAndCommentTest : BasePlatformTestCase() {
               |<!--<baz>content</baz>-->
               |bar
               |<baz>content</baz>
-              |<caret></foo>""".trimMargin()
+              |<caret></foo>
+            """.trimMargin()
         )
-
     }
 
     fun `test New line is inserted between original and copy when caret not at line start`() {
@@ -56,7 +58,8 @@ class DuplicateAndCommentTest : BasePlatformTestCase() {
             """<foo>
               |<selection>bar
               |<baz>content</selection><caret></baz>
-              |</foo>""".trimMargin()
+              |</foo>
+            """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COMMENT)
@@ -67,9 +70,8 @@ class DuplicateAndCommentTest : BasePlatformTestCase() {
               |<!--<baz>content-->
               |bar
               |<baz>content<caret></baz>
-              |</foo>""".trimMargin()
+              |</foo>
+            """.trimMargin()
         )
-
     }
-
 }

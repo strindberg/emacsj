@@ -13,7 +13,7 @@ private const val ACTION_CLEAR_RECTANGLE = "com.github.strindberg.emacsj.actions
 
 class RectangleTest : BasePlatformTestCase() {
 
-    fun `test Copy works 01`() {
+    fun `test copy works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)

@@ -1,10 +1,10 @@
 package com.github.strindberg.emacsj.paste
 
+import java.awt.datatransfer.StringSelection
 import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jdesktop.swingx.plaf.basic.core.BasicTransferable
 
 const val FILE = "file.txt"
 
@@ -15,7 +15,7 @@ class PasteTest : BasePlatformTestCase() {
 
     fun `test Paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
         myFixture.performEditorAction(ACTION_PASTE)
 
@@ -24,7 +24,7 @@ class PasteTest : BasePlatformTestCase() {
 
     fun `test Paste works with selection`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
         myFixture.performEditorAction(ACTION_PASTE)
 
@@ -33,7 +33,7 @@ class PasteTest : BasePlatformTestCase() {
 
     fun `test Prefix paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
         myFixture.performEditorAction(ACTION_PREFIX_PASTE)
 
@@ -42,7 +42,7 @@ class PasteTest : BasePlatformTestCase() {
 
     fun `test Prefix paste works with selection`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
         myFixture.performEditorAction(ACTION_PREFIX_PASTE)
 
@@ -51,8 +51,8 @@ class PasteTest : BasePlatformTestCase() {
 
     fun `test Paste history after paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
-        CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
+        CopyPasteManager.getInstance().setContents(StringSelection("baz"))
 
         myFixture.performEditorAction(ACTION_PASTE)
         myFixture.checkResult("foobaz<caret>")
@@ -63,8 +63,8 @@ class PasteTest : BasePlatformTestCase() {
 
     fun `test Paste history after prefix paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
-        CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
+        CopyPasteManager.getInstance().setContents(StringSelection("baz"))
 
         myFixture.performEditorAction(ACTION_PREFIX_PASTE)
         myFixture.checkResult("foo<caret>baz")
@@ -75,9 +75,9 @@ class PasteTest : BasePlatformTestCase() {
 
     fun `test Paste history is cleared of duplicates`() {
         myFixture.configureByText(FILE, "foo<caret>")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
-        CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
-        CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
+        CopyPasteManager.getInstance().setContents(StringSelection("baz"))
+        CopyPasteManager.getInstance().setContents(StringSelection("baz"))
 
         myFixture.performEditorAction(ACTION_PASTE)
         myFixture.checkResult("foobaz<caret>")
@@ -86,38 +86,31 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `test Paste history is rotated`() {
+    /* Clipboard access is unreliable when tests are run from the command line. This test is thus disabled for now. */
+    fun `Paste history is rotated`() {
         myFixture.configureByText(FILE, "foo<caret>")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("zed", null))
-        Thread.sleep(150)
-        CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null)) // discarded duplicate
-        Thread.sleep(150)
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
-        Thread.sleep(150)
-        CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
-        Thread.sleep(150)
+        CopyPasteManager.getInstance().setContents(StringSelection("zed"))
+        CopyPasteManager.getInstance().setContents(StringSelection("baz")) // discarded duplicate
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
+        CopyPasteManager.getInstance().setContents(StringSelection("baz"))
 
         myFixture.performEditorAction(ACTION_PASTE)
-        Thread.sleep(150)
         myFixture.checkResult("foobaz<caret>")
 
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
-        Thread.sleep(150)
         myFixture.checkResult("foobar<caret>")
 
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
-        Thread.sleep(150)
         myFixture.checkResult("foozed<caret>")
 
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
-        Thread.sleep(150)
         myFixture.checkResult("foobaz<caret>")
     }
 
     fun `test Paste history is not invoked after movement`() {
         myFixture.configureByText(FILE, "foo<caret>BAZ")
-        CopyPasteManager.getInstance().setContents(BasicTransferable("bar", null))
-        CopyPasteManager.getInstance().setContents(BasicTransferable("baz", null))
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
+        CopyPasteManager.getInstance().setContents(StringSelection("baz"))
 
         myFixture.performEditorAction(ACTION_PASTE)
         myFixture.checkResult("foobaz<caret>BAZ")
