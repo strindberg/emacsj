@@ -267,8 +267,8 @@
             <keyboard-shortcut first-keystroke="ctrl l" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl l" keymap="Emacs"/>
         </action>
-        <action id="com.github.strindberg.emacsj.actions.movement.windowline"
-                class="com.github.strindberg.emacsj.actions.movement.WindowLineAction"
+        <action id="com.github.strindberg.emacsj.actions.movement.reposition"
+                class="com.github.strindberg.emacsj.actions.movement.RepositionAction"
                 text="Reposition Caret">
             <keyboard-shortcut first-keystroke="alt r" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt r" keymap="Emacs"/>

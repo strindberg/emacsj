@@ -6,7 +6,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
-class WindowLineHandler : EditorActionHandler() {
+class RepositionHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val primary = caret ?: editor.caretModel.primaryCaret
