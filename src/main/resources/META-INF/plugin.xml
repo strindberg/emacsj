@@ -21,8 +21,8 @@
         <action id="com.github.strindberg.emacsj.actions.search.isearchregexpforward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchRegexpForwardAction"
                 text="Isearch Forward Regexp">
-            <keyboard-shortcut first-keystroke="alt s" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="alt s" keymap="Emacs"/>
+            <keyboard-shortcut first-keystroke="ctrl alt s" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="ctrl alt s" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchtextbackward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchTextBackwardAction"
@@ -33,8 +33,8 @@
         <action id="com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchRegexpBackwardAction"
                 text="Isearch Backward Regexp">
-            <keyboard-shortcut first-keystroke="alt r" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="alt r" keymap="Emacs"/>
+            <keyboard-shortcut first-keystroke="ctrl alt r" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="ctrl alt r" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchword"
                 class="com.github.strindberg.emacsj.actions.search.ISearchWordAction"
@@ -75,14 +75,14 @@
         <action id="com.github.strindberg.emacsj.actions.search.replacetext"
                 class="com.github.strindberg.emacsj.actions.search.ReplaceTextAction"
                 text="Search and Replace Text">
-            <keyboard-shortcut first-keystroke="alt r" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="alt r" keymap="Emacs"/>
+            <keyboard-shortcut first-keystroke="alt s" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt s" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.replaceregexp"
                 class="com.github.strindberg.emacsj.actions.search.ReplaceRegexpAction"
                 text="Search and Replace Regexp">
-            <keyboard-shortcut first-keystroke="alt shift r" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="alt shift r" keymap="Emacs"/>
+            <keyboard-shortcut first-keystroke="shift alt s" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="shift alt s" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.replaceprevious"
                 class="com.github.strindberg.emacsj.actions.search.ReplacePreviousAction"
