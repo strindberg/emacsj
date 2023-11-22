@@ -1,5 +1,6 @@
-package com.github.strindberg.emacsj.movement
+package com.github.strindberg.emacsj.view
 
+import com.github.strindberg.emacsj.mark.MarkHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_END
@@ -7,9 +8,9 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
 
-private const val ACTION_EXCHANGE_MARK = "com.github.strindberg.emacsj.actions.movement.exchangepointandmark"
-private const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.movement.pushmark"
-private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.movement.popmark"
+private const val ACTION_EXCHANGE_MARK = "com.github.strindberg.emacsj.actions.mark.exchangepointandmark"
+private const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
+private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
 
 class MarkTest : BasePlatformTestCase() {
 

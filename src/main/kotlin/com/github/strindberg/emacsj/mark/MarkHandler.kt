@@ -1,9 +1,9 @@
-package com.github.strindberg.emacsj.movement
+package com.github.strindberg.emacsj.mark
 
 import java.time.Duration
 import java.time.LocalDateTime
-import com.github.strindberg.emacsj.movement.Type.POP
-import com.github.strindberg.emacsj.movement.Type.PUSH
+import com.github.strindberg.emacsj.mark.Type.POP
+import com.github.strindberg.emacsj.mark.Type.PUSH
 import com.github.strindberg.emacsj.search.prependElement
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret

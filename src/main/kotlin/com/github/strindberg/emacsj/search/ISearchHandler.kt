@@ -1,7 +1,7 @@
 package com.github.strindberg.emacsj.search
 
 import java.lang.invoke.MethodHandles
-import com.github.strindberg.emacsj.movement.MarkHandler
+import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.search.SearchType.TEXT
 import com.intellij.openapi.actionSystem.DataContext

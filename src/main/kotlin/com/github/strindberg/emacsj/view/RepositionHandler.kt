@@ -1,4 +1,4 @@
-package com.github.strindberg.emacsj.movement
+package com.github.strindberg.emacsj.view
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret

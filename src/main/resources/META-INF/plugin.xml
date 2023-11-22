@@ -262,32 +262,33 @@
             <keyboard-shortcut first-keystroke="alt y" keymap="Emacs"/>
         </action>
 
-        <action id="com.github.strindberg.emacsj.actions.movement.recenter"
-                class="com.github.strindberg.emacsj.actions.movement.RecenterAction"
+        <action id="com.github.strindberg.emacsj.actions.view.recenter"
+                class="com.github.strindberg.emacsj.actions.view.RecenterAction"
                 text="Recenter Caret">
             <keyboard-shortcut first-keystroke="ctrl l" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl l" keymap="Emacs"/>
         </action>
-        <action id="com.github.strindberg.emacsj.actions.movement.reposition"
-                class="com.github.strindberg.emacsj.actions.movement.RepositionAction"
+        <action id="com.github.strindberg.emacsj.actions.view.reposition"
+                class="com.github.strindberg.emacsj.actions.view.RepositionAction"
                 text="Reposition Caret">
             <keyboard-shortcut first-keystroke="alt r" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt r" keymap="Emacs"/>
         </action>
-        <action id="com.github.strindberg.emacsj.actions.movement.exchangepointandmark"
-                class="com.github.strindberg.emacsj.actions.movement.ExchangePointAndMarkAction"
+
+        <action id="com.github.strindberg.emacsj.actions.mark.exchangepointandmark"
+                class="com.github.strindberg.emacsj.actions.mark.ExchangePointAndMarkAction"
                 text="Exchange Point and Mark">
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl x" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl x" keymap="Emacs"/>
         </action>
-        <action id="com.github.strindberg.emacsj.actions.movement.pushmark"
-                class="com.github.strindberg.emacsj.actions.movement.PushMarkAction"
+        <action id="com.github.strindberg.emacsj.actions.mark.pushmark"
+                class="com.github.strindberg.emacsj.actions.mark.PushMarkAction"
                 text="Set/Push Mark for Sticky Selection">
             <keyboard-shortcut first-keystroke="ctrl SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl SPACE" keymap="Emacs"/>
         </action>
-        <action id="com.github.strindberg.emacsj.actions.movement.popmark"
-                class="com.github.strindberg.emacsj.actions.movement.PopMarkAction"
+        <action id="com.github.strindberg.emacsj.actions.mark.popmark"
+                class="com.github.strindberg.emacsj.actions.mark.PopMarkAction"
                 text="Pop Mark">
             <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="ctrl SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="ctrl SPACE" keymap="Emacs"/>

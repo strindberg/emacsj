@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
-import com.github.strindberg.emacsj.movement.MarkHandler
+import com.github.strindberg.emacsj.mark.MarkHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
@@ -22,7 +22,7 @@ private const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacsj
 private const val ACTION_ISEARCH_WORD = "com.github.strindberg.emacsj.actions.search.isearchword"
 private const val ACTION_ISEARCH_CHAR = "com.github.strindberg.emacsj.actions.search.isearchchar"
 private const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions.search.isearchnewline"
-private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.movement.popmark"
+private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
 
 class ISearchTest : BasePlatformTestCase() {
 

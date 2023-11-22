@@ -4,13 +4,13 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import javax.swing.JComponent
-import com.github.strindberg.emacsj.movement.MarkHandler
+import com.github.strindberg.emacsj.mark.MarkHandler
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val ACTION_REPLACE_REGEXP = "com.github.strindberg.emacsj.actions.search.replaceregexp"
 private const val ACTION_REPLACE_TEXT = "com.github.strindberg.emacsj.actions.search.replacetext"
-private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.movement.popmark"
+private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
 
 class ReplaceTest : BasePlatformTestCase() {
 
