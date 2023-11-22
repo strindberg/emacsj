@@ -198,8 +198,8 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
             stringToFind = searchArg
             isForward = true
             isRegularExpressions = type == REGEXP
-            isCaseSensitive = type == REGEXP || caseSensitive(searchArg)
-            isPreserveCase = true
+            isCaseSensitive = type == REGEXP || caseSensitive(searchArg) || caseSensitive(replaceArg)
+            isPreserveCase = !(type == REGEXP || caseSensitive(searchArg) || caseSensitive(replaceArg))
             stringToReplace = fixBackReferences(replaceArg)
         }
         undoGroupId = UUID.randomUUID().toString()

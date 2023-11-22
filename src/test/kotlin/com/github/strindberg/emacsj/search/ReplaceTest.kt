@@ -155,7 +155,7 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.checkResult("bar Bar BAR<caret>")
     }
 
-    fun `test Upper case in replacement does not affect case sensitivity`() {
+    fun `test Upper case in replacement makes replacement dependent on case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -170,7 +170,7 @@ class ReplaceTest : BasePlatformTestCase() {
 
         popup.typeChar('!', textField)
 
-        myFixture.checkResult("bar Bar BAR<caret>")
+        myFixture.checkResult("BAR<caret> Foo FOO")
     }
 
     fun `test An upper case letter in source makes replacement dependent on case`() {
@@ -188,7 +188,43 @@ class ReplaceTest : BasePlatformTestCase() {
 
         popup.typeChar('!', textField)
 
-        myFixture.checkResult("foo Bar<caret> FOO")
+        myFixture.checkResult("foo bar<caret> FOO")
+    }
+
+    fun `test An upper case word can be transformed to lower case`() {
+        myFixture.configureByText(FILE, "<caret>foo Foo FOO")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        val textField = ReplaceHandler.delegate!!.ui.textField
+        val popup = ReplaceHandler.delegate!!.ui.popup
+
+        textField.text = "Foo"
+        popup.pressEnter(textField)
+
+        textField.text = "foo"
+        popup.pressEnter(textField)
+
+        popup.typeChar('!', textField)
+
+        myFixture.checkResult("foo foo<caret> FOO")
+    }
+
+    fun `test A lower case word can be transformed to upper case`() {
+        myFixture.configureByText(FILE, "<caret>foo Foo FOO")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        val textField = ReplaceHandler.delegate!!.ui.textField
+        val popup = ReplaceHandler.delegate!!.ui.popup
+
+        textField.text = "foo"
+        popup.pressEnter(textField)
+
+        textField.text = "Foo"
+        popup.pressEnter(textField)
+
+        popup.typeChar('!', textField)
+
+        myFixture.checkResult("Foo<caret> Foo FOO")
     }
 
     fun `test Regexp replace with back references java style works`() {
