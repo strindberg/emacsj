@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.strindberg.emacsj</id>
     <name>EmacsJ</name>
-    <vendor>strindberg</vendor>
+    <vendor>Jesper Holmberg</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
@@ -72,6 +72,7 @@
             <keyboard-shortcut first-keystroke="alt n" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt n" keymap="Emacs"/>
         </action>
+
         <action id="com.github.strindberg.emacsj.actions.search.replacetext"
                 class="com.github.strindberg.emacsj.actions.search.ReplaceTextAction"
                 text="Search and Replace Text">
