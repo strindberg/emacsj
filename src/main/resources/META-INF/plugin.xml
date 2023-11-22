@@ -198,12 +198,6 @@
             <keyboard-shortcut first-keystroke="alt SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt SPACE" keymap="Emacs"/>
         </action>
-        <action id="com.github.strindberg.emacsj.actions.space.openline"
-                class="com.github.strindberg.emacsj.actions.space.OpenLineAction"
-                text="Open Current Line at Point">
-            <keyboard-shortcut first-keystroke="ctrl o" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="ctrl o" keymap="Emacs"/>
-        </action>
 
         <action id="com.github.strindberg.emacsj.actions.line.duplicateandcomment"
                 class="com.github.strindberg.emacsj.actions.line.DuplicateAndCommentAction"
@@ -275,12 +269,6 @@
             <keyboard-shortcut first-keystroke="alt r" keymap="Emacs"/>
         </action>
 
-        <action id="com.github.strindberg.emacsj.actions.mark.exchangepointandmark"
-                class="com.github.strindberg.emacsj.actions.mark.ExchangePointAndMarkAction"
-                text="Exchange Point and Mark">
-            <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl x" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl x" keymap="Emacs"/>
-        </action>
         <action id="com.github.strindberg.emacsj.actions.mark.pushmark"
                 class="com.github.strindberg.emacsj.actions.mark.PushMarkAction"
                 text="Set/Push Mark for Sticky Selection">
@@ -292,6 +280,12 @@
                 text="Pop Mark">
             <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="ctrl SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl u" second-keystroke="ctrl SPACE" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.mark.exchangepointandmark"
+                class="com.github.strindberg.emacsj.actions.mark.ExchangePointAndMarkAction"
+                text="Exchange Point and Mark">
+            <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl x" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="ctrl x" second-keystroke="ctrl x" keymap="Emacs"/>
         </action>
 
         <action id="com.github.strindberg.emacsj.actions.kill.kill"
