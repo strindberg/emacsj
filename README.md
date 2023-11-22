@@ -10,6 +10,8 @@ simply install the plugin, choose the commands you are interested in, and either
 your own bindings in IntelliJ's preferences. If a key binding doesn't seem to do anything, double check that no other command is using 
 the same keybinding. 
 
+![configuration](./images/configuration.png "configuration")
+
 <!-- Plugin description end -->
 
 ## Installation
@@ -26,7 +28,7 @@ the same keybinding.
 
 ## Documentation
 
-## <a id="org5cb08b7"></a>Isearch
+## Isearch
 
 Incremental search. Each letter typed is added to the search, and the nearest match is highlighted, as well as all other visible matches.
 The order of the current match amongst all matches is displayed together with the total number of matches. Keep adding letters to narrow
@@ -68,7 +70,7 @@ characters, but switch to case-sensitive search if the search string contains on
 case string, and not match upper case letters, use regexp search which is always case-sensitive.
 
 
-## <a id="org9fd5f65"></a>Search/replace
+## Search/replace
 
 Search and replace asks for a text or regexp to search for, and then the replacement to be used. When replacement starts, each match found
 triggers a request for confirmation.
@@ -84,7 +86,7 @@ to perform the change or not.
 If the selection is active when Search/replace is started, the replacement is only performed within the current selection.
 
 When using regexp search, back references into groups in the matched string can be used in the replace string either in java style 
-(`%1, %2, &#x2026;`) or with backslash (`\1, \2, &#x2026;`). The whole match can be referenced by `$0` or `\&`.
+(`%1, %2, ...`) or with backslash (`\1, \2, ...`). The whole match can be referenced by `$0` or `\&`.
 
 While replacing, the following keys are active:
 
@@ -101,7 +103,7 @@ replacement string is lower case characters, but switch to case-sensitive search
 more capital letters. If you need to search and replace two lower case strings, and not match upper case letters, use regexp Search/replace
 which is always case-sensitive.
 
-## <a id="org42fb8a4"></a>Word Movement
+## Word Movement
 
 The word movement commands are the same as default IntelliJ movements, but with a slight difference in how word boundaries as non-word
 characters are handled. In standard IntelliJ, "kill to word end" will delete character up to the next non-word character, whereas the
@@ -120,9 +122,9 @@ The included commands are:
 -   Delete previous word (`alt-BACKSPACE`). Delete characters back to the start of the current word (defined as above).
 
 
-## <a id="org357f604"></a>Modify Word
+## Modify Word
 
-The modify word commands use the same definition of word boundaries as the word movement commands defined [above](#org42fb8a4). 
+The modify word commands use the same definition of word boundaries as the word movement commands defined [above](#word-movement). 
 They will modify the characters in the current or previous word or &#x2014; if selection is active &#x2014; modify the current selection.
 
 The commands are:
@@ -137,7 +139,7 @@ The commands are:
 
 ## Transpose Words
 
-The transpose words commands use the same definition of word boundaries as the word movement commands defined [above](#org42fb8a4).
+The transpose words commands use the same definition of word boundaries as the word movement commands defined [above](#word-movement).
 
 If the selection is active, the active selection is transposed with the following or previous word, respectively.
 
@@ -202,8 +204,8 @@ The commands are:
 The plugin maintains a mark history, if the plugin push mark command is used. This makes it possible to pop previous marks and go back to
 these previous locations. A separate mark history is maintained for each file where it is used.
 
-The commands [iSearch](#org5cb08b7) and [Search/Replace](#org9fd5f65) set the mark at the beginning of a search so that one can return to 
-the position where the latest search started. The command [Exchange Point and Mark](#orge174598) also uses the mark history.
+The commands [iSearch](#isearch) and [Search/replace](#searchreplace) set the mark at the beginning of a search so that one can return to 
+the position where the latest search started. The command [Exchange Point and Mark](#exchange-point-and-mark) also uses the mark history.
 
 The commands are:
 
@@ -212,7 +214,7 @@ The commands are:
 -   Pop Mark (`ctrl-u ctrl-SPACE`). Pop an item from the mark history and return caret to the saved position. History is maintained per file.
 
 
-## <a id="orge174598"></a>Exchange Point and Mark
+## Exchange Point and Mark
 
 When using sticky selection, Exchange Point and Mark (`ctrl-x ctrl-x`) switches the position of the selection start and the current caret. The
 selected region can then be expanded in another direction.
