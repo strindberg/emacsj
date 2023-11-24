@@ -230,12 +230,12 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun titleText(found: Boolean = true, wrapped: Boolean = false): String =
-        sequenceOf(
+        listOfNotNull(
             if (!found) "Failing" else null,
             if (wrapped) "Wrapped" else null,
             if (type == REGEXP) "Regexp Search" else "Search",
             if (direction == BACKWARD) "Backward" else null
-        ).filterNotNull().joinToString(" ") + ": "
+        ).joinToString(" ") + ": "
 
     internal fun startPreviousSearch() {
         state = SEARCH

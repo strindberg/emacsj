@@ -113,8 +113,8 @@
         <action id="com.github.strindberg.emacsj.actions.word.uppercaseprevious"
                 class="com.github.strindberg.emacsj.actions.word.UpperCasePreviousAction"
                 text="Upper Case Previous Word">
-            <keyboard-shortcut first-keystroke="ctrl alt u" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="ctrl alt u" keymap="Emacs"/>
+            <keyboard-shortcut first-keystroke="shift alt u" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="shift alt u" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.word.lowercase"
                 class="com.github.strindberg.emacsj.actions.word.LowerCaseAction"
@@ -125,8 +125,8 @@
         <action id="com.github.strindberg.emacsj.actions.word.lowercaseprevious"
                 class="com.github.strindberg.emacsj.actions.word.LowerCasePreviousAction"
                 text="Lower Case Previous Word">
-            <keyboard-shortcut first-keystroke="ctrl alt l" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="ctrl alt l" keymap="Emacs"/>
+            <keyboard-shortcut first-keystroke="shift alt l" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="shift alt l" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.word.capitalcase"
                 class="com.github.strindberg.emacsj.actions.word.CapitalCaseAction"
@@ -137,8 +137,8 @@
         <action id="com.github.strindberg.emacsj.actions.word.capitalcaseprevious"
                 class="com.github.strindberg.emacsj.actions.word.CapitalCasePreviousAction"
                 text="Capital Case Previous Word">
-            <keyboard-shortcut first-keystroke="ctrl alt c" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="ctrl alt c" keymap="Emacs"/>
+            <keyboard-shortcut first-keystroke="shift alt c" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="shift alt c" keymap="Emacs"/>
         </action>
 
         <action id="com.github.strindberg.emacsj.actions.word.movenextword"
@@ -199,8 +199,14 @@
             <keyboard-shortcut first-keystroke="alt SPACE" keymap="Emacs"/>
         </action>
 
-        <action id="com.github.strindberg.emacsj.actions.line.duplicateandcomment"
-                class="com.github.strindberg.emacsj.actions.line.DuplicateAndCommentAction"
+        <action id="com.github.strindberg.emacsj.actions.duplicate.duplicate"
+                class="com.github.strindberg.emacsj.actions.duplicate.DuplicateAction"
+                text="Duplicate Line/Region">
+            <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="Y" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="Y" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.duplicate.duplicateandcomment"
+                class="com.github.strindberg.emacsj.actions.duplicate.DuplicateAndCommentAction"
                 text="Duplicate Line/Region and Comment">
             <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="C" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="C" keymap="Emacs"/>

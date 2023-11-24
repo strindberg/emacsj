@@ -10,8 +10,6 @@ simply install the plugin, choose the commands you are interested in, and either
 your own bindings in IntelliJ's preferences. If a key binding doesn't seem to do anything, double check that no other command is using 
 the same keybinding. 
 
-![configuration](./images/configuration.png "configuration")
-
 <!-- Plugin description end -->
 
 ## Installation
@@ -42,12 +40,12 @@ There are four ways to start a search:
 
 -   Search Forward Text (`ctrl-s`). The written text is interpreted as literal text, and the search direction is forward in the editor.
 -   Search Backward Text (`ctrl-r`). The written text is interpreted as literal text, and the search direction is backward in the editor.
--   Search Forward Regexp (`alt-s`). The written text is interpreted as regular expression, and the search direction is forward in the editor.
--   Search Backward Regexp (`alt-s`). The written text is interpreted as regular expression, and the search direction is backward in the
+-   Search Forward Regexp (`ctrl-alt-s`). The written text is interpreted as regular expression, and the search direction is forward in the editor.
+-   Search Backward Regexp (`ctrl-alt-r`). The written text is interpreted as regular expression, and the search direction is backward in the
     editor.
 
 When search has been initiated, pressing one of the search keys again will bring up the previous text used for search. This is the quickest 
-way to resume asearch. History is kept separate between text search and regexp search, so only previous searches by the same type are
+way to resume a search. History is kept separate between text search and regexp search, so only previous searches by the same type are
 offered. The search history does not separate forward and backward searches.
 
 While searching, the following keys are active:
@@ -56,11 +54,11 @@ While searching, the following keys are active:
 -   `ENTER`: abort the search and leave the caret where it currently is.
 -   `BACKSPACE`: if several matches with the current search string have been visited, go back to in the history of matches. If not, remove
      the last character from the search string.
--   `alt-p`: choose backward in the list of previous searches (of the current type) performed.
--   `alt-n`: choose backward in the list of previous searches (of the current type) performed.
 -   `ctrl-w`: add the next word in the editor to the search string.
 -   `ctrl-alt-e`: add the rest of the current editor line to the search string.
 -   `ctrl-alt-y`: add the character at point to the search string.
+-   `alt-p`: choose backward in the list of previous searches (of the current type) performed.
+-   `alt-n`: choose backward in the list of previous searches (of the current type) performed.
 -   `ctrl-shift-ENTER`: add new line character to the search string.
 
 Text from the clipboard can be pasted during searching: the contents of the clipboard will be added to the current search string.
@@ -130,11 +128,11 @@ They will modify the characters in the current or previous word or &#x2014; if s
 The commands are:
 
 -   Upper case current word or region (`alt-u`).
--   Upper case previous word (`ctrl-alt-u`).
+-   Upper case previous word (`shift-alt-u`).
 -   Lower case current word or region (`alt-l`).
--   Lower case previous word (`ctrl-alt-l`).
+-   Lower case previous word (`shift-alt-l`).
 -   Capitalize current word or region (`alt-c`).
--   Capitalize previous word (`ctrl-alt-c`).
+-   Capitalize previous word (`shift-alt-c`).
 
 
 ## Transpose Words
@@ -165,7 +163,7 @@ current line is deleted. If the current line is blank and part of a consecutive 
 single blank line.
 
 
-## Duplicate and Comment
+## Duplicate
 
 Duplicate Line/Region and Comment (`ctrl-c c`) duplicates the current line or active region, and comments the original copy.
 

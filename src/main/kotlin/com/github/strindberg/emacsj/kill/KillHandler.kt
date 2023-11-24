@@ -21,7 +21,7 @@ class KillHandler : EditorWriteActionHandler.ForEachCaret() {
             document.textLength - 1,
             if (CharArrayUtil.isEmptyOrSpaces(document.charsSequence, offset, endOffset)) {
                 endOffset + 1
-            } else if (offset == DocumentUtil.getLineStartOffset(offset, document)) {
+            } else if (DocumentUtil.isAtLineStart(offset, document)) {
                 endOffset + 1
             } else {
                 endOffset

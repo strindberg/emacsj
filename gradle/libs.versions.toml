@@ -8,6 +8,7 @@ changelog = "2.2.0"
 gradleIntelliJPlugin = "1.16.0"
 qodana = "0.1.13"
 kover = "0.7.3"
+kotlinter = "4.1.0"
 
 [libraries]
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
@@ -18,3 +19,4 @@ gradleIntelliJPlugin = { id = "org.jetbrains.intellij", version.ref = "gradleInt
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }
+ktlint = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
