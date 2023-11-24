@@ -20,6 +20,7 @@ private const val ACTION_ISEARCH_PREVIOUS = "com.github.strindberg.emacsj.action
 private const val ACTION_ISEARCH_REGEXP_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpforward"
 private const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
 private const val ACTION_ISEARCH_WORD = "com.github.strindberg.emacsj.actions.search.isearchword"
+private const val ACTION_ISEARCH_LINE = "com.github.strindberg.emacsj.actions.search.isearchline"
 private const val ACTION_ISEARCH_CHAR = "com.github.strindberg.emacsj.actions.search.isearchchar"
 private const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions.search.isearchnewline"
 private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
@@ -551,6 +552,39 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
         myFixture.checkResult("bar foo bar <caret>foo")
         assertEquals("", ISearchHandler.delegate?.text)
+    }
+
+    fun `test Search current line works`() {
+        myFixture.configureByText(
+            FILE,
+            """<caret>foo bar foo
+               |baz bar foo
+               |baz bar baz
+               |foo bar foo
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_LINE)
+        myFixture.checkResult(
+            """foo bar foo<caret>
+            |baz bar foo
+            |baz bar baz
+            |foo bar foo
+            """.trimMargin()
+        )
+        assertEquals("foo bar foo", ISearchHandler.delegate?.text)
+        assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult(
+            """foo bar foo
+            |baz bar foo
+            |baz bar baz
+            |foo bar foo<caret>
+            """.trimMargin()
+        )
+        assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
     fun `test Backspace works as expected`() {

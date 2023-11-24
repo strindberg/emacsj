@@ -1,6 +1,7 @@
 package com.github.strindberg.emacsj.view
 
 import com.github.strindberg.emacsj.mark.MarkHandler
+import com.github.strindberg.emacsj.mark.TIMEOUT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_END
@@ -28,6 +29,18 @@ class MarkTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>foo bar baz")
     }
 
+    fun `test Pressing mark twice slowly starts selection`() {
+        MarkHandler.editorTypeId = ""
+        myFixture.configureByText(FILE, "<caret>foo bar baz")
+
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        Thread.sleep(TIMEOUT + 100)
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_END)
+        myFixture.checkResult("<selection>foo bar baz</selection><caret>")
+    }
+
     fun `test Exchange mark and point works`() {
         MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "A<caret>foo bar bazB")
@@ -41,6 +54,9 @@ class MarkTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_EXCHANGE_MARK)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
         myFixture.checkResult("<caret><selection>Afoo bar baz</selection>B")
+
+        myFixture.performEditorAction(ACTION_EXCHANGE_MARK)
+        myFixture.checkResult("<selection>Afoo bar baz</selection><caret>B")
     }
 
     fun `test Exchange mark and point reactivates selection`() {
