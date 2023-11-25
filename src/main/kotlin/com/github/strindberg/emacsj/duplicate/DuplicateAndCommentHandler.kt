@@ -1,6 +1,8 @@
 package com.github.strindberg.emacsj.duplicate
 
 import java.lang.invoke.MethodHandles
+import com.github.strindberg.emacsj.duplicate.Type.COMMENT
+import com.github.strindberg.emacsj.duplicate.Type.DUPLICATE
 import com.github.strindberg.emacsj.word.substring
 import com.intellij.codeInsight.generation.CommentByBlockCommentHandler
 import com.intellij.codeInsight.generation.CommentByLineCommentHandler
@@ -24,7 +26,7 @@ class DuplicateAndCommentHandler(val type: Type) : EditorWriteActionHandler.ForE
         val document = editor.document
 
         when (type) {
-            Type.DUPLICATE -> {
+            DUPLICATE -> {
                 if (caret.hasSelection()) {
                     val content = document.substring(caret.selectionStart, caret.selectionEnd)
                     document.insertString(caret.selectionEnd, content)
@@ -33,7 +35,7 @@ class DuplicateAndCommentHandler(val type: Type) : EditorWriteActionHandler.ForE
                 }
             }
 
-            Type.COMMENT -> {
+            COMMENT -> {
                 val useLineComment =
                     if (caret.hasSelection()) {
                         val start = caret.selectionStart
