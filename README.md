@@ -3,9 +3,11 @@
 <!-- Plugin description -->
 
 A collection of Emacs-inspired commands for text editing and search.
+<br/>
 
 This plugin is a collection of commands which make IntelliJ-based IDEs behave more closely to the Emacs way: some commands are
 modified versions of commands that IntelliJ already has, some are commands that do not exist in IntelliJ.
+<br/>
 
 The main features are:
 - Isearch modelled on Emacs' Isearch.
@@ -16,8 +18,12 @@ The main features are:
 - Easy access to clipboard history
 - Mark history with ability to pop mark, and exchange point and mark
 - Recenter and relocate caret
+<br/>
 
-To use the plugin, simply install the plugin, choose the commands you are interested in, and either use the key bindings suggested by the
+Documentation: [Github](https://github.com/strindberg/emacsj)
+<br/>
+
+To use the plugin, simply install it, choose the commands you are interested in, and either use the key bindings suggested by the
 plugin, or choose your own bindings in IntelliJ's preferences. If a command doesn't seem to do anything, double check that no other command
 is using the same key binding.
 
