@@ -21,8 +21,8 @@
         <action id="com.github.strindberg.emacsj.actions.search.isearchregexpforward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchRegexpForwardAction"
                 text="Isearch Forward Regexp">
-            <keyboard-shortcut first-keystroke="ctrl alt s" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="ctrl alt s" keymap="Emacs"/>
+            <keyboard-shortcut first-keystroke="ctrl shift s" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="ctrl shift s" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchtextbackward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchTextBackwardAction"
