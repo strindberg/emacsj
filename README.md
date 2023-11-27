@@ -1,7 +1,5 @@
 # EmacsJ
 
-<!-- Plugin description -->
-
 A collection of useful, Emacs-inspired commands for text editing and search.
 
 This plugin is a collection of commands adding a number of Emacs-inspired functionality to IntelliJ-based IDEs: some are modified versions
@@ -18,13 +16,11 @@ The main features are:
 - A mark history with ability to pop mark, and exchange point and mark.
 - Recenter and relocate caret.
 
-Documentation: [Github](https://github.com/strindberg/emacsj)
+Documentation: [GitHub](https://github.com/strindberg/emacsj)
 
 To use the plugin, simply install it, choose the commands you are interested in, and either use the key bindings suggested by the
 plugin, or choose your own bindings in IntelliJ's preferences. If a command doesn't seem to do anything, double check that no other command
 is using the same key binding. The plugin does not alter IntelliJ in any way other than add to the list of available commands.
-
-<!-- Plugin description end -->
 
 ## Installation
 
@@ -55,7 +51,7 @@ There are four ways to start a search:
 
 - Search Forward Text (`ctrl-s`). The search text is interpreted as literal text, and the search direction is forward in the editor.
 - Search Backward Text (`ctrl-r`). The search text is interpreted as literal text, and the search direction is backward in the editor.
-- Search Forward Regexp (`ctrl-alt-s`). The search text is interpreted as a egular expression, and the search direction is forward in the
+- Search Forward Regexp (`ctrl-alt-s`). The search text is interpreted as a regular expression, and the search direction is forward in the
   editor.
 - Search Backward Regexp (`ctrl-alt-r`). The search text is interpreted as a regular expression, and the search direction is backward in the
   editor.
@@ -101,7 +97,7 @@ There are two variants:
 Once the replacement text has been given, search is performed from the location of the caret, and at each match you can choose whether
 to perform the change or not. The search stops at the end of the file.
 
-When Saerch/replace is invoked, the last Search/replace command (if any) is suggested in the search bar. Pressing ENTER accepts the
+When Search/replace is invoked, the last Search/replace command (if any) is suggested in the search bar. Pressing ENTER accepts the
 suggestion and initiates the search.
 
 If a selection is active when Search/replace is started (i.e. a region is selected), the replacement is only performed within the current
@@ -260,7 +256,7 @@ The plugin maintains a mark history, if the plugin push mark command is used. Th
 these previous locations. A separate mark history is maintained for each file where it is used. The history only contains unique positions;
 a duplicate replaces any earlier item at the same position in the file.
 
-Besides maintaining a mark history, another difference between the plugin command and the standard IntelliJ set-mark command, is the the
+Besides maintaining a mark history, another difference between the plugin command and the standard IntelliJ set-mark command, is that the
 former always starts a new selection, whereas IntelliJ's command toggles selection. In other words, if a selection is already active, using
 the plugin command starts a new selection at the current point, instead of only turning off the selection.
 
