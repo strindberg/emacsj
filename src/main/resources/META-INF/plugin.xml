@@ -2,6 +2,29 @@
     <id>com.github.strindberg.emacsj</id>
     <name>EmacsJ</name>
     <vendor>Jesper Holmberg</vendor>
+    <description><![CDATA[
+      <p>A collection of useful, Emacs-inspired commands for text editing and search.</p>
+      <br/>
+
+      <p>This plugin is a collection of commands adding a number of Emacs-inspired functionality to IntelliJ-based IDEs: some are
+         modified versions of existing IntelliJ commands, some are commands that do not exist in IntelliJ.</p>
+      <br/>
+
+      <p>The main features are:
+      <ul>
+        <li>Incremental search modelled on Emacs' Isearch, with text and regexp search.</li>
+        <li>Search/replace with a very light-weight interface.</li>
+        <li>Word commands: transpose, upper-case, lower-case, capitalize, move, delete.</li>
+        <li>Rectangle commands: copy, open, clear, paste.</li>
+        <li>Whitespace commands: delete space around point, delete empty lines.</li>
+        <li>Easy access to clipboard history à la Emacs.</li>
+        <li>A mark history with ability to pop mark, and exchange point and mark.</li>
+        <li>Recenter and relocate caret.</li>
+      </ul></p>
+      <br/>
+
+      <p>Documentation: <a href="https://github.com/strindberg/emacsj">Github</a></p>
+    ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
 

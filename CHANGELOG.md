@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+- Re-implement functionality for duplicate region
+- Update key bindings
+
 ## [0.9.2] - 2023-11-25
 
 ### Added

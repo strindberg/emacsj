@@ -2,27 +2,23 @@
 
 <!-- Plugin description -->
 
-A collection of very useful, Emacs-inspired commands for text editing and search.
-<br/>
+A collection of useful, Emacs-inspired commands for text editing and search.
 
-This plugin is a collection of commands adding a number of Emacs-inspired functionality to IntelliJ-based IDEs: some commands are
-modified versions of commands that IntelliJ already has, some are commands that do not exist in IntelliJ.
-<br/>
+This plugin is a collection of commands adding a number of Emacs-inspired functionality to IntelliJ-based IDEs: some are modified versions
+of existing IntelliJ commands, some are commands that do not exist in IntelliJ.
 
 The main features are:
 
 - Incremental search modelled on Emacs' Isearch, with text and regexp search.
 - Search/replace with a very light-weight interface.
-- Word commands: transpose, upper-case, lower-case, capitalize, move, delete
-- Rectangle commands: copy, open, clear, paste
-- Whitespace commands: delete space around point, delete empty lines
-- Easy access to clipboard history à la Emacs
-- A mark history with ability to pop mark, and exchange point and mark
-- Recenter and relocate caret
-  <br/>
+- Word commands: transpose, upper-case, lower-case, capitalize, move, delete.
+- Rectangle commands: copy, open, clear, paste.
+- Whitespace commands: delete space around point, delete empty lines.
+- Easy access to clipboard history à la Emacs.
+- A mark history with ability to pop mark, and exchange point and mark.
+- Recenter and relocate caret.
 
 Documentation: [Github](https://github.com/strindberg/emacsj)
-<br/>
 
 To use the plugin, simply install it, choose the commands you are interested in, and either use the key bindings suggested by the
 plugin, or choose your own bindings in IntelliJ's preferences. If a command doesn't seem to do anything, double check that no other command
