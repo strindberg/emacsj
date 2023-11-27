@@ -21,7 +21,6 @@
         <li>A mark history with ability to pop mark, and exchange point and mark.</li>
         <li>Recenter and relocate caret.</li>
       </ul></p>
-      <br/>
 
       <p>Documentation: <a href="https://github.com/strindberg/emacsj">Github</a></p>
     ]]></description>
