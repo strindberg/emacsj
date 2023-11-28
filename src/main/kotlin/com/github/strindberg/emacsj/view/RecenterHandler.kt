@@ -16,12 +16,12 @@ class RecenterHandler : EditorActionHandler() {
 
         val scrollTop = caretOffset - editor.lineHeight
         val scrollMiddle = caretOffset - viewHeight / 2
-        val scrollEnd = caretOffset - viewHeight + 2 * editor.lineHeight
+        val scrollBottom = caretOffset - viewHeight + 2 * editor.lineHeight
 
         editor.scrollingModel.scrollVertically(
             when (viewOffset) {
                 scrollMiddle -> scrollTop
-                scrollTop -> scrollEnd
+                scrollTop -> scrollBottom
                 else -> scrollMiddle
             }
         )

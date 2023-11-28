@@ -12,15 +12,11 @@ The main features are:
 - Word commands: transpose, upper-case, lower-case, capitalize, move, delete.
 - Rectangle commands: copy, open, clear, paste.
 - Whitespace commands: delete space around point, delete empty lines.
-- Easy access to clipboard history à la Emacs.
-- A mark history with ability to pop mark, and exchange point and mark.
+- Easy access to clipboard history à la Emacs (kill ring).
+- A mark history with ability to pop mark (mark ring), and exchange point and mark.
 - Recenter and relocate caret.
 
 Documentation: [GitHub](https://github.com/strindberg/emacsj)
-
-To use the plugin, simply install it, choose the commands you are interested in, and either use the key bindings suggested by the
-plugin, or choose your own bindings in IntelliJ's preferences. If a command doesn't seem to do anything, double check that no other command
-is using the same key binding. The plugin does not alter IntelliJ in any way other than add to the list of available commands.
 
 ## Installation
 
@@ -33,6 +29,13 @@ is using the same key binding. The plugin does not alter IntelliJ in any way oth
 
   Download the [latest release](https://github.com/strindberg/emacsj/releases/latest) and install it manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+
+## Getting Started
+
+1. Install the plugin from the JetBrains Marketplace or through GitHub.
+2. Open Preferences -> Keymap and choose the commands you wish to use under Plugins -> EmacsJ. The plugin suggests key bindings, but these
+   can of course be changed.
+3. If a command doesn't seem to do anything, double check that no other command is using the same key binding.
 
 ## Features
 
@@ -49,12 +52,12 @@ corresponding key.
 
 There are four ways to start a search:
 
-- Search Forward Text (`ctrl-s`). The search text is interpreted as literal text, and the search direction is forward in the editor.
-- Search Backward Text (`ctrl-r`). The search text is interpreted as literal text, and the search direction is backward in the editor.
-- Search Forward Regexp (`ctrl-alt-s`). The search text is interpreted as a regular expression, and the search direction is forward in the
-  editor.
-- Search Backward Regexp (`ctrl-alt-r`). The search text is interpreted as a regular expression, and the search direction is backward in the
-  editor.
+- Isearch Forward Text (`ctrl-s`). The search text is interpreted as literal text, and the search direction is forward in the editor.
+- Isearch Backward Text (`ctrl-r`). The search text is interpreted as literal text, and the search direction is backward in the editor.
+- Isearch Forward Regexp (`ctrl-shift-s`). The search text is interpreted as a regular expression, and the search direction is forward in
+  the editor.
+- Isearch Backward Regexp (`ctrl-shift-r`). The search text is interpreted as a regular expression, and the search direction is backward in
+  the editor.
 
 Directly after a search has been initiated, pressing one of the search keys again will bring up the previous text used for search. This is
 the quickest way to resume a search. History is kept separate between text search and regexp search, so only previous searches by the same
@@ -63,7 +66,7 @@ type are offered. The search history does not separate forward and backward sear
 Except for the keys below, any command key will abort search and execute the command. This makes Isearch very useful as a navigation command
 as well: just search for the word where you want to end up, and keep on navigating with no extra key press required.
 
-While searching, the following keys are active:
+While searching, the following commands are available:
 
 - `ESCAPE` or `ctrl-g`: abort the search and return the caret to the point where the search started.
 - `ENTER`: abort the search and leave the caret where it currently is.
@@ -91,7 +94,7 @@ triggers a request for confirmation.
 
 There are two variants:
 
-- Search and Replace Text(`alt-s`). Both arguments are interpreted as literal texts.
+- Search and Replace Text(`alt-s`). Both arguments are interpreted as literal text.
 - Search and Replace Regexp(`shift-alt-s`). Both arguments are interpreted as regular expressions.
 
 Once the replacement text has been given, search is performed from the location of the caret, and at each match you can choose whether
@@ -113,8 +116,8 @@ While replacing, the following keys are active:
 - `!`: perform the replacement on this and all the following matches.
 - `.`: perform the replacement on this match and then stop.
 - `ctrl-shift-ENTER`: add new line character to the search text or replace text.
-- `alt-p`: browse backward in the list of previous Search/replace (of the current type) performed.
-- `alt-n`: browse forward in the list of previous Search/replace (of the current type) performed.
+- `alt-p`: browse backward in the list of previous Search/replace (of the current type).
+- `alt-n`: browse forward in the list of previous Search/replace (of the current type).
 
 The keybindings `y`, `n`, `!`, and `.` are non-configurable.
 
@@ -136,10 +139,10 @@ If the setting "use camel case" is true, these commands take that into account.
 
 The commands are:
 
-- Next Word (`alt-f`). Move the caret to the end of the current word (where current word is defined as everything up
+- Move Caret to Next Word (`alt-f`). Move the caret to the end of the current word (where current word is defined as everything up
   to the next end of word characters).
-- Previous Word (`alt-b`). Move the caret to the start of the current word (where current word is defined as everything back to the next end
-  of word characters, read backwards).
+- Move Caret to Previous Word (`alt-b`). Move the caret to the start of the current word (where current word is defined as everything back
+  to the next end of word characters, read backwards).
 - Delete Next Word (`alt-d`). Delete characters to the end of the current word (defined as above).
 - Delete Previous Word (`alt-BACKSPACE`). Delete characters back to the start of the current word (defined as above).
 
@@ -147,8 +150,8 @@ The word movement commands work with multiple carets.
 
 ## Modify Word
 
-The modify word commands word boundaries in the same way as the word movement commands defined [above](#word-movement).
-They will modify the characters in the current or previous word or - if selection is active - modify the current selection.
+The modify word commands use word boundaries in the same way as the word movement commands defined [above](#word-movement).
+They will modify the characters in the current or previous word or -- if selection is active -- modify the current selection.
 
 The Capitalize Word commands will skip over non-word characters until it finds a word to capitalize. If Capitalize Word is used with an
 active selection, each word in the region is capitalized.
@@ -170,7 +173,7 @@ The transpose words commands transpose the word at point with either the followi
 so that if two transposed words are separated by non-word characters, the words change place with the same delimiters between them as before
 the change.
 
-If the selection is active, the selected region is transposed with the following (forward) or previous (backward) word.
+If the selection is active, the selected region is transposed with the following or previous word, respectively.
 
 The commands are:
 
@@ -185,12 +188,12 @@ The delete whitespace commands reduce the number of whitespace characters around
 
 The commands are:
 
-- Delete all Whitespace Around Point (`ctrl-BACKSPACE`). Delete whitespace before and after caret.
-- Only One Space at Point (`alt-SPACE`). Reduce all whitespace around point to only one space.
+- Delete All Whitespace Around Point (`ctrl-BACKSPACE`). Delete whitespace before and after caret.
+- Leave One Space at Point (`alt-SPACE`). Reduce all whitespace around point to only one space.
 
 The delete whitespace commands work with multiple carets.
 
-## Delete Empty Lines
+## Delete Blank Lines
 
 The command Delete Blank Lines deletes lines that are either empty or only containing whitespace. If the caret is currently
 on a non-blank line, all subsequent blank lines are deleted. If the current line is blank and the surrounding lines are non-blank, the
@@ -222,23 +225,23 @@ A rectangle is defined as the rectangular region limited by the upper left corne
 to use these commands, first select a region and then use the proper command. No characters to the left or to the right of the rectangle
 will be affected (although they might move left or right).
 
-The Paste Rectangle command does not require a current selection.
+The Rectangle: Paste command does not require a current selection.
 
 The commands are:
 
-- Copy Rectangle (`ctrl-x alt-c`). Copy the contents of the rectangle to clipboard.
-- Cut Rectangle (`ctrl-x alt-k`). Copy the contents of the rectangle to clipboard, and delete it from the editor. Text to the right of the
+- Rectangle: Copy (`ctrl-x alt-c`). Copy the contents of the rectangle to clipboard.
+- Rectangle: Cut (`ctrl-x alt-k`). Copy the contents of the rectangle to clipboard, and delete it from the editor. Text to the right of the
   rectangle is adjusted leftward.
-- Open Rectangle (`ctrl-x alt-o`). Create a blank rectangle by shifting all text to the right of the rectangle.
-- Clear Rectangle (`ctrl-x alt-c`). Create a blank rectangle by replacing all text within the rectangle with space.
-- Paste Rectangle (`ctrl-x alt-p`). Paste the contents of the clipboard. If the clipboard contents are multi-line, each line is pasted with
+- Rectangle: Open (`ctrl-x alt-o`). Create a blank rectangle by shifting all text to the right of the rectangle.
+- Rectangle: Clear (`ctrl-x alt-c`). Create a blank rectangle by replacing all text within the rectangle with space.
+- Rectangle: Paste (`ctrl-x alt-p`). Paste the contents of the clipboard. If the clipboard contents are multi-line, each line is pasted with
   the same start column as the rectangle's upper left-hand corner. Text to the right of the insertion point is shifted rightward.
 
 ## Paste
 
-The paste commands enable the use of a paste history where a pasted snippet of text can be replaced by previous killed texts. By repeatedly
-pressing Paste: Previous Item in History after one use of Paste or Paste and Leave Caret at Point, the pasted text is replaced by the next
-item in the list of previously killed texts.
+The paste commands enable the use of a paste history (kill ring) where a pasted snippet of text can be replaced by previous killed texts. By
+repeatedly pressing Paste: Previous Item in History after one use of Paste or Paste and Leave Caret at Point, the pasted text is replaced by
+the next item in the list of previously killed texts.
 
 The items offered when using Paste: Previous Item are filtered for duplicates and blank entries.
 
@@ -252,9 +255,9 @@ The commands are:
 
 ## Push/Pop Mark
 
-The plugin maintains a mark history, if the plugin push mark command is used. This makes it possible to pop previous marks and go back to
-these previous locations. A separate mark history is maintained for each file where it is used. The history only contains unique positions;
-a duplicate replaces any earlier item at the same position in the file.
+The plugin maintains a mark history (mark ring), if the plugin's push mark command is used. This makes it possible to pop previous marks and
+go back to these previous locations. A separate mark history is maintained for each file where it is used. The history only contains unique
+positions; a duplicate replaces any earlier item at the same position in the file.
 
 Besides maintaining a mark history, another difference between the plugin command and the standard IntelliJ set-mark command, is that the
 former always starts a new selection, whereas IntelliJ's command toggles selection. In other words, if a selection is already active, using
@@ -268,13 +271,13 @@ described below.
 
 The commands are:
 
-- Push Mark (`ctrl-SPACE`). Set the mark (and activate sticky selection). The mark is saved to the mark history. To only save the mark to
-  history without starting selection, quickly hit the key binding twice (`ctrl-SPACE ctrl-SPACE`).
+- Set/Push Mark for Selection (`ctrl-SPACE`). Set the mark (and activate sticky selection). The mark is saved to the mark history. To only
+  save the mark to history without starting selection, quickly hit the key binding twice (`ctrl-SPACE ctrl-SPACE`).
 - Pop Mark (`ctrl-u ctrl-SPACE`). Pop an item from the mark history and return caret to the saved position. History is maintained per file.
 
 ## Exchange Point and Mark
 
-When using sticky selection, Exchange Point and Mark switches the position of the selection start and the current caret. The selected region
+When a selection is active, Exchange Point and Mark switches the position of the selection start and the current caret. The selected region
 can then be expanded in another direction. The location of the caret before the exchange is added to the mark history.
 
 If the selection is not active when the command is used, sticky selection is activated between the current point and the last saved mark.
