@@ -16,8 +16,6 @@ The main features are:
 - A mark history with ability to pop mark (mark ring), and exchange point and mark.
 - Recenter and relocate caret.
 
-Documentation: [GitHub](https://github.com/strindberg/emacsj)
-
 ## Installation
 
 - Using the IDE built-in plugin system:

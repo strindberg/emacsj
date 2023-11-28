@@ -22,7 +22,7 @@
         <li>Recenter and relocate caret.</li>
       </ul></p>
 
-      <p>Documentation: <a href="https://github.com/strindberg/emacsj">Github</a></p>
+      <p>Documentation: EmacsJ on <a href="https://github.com/strindberg/emacsj">GitHub</a></p>
     ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
