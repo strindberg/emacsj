@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
 import com.intellij.openapi.fileEditor.impl.IdeDocumentHistoryImpl.PlaceInfo
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
+import com.intellij.openapi.vfs.VirtualFile
 
 enum class Type { PUSH, POP }
 
@@ -31,21 +32,27 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
 
         internal fun pushPlaceInfo(editor: Editor) {
             if (editor is EditorEx) {
-                placeInfo(editor, editor.caretModel.primaryCaret.offset)?.let { placeInfo ->
-                    places.getOrPut(editor.virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
+                editor.virtualFile?.let { virtualFile ->
+                    placeInfo(editor, editor.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
+                        places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
+                    }
                 }
             }
         }
 
         internal fun peek(editor: Editor): PlaceInfoWrapper? =
-            if (editor is EditorEx) places[editor.virtualFile.hashCode()]?.peek() else null
+            (editor as? EditorEx)?.let {
+                editor.virtualFile?.let { virtualFile ->
+                    places[virtualFile.hashCode()]?.peek()
+                }
+            }
 
-        private fun placeInfo(editor: EditorEx, offset: Int): PlaceInfoWrapper? =
+        private fun placeInfo(editor: EditorEx, offset: Int, virtualFile: VirtualFile): PlaceInfoWrapper? =
             editor.project?.let { project ->
-                FileEditorManagerEx.getInstance(project).getSelectedEditor(editor.virtualFile)?.let { fileEditor ->
+                FileEditorManagerEx.getInstance(project).getSelectedEditor(virtualFile)?.let { fileEditor ->
                     PlaceInfoWrapper(
                         PlaceInfo(
-                            editor.virtualFile,
+                            virtualFile,
                             fileEditor.getState(FileEditorStateLevel.UNDO),
                             editorTypeId ?: TextEditorProvider.getInstance().editorTypeId,
                             null,
@@ -57,25 +64,27 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        val ex = editor as EditorEx
-
-        when (type) {
-            PUSH -> {
-                ex.isStickySelection = false
-                placeInfo(ex, editor.caretModel.primaryCaret.offset)?.let { placeInfo ->
-                    val lastPlaceInfo = peek(editor)
-                    if (lastPlaceInfo == null || lastPlaceInfo != placeInfo) {
-                        places.getOrPut(editor.virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
-                        lastPush = LocalDateTime.now()
-                        ex.isStickySelection = true
-                    } else if (Duration.between(lastPush, LocalDateTime.now()) > Duration.ofMillis(TIMEOUT)) {
-                        ex.isStickySelection = true
+        (editor as? EditorEx)?.let { ex ->
+            ex.virtualFile?.let { virtualFile ->
+                when (type) {
+                    PUSH -> {
+                        ex.isStickySelection = false
+                        placeInfo(ex, ex.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
+                            val lastPlaceInfo = peek(ex)
+                            if (lastPlaceInfo == null || lastPlaceInfo != placeInfo) {
+                                places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
+                                lastPush = LocalDateTime.now()
+                                ex.isStickySelection = true
+                            } else if (Duration.between(lastPush, LocalDateTime.now()) > Duration.ofMillis(TIMEOUT)) {
+                                ex.isStickySelection = true
+                            }
+                        }
                     }
-                }
-            }
-            POP -> {
-                places[editor.virtualFile.hashCode()]?.pop()?.let { place ->
-                    IdeDocumentHistory.getInstance(editor.project).gotoPlaceInfo(place.placeInfo)
+                    POP -> {
+                        places[virtualFile.hashCode()]?.pop()?.let { place ->
+                            IdeDocumentHistory.getInstance(ex.project).gotoPlaceInfo(place.placeInfo)
+                        }
+                    }
                 }
             }
         }

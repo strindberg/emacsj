@@ -7,7 +7,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.util.DocumentUtil
 
@@ -63,7 +63,7 @@ class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret
                     start?.let { document.deleteString(maxOf(0, it), end) }
                 }
             }
-            editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
+            editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
     }
 

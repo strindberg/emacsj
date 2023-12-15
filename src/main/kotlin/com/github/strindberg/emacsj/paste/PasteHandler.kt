@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorCopyPasteHelper
+import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.ide.CopyPasteManager
@@ -32,6 +33,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
                 historyListPos = 0
                 pasteType = type
                 editor.pasteAndMove(allContents)
+                editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
             HISTORY -> {
                 editor.getUserData(EditorEx.LAST_PASTED_REGION)?.let { region ->

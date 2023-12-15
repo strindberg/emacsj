@@ -5,6 +5,7 @@ import com.github.strindberg.emacsj.word.substring
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.openapi.ide.CopyPasteManager
@@ -43,6 +44,7 @@ class RectanglePasteHandler : EditorWriteActionHandler() {
 
             val newPosition = VisualPosition(startPosition.line + lines.size - 1, startPosition.column + maxLength)
             primary.moveToOffset(editor.visualPositionToOffset(newPosition))
+            editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
     }
 }
