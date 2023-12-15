@@ -27,12 +27,18 @@ import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.VisibleForTesting
 
-internal class CommonUI(val editor: Editor, keyEventHandler: (KeyEvent) -> Boolean, cancelCallback: () -> Boolean, var writeable: Boolean) {
+internal class CommonUI(
+    val editor: Editor,
+    private var writeable: Boolean,
+    keyEventHandler: (KeyEvent) -> Boolean,
+    cancelCallback: () -> Boolean,
+) {
 
     @Suppress("unused")
     private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
-    private val standardFont = UIUtil.getLabelFont()
+    private val standardFont =
+        UIUtil.getLabelFont().deriveFont((editor as? EditorEx)?.colorsScheme?.editorFontSize2D?.times(1.1f) ?: UIUtil.getLabelFont().size2D)
 
     private val panel: UIPanel = UIPanel(editor.component, standardFont)
 
@@ -40,7 +46,9 @@ internal class CommonUI(val editor: Editor, keyEventHandler: (KeyEvent) -> Boole
 
     private val textLabel = newLabel(true)
 
-    private val spaceLabel = newLabel(false).apply { text = "  " }
+    private val spaceLabel1 = newLabel(false).apply { text = " " }
+
+    private val spaceLabel2 = newLabel(false).apply { text = "  " }
 
     private val countLabel = newLabel(false)
 
@@ -90,18 +98,20 @@ internal class CommonUI(val editor: Editor, keyEventHandler: (KeyEvent) -> Boole
 
     init {
         panel.background = HintUtil.getInformationColor()
+        spaceLabel1.background = HintUtil.getInformationColor()
         titleLabel.background = HintUtil.getInformationColor()
         textField.background = HintUtil.getInformationColor()
-        spaceLabel.background = HintUtil.getInformationColor()
+        spaceLabel2.background = HintUtil.getInformationColor()
         countLabel.background = HintUtil.getInformationColor()
 
-        panel.add(titleLabel, GridBagConstraints().apply { gridx = 0 })
+        panel.add(spaceLabel1, GridBagConstraints().apply { gridx = 0 })
+        panel.add(titleLabel, GridBagConstraints().apply { gridx = 1 })
 
         if (writeable) {
             panel.add(
                 textField,
                 GridBagConstraints().apply {
-                    gridx = 1
+                    gridx = 2
                     weightx = 1.0
                     fill = GridBagConstraints.HORIZONTAL
                 }
@@ -150,12 +160,12 @@ internal class CommonUI(val editor: Editor, keyEventHandler: (KeyEvent) -> Boole
     }
 
     private fun setReadonlyComponents() {
-        panel.add(textLabel, GridBagConstraints().apply { gridx = 1 })
-        panel.add(spaceLabel, GridBagConstraints().apply { gridx = 2 })
+        panel.add(textLabel, GridBagConstraints().apply { gridx = 2 })
+        panel.add(spaceLabel2, GridBagConstraints().apply { gridx = 3 })
         panel.add(
             countLabel,
             GridBagConstraints().apply {
-                gridx = 3
+                gridx = 4
                 weightx = 1.0
                 fill = GridBagConstraints.HORIZONTAL
             }

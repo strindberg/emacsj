@@ -28,7 +28,7 @@ import com.intellij.openapi.application.ex.ClipboardUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
@@ -41,6 +41,9 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
 import org.jetbrains.annotations.VisibleForTesting
+
+private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
+private const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.recenter"
 
 internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
 
@@ -62,7 +65,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     private val actionHandlers = mutableListOf<ISearchActionHandler>()
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, ::keyEventHandler, ::hide, false)
+    internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
 
     internal var state: ISearchState = SEARCH
 
@@ -166,7 +169,14 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         return actionManager.getActionIdList("").filter { actionId ->
             !actionManager.isGroup(actionId) &&
                 actionManager.getAction(actionId)?.let { it is EditorAction && it !is ISearchAction } ?: false &&
-                actionId !in listOf(ACTION_EDITOR_BACKSPACE, ACTION_EDITOR_ENTER, ACTION_EDITOR_PASTE, ACTION_PASTE)
+                actionId !in listOf(
+                    ACTION_EDITOR_BACKSPACE,
+                    ACTION_EDITOR_ENTER,
+                    ACTION_EDITOR_PASTE,
+                    ACTION_PASTE,
+                    ACTION_EDITOR_SCROLL_TO_CENTER,
+                    ACTION_RECENTER
+                )
         }
     }
 
@@ -178,7 +188,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                 CHOOSE_PREVIOUS -> ui.text = ""
                 SEARCH, FAILED -> {
                     editor.caretModel.runForEachCaret { caret -> if (caret.isValid) caret.moveToOffset(caret.search.start) }
-                    editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
+                    editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
                 }
             }
         }
@@ -340,7 +350,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             caret.search = caret.search.copy(searchStart = searchStart ?: caret.search.searchStart, match = match)
             addHighlight(match)
 
-            editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
+            editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             IdeDocumentHistory.getInstance(editor.project).includeCurrentCommandAsNavigation()
         }
     }

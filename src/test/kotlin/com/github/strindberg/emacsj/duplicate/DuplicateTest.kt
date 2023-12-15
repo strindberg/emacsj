@@ -112,7 +112,7 @@ class DuplicateTest : BasePlatformTestCase() {
         )
     }
 
-    fun `test Java region is duplicated and commented`() {
+    fun `test Java region is duplicated and commented 1`() {
         myFixture.configureByText(
             FILE,
             """class Zoo { 

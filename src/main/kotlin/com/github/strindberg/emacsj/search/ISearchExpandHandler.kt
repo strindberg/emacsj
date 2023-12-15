@@ -5,6 +5,7 @@ import com.github.strindberg.emacsj.search.Type.LINE
 import com.github.strindberg.emacsj.search.Type.NEW_LINE
 import com.github.strindberg.emacsj.search.Type.WORD
 import com.github.strindberg.emacsj.word.currentWordEnd
+import com.github.strindberg.emacsj.word.isCamel
 import com.github.strindberg.emacsj.word.substring
 import com.github.strindberg.emacsj.word.text
 import com.intellij.openapi.actionSystem.DataContext
@@ -30,7 +31,7 @@ class ISearchExpandHandler(val type: Type) : EditorActionHandler() {
     }
 
     private fun getWord(editor: Editor, offset: Int): String =
-        editor.document.substring(offset, currentWordEnd(editor, offset) ?: (editor.text.lastIndex))
+        editor.document.substring(offset, currentWordEnd(editor.text, offset, editor.isCamel))
 
     private fun getLine(editor: Editor, offset: Int): String =
         editor.document.substring(offset, DocumentUtil.getLineEndOffset(offset, editor.document))

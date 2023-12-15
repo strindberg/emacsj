@@ -14,7 +14,7 @@ import com.intellij.find.FindResult
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.colors.EditorColors.IDENTIFIER_UNDER_CARET_ATTRIBUTES
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
@@ -63,7 +63,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         }
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, ::keyEventHandler, ::hide, true)
+    internal val ui = CommonUI(editor, true, ::keyEventHandler, ::hide)
 
     init {
         lastSearch?.let { (search, replace) ->
@@ -161,7 +161,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                             } catch (e: FindManager.MalformedReplacementStringException) {
                                 handleReplacementError()
                             }
-                            editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
+                            editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
                         }
 
                         else -> {
@@ -205,7 +205,18 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         undoGroupId = UUID.randomUUID().toString()
     }
 
-    private fun fixBackReferences(replaceArg: String) = replaceArg.replace(Regex("\\\\([1-9])"), "\\$$1").replace(Regex("\\\\&"), "\\$0")
+    private fun fixBackReferences(replaceArgument: String): String {
+        var argument = replaceArgument
+        val matches = Regex("""(\\\\[0-9]+|\\\\&)""").findAll(argument).map { result ->
+            argument = argument.replaceRange(result.range, "A".repeat(result.range.last - result.range.first))
+            Pair(result.range, result.value)
+        }
+        argument = argument.replace(Regex("""\\([0-9])"""), """\$$1""").replace(Regex("""\\&"""), """\$0""")
+        matches.forEach { (range, content) ->
+            argument = argument.replaceRange(range.first, range.last, content)
+        }
+        return argument
+    }
 
     private fun handleReplacementError() {
         ui.textColor = JBColor.RED
@@ -242,7 +253,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                     HighlighterLayer.LAST + 2,
                     HighlighterTargetArea.EXACT_RANGE
                 )
-                editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
+                editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
 
             state = ReplaceState.SEARCH_FOUND

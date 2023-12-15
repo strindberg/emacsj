@@ -17,6 +17,7 @@ const val FILE = "file.txt"
 private const val ACTION_ISEARCH_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchtextbackward"
 private const val ACTION_ISEARCH_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchtextforward"
 private const val ACTION_ISEARCH_PREVIOUS = "com.github.strindberg.emacsj.actions.search.isearchprevious"
+private const val ACTION_ISEARCH_NEXT = "com.github.strindberg.emacsj.actions.search.isearchnext"
 private const val ACTION_ISEARCH_REGEXP_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpforward"
 private const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
 private const val ACTION_ISEARCH_WORD = "com.github.strindberg.emacsj.actions.search.isearchword"
@@ -114,14 +115,16 @@ class ISearchTest : BasePlatformTestCase() {
     }
 
     fun `test Wrap-around search works`() {
-        myFixture.configureByText(FILE, "foo <caret>bar foo")
+        myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("foo")
-        myFixture.configureByText(FILE, "foo bar foo<caret>")
+        myFixture.checkResult("foo<caret> bar foo")
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult("foo bar foo<caret>")
 
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo bar foo<caret>")
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult("foo<caret> bar foo")
         assertEquals("foo", ISearchHandler.delegate?.text)
@@ -133,8 +136,34 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
 
         myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
-        myFixture.checkResult("foo bar fo<caret>o")
+        myFixture.checkResult("foo<caret> bar foo")
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("fo<caret>o bar foo")
         assertEquals("fo", ISearchHandler.delegate?.text)
+        assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Wrap-around reverse search works`() {
+        myFixture.configureByText(FILE, "foo bar foo<caret>")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("foo")
+        myFixture.checkResult("foo bar <caret>foo")
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.checkResult("<caret>foo bar foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.checkResult("foo bar <caret>foo")
+        assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("<caret>foo bar foo")
+        assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("foo bar <caret>foo")
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
@@ -256,6 +285,94 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
+    fun `test Text can be added to previous search`() {
+        myFixture.configureByText(FILE, "<caret>foo fooz foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+
+        pressEnter()
+
+        myFixture.checkResult("foo<caret> fooz foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        myFixture.type("z")
+        myFixture.performEditorAction(ACTION_EDITOR_ENTER)
+        myFixture.checkResult("foo fooz<caret> foo")
+        assertEquals("fooz", ISearchHandler.delegate?.text)
+        assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Text can be removed from previous search`() {
+        myFixture.configureByText(FILE, "<caret>foo fooz foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+
+        pressEnter()
+
+        myFixture.checkResult("foo<caret> fooz foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_EDITOR_ENTER)
+        myFixture.checkResult("foo fo<caret>oz foo")
+        assertEquals("fo", ISearchHandler.delegate?.text)
+        assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Text can be pasted into previous search`() {
+        myFixture.configureByText(FILE, "<caret>foo fooz foobar")
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+
+        pressEnter()
+
+        myFixture.checkResult("foo<caret> fooz foobar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        myFixture.performEditorAction(ACTION_EDITOR_PASTE)
+
+        myFixture.performEditorAction(ACTION_EDITOR_ENTER)
+        myFixture.checkResult("foo fooz foobar<caret>")
+        assertEquals("foobar", ISearchHandler.delegate?.text)
+        assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Previous searches can be navigated with previous and next`() {
+        myFixture.configureByText(FILE, "<caret>foo fooz foobar fooz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+        pressEnter()
+        myFixture.checkResult("foo<caret> fooz foobar fooz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("fooz")
+        pressEnter()
+        myFixture.checkResult("foo fooz<caret> foobar fooz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("bar")
+        pressEnter()
+        myFixture.checkResult("foo fooz foobar<caret> fooz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        myFixture.performEditorAction(ACTION_ISEARCH_NEXT)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+
+        assertEquals("fooz", ISearchHandler.delegate?.text)
+        myFixture.checkResult("foo fooz foobar fooz<caret>")
+    }
+
     fun `test Previous searches are offered in most recently used order`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz baz")
 
@@ -316,6 +433,28 @@ class ISearchTest : BasePlatformTestCase() {
         pressEnter()
 
         myFixture.checkResult("foo<caret> bar baz baz")
+    }
+
+    fun `test Pressing escape during previous search selection does not save text as previous search`() {
+        myFixture.configureByText(FILE, "<caret>foo bar baz baz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+        assertEquals("foo", ISearchHandler.delegate?.text)
+
+        pressEnter()
+
+        myFixture.checkResult("foo<caret> bar baz baz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        myFixture.type("bar")
+
+        pressEscape()
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        assertEquals("foo", ISearchHandler.delegate?.text)
     }
 
     fun `test Search current char works`() {

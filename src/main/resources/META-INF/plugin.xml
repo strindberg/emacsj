@@ -6,19 +6,28 @@
       <p>A collection of useful, Emacs-inspired commands for text editing and search.</p>
       <br/>
 
-      <p>This plugin is a collection of commands adding a number of Emacs-inspired functionality to IntelliJ-based IDEs: some are
-         modified versions of existing IntelliJ commands, some are commands that do not exist in IntelliJ.</p>
+      <p>This plugin is a collection of commands adding Emacs-inspired functionality to IntelliJ-based IDEs. It is mainly intended as an
+extension to IntelliJ's Emacs keymap. While the Emacs keymap in IntelliJ is already quite good, it still lacks some functionality that an
+Emacs user will miss. Moreover, many commands work slightly differently in IntelliJ and Emacs. This plugin's aim is to
+offer features that bridge that gap, so that switching between Emacs and IntelliJ becomes easy. Many of these commands could also be of
+interest to non-Emacs users.</p>
+      <br/>
+
+      <p>The plugin is meant to be used in a pick-and-choose fashion: nothing is changed by installing the plugin, but a number of commands are now
+available. The plugin suggests key bindings for these commands, but for best use you should peruse the documentation and enable the commands
+that you find useful.</p>
       <br/>
 
       <p>The main features are:
       <ul>
         <li>Incremental search modelled on Emacs' Isearch, with text and regexp search.</li>
-        <li>Search/replace with a very light-weight interface.</li>
+        <li>Query-replace as in Emacs with text or regexps, with a very light-weight interface.</li>
         <li>Word commands: transpose, upper-case, lower-case, capitalize, move, delete.</li>
         <li>Rectangle commands: copy, open, clear, paste.</li>
         <li>Whitespace commands: delete space around point, delete empty lines.</li>
         <li>Easy access to clipboard history à la Emacs (kill ring).</li>
         <li>A mark history with ability to pop mark (mark ring), and exchange point and mark.</li>
+        <li>Duplicate and comment regions and lines.</li>
         <li>Recenter and relocate caret.</li>
       </ul></p>
 
@@ -113,8 +122,8 @@
             <keyboard-shortcut first-keystroke="alt p" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt p" keymap="Emacs"/>
         </action>
-        <action id="com.github.strindberg.emacsj.actions.search.replacenex"
-                class="com.github.strindberg.emacsj.actions.search.ReplaceNexAction"
+        <action id="com.github.strindberg.emacsj.actions.search.replacenext"
+                class="com.github.strindberg.emacsj.actions.search.ReplaceNextAction"
                 text="Search and Replace: Next Item in Search History">
             <keyboard-shortcut first-keystroke="alt n" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt n" keymap="Emacs"/>
