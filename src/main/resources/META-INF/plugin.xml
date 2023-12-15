@@ -232,6 +232,12 @@
             <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="C" keymap="$default"/>
             <keyboard-shortcut first-keystroke="ctrl c" second-keystroke="C" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.duplicate.commentdwim"
+                class="com.github.strindberg.emacsj.actions.duplicate.CommentDwimAction"
+                text="Comment DWIM (Do What I Mean)">
+            <keyboard-shortcut first-keystroke="alt SEMICOLON" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt SEMICOLON" keymap="Emacs"/>
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.rectangle.copyrectangle"
                 class="com.github.strindberg.emacsj.actions.rectangle.CopyRectangleAction"
