@@ -16,10 +16,10 @@ class WordMovementHandler(private val type: MovementType) : EditorActionHandler.
 
     override fun doExecute(editor: Editor, caret: Caret, dataContext: DataContext?) {
         val offset = when (type) {
-            MovementType.NEXT -> currentWordEnd(editor, caret.offset)
-            MovementType.PREVIOUS -> currentWordStart(editor, caret.offset)
+            MovementType.NEXT -> currentWordEnd(editor.text, caret.offset, editor.isCamel)
+            MovementType.PREVIOUS -> currentWordStart(editor.text, caret.offset, editor.isCamel)
         }
 
-        offset?.let { caret.moveToOffset(it) }
+        offset.let { caret.moveToOffset(it) }
     }
 }

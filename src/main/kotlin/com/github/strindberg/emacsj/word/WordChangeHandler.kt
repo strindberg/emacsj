@@ -30,16 +30,19 @@ class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler
                 Pair(caret.selectionStart, caret.selectionEnd)
             } else {
                 when (type) {
-                    UPPER, LOWER, DELETE -> Pair(caret.offset, currentWordEnd(editor, caret.offset))
-                    CAPITAL -> Pair(firstLetterOrDigit(editor.text, caret.offset), currentWordEnd(editor, caret.offset))
+                    UPPER, LOWER, DELETE -> Pair(caret.offset, currentWordEnd(editor.text, caret.offset, editor.isCamel))
+                    CAPITAL -> Pair(
+                        firstLetterOrDigit(editor.text, caret.offset),
+                        currentWordEnd(editor.text, caret.offset, editor.isCamel)
+                    )
                     DELETE_PREVIOUS, UPPER_PREVIOUS, LOWER_PREVIOUS, CAPITAL_PREVIOUS -> Pair(
-                        currentWordStart(editor, caret.offset),
+                        currentWordStart(editor.text, caret.offset, editor.isCamel),
                         caret.offset
                     )
                 }
             }
 
-        if (start != null && end != null) {
+        if (start != null) {
             when (type) {
                 DELETE, DELETE_PREVIOUS -> editor.document.deleteString(start, end)
                 UPPER, UPPER_PREVIOUS -> replaceTextAndMove(editor.document, start, end, caret) { uppercase() }
@@ -64,16 +67,20 @@ class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler
                 document.substring(start, end).lowercase().replaceFirstChar { it.titlecase(Locale.getDefault()) }
             )
             if (end < regionEnd) {
-                capitalizeWord(document, firstLetterOrDigit(editor.text, end) ?: regionEnd, currentWordEnd(editor, end) ?: regionEnd)
+                capitalizeWord(
+                    document,
+                    firstLetterOrDigit(editor.text, end) ?: regionEnd,
+                    currentWordEnd(editor.text, end, editor.isCamel)
+                )
             }
         }
-        capitalizeWord(editor.document, regionStart, currentWordEnd(editor, regionStart) ?: regionEnd)
+        capitalizeWord(editor.document, regionStart, currentWordEnd(editor.text, regionStart, editor.isCamel))
         caret.moveToOffset(regionEnd)
     }
 
     private fun firstLetterOrDigit(text: CharSequence, offset: Int): Int? {
         tailrec fun next(offset: Int): Int? =
             if (offset >= text.length) null else if (text[offset].isLetterOrDigit()) offset else next(offset + 1)
-        return if (offset >= text.length) null else next(offset)
+        return next(offset)
     }
 }
