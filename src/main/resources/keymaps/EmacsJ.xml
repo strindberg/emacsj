@@ -1,0 +1,203 @@
+<keymap name="EmacsJ" parent="Emacs" version="1.2.0">
+    <action id="com.github.strindberg.emacsj.actions.search.isearchtextforward">
+        <keyboard-shortcut first-keystroke="control S"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchtextbackward">
+        <keyboard-shortcut first-keystroke="control R"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchregexpforward">
+        <keyboard-shortcut first-keystroke="control shift S"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchregexpbackward">
+        <keyboard-shortcut first-keystroke="control shift R"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchword">
+        <keyboard-shortcut first-keystroke="control W"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchline">
+        <keyboard-shortcut first-keystroke="control alt E"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchchar">
+        <keyboard-shortcut first-keystroke="control alt Y"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchnewline">
+        <keyboard-shortcut first-keystroke="control shift ENTER"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchprevious">
+        <keyboard-shortcut first-keystroke="alt P"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchnext">
+        <keyboard-shortcut first-keystroke="alt N"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.replacetext">
+        <keyboard-shortcut first-keystroke="alt S"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.replaceregexp">
+        <keyboard-shortcut first-keystroke="shift alt S"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.replaceprevious">
+        <keyboard-shortcut first-keystroke="alt P"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.replacenext">
+        <keyboard-shortcut first-keystroke="alt N"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.replacenewline">
+        <keyboard-shortcut first-keystroke="control shift ENTER"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.movenextword">
+        <keyboard-shortcut first-keystroke="alt F"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.movepreviousword">
+        <keyboard-shortcut first-keystroke="alt B"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.deletenextword">
+        <keyboard-shortcut first-keystroke="alt D"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.deletepreviousword">
+        <keyboard-shortcut first-keystroke="alt BACK_SPACE"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.uppercase">
+        <keyboard-shortcut first-keystroke="alt U"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.uppercaseprevious">
+        <keyboard-shortcut first-keystroke="shift alt U"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.lowercase">
+        <keyboard-shortcut first-keystroke="alt L"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.lowercaseprevious">
+        <keyboard-shortcut first-keystroke="shift alt L"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.capitalcase">
+        <keyboard-shortcut first-keystroke="alt C"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.capitalcaseprevious">
+        <keyboard-shortcut first-keystroke="shift alt C"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.transposewords">
+        <keyboard-shortcut first-keystroke="alt T"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.word.transposewordsreverse">
+        <keyboard-shortcut first-keystroke="shift alt T"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.space.deletespace">
+        <keyboard-shortcut first-keystroke="control BACK_SPACE"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.space.onespace">
+        <keyboard-shortcut first-keystroke="alt SPACE"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.space.deletelines">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="control O"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.duplicate.duplicate">
+        <keyboard-shortcut first-keystroke="control C" second-keystroke="Y"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.duplicate.duplicateandcomment">
+        <keyboard-shortcut first-keystroke="control C" second-keystroke="C"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.duplicate.commentdwim">
+        <keyboard-shortcut first-keystroke="alt SEMICOLON"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.rectangle.copyrectangle">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="alt W"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.rectangle.cutrectangle">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="alt K"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.rectangle.openrectangle">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="alt O"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.rectangle.clearrectangle">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="alt C"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.rectangle.rectanglepaste">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="alt Y"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.paste.pasteprefix">
+        <keyboard-shortcut first-keystroke="control U" second-keystroke="control Y"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.paste.paste">
+        <keyboard-shortcut first-keystroke="control Y"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.paste.pastehistory">
+        <keyboard-shortcut first-keystroke="alt Y"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.mark.pushmark">
+        <keyboard-shortcut first-keystroke="control SPACE"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.mark.popmark">
+        <keyboard-shortcut first-keystroke="control U" second-keystroke="control SPACE"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.mark.exchangepointandmark">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="control X"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.view.recenter">
+        <keyboard-shortcut first-keystroke="control L"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.view.reposition">
+        <keyboard-shortcut first-keystroke="alt R"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.kill.kill">
+        <keyboard-shortcut first-keystroke="control K"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.zap.zapto">
+        <keyboard-shortcut first-keystroke="alt Z"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.zap.zapupto">
+        <keyboard-shortcut first-keystroke="shift alt Z"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.zap.zapbackto">
+        <keyboard-shortcut first-keystroke="control alt Z"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.zap.zapbackupto">
+        <keyboard-shortcut first-keystroke="control shift alt Z"/>
+    </action>
+
+    <!--Conflicting shortcuts from Emacs.xml removed-->
+    <action id="EditorCutLineEnd"/>
+    <action id="EditorDeleteToWordStart">
+        <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="BACK_SPACE"/>
+    </action>
+    <action id="EditorKillToWordEnd"/>
+    <action id="EditorNextWord">
+        <keyboard-shortcut first-keystroke="control RIGHT"/>
+        <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="control F"/>
+    </action>
+    <action id="EditorPreviousWord">
+        <keyboard-shortcut first-keystroke="control LEFT"/>
+        <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="control B"/>
+    </action>
+    <action id="EditorScrollToCenter"/>
+    <action id="EditorToggleStickySelection">
+        <keyboard-shortcut first-keystroke="control shift 2"/>
+    </action>
+    <action id="Find">
+        <keyboard-shortcut first-keystroke="alt F3"/>
+    </action>
+    <action id="FindNext">
+        <keyboard-shortcut first-keystroke="F3"/>
+    </action>
+    <action id="FindPrevious">
+        <keyboard-shortcut first-keystroke="shift F3"/>
+    </action>
+    <action id="FindUsages">
+        <keyboard-shortcut first-keystroke="alt F7"/>
+    </action>
+    <action id="CommentByLineComment"/>
+    <action id="NextProjectWindow"/>
+    <action id="PasteMultiple"/>
+    <action id="SynchronizeCurrentFile">
+        <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="U"/>
+    </action>
+    <action id="$Copy">
+        <keyboard-shortcut first-keystroke="control INSERT"/>
+        <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="W"/>
+    </action>
+    <action id="$Paste">
+        <keyboard-shortcut first-keystroke="shift INSERT"/>
+    </action>
+
+    <!--Conflicting shortcuts from $default.xml removed-->
+    <action id="ReplaceInPath"/>
+
+</keymap>
