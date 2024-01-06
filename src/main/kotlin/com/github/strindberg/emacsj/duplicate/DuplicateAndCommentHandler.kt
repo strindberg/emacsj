@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj.duplicate
 
-import java.lang.invoke.MethodHandles
 import com.github.strindberg.emacsj.duplicate.Type.COMMENT
 import com.github.strindberg.emacsj.duplicate.Type.DUPLICATE
 import com.github.strindberg.emacsj.duplicate.Type.DWIM
@@ -8,7 +7,6 @@ import com.github.strindberg.emacsj.word.substring
 import com.intellij.codeInsight.generation.CommentByBlockCommentHandler
 import com.intellij.codeInsight.generation.CommentByLineCommentHandler
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -21,9 +19,6 @@ import com.intellij.util.DocumentUtil.isAtLineStart
 enum class Type { DUPLICATE, COMMENT, DWIM }
 
 class DuplicateAndCommentHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret() {
-
-    @Suppress("unused")
-    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val document = editor.document

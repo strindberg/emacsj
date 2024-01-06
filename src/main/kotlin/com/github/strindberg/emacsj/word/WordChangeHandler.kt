@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj.word
 
-import java.lang.invoke.MethodHandles
 import java.util.*
 import com.github.strindberg.emacsj.word.ChangeType.CAPITAL
 import com.github.strindberg.emacsj.word.ChangeType.CAPITAL_PREVIOUS
@@ -11,7 +10,6 @@ import com.github.strindberg.emacsj.word.ChangeType.LOWER_PREVIOUS
 import com.github.strindberg.emacsj.word.ChangeType.UPPER
 import com.github.strindberg.emacsj.word.ChangeType.UPPER_PREVIOUS
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -20,9 +18,6 @@ import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 enum class ChangeType { UPPER, LOWER, CAPITAL, UPPER_PREVIOUS, LOWER_PREVIOUS, CAPITAL_PREVIOUS, DELETE, DELETE_PREVIOUS }
 
 class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler.ForEachCaret() {
-
-    @Suppress("unused")
-    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val (start, end) =

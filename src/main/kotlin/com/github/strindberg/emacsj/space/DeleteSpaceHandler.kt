@@ -1,9 +1,7 @@
 package com.github.strindberg.emacsj.space
 
-import java.lang.invoke.MethodHandles
 import com.github.strindberg.emacsj.word.text
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -14,9 +12,6 @@ import com.intellij.util.DocumentUtil
 enum class Type { SINGLE, MULTIPLE }
 
 class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret() {
-
-    @Suppress("unused")
-    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         if (type == Type.SINGLE) {

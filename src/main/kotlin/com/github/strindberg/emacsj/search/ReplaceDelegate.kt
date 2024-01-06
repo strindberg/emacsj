@@ -2,7 +2,6 @@ package com.github.strindberg.emacsj.search
 
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ENTER
-import java.lang.invoke.MethodHandles
 import java.util.*
 import com.github.strindberg.emacsj.search.ReplaceHandler.Companion.addPrevious
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
@@ -12,7 +11,7 @@ import com.intellij.find.FindManager
 import com.intellij.find.FindModel
 import com.intellij.find.FindResult
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.colors.EditorColors.IDENTIFIER_UNDER_CARET_ATTRIBUTES
@@ -26,9 +25,6 @@ import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
 internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val selection: IntRange?, lastSearch: Replace?) {
-
-    @Suppress("unused")
-    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -135,7 +131,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                                 replaceInEditor()
                                 searchForReplacement(true)
                             } catch (e: FindManager.MalformedReplacementStringException) {
-                                handleReplacementError()
+                                handleReplacementError(e)
                             }
                         }
 
@@ -147,7 +143,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                             try {
                                 replaceInEditor()
                             } catch (e: FindManager.MalformedReplacementStringException) {
-                                handleReplacementError()
+                                handleReplacementError(e)
                             }
                             ui.popup.cancel()
                         }
@@ -159,7 +155,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                                     searchForReplacement(false)
                                 } while (lastResult.isStringFound)
                             } catch (e: FindManager.MalformedReplacementStringException) {
-                                handleReplacementError()
+                                handleReplacementError(e)
                             }
                             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
                         }
@@ -218,7 +214,8 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         return argument
     }
 
-    private fun handleReplacementError() {
+    private fun handleReplacementError(e: FindManager.MalformedReplacementStringException) {
+        thisLogger().warn(e.message)
         ui.textColor = JBColor.RED
         editor.markupModel.removeAllHighlighters()
         state = ReplaceState.REPLACE_FAILED

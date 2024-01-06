@@ -7,14 +7,12 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Point
 import java.awt.event.KeyEvent
-import java.lang.invoke.MethodHandles
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.SwingUtilities
 import com.intellij.codeInsight.hint.HintUtil
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.SpellCheckingEditorCustomizationProvider
 import com.intellij.openapi.editor.ex.EditorEx
@@ -33,9 +31,6 @@ internal class CommonUI(
     keyEventHandler: (KeyEvent) -> Boolean,
     cancelCallback: () -> Boolean,
 ) {
-
-    @Suppress("unused")
-    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     private val standardFont =
         UIUtil.getLabelFont().deriveFont((editor as? EditorEx)?.colorsScheme?.editorFontSize2D?.times(1.1f) ?: UIUtil.getLabelFont().size2D)

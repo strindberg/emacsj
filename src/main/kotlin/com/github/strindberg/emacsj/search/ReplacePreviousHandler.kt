@@ -1,16 +1,11 @@
 package com.github.strindberg.emacsj.search
 
-import java.lang.invoke.MethodHandles
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
 class ReplacePreviousHandler(private val forward: Boolean) : EditorActionHandler() {
-
-    @Suppress("unused")
-    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ReplaceHandler.delegate?.let { delegate ->

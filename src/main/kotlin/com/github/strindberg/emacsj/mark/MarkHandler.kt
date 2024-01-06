@@ -49,7 +49,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
 
         private fun placeInfo(editor: EditorEx, offset: Int, virtualFile: VirtualFile): PlaceInfoWrapper? =
             editor.project?.let { project ->
-                FileEditorManagerEx.getInstance(project).getSelectedEditor(virtualFile)?.let { fileEditor ->
+                FileEditorManagerEx.getInstanceEx(project).getSelectedEditor(virtualFile)?.let { fileEditor ->
                     PlaceInfoWrapper(
                         PlaceInfo(
                             virtualFile,

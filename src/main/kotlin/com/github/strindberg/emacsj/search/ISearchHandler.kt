@@ -1,19 +1,14 @@
 package com.github.strindberg.emacsj.search
 
-import java.lang.invoke.MethodHandles
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.search.SearchType.TEXT
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
 class ISearchHandler(private val direction: Direction, private val type: SearchType) : EditorActionHandler() {
-
-    @Suppress("unused")
-    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val current = delegate
@@ -34,9 +29,6 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
     }
 
     companion object {
-
-        @Suppress("unused")
-        private val companionLogger: Logger = Logger.getInstance("ISearchHandler.companion")
 
         private var lastStringSearches = listOf<String>()
 

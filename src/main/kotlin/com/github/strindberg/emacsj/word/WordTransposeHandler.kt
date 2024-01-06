@@ -1,8 +1,6 @@
 package com.github.strindberg.emacsj.word
 
-import java.lang.invoke.MethodHandles
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -11,9 +9,6 @@ import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 enum class Direction { FORWARD, BACKWARD }
 
 class WordTransposeHandler(private val direction: Direction) : EditorWriteActionHandler.ForEachCaret() {
-
-    @Suppress("unused")
-    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val hasSelection = caret.hasSelection() // This value is false after modification if using sticky selection
