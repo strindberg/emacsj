@@ -1,7 +1,5 @@
-package com.github.strindberg.emacsj.view
+package com.github.strindberg.emacsj.mark
 
-import com.github.strindberg.emacsj.mark.MarkHandler
-import com.github.strindberg.emacsj.mark.TIMEOUT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_END
