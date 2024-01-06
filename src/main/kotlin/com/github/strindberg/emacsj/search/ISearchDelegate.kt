@@ -5,7 +5,6 @@ import java.awt.event.InputEvent.CTRL_DOWN_MASK
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_G
-import java.lang.invoke.MethodHandles
 import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.actions.search.ISearchAction
 import com.github.strindberg.emacsj.search.Direction.BACKWARD
@@ -25,7 +24,6 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
 import com.intellij.openapi.application.ex.ClipboardUtil
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
@@ -47,9 +45,6 @@ private const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.r
 
 internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
 
-    @Suppress("unused")
-    private val logger = Logger.getInstance(MethodHandles.lookup().lookupClass())
-
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
             cancel()
@@ -60,9 +55,9 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     private val identifierAttributes: TextAttributes
 
-    private lateinit var typedHandler: ISearchTypedActionHandler
+    private lateinit var typedHandler: RestorableTypedActionHandler
 
-    private val actionHandlers = mutableListOf<ISearchActionHandler>()
+    private val actionHandlers = mutableListOf<RestorableActionHandler<ISearchDelegate>>()
 
     @VisibleForTesting
     internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
@@ -101,7 +96,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     private fun registerHandlers() {
         TypedAction.getInstance().apply {
             setupRawHandler(
-                object : ISearchTypedActionHandler(rawHandler) {
+                object : RestorableTypedActionHandler(rawHandler) {
                     override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
                         val delegate = ISearchHandler.delegate
                         if (delegate == null) {
@@ -120,7 +115,11 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         EditorActionManager.getInstance().apply {
             setActionHandler(
                 ACTION_EDITOR_BACKSPACE,
-                ISearchActionHandler(ACTION_EDITOR_BACKSPACE, getActionHandler(ACTION_EDITOR_BACKSPACE)) { _, _ ->
+                RestorableActionHandler(
+                    ACTION_EDITOR_BACKSPACE,
+                    getActionHandler(ACTION_EDITOR_BACKSPACE),
+                    { ISearchHandler.delegate }
+                ) { _, _ ->
                     when (state) {
                         CHOOSE_PREVIOUS -> text = text.dropLast(1)
                         SEARCH, FAILED -> popBreadcrumb()
@@ -130,7 +129,11 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
             setActionHandler(
                 ACTION_EDITOR_ENTER,
-                ISearchActionHandler(ACTION_EDITOR_ENTER, getActionHandler(ACTION_EDITOR_ENTER)) { _, _ ->
+                RestorableActionHandler(
+                    ACTION_EDITOR_ENTER,
+                    getActionHandler(ACTION_EDITOR_ENTER),
+                    { ISearchHandler.delegate }
+                ) { _, _ ->
                     when (state) {
                         CHOOSE_PREVIOUS -> startPreviousSearch()
                         SEARCH, FAILED -> cancel()
@@ -141,7 +144,11 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             listOf(ACTION_EDITOR_PASTE, ACTION_PASTE).forEach { actionId ->
                 setActionHandler(
                     actionId,
-                    ISearchActionHandler(actionId, getActionHandler(actionId)) { _, _ ->
+                    RestorableActionHandler(
+                        actionId,
+                        getActionHandler(actionId),
+                        { ISearchHandler.delegate }
+                    ) { _, _ ->
                         when (state) {
                             CHOOSE_PREVIOUS -> text += ClipboardUtil.getTextInClipboard()
                             SEARCH, FAILED -> searchAllCarets(direction, ClipboardUtil.getTextInClipboard() ?: "")
@@ -154,7 +161,11 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                 getActionHandler(actionId)?.let { originalHandler ->
                     setActionHandler(
                         actionId,
-                        ISearchActionHandler(actionId, originalHandler) { caret, dataContext ->
+                        RestorableActionHandler(
+                            actionId,
+                            originalHandler,
+                            { ISearchHandler.delegate }
+                        ) { caret, dataContext ->
                             cancel()
                             originalHandler.execute(editor, caret, dataContext)
                         }.also { actionHandlers.add(it) }
@@ -195,7 +206,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         return false
     }
 
-    internal fun cancel() {
+    private fun cancel() {
         ui.popup.cancel()
     }
 

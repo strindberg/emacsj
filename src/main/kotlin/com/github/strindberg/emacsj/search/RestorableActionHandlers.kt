@@ -7,18 +7,18 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.actionSystem.TypedActionHandler
 
-internal class ISearchActionHandler(
+internal class RestorableActionHandler<T>(
     val action: String,
     val originalHandler: EditorActionHandler,
-    val doExecute: ISearchDelegate.(caret: Caret?, dataContext: DataContext) -> Unit,
+    val getDelegate: () -> T?,
+    val doExecute: T.(caret: Caret?, dataContext: DataContext) -> Unit,
 ) : EditorActionHandler() {
 
-    public override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean {
-        return ISearchHandler.delegate != null || originalHandler.isEnabled(editor, caret, dataContext)
-    }
+    public override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean =
+        getDelegate() != null || originalHandler.isEnabled(editor, caret, dataContext)
 
     public override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        val delegate = ISearchHandler.delegate
+        val delegate = getDelegate()
         if (delegate == null) {
             originalHandler.execute(editor, caret, dataContext)
         } else {
@@ -27,4 +27,4 @@ internal class ISearchActionHandler(
     }
 }
 
-internal abstract class ISearchTypedActionHandler(val originalHandler: TypedActionHandler) : TypedActionHandlerBase(originalHandler)
+internal abstract class RestorableTypedActionHandler(val originalHandler: TypedActionHandler) : TypedActionHandlerBase(originalHandler)
