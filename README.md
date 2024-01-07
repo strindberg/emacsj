@@ -241,7 +241,7 @@ at its original position, and doesn't move it to the end of the new copy.
 
 *Comment DWIM (Do What I Mean)* will comment the current line if no selection is active. If the selection is active, it will comment the
 selected region, using line comments if the region's start is at a line start and the end is at either a line's start or end. Otherwise,
-block comment will be used.
+block comment will be used. If the line or region is already commented, the command instead un-comments the line or region.
 
 The commands are:
 
