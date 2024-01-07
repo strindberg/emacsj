@@ -1,10 +1,12 @@
 package com.github.strindberg.emacsj.zap
 
+import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 import java.util.*
 import com.github.strindberg.emacsj.search.CommonUI
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
+import com.github.strindberg.emacsj.word.substring
 import com.github.strindberg.emacsj.word.text
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
@@ -18,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
+import com.intellij.openapi.ide.CopyPasteManager
 import org.jetbrains.annotations.VisibleForTesting
 
 class ZapDelegate(val editor: Editor, val type: ZapType) {
@@ -51,6 +54,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                                 BACKWARD_TO, BACKWARD_UP_TO -> Pair(previousCharacter(editor.text, caret.offset, charTyped), caret.offset)
                             }
                             WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
+                                CopyPasteManager.getInstance().setContents(StringSelection(document.substring(start, end)))
                                 document.deleteString(start, end)
                             })
                         }
