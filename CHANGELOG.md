@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2024-01-08
+
+### Added
+- New EmacsJ keymap
+- New commands: zap-to-character (four variants)
+
+### Fixed
+- Recenter works better att editor ends
+
 ## [1.1.0] - 2023-12-15
  
 ### Added
