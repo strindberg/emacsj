@@ -13,9 +13,11 @@ offer features that bridge that gap, so that switching between Emacs and Intelli
 interest to non-Emacs users.</p>
       <br/>
 
-      <p>The plugin is meant to be used in a pick-and-choose fashion: nothing is changed by installing the plugin, but a number of commands are now
-available. The plugin suggests key bindings for these commands, but for best use you should peruse the documentation and enable the commands
-that you find useful.</p>
+      <p>There are two main ways of using EmacsJ: the plugin installs a number of commands which you can either pick-and-choose from, or
+activate all at once by choosing the EmacsJ keymap. If you want the former, study the available commands under Preferences -> Keymap ->
+Plugins -> EmacsJ and activate the ones you find interesting. Alternatively, you can choose the keymap EmacsJ under Preferences ->
+Keymap. This keymap is an extension of the standard Emacs keymap, and this way all the EmacsJ commands are activated. You can then
+de-activate the ones you don't want to use.</p>
       <br/>
 
       <p>The main features are:
@@ -29,6 +31,7 @@ that you find useful.</p>
         <li>A mark history with ability to pop mark (mark ring), and exchange point and mark.</li>
         <li>Duplicate and comment regions and lines.</li>
         <li>Recenter and relocate caret.</li>
+        <li>Zap to character.</li>
       </ul></p>
 
       <p>Documentation: EmacsJ on <a href="https://github.com/strindberg/emacsj">GitHub</a></p>

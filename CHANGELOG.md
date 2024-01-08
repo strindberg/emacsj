@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [1.2.1] - 2024-01-09
+
+### Fixed
+- Update documentation
+
 ## [1.2.0] - 2024-01-08
 
 ### Added
