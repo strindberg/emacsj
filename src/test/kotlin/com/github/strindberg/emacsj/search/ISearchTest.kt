@@ -748,6 +748,41 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
+    fun `test Backspace works as expected after failed search`() {
+        myFixture.configureByText(FILE, "<caret>foo bar foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("bar")
+        myFixture.checkResult("foo bar<caret> foo")
+        assertEquals("bar", ISearchHandler.delegate?.text)
+        assertEquals(ISearchState.SEARCH, ISearchHandler.delegate?.state)
+
+        myFixture.type("rab")
+        myFixture.checkResult("foo bar<caret> foo")
+        assertEquals("barrab", ISearchHandler.delegate?.text)
+        assertEquals(ISearchState.FAILED, ISearchHandler.delegate?.state)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("foo bar<caret> foo")
+        assertEquals("barra", ISearchHandler.delegate?.text)
+        assertEquals(ISearchState.FAILED, ISearchHandler.delegate?.state)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("foo bar<caret> foo")
+        assertEquals("barr", ISearchHandler.delegate?.text)
+        assertEquals(ISearchState.FAILED, ISearchHandler.delegate?.state)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("foo bar<caret> foo")
+        assertEquals("bar", ISearchHandler.delegate?.text)
+        assertEquals(ISearchState.SEARCH, ISearchHandler.delegate?.state)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("foo ba<caret>r foo")
+        assertEquals("ba", ISearchHandler.delegate?.text)
+        assertEquals(ISearchState.SEARCH, ISearchHandler.delegate?.state)
+    }
+
     fun `test Changing direction works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo bar foo")
 

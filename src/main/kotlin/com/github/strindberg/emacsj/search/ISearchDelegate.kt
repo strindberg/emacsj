@@ -38,6 +38,7 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
+import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
 private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
@@ -240,15 +241,17 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun updateUI(result: SearchResult, pos: Int?, noOfMatches: Int) {
-        updateUI(titleText(result.found, result.wrapped), text, result.color, Pair(pos ?: 0, noOfMatches))
+        updateUI(titleText(result.found, result.wrapped), text, result.found, Pair(pos ?: 0, noOfMatches))
     }
 
-    private fun updateUI(title: String, text: String, color: Color, count: Pair<Int, Int>?) {
+    private fun updateUI(title: String, text: String, found: Boolean, count: Pair<Int, Int>?) {
         ui.title = title
         ui.text = text
-        ui.textColor = color
+        ui.textColor = resultColor(found)
         ui.count = count
     }
+
+    private fun resultColor(found: Boolean): Color = if (found) JBColor.foreground() else JBColor.RED
 
     private fun titleText(found: Boolean = true, wrapped: Boolean = false): String =
         listOfNotNull(
@@ -264,22 +267,25 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun pushBreadcrumb() {
-        if (editor.caretModel.allCarets.any { CaretBreadcrumb(it.search, direction) != it.breadcrumbs.lastOrNull() }) {
+        if (breadcrumbs.lastOrNull()?.text != ui.text ||
+            editor.caretModel.allCarets.any { CaretBreadcrumb(it.search, direction) != it.breadcrumbs.lastOrNull() }
+        ) {
             editor.caretModel.runForEachCaret {
                 it.breadcrumbs.add(CaretBreadcrumb(it.search, direction))
             }
-            breadcrumbs.add(EditorBreadcrumb(ui.title, ui.text, ui.textColor, ui.count))
+            breadcrumbs.add(EditorBreadcrumb(ui.title, ui.text, state, ui.count))
         }
     }
 
     private fun popBreadcrumb() {
         breadcrumbs.removeLastOrNull()?.let { breadcrumb ->
-            updateUI(breadcrumb.title, breadcrumb.text, breadcrumb.color, breadcrumb.count)
+            state = breadcrumb.state
+            updateUI(breadcrumb.title, breadcrumb.text, breadcrumb.state == SEARCH, breadcrumb.count)
             findAllAndHighlight(editor, text, type, caseSensitive())
 
             editor.caretModel.runForEachCaret { caret ->
                 caret.breadcrumbs.removeLastOrNull()?.let { latest ->
-                    moveAndUpdate(caret, latest.searchStart, latest.match, latest.direction)
+                    moveAndUpdate(caret, latest.searchStart, latest.match, latest.direction, breadcrumb.state == SEARCH)
                 }
             }
         }
@@ -324,7 +330,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         val result = findString(caret, searchStart)
 
         if (result.isStringFound) {
-            moveAndUpdate(caret, searchStart, Match(result.startOffset, result.endOffset), direction)
+            moveAndUpdate(caret, searchStart, Match(result.startOffset, result.endOffset), direction, true)
         }
 
         return SearchResult(result.isStringFound, if (result.isStringFound) result.startOffset else null, wraparound)
@@ -333,19 +339,17 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     private fun matchEnd(start: Int): Int =
         start + if (type == TEXT) text.length else Regex(text).matchAt(editor.text, start)?.value?.length ?: 0
 
-    private fun findString(caret: Caret, searchStart: Int?): FindResult {
-        return FindManager.getInstance(editor.project)
-            .findString(
-                editor.text,
-                offset(editor.text, caret.search, searchStart),
-                FindModel().apply {
-                    stringToFind = text
-                    isForward = direction == FORWARD
-                    isCaseSensitive = caseSensitive()
-                    isRegularExpressions = type == REGEXP
-                }
-            )
-    }
+    private fun findString(caret: Caret, searchStart: Int?): FindResult =
+        FindManager.getInstance(editor.project).findString(
+            editor.text,
+            offset(editor.text, caret.search, searchStart),
+            FindModel().apply {
+                stringToFind = text
+                isForward = direction == FORWARD
+                isCaseSensitive = caseSensitive()
+                isRegularExpressions = type == REGEXP
+            }
+        )
 
     private fun offset(text: CharSequence, search: CaretSearch, searchStart: Int?): Int =
         when (direction) {
@@ -355,11 +359,13 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     private fun caseSensitive() = type == REGEXP || caseSensitive(text)
 
-    private fun moveAndUpdate(caret: Caret, searchStart: Int?, match: Match, direction: Direction) {
+    private fun moveAndUpdate(caret: Caret, searchStart: Int?, match: Match, direction: Direction, found: Boolean) {
         if (caret.isValid) { // Caret might have been disposed after multi-caret search
             caret.moveToOffset(if (direction == FORWARD) match.end else match.start)
             caret.search = caret.search.copy(searchStart = searchStart ?: caret.search.searchStart, match = match)
-            addHighlight(match)
+            if (match.start != match.end && found) {
+                addHighlight(match)
+            }
 
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             IdeDocumentHistory.getInstance(editor.project).includeCurrentCommandAsNavigation()
@@ -367,14 +373,12 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun addHighlight(match: Match) {
-        if (match.start != match.end) {
-            editor.markupModel.addRangeHighlighter(
-                EMACSJ_PRIMARY,
-                match.start,
-                match.end,
-                HighlighterLayer.LAST + 2,
-                HighlighterTargetArea.EXACT_RANGE
-            )
-        }
+        editor.markupModel.addRangeHighlighter(
+            EMACSJ_PRIMARY,
+            match.start,
+            match.end,
+            HighlighterLayer.LAST + 2,
+            HighlighterTargetArea.EXACT_RANGE
+        )
     }
 }

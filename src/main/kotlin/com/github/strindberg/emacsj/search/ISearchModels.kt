@@ -1,9 +1,7 @@
 package com.github.strindberg.emacsj.search
 
-import java.awt.Color
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.util.Key
-import com.intellij.ui.JBColor
 
 private val CARET_SEARCH_DATA_KEY = Key.create<CaretSearch>("ISearchHandler.CARET_SEARCH_DATA_KEY")
 private val CARET_BREADCRUMBS_KEY = Key.create<MutableList<CaretBreadcrumb>>("ISearchHandler.CARET_BREADCRUMBS_KEY")
@@ -29,12 +27,10 @@ internal data class CaretBreadcrumb(val caretSearch: CaretSearch, val direction:
     val match by caretSearch::match
 }
 
-internal data class EditorBreadcrumb(val title: String, val text: String, val color: Color, val count: Pair<Int, Int>?)
+internal data class EditorBreadcrumb(val title: String, val text: String, val state: ISearchState, val count: Pair<Int, Int>?)
 
 internal enum class ISearchState { SEARCH, FAILED, CHOOSE_PREVIOUS }
 
-internal data class SearchResult(val found: Boolean, val offset: Int?, val wrapped: Boolean) {
-    val color: Color = if (found) JBColor.foreground() else JBColor.RED
-}
+internal data class SearchResult(val found: Boolean, val offset: Int?, val wrapped: Boolean)
 
 enum class Direction { FORWARD, BACKWARD }
