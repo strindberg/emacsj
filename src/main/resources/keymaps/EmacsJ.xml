@@ -140,6 +140,12 @@
     <action id="com.github.strindberg.emacsj.actions.kill.kill">
         <keyboard-shortcut first-keystroke="control K"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.xref.gotoforward">
+        <keyboard-shortcut first-keystroke="alt PERIOD"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.xref.gotoback">
+        <keyboard-shortcut first-keystroke="alt COMMA"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.zap.zapto">
         <keyboard-shortcut first-keystroke="alt Z"/>
     </action>
@@ -195,6 +201,10 @@
     </action>
     <action id="$Paste">
         <keyboard-shortcut first-keystroke="shift INSERT"/>
+    </action>
+    <action id="GotoDeclaration">
+        <keyboard-shortcut first-keystroke="control alt G"/>
+        <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="PERIOD"/>
     </action>
 
     <!--Conflicting shortcuts from $default.xml removed-->

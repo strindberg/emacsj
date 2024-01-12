@@ -33,7 +33,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
         internal fun pushPlaceInfo(editor: Editor) {
             if (editor is EditorEx) {
                 editor.virtualFile?.let { virtualFile ->
-                    placeInfo(editor, editor.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
+                    PlaceInfoWrapper.placeInfo(editor, editor.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
                         places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
                     }
                 }
@@ -46,21 +46,6 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
                     places[virtualFile.hashCode()]?.peek()
                 }
             }
-
-        private fun placeInfo(editor: EditorEx, offset: Int, virtualFile: VirtualFile): PlaceInfoWrapper? =
-            editor.project?.let { project ->
-                FileEditorManagerEx.getInstanceEx(project).getSelectedEditor(virtualFile)?.let { fileEditor ->
-                    PlaceInfoWrapper(
-                        PlaceInfo(
-                            virtualFile,
-                            fileEditor.getState(FileEditorStateLevel.UNDO),
-                            editorTypeId ?: TextEditorProvider.getInstance().editorTypeId,
-                            null,
-                            editor.document.createRangeMarker(offset, offset)
-                        )
-                    )
-                }
-            }
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
@@ -69,7 +54,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
                 when (type) {
                     PUSH -> {
                         ex.isStickySelection = false
-                        placeInfo(ex, ex.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
+                        PlaceInfoWrapper.placeInfo(ex, ex.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
                             val lastPlaceInfo = peek(ex)
                             if (lastPlaceInfo == null || lastPlaceInfo != placeInfo) {
                                 places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
@@ -99,6 +84,23 @@ class PlaceInfoWrapper(val placeInfo: PlaceInfo) {
         } ?: false
 
     override fun hashCode(): Int = 31 * placeInfo.file.hashCode() + placeInfo.caretPosition?.startOffset.hashCode()
+
+    companion object {
+        fun placeInfo(editor: EditorEx, offset: Int, virtualFile: VirtualFile): PlaceInfoWrapper? =
+            editor.project?.let { project ->
+                FileEditorManagerEx.getInstanceEx(project).getSelectedEditor(virtualFile)?.let { fileEditor ->
+                    PlaceInfoWrapper(
+                        PlaceInfo(
+                            virtualFile,
+                            fileEditor.getState(FileEditorStateLevel.UNDO),
+                            MarkHandler.editorTypeId ?: TextEditorProvider.getInstance().editorTypeId,
+                            null,
+                            editor.document.createRangeMarker(offset, offset)
+                        )
+                    )
+                }
+            }
+    }
 }
 
 class LimitedStack<T> {

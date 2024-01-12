@@ -341,6 +341,19 @@ de-activate the ones you don't want to use.</p>
             <keyboard-shortcut first-keystroke="control K" keymap="Emacs"/>
         </action>
 
+        <action id="com.github.strindberg.emacsj.actions.xref.goforward"
+                class="com.github.strindberg.emacsj.actions.xref.XrefGoForwardAction"
+                text="Xref Go Forward">
+            <keyboard-shortcut first-keystroke="alt PERIOD" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt PERIOD" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.xref.goback"
+                class="com.github.strindberg.emacsj.actions.xref.XrefGoBackAction"
+                text="Xref Go Back">
+            <keyboard-shortcut first-keystroke="alt COMMA" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt COMMA" keymap="Emacs"/>
+        </action>
+
         <action id="com.github.strindberg.emacsj.actions.zap.zapto"
                 class="com.github.strindberg.emacsj.actions.zap.ZapToCharAction"
                 text="Zap To Character">
