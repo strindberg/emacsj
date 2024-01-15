@@ -4,7 +4,7 @@ changelog = "2.2.0"
 gradleIntelliJPlugin = "1.16.1"
 qodana = "0.1.13"
 kover = "0.7.5"
-kotlinter = "4.1.1"
+kotlinter = "4.2.0"
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
