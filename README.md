@@ -26,6 +26,7 @@ The main features are:
 - Duplicate and comment regions and lines.
 - Recenter and relocate caret.
 - Zap to character.
+- Go back in XRef history.
 
 ## Installation
 
@@ -348,6 +349,17 @@ The commands are:
 - Zap Back Up To Character (`ctrl-shift-alt-z`). Kill everything up to but not including the given character backwards.
 
 The *Zap to Character* commands work with multiple carets.
+
+### Go back in XRef History
+
+When using any of the (IntelliJ standard) commands *Go to Declaration* or *Go to Declaration or Usages*, the plugin saves the caret position
+from which the jump is made, creating a stack of previous positions. This stack can be popped with the command *Go Back to Previous Position
+After Jumping to Declaration*, and one can thus easily go back to previous positions.
+
+The commands are:
+
+- Go Back to Previous Position After Jumping to Declaration (`alt-COMMA`). Pop one item from stack of previous positions, and return caret
+  to that position.
 
 ### Kill Line
 

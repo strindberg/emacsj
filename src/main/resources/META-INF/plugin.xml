@@ -32,6 +32,7 @@ de-activate the ones you don't want to use.</p>
         <li>Duplicate and comment regions and lines.</li>
         <li>Recenter and relocate caret.</li>
         <li>Zap to character.</li>
+        <li>Go back in XRef history.</li>
       </ul></p>
 
       <p>Documentation: EmacsJ on <a href="https://github.com/strindberg/emacsj">GitHub</a></p>
@@ -45,6 +46,10 @@ de-activate the ones you don't want to use.</p>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/EmacsJDarcula.xml"/>
         <bundledKeymap file="EmacsJ.xml"/>
     </extensions>
+
+    <applicationListeners>
+        <listener class="com.github.strindberg.emacsj.xref.XRefCommandListener" topic="com.intellij.openapi.command.CommandListener"/>
+    </applicationListeners>
 
     <actions>
         <action id="com.github.strindberg.emacsj.actions.search.isearchtextforward"
@@ -366,6 +371,12 @@ de-activate the ones you don't want to use.</p>
             <keyboard-shortcut first-keystroke="control shift alt Z" keymap="Emacs"/>
         </action>
 
+        <action id="com.github.strindberg.emacsj.actions.xref.xrefback"
+                class="com.github.strindberg.emacsj.actions.xref.XRefBackAction"
+                text="Go Back to Previous Position After Jumping to Declaration (Xref-Go-Back)">
+            <keyboard-shortcut first-keystroke="alt COMMA" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt COMMA" keymap="Emacs"/>
+        </action>
     </actions>
 
 </idea-plugin>

@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2024-01-16
+
+### Added
+- New command: Go back in XRef history (Thank you, Eugene Bulavin).
+
 ## [1.2.2] - 2024-01-11
 
 ### Fixed
