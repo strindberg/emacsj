@@ -152,6 +152,9 @@
     <action id="com.github.strindberg.emacsj.actions.zap.zapbackupto">
         <keyboard-shortcut first-keystroke="control shift alt Z"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.xref.xrefback">
+        <keyboard-shortcut first-keystroke="alt COMMA"/>
+    </action>
 
     <!--Conflicting shortcuts from Emacs.xml removed-->
     <action id="EditorCutLineEnd"/>
