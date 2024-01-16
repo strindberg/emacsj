@@ -1,15 +1,15 @@
 [versions]
-kotlin = "1.9.22"
 changelog = "2.2.0"
 gradleIntelliJPlugin = "1.16.1"
-qodana = "0.1.13"
+kotlin = "1.9.22"
+kotlinter = "4.2.0"
 kover = "0.7.5"
-kotlinter = "4.1.1"
+qodana = "0.1.13"
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
 gradleIntelliJPlugin = { id = "org.jetbrains.intellij", version.ref = "gradleIntelliJPlugin" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
-qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }
 ktlint = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
+qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }

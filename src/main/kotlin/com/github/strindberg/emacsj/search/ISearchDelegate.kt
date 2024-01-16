@@ -319,7 +319,13 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         val searchStart =
             with(caret.search) {
                 if (firstSearch) {
-                    if (direction == FORWARD) match.start else if (keepStart) searchStart else matchEnd(match.start)
+                    if (direction == FORWARD) {
+                        match.start
+                    } else if (keepStart) {
+                        searchStart
+                    } else {
+                        matchEnd(match.start)
+                    }
                 } else if (wraparound) {
                     if (direction == FORWARD) 0 else editor.document.textLength + 1
                 } else {

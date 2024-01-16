@@ -50,7 +50,13 @@ private fun nextWordEnd(text: CharSequence, offset: Int, isCamel: Boolean): Int 
 
 private fun nextBoundary(text: CharSequence, offset: Int, isCamel: Boolean, check: (CharSequence, Int, Boolean) -> Boolean): Int {
     tailrec fun next(offset: Int): Int =
-        if (offset >= text.length) text.length else if (check(text, offset, isCamel)) offset else next(offset + 1)
+        if (offset >= text.length) {
+            text.length
+        } else if (check(text, offset, isCamel)) {
+            offset
+        } else {
+            next(offset + 1)
+        }
     return next(offset)
 }
 
@@ -62,7 +68,13 @@ private fun previousWordEnd(text: CharSequence, offset: Int, isCamel: Boolean): 
 
 private fun previousBoundary(text: CharSequence, offset: Int, isCamel: Boolean, check: (CharSequence, Int, Boolean) -> Boolean): Int {
     tailrec fun previous(offset: Int): Int =
-        if (offset <= 0) 0 else if (check(text, offset, isCamel)) offset else previous(offset - 1)
+        if (offset <= 0) {
+            0
+        } else if (check(text, offset, isCamel)) {
+            offset
+        } else {
+            previous(offset - 1)
+        }
     return previous(offset)
 }
 

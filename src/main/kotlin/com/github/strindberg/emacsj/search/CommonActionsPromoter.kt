@@ -14,9 +14,25 @@ class CommonActionsPromoter : ActionPromoter {
     override fun promote(actions: MutableList<out AnAction>, context: DataContext): List<AnAction> {
         val newList = actions.toMutableList()
         if (ISearchHandler.delegate != null) {
-            newList.sortWith { a, b -> if (isISearchAction(a)) -1 else if (isISearchAction(b)) 1 else 0 }
+            newList.sortWith { a, b ->
+                if (isISearchAction(a)) {
+                    -1
+                } else if (isISearchAction(b)) {
+                    1
+                } else {
+                    0
+                }
+            }
         } else if (ReplaceHandler.delegate != null) {
-            newList.sortWith { a, b -> if (a is ReplaceAction) -1 else if (b is ReplaceAction) 1 else 0 }
+            newList.sortWith { a, b ->
+                if (a is ReplaceAction) {
+                    -1
+                } else if (b is ReplaceAction) {
+                    1
+                } else {
+                    0
+                }
+            }
         }
         return newList
     }

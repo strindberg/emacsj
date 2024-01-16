@@ -1,15 +1,16 @@
 import org.jetbrains.changelog.Changelog
 
 fun properties(key: String) = providers.gradleProperty(key)
+
 fun environment(key: String) = providers.environmentVariable(key)
 
 plugins {
-    alias(libs.plugins.kotlin)
-    alias(libs.plugins.gradleIntelliJPlugin)
     alias(libs.plugins.changelog)
-    alias(libs.plugins.qodana)
+    alias(libs.plugins.gradleIntelliJPlugin)
+    alias(libs.plugins.kotlin)
     alias(libs.plugins.kover)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.qodana)
 }
 
 group = properties("pluginGroup").get()

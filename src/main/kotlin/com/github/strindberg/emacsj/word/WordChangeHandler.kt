@@ -75,7 +75,13 @@ class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler
 
     private fun firstLetterOrDigit(text: CharSequence, offset: Int): Int? {
         tailrec fun next(offset: Int): Int? =
-            if (offset >= text.length) null else if (text[offset].isLetterOrDigit()) offset else next(offset + 1)
+            if (offset >= text.length) {
+                null
+            } else if (text[offset].isLetterOrDigit()) {
+                offset
+            } else {
+                next(offset + 1)
+            }
         return next(offset)
     }
 }
