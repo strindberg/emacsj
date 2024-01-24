@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.xref
 
+import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_GOTO_DECLARATION
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
@@ -9,7 +10,7 @@ private const val ACTION_XREF_BACK = "com.github.strindberg.emacsj.actions.xref.
 
 class XRefTest : BasePlatformTestCase() {
     fun `test XRef back works`() {
-        XRefCommandListener.editorTypeId = ""
+        EmacsJCommandListener.editorTypeId = ""
 
         myFixture.configureByText(
             FILE,

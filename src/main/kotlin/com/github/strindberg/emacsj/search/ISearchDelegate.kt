@@ -77,6 +77,15 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     init {
         editor.document.setReadOnly(true) // Prevent dead keys such as '^' and '~' from showing up in editor while searching.
 
+        identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
+        editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
+
+        if (editor.selectionModel.hasSelection()) {
+            editor.caretModel.removeSecondaryCarets()
+        }
+
+        editor.caretModel.addCaretListener(caretListener)
+
         editor.caretModel.runForEachCaret {
             it.search = CaretSearch(it.offset)
             it.breadcrumbs = mutableListOf()
@@ -85,14 +94,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         registerHandlers()
 
         ui.title = titleText()
-
-        if (editor.selectionModel.hasSelection()) {
-            editor.caretModel.removeSecondaryCarets()
-        }
-        editor.caretModel.addCaretListener(caretListener)
-
-        identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
-        editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
 
         ui.show()
     }
@@ -223,9 +224,9 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
         editor.caretModel.removeCaretListener(caretListener)
 
-        ISearchHandler.searchConcluded(text, type)
-
         editor.document.setReadOnly(false)
+
+        ISearchHandler.searchConcluded(text, type)
 
         ISearchHandler.delegate = null
 
@@ -290,6 +291,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     private fun popBreadcrumb() {
         breadcrumbs.removeLastOrNull()?.let { breadcrumb ->
             if (breadcrumb.text != ui.text) {
+                CommonHighlighter.cancel()
                 editor.markupModel.removeAllHighlighters()
             } else {
                 rangeHighlighters.forEach {
@@ -313,9 +315,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     internal fun searchAllCarets(newDirection: Direction, newText: String = "", keepStart: Boolean = true) {
-        if (newText.isNotEmpty()) {
-            CommonHighlighter.cancel()
-        }
         pushBreadcrumb()
 
         val firstSearch = newText.isNotEmpty() || newDirection != direction
@@ -327,6 +326,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
         if (text.isNotEmpty() && (single || state == SEARCH)) { // Don't wrap around on multi-caret search
             if (newText.isNotEmpty()) {
+                CommonHighlighter.cancel()
                 editor.markupModel.removeAllHighlighters()
             } else {
                 rangeHighlighters.forEach {
@@ -343,7 +343,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
     }
 
-    private fun findAllAndHighlight(offset: Int?, results: List<Int>, reHighight: Boolean) {
+    private fun findAllAndHighlight(offset: Int?, results: List<Int>, highlight: Boolean) {
         CommonHighlighter.findAllAndHighlight(
             editor,
             text,
@@ -353,7 +353,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             callback = { matches ->
                 updateCount(Pair(matches.withIndex().find { it.value.startOffset == offset }?.let { it.index + 1 }, matches.size))
             },
-            reHighlight = reHighight
+            highlight = highlight
         )
     }
 

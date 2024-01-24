@@ -106,10 +106,10 @@ lower case string, and not match upper case letters, use regexp search which is 
 
 Isearch works with multiple carets.
 
-### Search/replace
+### Search/replace (query-replace)
 
-Search/replace asks for a text or regexp to search for, and then the replacement to be used. When replacement starts, each match found
-triggers a request for confirmation.
+Search/replace (query-replace) asks for a text or regexp to search for, and then the replacement to be used. When replacement starts, each
+match found triggers a request for confirmation.
 
 There are two variants:
 
@@ -274,20 +274,19 @@ The commands are:
 
 ### Paste
 
-The paste commands enable the use of a paste history (kill ring) where a pasted snippet of text can be replaced by previous killed texts. By
-repeatedly pressing *Paste: Previous Item in History* after use of *Paste* or *Paste and Leave Caret at Point*, the pasted text is replaced
-by
-the next item in the list of previously killed texts.
+The paste commands enable the use of a paste history (kill ring) where a pasted snippet of text can be replaced by previous copied texts. By
+repeatedly pressing *Paste: Previous Item in Clipboard History* after use of *Paste: Leave Caret After Pasted Region* or *Paste: Leave Caret
+at Point*, the pasted text is replaced by the next item in the list of previously killed texts.
 
-The items offered when using *Paste: Previous Item* are filtered for duplicates and blank entries.
+The items offered when using *Paste: Previous Item in Clipboard History* are filtered for duplicates and blank entries.
 
 The commands are:
 
-- Paste (`ctrl-y`). This command works as standard IntelliJ paste, but it sets up the paste history so that further invocations of Paste:
-  Previous Item in History can suggest previously killed texts.
-- Paste and Leave Caret at Point (`ctrl-u ctrl y`). Works as Paste, but also leaves the caret at the current point and not at the end of the
+- Paste: Leave Caret After Pasted Region (`ctrl-y`). This command works as standard IntelliJ *Paste*, but it sets up the paste history so
+  that further invocations of *Paste: Previous Item in Clipboard History* can suggest previously killed/copied texts.
+- Paste: Leave Caret at Point (`ctrl-u ctrl y`). Works as Paste, but also leaves the caret at the current point and not at the end of the
   pasted text.
-- Paste: Previous Item in History (`alt-y`). Cycle through the history of killed text, replacing the previously pasted text.
+- Paste: Previous Item in Clipboard History (`alt-y`). Cycle through the history of killed text, replacing the previously pasted text.
 
 ### Push/Pop Mark
 
@@ -299,8 +298,8 @@ Besides maintaining a mark history, another difference between the plugin's comm
 former always starts a new selection, whereas IntelliJ's command toggles selection. In other words, if a selection is already active, using
 the plugin command starts a new selection at the current point, instead of only turning off the selection.
 
-Adding to the mark history without starting a new selection can be achieved by quickly hitting the *Set/Push Mark for Selection* command
-twice.
+Adding to the mark history without starting a new selection can be achieved by hitting the *Set/Push Mark for Selection* command
+twice in the same position.
 
 The commands [Isearch](#isearch) and [Search/replace](#searchreplace) set the mark at the beginning of a search so that one can return to
 the position where the latest search started. The command [Exchange Point and Mark](#exchange-point-and-mark) also uses the mark history, as
@@ -309,7 +308,7 @@ described below.
 The commands are:
 
 - Set/Push Mark for Selection (`ctrl-SPACE`). Set the mark (and activate sticky selection). The mark is saved to the mark history. To only
-  save the mark to history without starting selection, quickly hit the key binding twice (`ctrl-SPACE ctrl-SPACE`).
+  save the mark to history without starting selection, hit the key binding twice (`ctrl-SPACE ctrl-SPACE`).
 - Pop Mark (`ctrl-u ctrl-SPACE`). Pop an item from the mark history and return caret to the saved position. History is maintained per file.
 
 ### Exchange Point and Mark

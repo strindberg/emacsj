@@ -35,19 +35,17 @@ class CommonHighlighter {
             range: IntRange? = null,
             results: List<Int> = emptyList(),
             callback: (List<FindResult>) -> Unit = {},
-            reHighlight: Boolean = true,
+            highlight: Boolean = true,
         ) {
             if (testing) {
-                doFindAllAndHighlight(editor, searchArg, type, useCase, range, results, callback, reHighlight)
+                doFindAllAndHighlight(editor, searchArg, type, useCase, range, results, callback, highlight)
             } else {
                 progressIndicator?.cancel()
                 progressIndicator = ProgressIndicatorBase()
                 thread {
                     ProgressManager.getInstance()
                         .runProcess(
-                            {
-                                doFindAllAndHighlight(editor, searchArg, type, useCase, range, results, callback, reHighlight)
-                            },
+                            { doFindAllAndHighlight(editor, searchArg, type, useCase, range, results, callback, highlight) },
                             progressIndicator
                         )
                 }
@@ -62,10 +60,9 @@ class CommonHighlighter {
             range: IntRange?,
             results: List<Int>,
             callback: (List<FindResult>) -> Unit,
-            reHighlight: Boolean,
+            highlight: Boolean,
         ) {
             val matches = mutableListOf<FindResult>()
-
             if (searchArg.isNotEmpty()) {
                 val findManager = FindManager.getInstance(editor.project)
                 val findModel = FindModel().apply {
@@ -73,10 +70,10 @@ class CommonHighlighter {
                     isCaseSensitive = useCase
                     isRegularExpressions = type == REGEXP
                 }
-
                 val text = editor.text.substring(0, range?.last ?: editor.text.length)
                 var offset = range?.start ?: 0
                 var count = 1
+
                 while (offset < text.length) {
                     count = checkCanceled(count)
                     val result = findManager.findString(text, offset, findModel)
@@ -84,7 +81,8 @@ class CommonHighlighter {
                     matches.add(result)
                     offset = maxOf(result.endOffset, offset + 1) // regexp match can be length zero
                 }
-                if (reHighlight) {
+
+                if (highlight) {
                     addSecondaryHighlights(editor, matches, results)
                 }
             }
@@ -94,24 +92,20 @@ class CommonHighlighter {
         private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>, results: List<Int>) {
             if (testing) {
                 matches.forEach { match ->
-                    addHighlight(match, results, editor)
+                    addHighlight(editor, match, results)
                 }
             } else {
                 var count = 1
                 matches.forEach { match ->
                     count = checkCanceled(count)
                     ApplicationManager.getApplication().invokeLater {
-                        addHighlight(match, results, editor)
+                        addHighlight(editor, match, results)
                     }
                 }
             }
         }
 
-        private fun addHighlight(
-            match: FindResult,
-            results: List<Int>,
-            editor: Editor,
-        ) {
+        private fun addHighlight(editor: Editor, match: FindResult, results: List<Int>) {
             if (!match.isEmpty && match.startOffset !in results) {
                 editor.markupModel.addRangeHighlighter(
                     EMACSJ_SECONDARY,

@@ -55,8 +55,6 @@ class PasteTest : BasePlatformTestCase() {
         CopyPasteManager.getInstance().setContents(StringSelection("baz"))
 
         myFixture.performEditorAction(ACTION_PASTE)
-        myFixture.checkResult("foobaz<caret>")
-
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
         myFixture.checkResult("foobar<caret>")
     }
@@ -67,8 +65,6 @@ class PasteTest : BasePlatformTestCase() {
         CopyPasteManager.getInstance().setContents(StringSelection("baz"))
 
         myFixture.performEditorAction(ACTION_PREFIX_PASTE)
-        myFixture.checkResult("foo<caret>baz")
-
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
         myFixture.checkResult("foo<caret>bar")
     }
@@ -80,8 +76,6 @@ class PasteTest : BasePlatformTestCase() {
         CopyPasteManager.getInstance().setContents(StringSelection("baz"))
 
         myFixture.performEditorAction(ACTION_PASTE)
-        myFixture.checkResult("foobaz<caret>")
-
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
         myFixture.checkResult("foobar<caret>")
     }

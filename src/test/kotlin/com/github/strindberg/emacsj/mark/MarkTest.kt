@@ -18,6 +18,19 @@ class MarkTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
         myFixture.performEditorAction(ACTION_PUSH_MARK)
+
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_END)
+        myFixture.checkResult("<selection>foo bar baz</selection><caret>")
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+        myFixture.checkResult("<caret>foo bar baz")
+    }
+
+    fun `test Pressing mark twice pushes mark without starting selection`() {
+        MarkHandler.editorTypeId = ""
+        myFixture.configureByText(FILE, "<caret>foo bar baz")
+
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
         myFixture.performEditorAction(ACTION_PUSH_MARK)
 
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_END)
@@ -25,18 +38,6 @@ class MarkTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult("<caret>foo bar baz")
-    }
-
-    fun `test Pressing mark twice slowly starts selection`() {
-        MarkHandler.editorTypeId = ""
-        myFixture.configureByText(FILE, "<caret>foo bar baz")
-
-        myFixture.performEditorAction(ACTION_PUSH_MARK)
-        Thread.sleep(TIMEOUT + 100)
-        myFixture.performEditorAction(ACTION_PUSH_MARK)
-
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_END)
-        myFixture.checkResult("<selection>foo bar baz</selection><caret>")
     }
 
     fun `test Exchange mark and point works`() {
