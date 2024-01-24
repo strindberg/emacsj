@@ -28,6 +28,11 @@ private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.p
 
 class ISearchTest : BasePlatformTestCase() {
 
+    override fun setUp() {
+        CommonHighlighter.testing = true
+        super.setUp()
+    }
+
     override fun tearDown() {
         ISearchHandler.delegate?.hide()
         super.tearDown()

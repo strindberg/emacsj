@@ -35,6 +35,7 @@ import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
@@ -59,6 +60,8 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     private lateinit var typedHandler: RestorableTypedActionHandler
 
     private val actionHandlers = mutableListOf<RestorableActionHandler<ISearchDelegate>>()
+
+    private var rangeHighlighters: MutableList<RangeHighlighter> = mutableListOf()
 
     @VisibleForTesting
     internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
@@ -240,15 +243,22 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
     }
 
-    private fun updateUI(result: SearchResult, pos: Int?, noOfMatches: Int) {
-        updateUI(titleText(result.found, result.wrapped), text, result.found, Pair(pos ?: 0, noOfMatches))
+    private fun updateUI(result: SearchResult) {
+        updateUI(titleText(result.found, result.wrapped), text, result.found)
     }
 
-    private fun updateUI(title: String, text: String, found: Boolean, count: Pair<Int, Int>?) {
+    private fun updateUI(title: String, text: String, found: Boolean) {
         ui.title = title
         ui.text = text
         ui.textColor = resultColor(found)
-        ui.count = count
+    }
+
+    private fun updateCount(count: Pair<Int?, Int>?) {
+        ui.count = if (count != null) {
+            (Pair(count.first ?: 0, count.second))
+        } else {
+            null
+        }
     }
 
     private fun resultColor(found: Boolean): Color = if (found) JBColor.foreground() else JBColor.RED
@@ -279,19 +289,33 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     private fun popBreadcrumb() {
         breadcrumbs.removeLastOrNull()?.let { breadcrumb ->
-            state = breadcrumb.state
-            updateUI(breadcrumb.title, breadcrumb.text, breadcrumb.state == SEARCH, breadcrumb.count)
-            findAllAndHighlight(editor, text, type, caseSensitive())
+            if (breadcrumb.text != ui.text) {
+                editor.markupModel.removeAllHighlighters()
+            } else {
+                rangeHighlighters.forEach {
+                    editor.markupModel.removeHighlighter(it)
+                }
+            }
 
+            state = breadcrumb.state
+            updateUI(breadcrumb.title, breadcrumb.text, breadcrumb.state == SEARCH)
+            updateCount(breadcrumb.count)
+
+            val matches = mutableListOf<Int>()
             editor.caretModel.runForEachCaret { caret ->
                 caret.breadcrumbs.removeLastOrNull()?.let { latest ->
+                    matches.add(latest.match.start)
                     moveAndUpdate(caret, latest.searchStart, latest.match, latest.direction, breadcrumb.state == SEARCH)
                 }
             }
+            CommonHighlighter.findAllAndHighlight(editor, text, type, caseSensitive(), results = matches)
         }
     }
 
     internal fun searchAllCarets(newDirection: Direction, newText: String = "", keepStart: Boolean = true) {
+        if (newText.isNotEmpty()) {
+            CommonHighlighter.cancel()
+        }
         pushBreadcrumb()
 
         val firstSearch = newText.isNotEmpty() || newDirection != direction
@@ -302,17 +326,35 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         text += newText
 
         if (text.isNotEmpty() && (single || state == SEARCH)) { // Don't wrap around on multi-caret search
-            val matches = findAllAndHighlight(editor, text, type, caseSensitive())
-
+            if (newText.isNotEmpty()) {
+                editor.markupModel.removeAllHighlighters()
+            } else {
+                rangeHighlighters.forEach {
+                    editor.markupModel.removeHighlighter(it)
+                }
+            }
             val results = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
                 searchAndUpdate(caret, keepStart, firstSearch, wraparound)
             }
-
             val result = if (single) results[0] else SearchResult(results.any { it.found }, null, false)
-            val pos = matches.withIndex().find { it.value.startOffset == result.offset }?.let { it.index + 1 }
             state = if (result.found) SEARCH else FAILED
-            updateUI(result, pos, matches.size)
+            findAllAndHighlight(result.offset, results.mapNotNull { it.offset }, newText.isNotEmpty())
+            updateUI(result)
         }
+    }
+
+    private fun findAllAndHighlight(offset: Int?, results: List<Int>, reHighight: Boolean) {
+        CommonHighlighter.findAllAndHighlight(
+            editor,
+            text,
+            type,
+            caseSensitive(),
+            results = results,
+            callback = { matches ->
+                updateCount(Pair(matches.withIndex().find { it.value.startOffset == offset }?.let { it.index + 1 }, matches.size))
+            },
+            reHighlight = reHighight
+        )
     }
 
     private fun searchAndUpdate(caret: Caret, keepStart: Boolean, firstSearch: Boolean, wraparound: Boolean): SearchResult {
@@ -379,12 +421,14 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun addHighlight(match: Match) {
-        editor.markupModel.addRangeHighlighter(
-            EMACSJ_PRIMARY,
-            match.start,
-            match.end,
-            HighlighterLayer.LAST + 2,
-            HighlighterTargetArea.EXACT_RANGE
+        rangeHighlighters.add(
+            editor.markupModel.addRangeHighlighter(
+                EMACSJ_PRIMARY,
+                match.start,
+                match.end,
+                HighlighterLayer.LAST + 2,
+                HighlighterTargetArea.EXACT_RANGE
+            )
         )
     }
 }
