@@ -53,6 +53,30 @@ class ISearchTest : BasePlatformTestCase() {
         assertNull(ISearchHandler.delegate?.ui?.count)
     }
 
+    fun `test Empty search doesn't crash`() {
+        myFixture.configureByText(FILE, "<caret>foo")
+        ISearchHandler.lastStringSearches = listOf()
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("<caret>foo")
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("<caret>foo")
+    }
+
+    fun `test Empty reverse search doesn't crash`() {
+        myFixture.configureByText(FILE, "foo<caret>")
+        ISearchHandler.lastStringSearches = listOf()
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.checkResult("foo<caret>")
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("foo<caret>")
+    }
+
     fun `test Simple search works 2`() {
         myFixture.configureByText(FILE, "<caret>foo")
 
@@ -103,6 +127,23 @@ class ISearchTest : BasePlatformTestCase() {
     }
 
     fun `test Reverse search - adding letters after finding matches works`() {
+        myFixture.configureByText(FILE, "foop bar foop baz foop<caret> foop")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("foo")
+        myFixture.checkResult("foop bar foop baz <caret>foop foop")
+        assertEquals(Pair(3, 4), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.checkResult("foop bar <caret>foop baz foop foop")
+        assertEquals(Pair(2, 4), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.type("p")
+        myFixture.checkResult("foop bar <caret>foop baz foop foop")
+        assertEquals(Pair(2, 4), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Reverse search - adding letters after finding matches works 2`() {
         myFixture.configureByText(FILE, "foop bar foop baz foo<caret>p")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)

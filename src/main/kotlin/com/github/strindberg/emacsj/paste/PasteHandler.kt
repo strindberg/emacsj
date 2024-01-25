@@ -32,7 +32,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
         when (type) {
             STANDARD, PREFIX -> {
-                clipboardHistory = filteredContents()
+                clipboardHistory = filteredContents().take(64)
                 clipboaardHistoryPos = 0
                 pasteType = type
                 editor.pasteAndMove(clipboardHistory)

@@ -18,14 +18,11 @@ internal var Caret.breadcrumbs: MutableList<CaretBreadcrumb>
         putUserData(CARET_BREADCRUMBS_KEY, breadcrumbs)
     }
 
-internal data class CaretSearch(val start: Int, val searchStart: Int = start, val match: Match = Match(start, start))
+internal data class CaretSearch(val origin: Int, val match: Match = Match(origin, origin))
 
 internal data class Match(val start: Int, val end: Int)
 
-internal data class CaretBreadcrumb(val caretSearch: CaretSearch, val direction: Direction) {
-    val searchStart by caretSearch::searchStart
-    val match by caretSearch::match
-}
+internal data class CaretBreadcrumb(val match: Match, val direction: Direction)
 
 internal data class EditorBreadcrumb(val title: String, val text: String, val state: ISearchState, val count: Pair<Int, Int>?)
 

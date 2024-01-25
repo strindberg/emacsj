@@ -6,6 +6,7 @@
 
 ### Fixed
 - Run highlighting of secondary matches for "ISearch" and "Search/Replace" in separate thread.
+- Fix Isearch bug where reverse search started at origin when a letter was added after previous searches.
 - EmacsJ keymap: remove keybindings from keymap "$default" clashing with plugin prefix "Ctrl-U".
 - Better handling of "Recenter Caret" and "Reposition Caret" near start/end of editor.
 - Remove timeout for double-tapping "Set/Push Mark for Selection": tapping twice in same position pushes mark without starting selection.
