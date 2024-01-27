@@ -3,6 +3,7 @@ package com.github.strindberg.emacsj.paste
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import com.github.strindberg.emacsj.EmacsJCommandListener
+import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.paste.Type.HISTORY
 import com.github.strindberg.emacsj.paste.Type.PREFIX
 import com.github.strindberg.emacsj.paste.Type.STANDARD
@@ -53,6 +54,8 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
         clipboardContents(allContents)?.let { contents ->
             pasteTransferable(contents)?.let { range ->
                 putUserData(EditorEx.LAST_PASTED_REGION, range)
+                caretModel.primaryCaret.moveToOffset(if (pasteType == STANDARD) range.startOffset else range.endOffset)
+                MarkHandler.pushPlaceInfo(this)
                 caretModel.primaryCaret.moveToOffset(if (pasteType == STANDARD) range.endOffset else range.startOffset)
             }
         }

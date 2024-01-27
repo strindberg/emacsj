@@ -53,8 +53,7 @@ class EmacsJCommandListener : CommandListener {
                                         ex.document.createRangeMarker(offset, offset)
                                     )
                                 )
-                                val lastPlaceInfo = places.peek()
-                                if (lastPlaceInfo == null || lastPlaceInfo != placeInfo) {
+                                if (placeInfo != places.peek()) {
                                     places.push(placeInfo)
                                 }
                             }

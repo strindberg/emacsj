@@ -18,13 +18,19 @@ import org.jetbrains.annotations.VisibleForTesting
 class CommonHighlighter {
 
     companion object {
+
         @VisibleForTesting
         internal var testing = false
 
-        private var progressIndicator: ProgressIndicator? = null
+        private var progressIndicators = mutableListOf<ProgressIndicator>()
 
-        internal fun cancel() {
-            progressIndicator?.cancel()
+        internal fun cancel(editor: Editor) {
+            val iterator = progressIndicators.iterator()
+            while (iterator.hasNext()) {
+                iterator.next().cancel()
+                iterator.remove()
+            }
+            editor.markupModel.removeAllHighlighters()
         }
 
         internal fun findAllAndHighlight(
@@ -33,20 +39,22 @@ class CommonHighlighter {
             type: SearchType,
             useCase: Boolean,
             range: IntRange? = null,
-            results: List<Int> = emptyList(),
             callback: (List<FindResult>) -> Unit = {},
             highlight: Boolean = true,
         ) {
             if (testing) {
-                doFindAllAndHighlight(editor, searchArg, type, useCase, range, results, callback, highlight)
+                doFindAllAndHighlight(editor, searchArg, type, useCase, range, callback, highlight)
             } else {
-                progressIndicator?.cancel()
-                progressIndicator = ProgressIndicatorBase()
+                val indicator = ProgressIndicatorBase()
+                progressIndicators.add(indicator)
                 thread {
                     ProgressManager.getInstance()
                         .runProcess(
-                            { doFindAllAndHighlight(editor, searchArg, type, useCase, range, results, callback, highlight) },
-                            progressIndicator
+                            {
+                                Thread.sleep(50)
+                                doFindAllAndHighlight(editor, searchArg, type, useCase, range, callback, highlight)
+                            },
+                            indicator
                         )
                 }
             }
@@ -58,7 +66,6 @@ class CommonHighlighter {
             type: SearchType,
             useCase: Boolean,
             range: IntRange?,
-            results: List<Int>,
             callback: (List<FindResult>) -> Unit,
             highlight: Boolean,
         ) {
@@ -72,10 +79,11 @@ class CommonHighlighter {
                 }
                 val text = editor.text.substring(0, range?.last ?: editor.text.length)
                 var offset = range?.start ?: 0
-                var count = 1
 
+                if (!testing) {
+                    ProgressManager.checkCanceled()
+                }
                 while (offset < text.length) {
-                    count = checkCanceled(count)
                     val result = findManager.findString(text, offset, findModel)
                     if (!result.isStringFound) break
                     matches.add(result)
@@ -83,30 +91,31 @@ class CommonHighlighter {
                 }
 
                 if (highlight) {
-                    addSecondaryHighlights(editor, matches, results)
+                    addSecondaryHighlights(editor, matches)
                 }
             }
             callback(matches)
         }
 
-        private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>, results: List<Int>) {
+        private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>) {
             if (testing) {
                 matches.forEach { match ->
-                    addHighlight(editor, match, results)
+                    addHighlight(editor, match)
                 }
             } else {
-                var count = 1
-                matches.forEach { match ->
-                    count = checkCanceled(count)
+                matches.chunked(100).forEach { chunk ->
+                    ProgressManager.checkCanceled()
                     ApplicationManager.getApplication().invokeLater {
-                        addHighlight(editor, match, results)
+                        chunk.forEach { match ->
+                            addHighlight(editor, match)
+                        }
                     }
                 }
             }
         }
 
-        private fun addHighlight(editor: Editor, match: FindResult, results: List<Int>) {
-            if (!match.isEmpty && match.startOffset !in results) {
+        private fun addHighlight(editor: Editor, match: FindResult) {
+            if (!match.isEmpty) {
                 editor.markupModel.addRangeHighlighter(
                     EMACSJ_SECONDARY,
                     match.startOffset,
@@ -115,13 +124,6 @@ class CommonHighlighter {
                     HighlighterTargetArea.EXACT_RANGE
                 )
             }
-        }
-
-        private fun checkCanceled(count: Int): Int {
-            if (!testing && count % 40 == 0) {
-                ProgressManager.checkCanceled()
-            }
-            return count + 1
         }
     }
 }

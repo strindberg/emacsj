@@ -13,8 +13,12 @@ private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.p
 
 class MarkTest : BasePlatformTestCase() {
 
-    fun `test Set mark and pop mark works`() {
+    override fun setUp() {
         MarkHandler.editorTypeId = ""
+        super.setUp()
+    }
+
+    fun `test Set mark and pop mark works`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -27,7 +31,6 @@ class MarkTest : BasePlatformTestCase() {
     }
 
     fun `test Pressing mark twice pushes mark without starting selection`() {
-        MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -41,7 +44,6 @@ class MarkTest : BasePlatformTestCase() {
     }
 
     fun `test Exchange mark and point works`() {
-        MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "A<caret>foo bar bazB")
 
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -59,7 +61,6 @@ class MarkTest : BasePlatformTestCase() {
     }
 
     fun `test Exchange mark and point reactivates selection`() {
-        MarkHandler.editorTypeId = ""
         myFixture.configureByText(
             FILE,
             """<caret>foo bar baz

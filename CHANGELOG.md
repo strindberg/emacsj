@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [1.3.1] - 2024-02-05
+
+### Added
+- All paste commands push a mark to the opposite side of the pasted region.
+
 ### Fixed
 - Run highlighting of secondary matches for "ISearch" and "Search/Replace" in separate thread.
 - Fix Isearch bug where reverse search started at origin when a letter was added after previous searches.

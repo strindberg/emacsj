@@ -66,8 +66,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
                         val previousSticky = ex.isStickySelection
                         ex.isStickySelection = false
                         placeInfo(ex, ex.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
-                            val lastPlaceInfo = peek(ex)
-                            if (lastPlaceInfo == null || lastPlaceInfo != placeInfo || !previousSticky) {
+                            if (placeInfo != peek(ex) || !previousSticky) {
                                 places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
                                 ex.isStickySelection = true
                             }

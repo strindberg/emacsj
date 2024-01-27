@@ -52,20 +52,20 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
     }
 
-    private val breadcrumbs = mutableListOf<EditorBreadcrumb>()
-
     private val identifierAttributes: TextAttributes
 
-    private lateinit var typedHandler: RestorableTypedActionHandler
+    private val typedHandler: RestorableTypedActionHandler
 
-    private val actionHandlers = mutableListOf<RestorableActionHandler<ISearchDelegate>>()
-
-    private var rangeHighlighters = mutableListOf<RangeHighlighter>()
+    private val actionHandlers: List<RestorableActionHandler<ISearchDelegate>>
 
     @VisibleForTesting
     internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
 
     internal var state: ISearchState = SEARCH
+
+    private val breadcrumbs = mutableListOf<EditorBreadcrumb>()
+
+    private val rangeHighlighters = mutableListOf<RangeHighlighter>()
 
     internal var text: String
         get() = ui.text
@@ -90,14 +90,8 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             it.breadcrumbs = mutableListOf()
         }
 
-        registerHandlers()
-
         ui.title = titleText()
 
-        ui.show()
-    }
-
-    private fun registerHandlers() {
         TypedAction.getInstance().apply {
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
@@ -115,8 +109,12 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                 }.also { typedHandler = it }
             )
         }
+    }
 
+    init {
         EditorActionManager.getInstance().apply {
+            val handlers = mutableListOf<RestorableActionHandler<ISearchDelegate>>()
+
             setActionHandler(
                 ACTION_EDITOR_BACKSPACE,
                 RestorableActionHandler(
@@ -128,7 +126,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                         CHOOSE_PREVIOUS -> text = text.dropLast(1)
                         SEARCH, FAILED -> popBreadcrumb()
                     }
-                }.also { actionHandlers.add(it) }
+                }.also { handlers.add(it) }
             )
 
             setActionHandler(
@@ -142,7 +140,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                         CHOOSE_PREVIOUS -> startPreviousSearch()
                         SEARCH, FAILED -> cancel()
                     }
-                }.also { actionHandlers.add(it) }
+                }.also { handlers.add(it) }
             )
 
             listOf(ACTION_EDITOR_PASTE, ACTION_PASTE).forEach { actionId ->
@@ -157,7 +155,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                             CHOOSE_PREVIOUS -> text += ClipboardUtil.getTextInClipboard()
                             SEARCH, FAILED -> searchAllCarets(direction, ClipboardUtil.getTextInClipboard() ?: "", keepStart = true)
                         }
-                    }.also { actionHandlers.add(it) }
+                    }.also { handlers.add(it) }
                 )
             }
 
@@ -172,11 +170,17 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                         ) { caret, dataContext ->
                             cancel()
                             originalHandler.execute(editor, caret, dataContext)
-                        }.also { actionHandlers.add(it) }
+                        }.also { handlers.add(it) }
                     )
                 }
             }
+
+            actionHandlers = handlers
         }
+    }
+
+    init {
+        ui.show()
     }
 
     private fun editorActions(): List<String> {
@@ -185,13 +189,13 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             !actionManager.isGroup(actionId) &&
                 actionManager.getAction(actionId)?.let { it is EditorAction && it !is ISearchAction } ?: false &&
                 actionId !in listOf(
-                    ACTION_EDITOR_BACKSPACE,
-                    ACTION_EDITOR_ENTER,
-                    ACTION_EDITOR_PASTE,
-                    ACTION_PASTE,
-                    ACTION_EDITOR_SCROLL_TO_CENTER,
-                    ACTION_RECENTER
-                )
+                ACTION_EDITOR_BACKSPACE,
+                ACTION_EDITOR_ENTER,
+                ACTION_EDITOR_PASTE,
+                ACTION_PASTE,
+                ACTION_EDITOR_SCROLL_TO_CENTER,
+                ACTION_RECENTER
+            )
         }
     }
 
@@ -278,27 +282,18 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     private fun popBreadcrumb() {
         breadcrumbs.removeLastOrNull()?.let { breadcrumb ->
-            if (breadcrumb.text != ui.text) {
-                CommonHighlighter.cancel()
-                editor.markupModel.removeAllHighlighters()
-            } else {
-                rangeHighlighters.forEach {
-                    editor.markupModel.removeHighlighter(it)
-                }
-            }
+            removeHighlighters(breadcrumb.text != ui.text)
 
             state = breadcrumb.state
             updateUI(breadcrumb.title, breadcrumb.text, breadcrumb.state == SEARCH)
             updateCount(breadcrumb.count)
 
-            val matches = mutableListOf<Int>()
             editor.caretModel.runForEachCaret { caret ->
                 caret.breadcrumbs.removeLastOrNull()?.let { latest ->
-                    matches.add(latest.match.start)
                     moveAndUpdate(caret, latest.match, latest.direction, breadcrumb.state == SEARCH)
                 }
             }
-            CommonHighlighter.findAllAndHighlight(editor, text, type, caseSensitive(), results = matches)
+            CommonHighlighter.findAllAndHighlight(editor, text, type, caseSensitive())
         }
     }
 
@@ -319,31 +314,33 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         text += newText
 
         if (single || state == SEARCH) { // Don't wrap around on multi-caret search
-            if (isNewText) {
-                CommonHighlighter.cancel()
-                editor.markupModel.removeAllHighlighters()
-            } else {
-                rangeHighlighters.forEach {
-                    editor.markupModel.removeHighlighter(it)
-                }
-            }
+            removeHighlighters(isNewText)
             val results = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
                 searchAndUpdate(caret, keepStart, firstSearch, wraparound)
             }
             val result = if (single) results[0] else SearchResult(results.any { it.found }, null, false)
             state = if (result.found) SEARCH else FAILED
-            findAllAndHighlight(result.offset, results.mapNotNull { it.offset }, isNewText)
+            findAllAndHighlight(result.offset, isNewText)
             updateUI(result)
         }
     }
 
-    private fun findAllAndHighlight(offset: Int?, results: List<Int>, highlight: Boolean) {
+    private fun removeHighlighters(isNewText: Boolean) {
+        if (isNewText) {
+            CommonHighlighter.cancel(editor)
+        } else {
+            rangeHighlighters.forEach {
+                editor.markupModel.removeHighlighter(it)
+            }
+        }
+    }
+
+    private fun findAllAndHighlight(offset: Int?, highlight: Boolean) {
         CommonHighlighter.findAllAndHighlight(
             editor,
             text,
             type,
             caseSensitive(),
-            results = results,
             callback = { matches ->
                 updateCount(Pair(matches.withIndex().find { it.value.startOffset == offset }?.let { it.index + 1 }, matches.size))
             },
