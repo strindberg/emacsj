@@ -290,19 +290,19 @@ de-activate the ones you don't want to use.</p>
 
         <action id="com.github.strindberg.emacsj.actions.paste.pasteprefix"
                 class="com.github.strindberg.emacsj.actions.paste.PastePrefixAction"
-                text="Paste and Leave Caret at Point">
+                text="Paste: Leave Caret at Point">
             <keyboard-shortcut first-keystroke="control U" second-keystroke="control Y" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control U" second-keystroke="control Y" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.paste.paste"
                 class="com.github.strindberg.emacsj.actions.paste.PasteAction"
-                text="Paste">
+                text="Paste: Leave Caret After Pasted Region">
             <keyboard-shortcut first-keystroke="control Y" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control Y" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.paste.pastehistory"
                 class="com.github.strindberg.emacsj.actions.paste.PasteHistoryAction"
-                text="Paste: Previous Item in History">
+                text="Paste: Previous Item in Clipboard History">
             <keyboard-shortcut first-keystroke="alt Y" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt Y" keymap="Emacs"/>
         </action>

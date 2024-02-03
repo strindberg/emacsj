@@ -2,6 +2,8 @@ package com.github.strindberg.emacsj.paste
 
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
+import com.github.strindberg.emacsj.EmacsJCommandListener
+import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.paste.Type.HISTORY
 import com.github.strindberg.emacsj.paste.Type.PREFIX
 import com.github.strindberg.emacsj.paste.Type.STANDARD
@@ -17,33 +19,31 @@ import com.intellij.openapi.util.TextRange
 
 enum class Type { STANDARD, PREFIX, HISTORY }
 
+private val pasteCommands =
+    listOf("Paste: Leave Caret at Point", "Paste: Leave Caret After Pasted Region", "Paste: Previous Item in Clipboard History")
+
 class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     companion object {
-        var historyListSize = 0
-        var historyListPos = 0
+        var clipboardHistory = listOf<Transferable>()
+        var clipboaardHistoryPos = 0
         var pasteType = STANDARD
     }
 
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        val allContents = filteredContents()
         when (type) {
             STANDARD, PREFIX -> {
-                historyListSize = allContents.size
-                historyListPos = 0
+                clipboardHistory = filteredContents().take(64)
+                clipboaardHistoryPos = 0
                 pasteType = type
-                editor.pasteAndMove(allContents)
+                editor.pasteAndMove(clipboardHistory)
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
             HISTORY -> {
                 editor.getUserData(EditorEx.LAST_PASTED_REGION)?.let { region ->
-                    if (allContents.size == historyListSize) {
-                        if ((pasteType == STANDARD && editor.caretModel.primaryCaret.offset == region.endOffset) ||
-                            (pasteType == PREFIX && editor.caretModel.primaryCaret.offset == region.startOffset)
-                        ) {
-                            editor.document.deleteString(region.startOffset, region.endOffset)
-                            editor.pasteAndMove(allContents)
-                        }
+                    if (EmacsJCommandListener.lastCommandName() in pasteCommands) {
+                        editor.document.deleteString(region.startOffset, region.endOffset)
+                        editor.pasteAndMove(clipboardHistory)
                     }
                 }
             }
@@ -54,6 +54,8 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
         clipboardContents(allContents)?.let { contents ->
             pasteTransferable(contents)?.let { range ->
                 putUserData(EditorEx.LAST_PASTED_REGION, range)
+                caretModel.primaryCaret.moveToOffset(if (pasteType == STANDARD) range.startOffset else range.endOffset)
+                MarkHandler.pushPlaceInfo(this)
                 caretModel.primaryCaret.moveToOffset(if (pasteType == STANDARD) range.endOffset else range.startOffset)
             }
         }
@@ -61,7 +63,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     private fun clipboardContents(allContents: List<Transferable>): Transferable? {
         return allContents.takeUnless { it.isEmpty() }?.let { history ->
-            history[historyListPos++ % history.size]
+            history[clipboaardHistoryPos++ % history.size]
         }
     }
 

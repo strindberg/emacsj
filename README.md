@@ -274,22 +274,25 @@ The commands are:
 
 ### Paste
 
-The paste commands enable the use of a paste history (kill ring) where a pasted snippet of text can be replaced by previous killed texts. By
-repeatedly pressing *Paste: Previous Item in History* after use of *Paste* or *Paste and Leave Caret at Point*, the pasted text is replaced
-by
-the next item in the list of previously killed texts.
+The paste commands enable the use of a paste history (kill ring) where a pasted snippet of text can be replaced by previous copied texts. By
+repeatedly pressing *Paste: Previous Item in Clipboard History* after use of *Paste: Leave Caret After Pasted Region* or *Paste: Leave Caret
+at Point*, the pasted text is replaced by the next item in the list of previously killed texts.
 
-The items offered when using *Paste: Previous Item* are filtered for duplicates and blank entries.
+All paste commands push the opposite end of the pasted region as a mark to the [mark ring](#mark-ring") (without starting a selection). In
+other words, when using *Paste: Leave Caret After Pasted Region*, a mark is pushed at the beginning of the pasted region, and vice versa
+for *Paste: Leave Caret at Point*.
+
+The items offered when using *Paste: Previous Item in Clipboard History* are filtered for duplicates and blank entries.
 
 The commands are:
 
-- Paste (`ctrl-y`). This command works as standard IntelliJ paste, but it sets up the paste history so that further invocations of Paste:
-  Previous Item in History can suggest previously killed texts.
-- Paste and Leave Caret at Point (`ctrl-u ctrl y`). Works as Paste, but also leaves the caret at the current point and not at the end of the
+- Paste: Leave Caret After Pasted Region (`ctrl-y`). This command works as standard IntelliJ *Paste*, but it sets up the paste history so
+  that further invocations of *Paste: Previous Item in Clipboard History* can suggest previously killed/copied texts.
+- Paste: Leave Caret at Point (`ctrl-u ctrl y`). Works as Paste, but also leaves the caret at the current point and not at the end of the
   pasted text.
-- Paste: Previous Item in History (`alt-y`). Cycle through the history of killed text, replacing the previously pasted text.
+- Paste: Previous Item in Clipboard History (`alt-y`). Cycle through the history of killed text, replacing the previously pasted text.
 
-### Push/Pop Mark
+### Mark Ring
 
 The plugin maintains a mark history (mark ring), if the plugin's *Set/Push Mark for Selection* command is used. This makes it possible to
 pop previous marks and go back to these previous locations. A separate mark history is maintained for each file where it is used. The
