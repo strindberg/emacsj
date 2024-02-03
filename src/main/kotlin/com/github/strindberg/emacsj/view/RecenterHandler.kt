@@ -1,40 +1,41 @@
 package com.github.strindberg.emacsj.view
 
+import com.github.strindberg.emacsj.EmacsJCommandListener
+import com.github.strindberg.emacsj.view.Position.BOTTOM
+import com.github.strindberg.emacsj.view.Position.MIDDLE
+import com.github.strindberg.emacsj.view.Position.TOP
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
+private const val COMMAND_RECENTER = "Recenter Caret"
+
+enum class Position { TOP, MIDDLE, BOTTOM }
+
 class RecenterHandler : EditorActionHandler() {
+
+    private var lastPosition = MIDDLE
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val primary = caret ?: editor.caretModel.primaryCaret
 
-        val viewOffset = editor.scrollingModel.verticalScrollOffset
         val viewHeight = editor.scrollingModel.visibleArea.height
         val caretOffset = editor.visualPositionToXY(primary.visualPosition).y
-        val editorEnd = editor.visualPositionToXY(VisualPosition(editor.document.lineCount, 0)).y
 
         val scrollTop = caretOffset - editor.lineHeight
         val scrollMiddle = caretOffset - viewHeight / 2
         val scrollBottom = caretOffset - viewHeight + 2 * editor.lineHeight
 
-        editor.scrollingModel.scrollVertically(
-            when (viewOffset) {
-                scrollMiddle -> scrollTop
-                scrollTop -> scrollBottom
-                scrollBottom -> scrollMiddle
-                else -> {
-                    if (caretOffset < viewHeight / 2) {
-                        scrollTop
-                    } else if (editorEnd - caretOffset < viewHeight / 2) {
-                        scrollBottom
-                    } else {
-                        scrollMiddle
-                    }
-                }
-            }
-        )
+        if (EmacsJCommandListener.lastCommandName() == COMMAND_RECENTER && lastPosition == MIDDLE) {
+            lastPosition = TOP
+            editor.scrollingModel.scrollVertically(scrollTop)
+        } else if (EmacsJCommandListener.lastCommandName() == COMMAND_RECENTER && lastPosition == TOP) {
+            lastPosition = BOTTOM
+            editor.scrollingModel.scrollVertically(scrollBottom)
+        } else {
+            lastPosition = MIDDLE
+            editor.scrollingModel.scrollVertically(scrollMiddle)
+        }
     }
 }
