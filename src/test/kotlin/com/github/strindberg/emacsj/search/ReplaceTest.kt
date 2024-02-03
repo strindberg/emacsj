@@ -16,6 +16,11 @@ private const val ACTION_REPLACE_PREVIOUS = "com.github.strindberg.emacsj.action
 
 class ReplaceTest : BasePlatformTestCase() {
 
+    override fun setUp() {
+        CommonHighlighter.testing = true
+        super.setUp()
+    }
+
     override fun tearDown() {
         ReplaceHandler.delegate?.hide()
         super.tearDown()

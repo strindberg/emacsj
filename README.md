@@ -106,10 +106,10 @@ lower case string, and not match upper case letters, use regexp search which is 
 
 Isearch works with multiple carets.
 
-### Search/replace
+### Search/replace (query-replace)
 
-Search/replace asks for a text or regexp to search for, and then the replacement to be used. When replacement starts, each match found
-triggers a request for confirmation.
+Search/replace (query-replace) asks for a text or regexp to search for, and then the replacement to be used. When replacement starts, each
+match found triggers a request for confirmation.
 
 There are two variants:
 

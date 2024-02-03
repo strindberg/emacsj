@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import org.jetbrains.annotations.VisibleForTesting
 
 class ISearchHandler(private val direction: Direction, private val type: SearchType) : EditorActionHandler() {
 
@@ -17,7 +18,7 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
                 ISearchState.CHOOSE_PREVIOUS -> current.startPreviousSearch()
                 ISearchState.SEARCH, ISearchState.FAILED ->
                     if (current.text.isEmpty()) {
-                        current.searchAllCarets(direction, getPrevious(current.type))
+                        current.searchAllCarets(direction, getPrevious(current.type), keepStart = true)
                     } else {
                         current.searchAllCarets(direction, keepStart = false)
                     }
@@ -30,7 +31,8 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
 
     companion object {
 
-        private var lastStringSearches = listOf<String>()
+        @VisibleForTesting
+        internal var lastStringSearches = listOf<String>()
 
         private var lastRegexpSearches = listOf<String>()
 
