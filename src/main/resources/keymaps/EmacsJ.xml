@@ -202,5 +202,6 @@
 
     <!--Conflicting shortcuts from $default.xml removed-->
     <action id="ReplaceInPath"/>
+    <action id="GotoSuperMethod"/>
 
 </keymap>
