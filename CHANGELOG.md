@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+## [1.3.1] - 2024-02-05
+
+### Added
+- All paste commands push a mark to the opposite side of the pasted region.
+
+### Fixed
+- Run highlighting of secondary matches for "ISearch" and "Search/Replace" in separate thread.
+- Fix Isearch bug where reverse search started at origin when a letter was added after previous searches.
+- EmacsJ keymap: remove keybindings from keymap "$default" clashing with plugin prefix "Ctrl-U".
+- Better handling of "Recenter Caret" and "Reposition Caret" near start/end of editor.
+- Remove timeout for double-tapping "Set/Push Mark for Selection": tapping twice in same position pushes mark without starting selection.
+
 ## [1.3.0] - 2024-01-16
 
 ### Added
@@ -31,7 +43,6 @@
 ## [1.1.0] - 2023-12-15
  
 ### Added
-
 - New command: comment-dwim (do what I mean).
 - Recenter can be used during Isearch.
 - Replace arguments: '\1' and '\&' can be escaped.
@@ -45,24 +56,20 @@
 ## [1.0.2] - 2023-11-28
 
 ### Added
-
 - Improve plugin description.
 
 ## [1.0.1] - 2023-11-28
 
 ### Added
-
 - First public release.
 
 ## [0.9.3] - 2023-11-25
 
 ### Added
-
 - Re-implement functionality for duplicate region.
 - Update key bindings.
 
 ## [0.9.2] - 2023-11-23
 
 ### Added
-
 - Initial release.

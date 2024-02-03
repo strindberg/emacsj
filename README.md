@@ -302,8 +302,8 @@ Besides maintaining a mark history, another difference between the plugin's comm
 former always starts a new selection, whereas IntelliJ's command toggles selection. In other words, if a selection is already active, using
 the plugin command starts a new selection at the current point, instead of only turning off the selection.
 
-Adding to the mark history without starting a new selection can be achieved by quickly hitting the *Set/Push Mark for Selection* command
-twice.
+Adding to the mark history without starting a new selection can be achieved by hitting the *Set/Push Mark for Selection* command
+twice in the same position.
 
 The commands [Isearch](#isearch) and [Search/replace](#searchreplace) set the mark at the beginning of a search so that one can return to
 the position where the latest search started. The command [Exchange Point and Mark](#exchange-point-and-mark) also uses the mark history, as
@@ -312,7 +312,7 @@ described below.
 The commands are:
 
 - Set/Push Mark for Selection (`ctrl-SPACE`). Set the mark (and activate sticky selection). The mark is saved to the mark history. To only
-  save the mark to history without starting selection, quickly hit the key binding twice (`ctrl-SPACE ctrl-SPACE`).
+  save the mark to history without starting selection, hit the key binding twice (`ctrl-SPACE ctrl-SPACE`).
 - Pop Mark (`ctrl-u ctrl-SPACE`). Pop an item from the mark history and return caret to the saved position. History is maintained per file.
 
 ### Exchange Point and Mark
