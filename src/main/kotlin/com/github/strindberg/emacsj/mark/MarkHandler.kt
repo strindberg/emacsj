@@ -1,7 +1,5 @@
 package com.github.strindberg.emacsj.mark
 
-import java.time.Duration
-import java.time.LocalDateTime
 import com.github.strindberg.emacsj.mark.Type.POP
 import com.github.strindberg.emacsj.mark.Type.PUSH
 import com.github.strindberg.emacsj.search.prependElement
@@ -19,13 +17,10 @@ import com.intellij.openapi.vfs.VirtualFile
 
 enum class Type { PUSH, POP }
 
-const val TIMEOUT = 500L
-
 class MarkHandler(val type: Type) : EditorActionHandler() {
 
     companion object {
         private val places = mutableMapOf<Int, LimitedStack<PlaceInfoWrapper>>()
-        private var lastPush: LocalDateTime = LocalDateTime.now()
 
         // Used for testing
         internal var editorTypeId: String? = null
@@ -68,14 +63,11 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
             ex.virtualFile?.let { virtualFile ->
                 when (type) {
                     PUSH -> {
+                        val previousSticky = ex.isStickySelection
                         ex.isStickySelection = false
                         placeInfo(ex, ex.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
-                            val lastPlaceInfo = peek(ex)
-                            if (lastPlaceInfo == null || lastPlaceInfo != placeInfo) {
+                            if (placeInfo != peek(ex) || !previousSticky) {
                                 places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
-                                lastPush = LocalDateTime.now()
-                                ex.isStickySelection = true
-                            } else if (Duration.between(lastPush, LocalDateTime.now()) > Duration.ofMillis(TIMEOUT)) {
                                 ex.isStickySelection = true
                             }
                         }

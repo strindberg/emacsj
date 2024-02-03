@@ -48,7 +48,7 @@ de-activate the ones you don't want to use.</p>
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.strindberg.emacsj.xref.XRefCommandListener" topic="com.intellij.openapi.command.CommandListener"/>
+        <listener class="com.github.strindberg.emacsj.EmacsJCommandListener" topic="com.intellij.openapi.command.CommandListener"/>
     </applicationListeners>
 
     <actions>

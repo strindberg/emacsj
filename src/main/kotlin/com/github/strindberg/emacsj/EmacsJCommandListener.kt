@@ -1,4 +1,4 @@
-package com.github.strindberg.emacsj.xref
+package com.github.strindberg.emacsj
 
 import com.github.strindberg.emacsj.mark.LimitedStack
 import com.github.strindberg.emacsj.mark.PlaceInfoWrapper
@@ -12,15 +12,23 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.fileEditor.impl.IdeDocumentHistoryImpl.PlaceInfo
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 
-class XRefCommandListener : CommandListener {
+class EmacsJCommandListener : CommandListener {
 
     companion object {
         private val places = LimitedStack<PlaceInfoWrapper>()
 
+        private var lastCommandName: String? = null
+
         // Used for testing
         internal var editorTypeId: String? = null
 
-        fun pop(): PlaceInfoWrapper? = places.pop()
+        fun popPlace(): PlaceInfoWrapper? = places.pop()
+
+        fun lastCommandName() = lastCommandName
+    }
+
+    override fun commandFinished(event: CommandEvent) {
+        lastCommandName = event.commandName
     }
 
     override fun commandStarted(event: CommandEvent) {
@@ -45,8 +53,7 @@ class XRefCommandListener : CommandListener {
                                         ex.document.createRangeMarker(offset, offset)
                                     )
                                 )
-                                val lastPlaceInfo = places.peek()
-                                if (lastPlaceInfo == null || lastPlaceInfo != placeInfo) {
+                                if (placeInfo != places.peek()) {
                                     places.push(placeInfo)
                                 }
                             }
