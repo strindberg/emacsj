@@ -3,7 +3,7 @@ changelog = "2.2.0"
 gradleIntelliJPlugin = "1.17.1"
 kotlin = "1.9.22"
 kotlinter = "4.2.0"
-kover = "0.7.5"
+kover = "0.7.6"
 qodana = "0.1.13"
 
 [plugins]
