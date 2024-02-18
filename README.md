@@ -278,7 +278,7 @@ The paste commands enable the use of a paste history (kill ring) where a pasted 
 repeatedly pressing *Paste: Previous Item in Clipboard History* after use of *Paste: Leave Caret After Pasted Region* or *Paste: Leave Caret
 at Point*, the pasted text is replaced by the next item in the list of previously killed texts.
 
-All paste commands push the opposite end of the pasted region as a mark to the [mark ring](#mark-ring") (without starting a selection). In
+All paste commands push the opposite end of the pasted region as a mark to the [mark ring](#mark-ring) (without starting a selection). In
 other words, when using *Paste: Leave Caret After Pasted Region*, a mark is pushed at the beginning of the pasted region, and vice versa
 for *Paste: Leave Caret at Point*.
 
@@ -296,7 +296,7 @@ The commands are:
 
 The plugin maintains a mark history (mark ring), if the plugin's *Set/Push Mark for Selection* command is used. This makes it possible to
 pop previous marks and go back to these previous locations. A separate mark history is maintained for each file where it is used. The
-history only contains unique positions; a new mark replaces any earlier item at the same position in the file.
+history only contains unique positions: a new mark replaces any earlier item at the same position in the file.
 
 Besides maintaining a mark history, another difference between the plugin's command and the standard IntelliJ set-mark command, is that the
 former always starts a new selection, whereas IntelliJ's command toggles selection. In other words, if a selection is already active, using
