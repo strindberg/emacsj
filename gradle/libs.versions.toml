@@ -1,7 +1,7 @@
 [versions]
 changelog = "2.2.0"
 gradleIntelliJPlugin = "1.17.2"
-kotlin = "1.9.22"
+kotlin = "1.9.23"
 kotlinter = "4.3.0"
 kover = "0.7.6"
 qodana = "0.1.13"
