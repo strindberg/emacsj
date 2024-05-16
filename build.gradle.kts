@@ -1,3 +1,4 @@
+import org.gradle.internal.impldep.org.testng.reporters.XMLUtils.xml
 import org.jetbrains.changelog.Changelog
 
 fun properties(key: String) = providers.gradleProperty(key)
@@ -48,10 +49,17 @@ qodana {
     showReport = environment("QODANA_SHOW_REPORT").map { it.toBoolean() }.getOrElse(false)
 }
 
-koverReport {
-    defaults {
-        xml {
-            onCheck = true
+kover {
+    currentProject {
+        sources {
+            excludeJava = true
+        }
+    }
+    reports {
+        total {
+            xml {
+                onCheck = true
+            }
         }
     }
 }
