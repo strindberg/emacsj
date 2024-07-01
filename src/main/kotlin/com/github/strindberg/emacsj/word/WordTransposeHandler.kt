@@ -67,9 +67,12 @@ class WordTransposeHandler(private val direction: Direction) : EditorWriteAction
     }
 
     private fun lowerCamelCase(caret: Caret, firstEnd: Int, secondStart: Int, firstWord: String, secondWord: String) =
-        if (!caret.hasSelection() && firstEnd == secondStart &&
-            firstWord.isNotEmpty() && firstWord[0].isLowerCase() &&
-            secondWord.isNotEmpty() && secondWord[0].isUpperCase()
+        if (!caret.hasSelection() &&
+            firstEnd == secondStart &&
+            firstWord.isNotEmpty() &&
+            firstWord[0].isLowerCase() &&
+            secondWord.isNotEmpty() &&
+            secondWord[0].isUpperCase()
         ) {
             Pair(firstWord.replaceFirstChar { it.titlecaseChar() }, secondWord.replaceFirstChar { it.lowercase() })
         } else {

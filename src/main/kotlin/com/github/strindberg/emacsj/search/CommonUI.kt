@@ -169,7 +169,5 @@ internal class CommonUI(
 }
 
 private class UIPanel(private val contentComponent: JComponent, val standardFont: Font) : JPanel(GridBagLayout()) {
-    override fun getPreferredSize(): Dimension {
-        return Dimension(contentComponent.width, (standardFont.size * 2.5).toInt())
-    }
+    override fun getPreferredSize(): Dimension = Dimension(contentComponent.width, (standardFont.size * 2.5).toInt())
 }

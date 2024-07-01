@@ -79,18 +79,20 @@ private fun previousBoundary(text: CharSequence, offset: Int, isCamel: Boolean, 
 }
 
 private fun isWordStart(text: CharSequence, offset: Int, isCamel: Boolean): Boolean =
-    (offset > 0 && offset < text.length) && run {
-        val previous = text[offset - 1]
-        val current = text[offset]
-        current.isLetterOrDigit() && (!previous.isLetterOrDigit() || isCamelBoundary(previous, current, isCamel))
-    }
+    (offset > 0 && offset < text.length) &&
+        run {
+            val previous = text[offset - 1]
+            val current = text[offset]
+            current.isLetterOrDigit() && (!previous.isLetterOrDigit() || isCamelBoundary(previous, current, isCamel))
+        }
 
 private fun isWordEnd(text: CharSequence, offset: Int, isCamel: Boolean): Boolean =
-    (offset > 0 && offset < text.length) && run {
-        val previous = text[offset - 1]
-        val current = text[offset]
-        previous.isLetterOrDigit() && (!current.isLetterOrDigit() || isCamelBoundary(previous, current, isCamel))
-    }
+    (offset > 0 && offset < text.length) &&
+        run {
+            val previous = text[offset - 1]
+            val current = text[offset]
+            previous.isLetterOrDigit() && (!current.isLetterOrDigit() || isCamelBoundary(previous, current, isCamel))
+        }
 
 private fun isCamelBoundary(prev: Char, curr: Char, isCamel: Boolean): Boolean =
     isCamel && prev.isLowerCaseOrDigit() && curr.isUpperCase()

@@ -5,4 +5,6 @@ import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.search.SearchType
 import com.intellij.openapi.editor.actionSystem.EditorAction
 
-class ISearchTextForwardAction : ISearchAction, EditorAction(ISearchHandler(direction = Direction.FORWARD, type = SearchType.TEXT))
+class ISearchTextForwardAction :
+    EditorAction(ISearchHandler(direction = Direction.FORWARD, type = SearchType.TEXT)),
+    ISearchAction

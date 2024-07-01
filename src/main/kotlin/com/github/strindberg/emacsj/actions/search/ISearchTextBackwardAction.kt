@@ -5,4 +5,6 @@ import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.search.SearchType
 import com.intellij.openapi.editor.actionSystem.EditorAction
 
-class ISearchTextBackwardAction : ISearchAction, EditorAction(ISearchHandler(direction = Direction.BACKWARD, type = SearchType.TEXT))
+class ISearchTextBackwardAction :
+    EditorAction(ISearchHandler(direction = Direction.BACKWARD, type = SearchType.TEXT)),
+    ISearchAction

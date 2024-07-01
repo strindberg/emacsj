@@ -5,4 +5,6 @@ import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.search.SearchType
 import com.intellij.openapi.editor.actionSystem.EditorAction
 
-class ISearchRegexpForwardAction : ISearchAction, EditorAction(ISearchHandler(direction = Direction.FORWARD, type = SearchType.REGEXP))
+class ISearchRegexpForwardAction :
+    EditorAction(ISearchHandler(direction = Direction.FORWARD, type = SearchType.REGEXP)),
+    ISearchAction

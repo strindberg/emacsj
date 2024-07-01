@@ -200,7 +200,8 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun keyEventHandler(e: KeyEvent): Boolean {
-        if (e.id == KeyEvent.KEY_PRESSED && // ESC or ctrl-g
+        // ESC or ctrl-g pressed
+        if (e.id == KeyEvent.KEY_PRESSED &&
             (e.keyCode == VK_ESCAPE || (e.keyCode == VK_G && (e.modifiersEx and CTRL_DOWN_MASK == CTRL_DOWN_MASK)))
         ) {
             when (state) {

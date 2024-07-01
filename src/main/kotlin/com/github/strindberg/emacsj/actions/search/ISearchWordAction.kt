@@ -4,4 +4,6 @@ import com.github.strindberg.emacsj.search.ISearchExpandHandler
 import com.github.strindberg.emacsj.search.Type
 import com.intellij.openapi.editor.actionSystem.EditorAction
 
-class ISearchWordAction : ISearchAction, EditorAction(ISearchExpandHandler(Type.WORD))
+class ISearchWordAction :
+    EditorAction(ISearchExpandHandler(Type.WORD)),
+    ISearchAction

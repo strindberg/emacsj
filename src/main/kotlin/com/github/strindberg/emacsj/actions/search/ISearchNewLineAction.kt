@@ -4,4 +4,6 @@ import com.github.strindberg.emacsj.search.ISearchExpandHandler
 import com.github.strindberg.emacsj.search.Type
 import com.intellij.openapi.editor.actionSystem.EditorAction
 
-class ISearchNewLineAction : ISearchAction, EditorAction(ISearchExpandHandler(Type.NEW_LINE))
+class ISearchNewLineAction :
+    EditorAction(ISearchExpandHandler(Type.NEW_LINE)),
+    ISearchAction

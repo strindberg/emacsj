@@ -61,11 +61,12 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
         }
     }
 
-    private fun clipboardContents(allContents: List<Transferable>): Transferable? {
-        return allContents.takeUnless { it.isEmpty() }?.let { history ->
+    private fun clipboardContents(allContents: List<Transferable>): Transferable? =
+        allContents.takeUnless {
+            it.isEmpty()
+        }?.let { history ->
             history[clipboaardHistoryPos++ % history.size]
         }
-    }
 
     private fun filteredContents(): List<Transferable> =
         CopyPasteManager.getInstance().allContents
