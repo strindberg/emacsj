@@ -1,6 +1,6 @@
 [versions]
 changelog = "2.2.0"
-gradleIntelliJPlugin = "1.17.3"
+gradleIntelliJPlugin = "1.17.4"
 kotlin = "2.0.0"
 kotlinter = "4.3.0"
 kover = "0.8.1"
