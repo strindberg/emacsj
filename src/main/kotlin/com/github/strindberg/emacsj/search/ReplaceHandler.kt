@@ -49,7 +49,7 @@ class ReplaceHandler(private val type: SearchType) : EditorActionHandler() {
                 REGEXP -> lastRegexpSearches
                 TEXT -> lastStringSearches
             }
-            savedPos = previousPos(savedPos, list)
+            savedPos = list.previousPos(savedPos)
             return if (savedPos > -1) list[savedPos] else Replace.EMPTY
         }
 
@@ -58,7 +58,7 @@ class ReplaceHandler(private val type: SearchType) : EditorActionHandler() {
                 REGEXP -> lastRegexpSearches
                 TEXT -> lastStringSearches
             }
-            savedPos = nextPos(savedPos)
+            savedPos = list.nextPos(savedPos)
             return if (savedPos > -1) list[savedPos] else Replace.EMPTY
         }
 

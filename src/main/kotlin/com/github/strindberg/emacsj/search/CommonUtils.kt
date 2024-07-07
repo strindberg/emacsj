@@ -16,6 +16,6 @@ internal fun caseSensitive(text: String): Boolean = text.any { isUpperCase(it) &
 internal fun <T> prependElement(element: T, list: List<T>) =
     (listOf(element) + list).distinct().take(64) // Remove duplicates, keep most recent
 
-internal fun nextPos(oldPos: Int) = maxOf(oldPos - 1, -1)
+internal fun List<*>.nextPos(oldPos: Int) = maxOf(oldPos - 1, -1)
 
-internal fun previousPos(oldPos: Int, list: List<*>) = minOf(oldPos + 1, list.lastIndex)
+internal fun List<*>.previousPos(oldPos: Int) = minOf(oldPos + 1, lastIndex)
