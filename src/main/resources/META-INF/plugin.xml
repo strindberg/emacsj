@@ -45,6 +45,7 @@ de-activate the ones you don't want to use.</p>
         <additionalTextAttributes scheme="Default" file="colorSchemes/EmacsJDefault.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/EmacsJDarcula.xml"/>
         <bundledKeymap file="EmacsJ.xml"/>
+        <colorSettingsPage implementation="com.github.strindberg.emacsj.preferences.EmacsJColorSettingsPage"/>
     </extensions>
 
     <applicationListeners>
