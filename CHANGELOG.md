@@ -105,7 +105,8 @@
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.3.2...HEAD
+[1.3.2]: https://github.com/strindberg/emacsj/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/strindberg/emacsj/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/strindberg/emacsj/compare/v1.2.2...v1.3.0
 [1.2.2]: https://github.com/strindberg/emacsj/compare/v1.2.1...v1.2.2
