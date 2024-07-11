@@ -106,6 +106,9 @@ lower case string, and not match upper case letters, use regexp search which is 
 
 Isearch works with multiple carets.
 
+To change the colors used by Isearch to mark matches, go to Settings -> Editor -> Color Schemes -> EmacsJ. The colors chosen for primary
+and secondary matches are used by both Isearch and Search/replace (below).  
+
 ### Search/replace (query-replace)
 
 Search/replace (query-replace) asks for a text or regexp to search for, and then the replacement to be used. When replacement starts, each
@@ -150,6 +153,8 @@ Search/replace text uses smart case, such that the search will be performed with
 whole replacement string consist of lower case characters, but switch to case-sensitive search if the search string or replace string
 contains one or more capital letters. If you need to search and replace two lower case strings, and not match upper case letters, use regexp
 Search/replace which is always case-sensitive.
+
+Colors used by Search/replace can be configured as described under ISearch (above).
 
 ### Word Movement
 

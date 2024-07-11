@@ -16,6 +16,12 @@
 
 ### Security
 
+## [1.3.2] - 2024-07-11
+
+### Added
+
+- Colors used by Isearch and Search/replace can be configured.
+
 ## [1.3.1] - 2024-02-05
 
 ### Added
