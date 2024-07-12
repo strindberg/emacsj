@@ -47,8 +47,7 @@ The main features are:
     1. Open Preferences -> Keymap and choose the commands you wish to use under Plugins -> EmacsJ. The plugin suggests key bindings, but
        these can of course be changed.
     2. Alternatively, choose the keymap *EmacsJ* in Preferences -> Keymap. This activates all the plugin commands, and can then be
-       de-activated or
-       changed as needed.
+       de-activated or changed as needed.
 3. If a command doesn't seem to do anything, double check that no other command is using the same key binding.
 
 ## Features

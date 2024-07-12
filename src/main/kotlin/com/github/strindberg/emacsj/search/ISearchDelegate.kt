@@ -113,69 +113,67 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     init {
         EditorActionManager.getInstance().apply {
-            val handlers = mutableListOf<RestorableActionHandler<ISearchDelegate>>()
-
-            setActionHandler(
-                ACTION_EDITOR_BACKSPACE,
-                RestorableActionHandler(
-                    ACTION_EDITOR_BACKSPACE,
-                    getActionHandler(ACTION_EDITOR_BACKSPACE),
-                    { ISearchHandler.delegate }
-                ) { _, _ ->
-                    when (state) {
-                        CHOOSE_PREVIOUS -> text = text.dropLast(1)
-                        SEARCH, FAILED -> popBreadcrumb()
-                    }
-                }.also { handlers.add(it) }
-            )
-
-            setActionHandler(
-                ACTION_EDITOR_ENTER,
-                RestorableActionHandler(
-                    ACTION_EDITOR_ENTER,
-                    getActionHandler(ACTION_EDITOR_ENTER),
-                    { ISearchHandler.delegate }
-                ) { _, _ ->
-                    when (state) {
-                        CHOOSE_PREVIOUS -> startPreviousSearch()
-                        SEARCH, FAILED -> cancel()
-                    }
-                }.also { handlers.add(it) }
-            )
-
-            listOf(ACTION_EDITOR_PASTE, ACTION_PASTE).forEach { actionId ->
+            actionHandlers = buildList {
                 setActionHandler(
-                    actionId,
+                    ACTION_EDITOR_BACKSPACE,
                     RestorableActionHandler(
-                        actionId,
-                        getActionHandler(actionId),
+                        ACTION_EDITOR_BACKSPACE,
+                        getActionHandler(ACTION_EDITOR_BACKSPACE),
                         { ISearchHandler.delegate }
                     ) { _, _ ->
                         when (state) {
-                            CHOOSE_PREVIOUS -> text += ClipboardUtil.getTextInClipboard()
-                            SEARCH, FAILED -> searchAllCarets(direction, ClipboardUtil.getTextInClipboard() ?: "", keepStart = true)
+                            CHOOSE_PREVIOUS -> text = text.dropLast(1)
+                            SEARCH, FAILED -> popBreadcrumb()
                         }
-                    }.also { handlers.add(it) }
+                    }.also { add(it) }
                 )
-            }
 
-            editorActions().forEach { actionId ->
-                getActionHandler(actionId)?.let { originalHandler ->
+                setActionHandler(
+                    ACTION_EDITOR_ENTER,
+                    RestorableActionHandler(
+                        ACTION_EDITOR_ENTER,
+                        getActionHandler(ACTION_EDITOR_ENTER),
+                        { ISearchHandler.delegate }
+                    ) { _, _ ->
+                        when (state) {
+                            CHOOSE_PREVIOUS -> startPreviousSearch()
+                            SEARCH, FAILED -> cancel()
+                        }
+                    }.also { add(it) }
+                )
+
+                listOf(ACTION_EDITOR_PASTE, ACTION_PASTE).forEach { actionId ->
                     setActionHandler(
                         actionId,
                         RestorableActionHandler(
                             actionId,
-                            originalHandler,
+                            getActionHandler(actionId),
                             { ISearchHandler.delegate }
-                        ) { caret, dataContext ->
-                            cancel()
-                            originalHandler.execute(editor, caret, dataContext)
-                        }.also { handlers.add(it) }
+                        ) { _, _ ->
+                            when (state) {
+                                CHOOSE_PREVIOUS -> text += ClipboardUtil.getTextInClipboard()
+                                SEARCH, FAILED -> searchAllCarets(direction, ClipboardUtil.getTextInClipboard() ?: "", keepStart = true)
+                            }
+                        }.also { add(it) }
                     )
                 }
-            }
 
-            actionHandlers = handlers
+                editorActions().forEach { actionId ->
+                    getActionHandler(actionId)?.let { originalHandler ->
+                        setActionHandler(
+                            actionId,
+                            RestorableActionHandler(
+                                actionId,
+                                originalHandler,
+                                { ISearchHandler.delegate }
+                            ) { caret, dataContext ->
+                                cancel()
+                                originalHandler.execute(editor, caret, dataContext)
+                            }.also { add(it) }
+                        )
+                    }
+                }
+            }
         }
     }
 
