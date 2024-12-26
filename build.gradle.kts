@@ -1,4 +1,3 @@
-import org.gradle.internal.impldep.org.testng.reporters.XMLUtils.xml
 import org.jetbrains.changelog.Changelog
 
 fun properties(key: String) = providers.gradleProperty(key)
