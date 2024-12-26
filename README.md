@@ -12,11 +12,11 @@ There are two main ways of using EmacsJ: the plugin installs a number of command
 activate all at once by choosing the *EmacsJ* keymap. If you want the former, study the available commands under Preferences -> Keymap ->
 Plugins -> EmacsJ and activate the ones you find interesting. Alternatively, you can choose the keymap *EmacsJ* under Preferences ->
 Keymap. This keymap is an extension of the standard *Emacs* keymap, and this way all the EmacsJ commands are activated. You can then
-de-activate the ones you don't want to use.
+deactivate the ones you don't want to use.
 
 The main features are:
 
-- Incremental search modelled on Emacs' Isearch, with text and regexp search.
+- Incremental search modeled on Emacs' Isearch, with text and regexp search.
 - Query-replace as in Emacs with text or regexps, with a very light-weight interface.
 - Word commands: transpose, upper-case, lower-case, capitalize, move, delete.
 - Rectangle commands: copy, open, clear, paste.
@@ -47,7 +47,7 @@ The main features are:
     1. Open Preferences -> Keymap and choose the commands you wish to use under Plugins -> EmacsJ. The plugin suggests key bindings, but
        these can of course be changed.
     2. Alternatively, choose the keymap *EmacsJ* in Preferences -> Keymap. This activates all the plugin commands, and can then be
-       de-activated or changed as needed.
+       deactivated or changed as needed.
 3. If a command doesn't seem to do anything, double check that no other command is using the same key binding.
 
 ## Features
@@ -55,7 +55,7 @@ The main features are:
 ### Isearch
 
 Incremental search. Each letter typed is added to the search, and the nearest match is highlighted, as well as all other visible matches.
-The order of the current match amongst all matches is displayed together with the total number of matches. Keep adding letters to narrow
+The order of the current match among all matches is displayed together with the total number of matches. Keep adding letters to narrow
 the search.
 
 While searching, pressing the search keybinding again jumps to the next match, if available. Once the matches are exhausted at the end of
@@ -88,7 +88,7 @@ While searching, the following commands are available:
 - `ctrl-w`: add the word at point in the editor to the search string.
 - `ctrl-alt-e`: add the rest of the current editor line to the search string.
 - `ctrl-alt-y`: add the character at point to the search string.
-- `ctrl-shift-ENTER`: add new line character to the search string.
+- `ctrl-shift-ENTER`: add a new line character to the search string.
 - `alt-p`: browse backward in the list of previous searches (of the current type).
 - `alt-n`: browse forward in the list of previous searches (of the current type).
 - `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search. This works both with the
@@ -106,7 +106,7 @@ lower case string, and not match upper case letters, use regexp search which is 
 Isearch works with multiple carets.
 
 To change the colors used by Isearch to mark matches, go to Settings -> Editor -> Color Schemes -> EmacsJ. The colors chosen for primary
-and secondary matches are used by both Isearch and Search/replace (below).  
+and secondary matches are used by both Isearch and Search/replace (below).
 
 ### Search/replace (query-replace)
 
@@ -153,7 +153,7 @@ whole replacement string consist of lower case characters, but switch to case-se
 contains one or more capital letters. If you need to search and replace two lower case strings, and not match upper case letters, use regexp
 Search/replace which is always case-sensitive.
 
-Colors used by Search/replace can be configured as described under ISearch (above).
+Colors used by Search/replace can be configured as described under Isearch (above).
 
 ### Word Movement
 
