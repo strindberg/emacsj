@@ -1,5 +1,6 @@
 # EmacsJ
 
+<!-- Plugin description -->
 A collection of useful, Emacs-inspired commands for text editing and search.
 
 This plugin is a collection of commands adding Emacs-inspired functionality to IntelliJ-based IDEs. It is mainly intended as an
@@ -27,6 +28,9 @@ The main features are:
 - Recenter and relocate caret.
 - Zap to character.
 - Go back in XRef history.
+
+Documentation: EmacsJ on [GitHub](https://github.com/strindberg/emacsj)
+<!-- Plugin description end -->
 
 ## Installation
 

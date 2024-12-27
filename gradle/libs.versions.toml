@@ -1,14 +1,18 @@
 [versions]
 changelog = "2.2.1"
-gradleIntelliJPlugin = "1.17.4"
+intellij-platform = "2.2.1"
+junit = "4.13.2"
 kotlin = "2.1.0"
 kotlinter = "5.0.1"
 kover = "0.9.0"
-qodana = "0.1.13"
+qodana = "2024.2.3"
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
-gradleIntelliJPlugin = { id = "org.jetbrains.intellij", version.ref = "gradleIntelliJPlugin" }
+intellij-platform = { id = "org.jetbrains.intellij.platform", version.ref = "intellij-platform" }
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ktlint = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
