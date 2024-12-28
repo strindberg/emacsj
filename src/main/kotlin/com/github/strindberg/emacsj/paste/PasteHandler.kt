@@ -25,9 +25,9 @@ private val pasteCommands =
 class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     companion object {
-        var clipboardHistory = listOf<Transferable>()
-        var clipboaardHistoryPos = 0
-        var pasteType = STANDARD
+        private var clipboardHistory = listOf<Transferable>()
+        private var clipboaardHistoryPos = 0
+        private var pasteType = STANDARD
     }
 
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
@@ -36,22 +36,22 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
                 clipboardHistory = filteredContents().take(64)
                 clipboaardHistoryPos = 0
                 pasteType = type
-                editor.pasteAndMove(clipboardHistory)
+                editor.pasteAndMove()
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
             HISTORY -> {
                 editor.getUserData(EditorEx.LAST_PASTED_REGION)?.let { region ->
                     if (EmacsJCommandListener.lastCommandName() in pasteCommands) {
                         editor.document.deleteString(region.startOffset, region.endOffset)
-                        editor.pasteAndMove(clipboardHistory)
+                        editor.pasteAndMove()
                     }
                 }
             }
         }
     }
 
-    private fun Editor.pasteAndMove(allContents: List<Transferable>) {
-        clipboardContents(allContents)?.let { contents ->
+    private fun Editor.pasteAndMove() {
+        clipboardContents(clipboardHistory)?.let { contents ->
             pasteTransferable(contents)?.let { range ->
                 putUserData(EditorEx.LAST_PASTED_REGION, range)
                 caretModel.primaryCaret.moveToOffset(if (pasteType == STANDARD) range.startOffset else range.endOffset)
