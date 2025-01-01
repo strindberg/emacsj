@@ -23,7 +23,7 @@ class ExchangePointAndMarkHandler : EditorActionHandler() {
                 ex.isStickySelection = true // set new start of selection
                 primary.moveToOffset(if (primary.offset == selectionEnd) selectionStart else selectionEnd)
             } else {
-                MarkHandler.peek(editor)?.placeInfo?.caretPosition?.startOffset?.let { oldMark ->
+                MarkHandler.peek(editor)?.caretPosition?.let { oldMark ->
                     ex.isStickySelection = false
                     ex.isStickySelection = true
                     primary.moveToOffset(oldMark)

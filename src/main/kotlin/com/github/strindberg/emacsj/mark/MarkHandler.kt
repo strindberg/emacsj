@@ -8,10 +8,9 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.fileEditor.FileEditorState
 import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
-import com.intellij.openapi.fileEditor.impl.IdeDocumentHistoryImpl.PlaceInfo
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.vfs.VirtualFile
 
@@ -20,7 +19,7 @@ enum class Type { PUSH, POP }
 class MarkHandler(val type: Type) : EditorActionHandler() {
 
     companion object {
-        private val places = mutableMapOf<Int, LimitedStack<PlaceInfoWrapper>>()
+        private val places = mutableMapOf<Int, LimitedStack<PlaceInfo>>()
 
         // Used for testing
         internal var editorTypeId: String? = null
@@ -35,27 +34,36 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
             }
         }
 
-        internal fun peek(editor: Editor): PlaceInfoWrapper? =
+        internal fun peek(editor: Editor): PlaceInfo? =
             (editor as? EditorEx)?.let {
                 editor.virtualFile?.let { virtualFile ->
                     places[virtualFile.hashCode()]?.peek()
                 }
             }
 
-        private fun placeInfo(editor: EditorEx, offset: Int, virtualFile: VirtualFile): PlaceInfoWrapper? =
+        private fun placeInfo(editor: EditorEx, offset: Int, virtualFile: VirtualFile): PlaceInfo? =
             editor.project?.let { project ->
                 FileEditorManagerEx.getInstanceEx(project).getSelectedEditor(virtualFile)?.let { fileEditor ->
-                    PlaceInfoWrapper(
-                        PlaceInfo(
-                            virtualFile,
-                            fileEditor.getState(FileEditorStateLevel.UNDO),
-                            editorTypeId ?: TextEditorProvider.getInstance().editorTypeId,
-                            null,
-                            editor.document.createRangeMarker(offset, offset)
-                        )
+                    PlaceInfo(
+                        virtualFile,
+                        fileEditor.getState(FileEditorStateLevel.UNDO),
+                        editorTypeId ?: TextEditorProvider.getInstance().editorTypeId,
+                        offset,
                     )
                 }
             }
+
+        internal fun gotoPlaceInfo(editor: EditorEx, info: PlaceInfo) {
+            editor.project?.let { project ->
+                FileEditorManagerEx.getInstanceExIfCreated(project)?.let { fileEditorManager ->
+                    fileEditorManager.openFile(info.file, focusEditor = true)
+                    fileEditorManager.setSelectedEditor(info.file, info.editorTypeId)
+                    fileEditorManager.getSelectedEditorWithProvider(info.file)?.takeIf {
+                        it.provider.editorTypeId == info.editorTypeId
+                    }?.fileEditor?.setState(info.state)
+                }
+            }
+        }
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
@@ -74,7 +82,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
                     }
                     POP -> {
                         places[virtualFile.hashCode()]?.pop()?.let { place ->
-                            IdeDocumentHistory.getInstance(ex.project).gotoPlaceInfo(place.placeInfo)
+                            gotoPlaceInfo(editor, place)
                         }
                     }
                 }
@@ -83,14 +91,13 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     }
 }
 
-class PlaceInfoWrapper(val placeInfo: PlaceInfo) {
+class PlaceInfo(val file: VirtualFile, val state: FileEditorState, val editorTypeId: String, val caretPosition: Int) {
     override fun equals(other: Any?): Boolean =
-        (other as? PlaceInfoWrapper)?.let {
-            placeInfo.file == other.placeInfo.file &&
-                placeInfo.caretPosition?.startOffset == other.placeInfo.caretPosition?.startOffset
+        (other as? PlaceInfo)?.let {
+            file == other.file && caretPosition == other.caretPosition
         } ?: false
 
-    override fun hashCode(): Int = 31 * placeInfo.file.hashCode() + placeInfo.caretPosition?.startOffset.hashCode()
+    override fun hashCode(): Int = 31 * file.hashCode() + caretPosition.hashCode()
 }
 
 class LimitedStack<T> {

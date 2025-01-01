@@ -313,7 +313,7 @@ the plugin command starts a new selection at the current point, instead of only 
 Adding to the mark history without starting a new selection can be achieved by hitting the *Set/Push Mark for Selection* command
 twice in the same position.
 
-The commands [Isearch](#isearch) and [Search/replace](#searchreplace) set the mark at the beginning of a search so that one can return to
+The commands [Isearch](#isearch) and [Search/replace](#searchreplace-query-replace) set the mark at the beginning of a search so that one can return to
 the position where the latest search started. The command [Exchange Point and Mark](#exchange-point-and-mark) also uses the mark history, as
 described below.
 
