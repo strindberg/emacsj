@@ -18,6 +18,11 @@ internal var Caret.breadcrumbs: MutableList<CaretBreadcrumb>
         putUserData(CARET_BREADCRUMBS_KEY, breadcrumbs)
     }
 
+internal fun Caret.clearData() {
+    putUserData(CARET_SEARCH_DATA_KEY, null)
+    putUserData(CARET_BREADCRUMBS_KEY, null)
+}
+
 internal data class CaretSearch(val origin: Int, val match: Match = Match(origin, origin))
 
 internal data class Match(val start: Int, val end: Int)

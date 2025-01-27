@@ -89,13 +89,18 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     private fun cancel() {
-        ui.popup.cancel()
+        ui.cancelUI()
     }
 
     internal fun hide(): Boolean {
         unregisterHandlers()
+
         document.setReadOnly(false)
+
+        ui.cancelUI()
+
         ZapHandler.delegate = null
+
         return true
     }
 

@@ -28,7 +28,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
-            ui.popup.cancel()
+            ui.cancelUI()
         }
     }
 
@@ -86,6 +86,8 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         editor.caretModel.removeCaretListener(caretListener)
 
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
+
+        ui.cancelUI()
 
         ReplaceHandler.delegate = null
 
@@ -152,7 +154,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                             } catch (e: FindManager.MalformedReplacementStringException) {
                                 handleReplacementError(e)
                             }
-                            ui.popup.cancel()
+                            ui.cancelUI()
                         }
 
                         '!' -> {
@@ -168,7 +170,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                         }
 
                         else -> {
-                            ui.popup.cancel()
+                            ui.cancelUI()
                         }
                     }
                 }
@@ -176,7 +178,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
 
             ReplaceState.REPLACE_DONE, ReplaceState.REPLACE_FAILED -> {
                 if (e.id == KeyEvent.KEY_PRESSED) {
-                    ui.popup.cancel()
+                    ui.cancelUI()
                 }
             }
         }

@@ -10,7 +10,6 @@ import java.awt.Rectangle
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.KeyEvent
-import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
@@ -38,7 +37,7 @@ internal class CommonUI(
     private val standardFont =
         UIUtil.getLabelFont().deriveFont((editor as? EditorEx)?.colorsScheme?.editorFontSize2D?.times(1.1f) ?: UIUtil.getLabelFont().size2D)
 
-    private val panel: UIPanel = UIPanel(this, editor.component, standardFont)
+    private val panel: UIPanel = UIPanel(this, editor, standardFont)
 
     private val titleLabel = newLabel(false)
 
@@ -145,10 +144,19 @@ internal class CommonUI(
         popup.show(popupPoint())
     }
 
+    internal fun cancelUI() {
+        popup.cancel()
+        panel.cancel()
+    }
+
     internal fun popupPoint(): RelativePoint =
         SwingUtilities.getAncestorOfClass(JScrollPane::class.java, editor.contentComponent).let { scroll ->
             RelativePoint(scroll, Point(0, scroll.y + scroll.height - panel.preferredSize.height))
         }
+
+    internal fun setPopupBounds(rectangle: Rectangle) {
+        popup.setBounds(rectangle)
+    }
 
     internal fun makeReadonly(text: String) {
         panel.remove(textField)
@@ -174,23 +182,31 @@ internal class CommonUI(
     }
 }
 
-private class UIPanel(private val commonUI: CommonUI, private val editorComponent: JComponent, private val standardFont: Font) :
-    JPanel(GridBagLayout()) {
+private class UIPanel(private val commonUI: CommonUI, private val editor: Editor, private val baseFont: Font) : JPanel(GridBagLayout()) {
 
-    init {
-        editorComponent.addComponentListener(object : ComponentAdapter() {
-            override fun componentResized(e: ComponentEvent?) {
-                commonUI.popup.setBounds(getNewBounds())
-            }
-        })
-        editorComponent.topLevelAncestor?.addComponentListener(object : ComponentAdapter() {
-            override fun componentMoved(e: ComponentEvent?) {
-                commonUI.popup.setBounds(getNewBounds())
-            }
-        })
+    private val resizeListener = object : ComponentAdapter() {
+        override fun componentResized(e: ComponentEvent?) {
+            commonUI.setPopupBounds(getNewBounds())
+        }
     }
 
-    override fun getPreferredSize(): Dimension = Dimension(editorComponent.width, (standardFont.size * 2.5).toInt())
+    private val moveListener = object : ComponentAdapter() {
+        override fun componentMoved(e: ComponentEvent?) {
+            commonUI.setPopupBounds(getNewBounds())
+        }
+    }
+
+    init {
+        editor.component.addComponentListener(resizeListener)
+        editor.component.topLevelAncestor?.addComponentListener(moveListener)
+    }
+
+    override fun getPreferredSize(): Dimension = Dimension(editor.component.width, (baseFont.size * 2.5).toInt())
 
     fun getNewBounds(): Rectangle = Rectangle(commonUI.popupPoint().screenPoint, preferredSize)
+
+    fun cancel() {
+        editor.component.removeComponentListener(resizeListener)
+        editor.component.topLevelAncestor?.removeComponentListener(moveListener)
+    }
 }

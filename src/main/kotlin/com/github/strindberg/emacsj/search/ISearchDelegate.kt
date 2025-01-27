@@ -185,7 +185,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         val actionManager = ActionManager.getInstance()
         return actionManager.getActionIdList("").filter { actionId ->
             !actionManager.isGroup(actionId) &&
-                actionManager.getAction(actionId)?.let { it is EditorAction && it !is ISearchAction } ?: false &&
+                actionManager.getAction(actionId)?.let { it is EditorAction && it !is ISearchAction } == true &&
                 actionId !in listOf(
                     ACTION_EDITOR_BACKSPACE,
                     ACTION_EDITOR_ENTER,
@@ -214,7 +214,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun cancel() {
-        ui.popup.cancel()
+        ui.cancelUI()
     }
 
     internal fun hide(): Boolean {
@@ -230,7 +230,13 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
         ISearchHandler.searchConcluded(text, type)
 
+        ui.cancelUI()
+
         ISearchHandler.delegate = null
+
+        editor.caretModel.runForEachCaret {
+            it.clearData()
+        }
 
         return true
     }
