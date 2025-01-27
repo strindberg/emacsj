@@ -3,6 +3,8 @@
 <!-- Plugin description -->
 A collection of useful, Emacs-inspired commands for text editing and search.
 
+Documentation: EmacsJ on [GitHub](https://github.com/strindberg/emacsj)
+
 This plugin is a collection of commands adding Emacs-inspired functionality to IntelliJ-based IDEs. It is mainly intended as an
 extension to IntelliJ's Emacs keymap. While the Emacs keymap in IntelliJ is already quite good, it still lacks some functionality that an
 Emacs user will miss. Moreover, many commands work slightly differently in IntelliJ and Emacs. This plugin's aim is to
