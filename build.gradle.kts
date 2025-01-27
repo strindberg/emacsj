@@ -105,9 +105,6 @@ intellijPlatform {
     pluginVerification {
         ides {
             recommended()
-            select {
-                sinceBuild = "243"
-            }
         }
     }
 }
