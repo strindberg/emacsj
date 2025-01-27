@@ -14,6 +14,12 @@
 
 ### Fixed
 
+- Bump compatibility with future IntelliJ versions.
+- Refactor location history not to use internal IntelliJ classes.
+- Isearch interface now resizes/moves with IntelliJ window.
+- Inactivate two Terminal-plugin key bindings clashing with this plugin.
+- Migrate to new version of Gradle plugin.
+
 ### Security
 
 ## [1.3.2] - 2024-07-11
