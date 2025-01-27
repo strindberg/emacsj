@@ -48,6 +48,7 @@ kotlin {
         languageVersion = JavaLanguageVersion.of(17)
         vendor = JvmVendorSpec.JETBRAINS
     }
+    compilerOptions.freeCompilerArgs.addAll("-Xjsr305=strict")
 }
 
 intellijPlatform {
