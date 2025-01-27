@@ -105,7 +105,7 @@ intellijPlatform {
         ides {
             recommended()
             select {
-                sinceBuild = "241"
+                sinceBuild = "243"
             }
         }
     }
