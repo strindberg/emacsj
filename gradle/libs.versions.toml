@@ -2,7 +2,7 @@
 changelog = "2.2.1"
 intellij-platform = "2.2.1"
 junit = "4.13.2"
-kotlin = "2.1.0"
+kotlin = "2.1.10"
 kotlinter = "5.0.1"
 kover = "0.9.1"
 qodana = "2024.3.4"
