@@ -204,4 +204,8 @@
     <action id="ReplaceInPath"/>
     <action id="GotoSuperMethod"/>
 
+    <!--Conflicting shortcuts from Terminal plugin removed-->
+    <action id="Terminal.DeletePreviousWord"/>
+    <action id="Terminal.SearchInCommandHistory"/>
+
 </keymap>
