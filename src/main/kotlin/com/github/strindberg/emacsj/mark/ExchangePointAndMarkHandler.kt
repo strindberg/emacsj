@@ -19,17 +19,21 @@ class ExchangePointAndMarkHandler : EditorActionHandler() {
 
                 MarkHandler.pushPlaceInfo(editor)
 
-                ex.isStickySelection = false
-                ex.isStickySelection = true // set new start of selection
+                ex.startStickySelection()
                 primary.moveToOffset(if (primary.offset == selectionEnd) selectionStart else selectionEnd)
             } else {
                 MarkHandler.peek(editor)?.caretPosition?.let { oldMark ->
-                    ex.isStickySelection = false
-                    ex.isStickySelection = true
+                    ex.startStickySelection()
                     primary.moveToOffset(oldMark)
                 }
             }
             ex.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
+    }
+
+    // Sticky selection must be toggled off first to allow new start position.
+    private fun EditorEx.startStickySelection() {
+        isStickySelection = false
+        isStickySelection = true
     }
 }

@@ -95,7 +95,7 @@ class PlaceInfo(val file: VirtualFile, val state: FileEditorState, val editorTyp
     override fun equals(other: Any?): Boolean =
         (other as? PlaceInfo)?.let {
             file == other.file && caretPosition == other.caretPosition
-        } ?: false
+        } == true
 
     override fun hashCode(): Int = 31 * file.hashCode() + caretPosition.hashCode()
 }
