@@ -292,6 +292,22 @@ class ISearchTest : BasePlatformTestCase() {
         assertNull(ISearchHandler.delegate?.ui?.count)
     }
 
+    fun `test Previous search is not triggered if changing direction with empty search`() {
+        myFixture.configureByText(FILE, "<caret>foo foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("oo")
+
+        pressEnter()
+
+        myFixture.checkResult("foo<caret> foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.checkResult("foo<caret> foo")
+        assertEquals("", ISearchHandler.delegate?.text)
+    }
+
     fun `test Escape returns to original start`() {
         myFixture.configureByText(FILE, "foo<caret> bar foo")
 

@@ -18,7 +18,12 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
                 ISearchState.CHOOSE_PREVIOUS -> current.startPreviousSearch()
                 ISearchState.SEARCH, ISearchState.FAILED ->
                     if (current.text.isEmpty()) {
-                        current.searchAllCarets(direction, getPrevious(current.type), keepStart = true)
+                        if (current.direction == direction) {
+                            current.searchAllCarets(direction, getPrevious(current.type), keepStart = true)
+                        } else {
+                            current.direction = direction
+                            current.initTitleText()
+                        }
                     } else {
                         current.searchAllCarets(direction, keepStart = false)
                     }

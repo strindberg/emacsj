@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fixed
+- Reversing search direction with empty search string does not trigger retrieval of previous search.
+- Updating plugin will less often require a restart.
+
 ## [1.3.3] - 2025-01-27
 
 ### Fixed

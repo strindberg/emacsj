@@ -90,7 +90,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             it.breadcrumbs = mutableListOf()
         }
 
-        ui.title = titleText()
+        initTitleText()
 
         TypedAction.getInstance().apply {
             setupRawHandler(
@@ -211,6 +211,10 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             }
         }
         return false
+    }
+
+    internal fun initTitleText() {
+        ui.title = titleText()
     }
 
     private fun cancel() {
