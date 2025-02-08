@@ -126,6 +126,21 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
+    fun `test Search can be reversed after failed search`() {
+        myFixture.configureByText(FILE, "fool <caret>foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("fool")
+        myFixture.checkResult("fool foo<caret>")
+        assertEquals("fool", ISearchHandler.delegate?.text)
+        assertEquals(Pair(0, 1), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.checkResult("<caret>fool foo")
+        assertEquals("fool", ISearchHandler.delegate?.text)
+        assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
+    }
+
     fun `test Reverse search - adding letters after finding matches works`() {
         myFixture.configureByText(FILE, "foop bar foop baz foop<caret> foop")
 
@@ -1206,6 +1221,37 @@ class ISearchTest : BasePlatformTestCase() {
         )
         assertEquals(")", ISearchHandler.delegate?.text)
         assertEquals(Pair(0, 2), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Multiple caret search can be reversed after failed search`() {
+        myFixture.configureByText(
+            FILE,
+            """fool (<caret>foo bar) baz
+            |(<caret>foo baz) bar
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("fool")
+
+        myFixture.checkResult(
+            """fool (foo<caret> bar) baz
+            |(foo<caret> baz) bar
+            """.trimMargin()
+        )
+        assertEquals("fool", ISearchHandler.delegate?.text)
+        assertEquals(Pair(0, 1), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+
+        myFixture.checkResult(
+            """<caret>fool (foo bar) baz
+            |(foo baz) bar
+            """.trimMargin()
+        )
+        assertEquals("fool", ISearchHandler.delegate?.text)
+        // Pair(0, 1) b/c multi caret search does not display occurrence number
+        assertEquals(Pair(0, 1), ISearchHandler.delegate?.ui?.count)
     }
 
     fun `test Multiple caret search works over overlapping texts`() {

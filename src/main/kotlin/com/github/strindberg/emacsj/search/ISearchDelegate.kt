@@ -322,7 +322,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         direction = newDirection
         text += newText
 
-        if (single || state == SEARCH) { // Don't wrap around on multi-caret search
+        if (single || !wraparound) {
             removeHighlighters(isNewText)
             val results = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
                 searchAndUpdate(caret, keepStart, firstSearch, wraparound)
