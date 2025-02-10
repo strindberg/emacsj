@@ -29,6 +29,12 @@
     <action id="com.github.strindberg.emacsj.actions.search.isearchnext">
         <keyboard-shortcut first-keystroke="alt N"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchswap">
+        <keyboard-shortcut first-keystroke="control ENTER"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchmark">
+        <keyboard-shortcut first-keystroke="alt ENTER"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.replacetext">
         <keyboard-shortcut first-keystroke="alt S"/>
     </action>

@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.mark
 
+import com.github.strindberg.emacsj.search.startStickySelection
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -29,11 +30,5 @@ class ExchangePointAndMarkHandler : EditorActionHandler() {
             }
             ex.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
-    }
-
-    // Sticky selection must be toggled off first to allow new start position.
-    private fun EditorEx.startStickySelection() {
-        isStickySelection = false
-        isStickySelection = true
     }
 }

@@ -78,6 +78,18 @@
             <keyboard-shortcut first-keystroke="alt N" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt N" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchswap"
+                class="com.github.strindberg.emacsj.actions.search.ISearchSwapAction"
+                text="Isearch: Finish Search and Put Caret at Start of Final Match">
+            <keyboard-shortcut first-keystroke="control ENTER" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control ENTER" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchmark"
+                class="com.github.strindberg.emacsj.actions.search.ISearchMarkAction"
+                text="Isearch: Finish Search and Mark Final Match as Selected">
+            <keyboard-shortcut first-keystroke="alt ENTER" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt ENTER" keymap="Emacs"/>
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.search.replacetext"
                 class="com.github.strindberg.emacsj.actions.search.ReplaceTextAction"

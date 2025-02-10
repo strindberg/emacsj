@@ -24,6 +24,8 @@ private const val ACTION_ISEARCH_WORD = "com.github.strindberg.emacsj.actions.se
 private const val ACTION_ISEARCH_LINE = "com.github.strindberg.emacsj.actions.search.isearchline"
 private const val ACTION_ISEARCH_CHAR = "com.github.strindberg.emacsj.actions.search.isearchchar"
 private const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions.search.isearchnewline"
+private const val ACTION_ISEARCH_SWAP = "com.github.strindberg.emacsj.actions.search.isearchswap"
+private const val ACTION_ISEARCH_MARK = "com.github.strindberg.emacsj.actions.search.isearchmark"
 private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
 
 class ISearchTest : BasePlatformTestCase() {
@@ -1358,6 +1360,66 @@ class ISearchTest : BasePlatformTestCase() {
             |foo bar bay
             """.trimMargin()
         )
+    }
+
+    fun `test Swap at stop works`() {
+        myFixture.configureByText(FILE, "<caret>foo foo bar baz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+        myFixture.checkResult("foo<caret> foo bar baz")
+        myFixture.performEditorAction(ACTION_ISEARCH_SWAP)
+        myFixture.checkResult("<caret>foo foo bar baz")
+    }
+
+    fun `test Swap at stop after failed search works`() {
+        myFixture.configureByText(FILE, "<caret>foo foo bar baz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foobar")
+        myFixture.checkResult("foo<caret> foo bar baz")
+        myFixture.performEditorAction(ACTION_ISEARCH_SWAP)
+        myFixture.checkResult("<caret>foo foo bar baz")
+    }
+
+    fun `test Swap at stop after backward search works`() {
+        myFixture.configureByText(FILE, "foo foo bar <caret>baz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("foo")
+        myFixture.checkResult("foo <caret>foo bar baz")
+        myFixture.performEditorAction(ACTION_ISEARCH_SWAP)
+        myFixture.checkResult("foo foo<caret> bar baz")
+    }
+
+    fun `test Mark at stop works`() {
+        myFixture.configureByText(FILE, "<caret>foo foo bar baz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+        myFixture.checkResult("foo<caret> foo bar baz")
+        myFixture.performEditorAction(ACTION_ISEARCH_MARK)
+        myFixture.checkResult("<selection>foo</selection><caret> foo bar baz")
+    }
+
+    fun `test Mark at stop after failed search works`() {
+        myFixture.configureByText(FILE, "<caret>foo foo bar baz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foobar")
+        myFixture.checkResult("foo<caret> foo bar baz")
+        myFixture.performEditorAction(ACTION_ISEARCH_MARK)
+        myFixture.checkResult("<selection>foo<caret></selection> foo bar baz")
+    }
+
+    fun `test Mark at stop after backward search works`() {
+        myFixture.configureByText(FILE, "foo foo bar <caret>baz")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("foo")
+        myFixture.checkResult("foo <caret>foo bar baz")
+        myFixture.performEditorAction(ACTION_ISEARCH_MARK)
+        myFixture.checkResult("foo <selection><caret>foo</selection> bar baz")
     }
 
     private fun pressEnter() {

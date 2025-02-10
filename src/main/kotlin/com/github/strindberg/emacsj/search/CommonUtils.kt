@@ -4,6 +4,7 @@ import java.lang.Character.isUpperCase
 import java.lang.Character.toLowerCase
 import java.lang.Character.toUpperCase
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.editor.ex.EditorEx
 
 enum class SearchType { TEXT, REGEXP }
 
@@ -19,3 +20,9 @@ internal fun <T> prependElement(element: T, list: List<T>) =
 internal fun List<*>.nextPos(oldPos: Int) = maxOf(oldPos - 1, -1)
 
 internal fun List<*>.previousPos(oldPos: Int) = minOf(oldPos + 1, lastIndex)
+
+// Sticky selection must be toggled off first to allow new start position.
+internal fun EditorEx.startStickySelection() {
+    isStickySelection = false
+    isStickySelection = true
+}

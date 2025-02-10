@@ -32,6 +32,7 @@ import com.intellij.openapi.editor.actionSystem.TypedAction
 import com.intellij.openapi.editor.colors.EditorColors.IDENTIFIER_UNDER_CARET_ATTRIBUTES
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
@@ -332,6 +333,26 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             findAllAndHighlight(result.offset, isNewText)
             updateUI(result)
         }
+    }
+
+    internal fun swapSearchStopAndThenCancel() {
+        editor.caretModel.allCarets.forEach { caret ->
+            if (caret.isValid) {
+                caret.moveToOffset(if (direction == FORWARD) caret.search.match.start else caret.search.match.end)
+            }
+        }
+        cancel()
+    }
+
+    internal fun markSearchStopAndThenCancel() {
+        (editor as? EditorEx)?.let {
+            editor.caretModel.currentCaret.let { caret ->
+                caret.moveToOffset(if (direction == FORWARD) caret.search.match.start else caret.search.match.end)
+                editor.startStickySelection()
+                caret.moveToOffset(if (direction == FORWARD) caret.search.match.end else caret.search.match.start)
+            }
+        }
+        cancel()
     }
 
     private fun removeHighlighters(isNewText: Boolean) {
