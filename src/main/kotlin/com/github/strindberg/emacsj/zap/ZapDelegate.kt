@@ -84,7 +84,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     private fun editorActions(): List<String> {
         val actionManager = ActionManager.getInstance()
         return actionManager.getActionIdList("").filter { actionId ->
-            !actionManager.isGroup(actionId) && actionManager.getAction(actionId)?.let { it is EditorAction } ?: false
+            !actionManager.isGroup(actionId) && actionManager.getAction(actionId)?.let { it is EditorAction } == true
         }
     }
 

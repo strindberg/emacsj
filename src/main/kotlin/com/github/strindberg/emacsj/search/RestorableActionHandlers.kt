@@ -14,10 +14,10 @@ internal class RestorableActionHandler<T>(
     val doExecute: T.(caret: Caret?, dataContext: DataContext) -> Unit,
 ) : EditorActionHandler() {
 
-    public override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean =
+    override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean =
         getDelegate() != null || originalHandler.isEnabled(editor, caret, dataContext)
 
-    public override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
+    override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val delegate = getDelegate()
         if (delegate == null) {
             originalHandler.execute(editor, caret, dataContext)
