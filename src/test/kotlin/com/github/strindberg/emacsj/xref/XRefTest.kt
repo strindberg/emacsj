@@ -10,10 +10,7 @@ private const val ACTION_XREF_BACK = "com.github.strindberg.emacsj.actions.xref.
 
 class XRefTest : BasePlatformTestCase() {
 
-    fun `test One test required by test runner`() {}
-
-    /* Running this test creates an error in the creation of the code coverage report. It is thus disabled for now. */
-    fun `XRef back works`() {
+    fun `test XRef back works`() {
         EmacsJCommandListener.editorTypeId = ""
 
         myFixture.configureByText(
@@ -30,7 +27,6 @@ class XRefTest : BasePlatformTestCase() {
             """.trimIndent()
         )
 
-        // This action creates the code coverage error
         myFixture.performEditorAction(ACTION_GOTO_DECLARATION)
         myFixture.checkResult(
             """
