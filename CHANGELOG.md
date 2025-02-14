@@ -9,7 +9,7 @@
 - Isearch can be finished with the final match selected.
 
 ### Fixed
-- Reversing search direction with empty search string does not trigger retrieval of previous search.
+- Reversing search direction with empty search string no longer trigger retrieval of previous search.
 - Updating plugin will less often require a restart.
 - Multi-caret search can now be reversed after failed match.
 
