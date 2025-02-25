@@ -88,7 +88,9 @@ as well: just search for the word where you want to end up, and keep on navigati
 While searching, the following commands are available:
 
 - `ESCAPE` or `ctrl-g`: abort the search and return the caret to the point where the search started.
-- `ENTER`: abort the search and leave the caret where it currently is.
+- `ENTER`: finish search and leave the caret where it currently is.
+- `ctrl-ENTER`: finish search and leave the caret at the start of the final match.
+- `alt-ENTER`: finish search and mark the final match as selected.
 - `BACKSPACE`: if several matches with the current search string have been visited, go back in the history of matches. If not, remove
   the last character from the search string.
 - `ctrl-w`: add the word at point in the editor to the search string.

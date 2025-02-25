@@ -4,11 +4,15 @@
 
 ## [Unreleased]
 
+## [1.3.4] - 2025-02-28
+
 ### Added
+
 - Isearch can be finished with mark at start of final match.
 - Isearch can be finished with the final match selected.
 
 ### Fixed
+
 - Reversing search direction with empty search string no longer trigger retrieval of previous search.
 - Updating plugin will less often require a restart.
 - Multi-caret search can now be reversed after failed match.
@@ -112,7 +116,8 @@
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.3.3...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.3.4...HEAD
+[1.3.4]: https://github.com/strindberg/emacsj/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/strindberg/emacsj/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/strindberg/emacsj/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/strindberg/emacsj/compare/v1.3.0...v1.3.1
