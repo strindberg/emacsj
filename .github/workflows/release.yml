@@ -18,6 +18,9 @@ jobs:
       pull-requests: write
     steps:
 
+      - name: Release superfluous space
+        run: cd /opt && find . -maxdepth 1 -mindepth 1 '!' -path ./containerd '!' -path ./actionarchivecache '!' -path ./runner '!' -path ./runner-cache -exec rm -rf '{}' ';'
+
       # Check out the current repository
       - name: Fetch Sources
         uses: actions/checkout@v4
