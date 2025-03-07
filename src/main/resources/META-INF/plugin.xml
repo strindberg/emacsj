@@ -11,6 +11,12 @@
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/EmacsJDarcula.xml"/>
         <bundledKeymap file="EmacsJ.xml"/>
         <colorSettingsPage implementation="com.github.strindberg.emacsj.preferences.EmacsJColorSettingsPage"/>
+        <applicationConfigurable
+            parentId="editor"
+            instance="com.github.strindberg.emacsj.preferences.EmacsJSettingsConfigurable"
+            id="com.github.strindberg.emacsj.preferences.EmacsJSettingsConfigurable"
+            displayName="EmacsJ"/>
+        <applicationService serviceImplementation="com.github.strindberg.emacsj.preferences.EmacsJSettings"/>
     </extensions>
 
     <applicationListeners>

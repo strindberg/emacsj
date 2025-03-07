@@ -4,8 +4,10 @@ import java.awt.event.InputEvent.CTRL_DOWN_MASK
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_G
+import java.util.regex.Pattern
 import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.actions.search.ISearchAction
+import com.github.strindberg.emacsj.preferences.EmacsJSettings
 import com.github.strindberg.emacsj.search.Direction.BACKWARD
 import com.github.strindberg.emacsj.search.Direction.FORWARD
 import com.github.strindberg.emacsj.search.ISearchState.CHOOSE_PREVIOUS
@@ -23,6 +25,7 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
 import com.intellij.openapi.application.ex.ClipboardUtil
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
@@ -46,6 +49,8 @@ private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
 private const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.recenter"
 
 internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
+
+    private val logger = Logger.getInstance(ISearchDelegate::class.java)
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -425,16 +430,28 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         start + if (type == TEXT) text.length else Regex(text).matchAt(editor.text, start)?.value?.length ?: 0
 
     private fun findString(offset: Int): FindResult =
-        FindManager.getInstance(editor.project).findString(
-            editor.text,
-            offset,
+        FindManager.getInstance(editor.project).findString(editor.text, offset, applyWhitespaceRegexp())
+
+    private fun applyWhitespaceRegexp(): FindModel {
+        val searchWhitespaceRegex = EmacsJSettings.getInstance().state.searchWhitespaceRegexp
+        logger.info("searchWhitespaceRegex = '$searchWhitespaceRegex'")
+        return if (text.contains("\\s+".toRegex()) && !searchWhitespaceRegex.matches("^\\s*$".toRegex())) {
+            FindModel().apply {
+                stringToFind =
+                    text.split("\\s+".toRegex()).filter { it.isNotEmpty() }.joinToString(searchWhitespaceRegex) { Pattern.quote(it) }
+                isForward = direction == FORWARD
+                isCaseSensitive = caseSensitive()
+                isRegularExpressions = true
+            }
+        } else {
             FindModel().apply {
                 stringToFind = text
                 isForward = direction == FORWARD
                 isCaseSensitive = caseSensitive()
                 isRegularExpressions = type == REGEXP
             }
-        )
+        }
+    }
 
     private fun caseSensitive() = type == REGEXP || caseSensitive(text)
 

@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.mark.MarkHandler
+import com.github.strindberg.emacsj.preferences.EmacsJSettings
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
@@ -1420,6 +1421,33 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo <caret>foo bar baz")
         myFixture.performEditorAction(ACTION_ISEARCH_MARK)
         myFixture.checkResult("foo <selection><caret>foo</selection> bar baz")
+    }
+
+    fun `test Simple search with whitespace regexp works 1`() {
+        myFixture.configureByText(FILE, "<caret>foo bar yes sir")
+        EmacsJSettings.getInstance().state.searchWhitespaceRegexp = ".*?"
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("o")
+        myFixture.checkResult("fo<caret>o bar yes sir")
+    }
+
+    fun `test Simple search with whitespace regexp works 2`() {
+        myFixture.configureByText(FILE, "<caret>foo bar yes sir")
+        EmacsJSettings.getInstance().state.searchWhitespaceRegexp = ".*?"
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("o e")
+        myFixture.checkResult("foo bar ye<caret>s sir")
+    }
+
+    fun `test Simple search with whitespace regexp works 3`() {
+        myFixture.configureByText(FILE, "<caret>foo bar yes sir")
+        EmacsJSettings.getInstance().state.searchWhitespaceRegexp = ".*?"
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("o e i")
+        myFixture.checkResult("foo bar yes si<caret>r")
     }
 
     private fun pressEnter() {
