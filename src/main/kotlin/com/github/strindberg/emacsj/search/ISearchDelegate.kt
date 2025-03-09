@@ -79,6 +79,14 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             ui.text = newText
         }
 
+    private var lastLax = true
+
+    private var lax: Boolean = true
+
+    internal fun swapLax() {
+        lax = !lax
+    }
+
     init {
         editor.document.setReadOnly(true) // Prevent dead keys such as '^' and '~' from showing up in editor while searching.
 
@@ -291,7 +299,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             editor.caretModel.runForEachCaret {
                 it.breadcrumbs.add(CaretBreadcrumb(it.search.match, direction))
             }
-            breadcrumbs.add(EditorBreadcrumb(ui.title, ui.text, state, ui.count))
+            breadcrumbs.add(EditorBreadcrumb(ui.title, ui.text, state, ui.count, lax))
         }
     }
 
@@ -300,6 +308,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             removeHighlighters(breadcrumb.text != ui.text)
 
             state = breadcrumb.state
+            lax = breadcrumb.lax
             updateUI(breadcrumb.title, breadcrumb.text, breadcrumb.state == SEARCH)
             updateCount(breadcrumb.count)
 
@@ -308,7 +317,8 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                     moveAndUpdate(caret, latest.match, latest.direction, breadcrumb.state == SEARCH)
                 }
             }
-            CommonHighlighter.findAllAndHighlight(editor, text, type, caseSensitive())
+            val (isRegexp, searchString) = applyWhitespaceRegexp()
+            CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
         }
     }
 
@@ -338,6 +348,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             findAllAndHighlight(result.offset, isNewText)
             updateUI(result)
         }
+        lastLax = lax
     }
 
     internal fun swapSearchStopAndThenCancel() {
@@ -361,26 +372,13 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun removeHighlighters(isNewText: Boolean) {
-        if (isNewText) {
+        if (isNewText || lastLax != lax) {
             CommonHighlighter.cancel(editor)
         } else {
             rangeHighlighters.forEach {
                 editor.markupModel.removeHighlighter(it)
             }
         }
-    }
-
-    private fun findAllAndHighlight(offset: Int?, highlight: Boolean) {
-        CommonHighlighter.findAllAndHighlight(
-            editor,
-            text,
-            type,
-            caseSensitive(),
-            callback = { matches ->
-                updateCount(Pair(matches.withIndex().find { it.value.startOffset == offset }?.let { it.index + 1 }, matches.size))
-            },
-            highlight = highlight
-        )
     }
 
     private fun searchAndUpdate(caret: Caret, keepStart: Boolean, firstSearch: Boolean, wraparound: Boolean): SearchResult {
@@ -429,27 +427,41 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     private fun matchEnd(start: Int): Int =
         start + if (type == TEXT) text.length else Regex(text).matchAt(editor.text, start)?.value?.length ?: 0
 
-    private fun findString(offset: Int): FindResult =
-        FindManager.getInstance(editor.project).findString(editor.text, offset, applyWhitespaceRegexp())
+    private fun findAllAndHighlight(offset: Int?, highlight: Boolean) {
+        val (isRegexp, searchString) = applyWhitespaceRegexp()
+        CommonHighlighter.findAllAndHighlight(
+            editor,
+            searchString,
+            isRegexp,
+            caseSensitive(),
+            callback = { matches ->
+                updateCount(Pair(matches.withIndex().find { it.value.startOffset == offset }?.let { it.index + 1 }, matches.size))
+            },
+            highlight = highlight
+        )
+    }
 
-    private fun applyWhitespaceRegexp(): FindModel {
+    private fun findString(offset: Int): FindResult {
+        val (isRegexp, searchString) = applyWhitespaceRegexp()
+        return FindManager.getInstance(editor.project).findString(
+            editor.text,
+            offset,
+            FindModel().apply {
+                stringToFind = searchString
+                isForward = direction == FORWARD
+                isCaseSensitive = caseSensitive()
+                isRegularExpressions = isRegexp
+            }
+        )
+    }
+
+    private fun applyWhitespaceRegexp(): Pair<Boolean, String> {
         val searchWhitespaceRegex = EmacsJSettings.getInstance().state.searchWhitespaceRegexp
         logger.info("searchWhitespaceRegex = '$searchWhitespaceRegex'")
-        return if (text.contains("\\s+".toRegex()) && !searchWhitespaceRegex.matches("^\\s*$".toRegex())) {
-            FindModel().apply {
-                stringToFind =
-                    text.split("\\s+".toRegex()).filter { it.isNotEmpty() }.joinToString(searchWhitespaceRegex) { Pattern.quote(it) }
-                isForward = direction == FORWARD
-                isCaseSensitive = caseSensitive()
-                isRegularExpressions = true
-            }
+        return if (type == TEXT && lax && searchWhitespaceRegex.isNotEmpty()) {
+            Pair(true, text.split(" +".toRegex()).filter { it.isNotBlank() }.joinToString(searchWhitespaceRegex) { Pattern.quote(it) })
         } else {
-            FindModel().apply {
-                stringToFind = text
-                isForward = direction == FORWARD
-                isCaseSensitive = caseSensitive()
-                isRegularExpressions = type == REGEXP
-            }
+            Pair(type == REGEXP, text)
         }
     }
 

@@ -96,6 +96,12 @@
             <keyboard-shortcut first-keystroke="alt ENTER" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt ENTER" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch"
+                class="com.github.strindberg.emacsj.actions.search.ISearchToggleLaxWhitespaceAction"
+                text="Isearch: Toggle Lax Handling of Whitespace">
+            <keyboard-shortcut first-keystroke="alt s" second-keystroke="SPACE" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt s" second-keystroke="SPACE" keymap="Emacs"/>
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.search.replacetext"
                 class="com.github.strindberg.emacsj.actions.search.ReplaceTextAction"
