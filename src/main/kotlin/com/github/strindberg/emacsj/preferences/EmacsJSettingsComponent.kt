@@ -1,5 +1,7 @@
 package com.github.strindberg.emacsj.preferences
 
+import java.awt.Font
+import javax.swing.JCheckBox
 import javax.swing.JComponent
 import javax.swing.JPanel
 import com.intellij.ui.components.JBLabel
@@ -10,11 +12,24 @@ class EmacsJSettingsComponent {
 
     private val mainPanel: JPanel
 
+    private val iSearchLabel = JBLabel("Isearch")
+
     private val searchWhitespaceRegexp: JBTextField = JBTextField()
 
+    private val useLaxISearch: JCheckBox = JCheckBox()
+
+    private val description =
+        JBLabel("If enabled, space is replaced with given regexp in Isearch. Default is '.*?'. Emacs default is '[ 	]+'.")
+
     init {
+        description.font = description.font.deriveFont(Font.ITALIC)
+        iSearchLabel.font = iSearchLabel.font.deriveFont(Font.BOLD)
         mainPanel = FormBuilder.createFormBuilder()
-            .addLabeledComponent(JBLabel("Whitespace regexp:"), searchWhitespaceRegexp, 1, false)
+            .addComponent(iSearchLabel)
+            .addLabeledComponent(JBLabel("Isearch whitespace regexp:"), searchWhitespaceRegexp, 1, false)
+            .addLabeledComponent(JBLabel("Use lax Isearch:"), useLaxISearch, 1, false)
+            .addComponent(description)
+            .addSeparator()
             .addComponentFillVertically(JPanel(), 0)
             .panel
     }
@@ -27,5 +42,11 @@ class EmacsJSettingsComponent {
 
     fun setSearchWhitespaceRegexp(newText: String) {
         searchWhitespaceRegexp.setText(newText)
+    }
+
+    fun getUseLaxISearch() = useLaxISearch.isSelected
+
+    fun setUseLaxISearch(newValue: Boolean) {
+        useLaxISearch.isSelected = newValue
     }
 }

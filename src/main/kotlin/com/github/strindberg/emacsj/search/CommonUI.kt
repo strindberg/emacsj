@@ -14,6 +14,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.SwingUtilities
+import kotlin.concurrent.thread
 import com.intellij.codeInsight.hint.HintUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.SpellCheckingEditorCustomizationProvider
@@ -80,6 +81,18 @@ internal class CommonUI(
     private fun displayText(text: String): String = text.replace("\n", "\\n")
 
     private fun scrubText(text: String): String = text.replace("\\n", "\n")
+
+    internal fun flashLax(lax: Boolean) {
+        if (lax) {
+            countLabel.text = "[match spaces loosely]"
+        } else {
+            countLabel.text = "[match spaces literally]"
+        }
+        thread(start = true) {
+            Thread.sleep(1500)
+            countLabel.text = ""
+        }
+    }
 
     internal var count: Pair<Int, Int>? = null
         set(newCount) {

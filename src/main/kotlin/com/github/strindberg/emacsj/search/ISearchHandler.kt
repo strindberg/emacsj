@@ -1,6 +1,7 @@
 package com.github.strindberg.emacsj.search
 
 import com.github.strindberg.emacsj.mark.MarkHandler
+import com.github.strindberg.emacsj.preferences.EmacsJSettings
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.search.SearchType.TEXT
 import com.intellij.openapi.actionSystem.DataContext
@@ -36,6 +37,8 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
 
     companion object {
 
+        internal var delegate: ISearchDelegate? = null
+
         @VisibleForTesting
         internal var lastStringSearches = listOf<String>()
 
@@ -43,7 +46,11 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
 
         private var savedPos = -1
 
-        internal var delegate: ISearchDelegate? = null
+        internal var lax: Boolean = EmacsJSettings.getInstance().state.useLaxISearch
+
+        internal fun swapLax() {
+            lax = !lax
+        }
 
         internal fun searchConcluded(text: String, type: SearchType) {
             savedPos = -1

@@ -11,7 +11,7 @@ import com.intellij.openapi.components.Storage
 )
 class EmacsJSettings : PersistentStateComponent<EmacsJState> {
 
-    private var state = EmacsJState("")
+    private var state = EmacsJState()
 
     override fun getState(): EmacsJState = state
 
@@ -24,4 +24,4 @@ class EmacsJSettings : PersistentStateComponent<EmacsJState> {
     }
 }
 
-class EmacsJState(var searchWhitespaceRegexp: String = "")
+class EmacsJState(var searchWhitespaceRegexp: String = ".*?", var useLaxISearch: Boolean = true)
