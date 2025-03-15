@@ -25,7 +25,6 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
 import com.intellij.openapi.application.ex.ClipboardUtil
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
@@ -49,8 +48,6 @@ private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
 private const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.recenter"
 
 internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
-
-    private val logger = Logger.getInstance(ISearchDelegate::class.java)
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -310,7 +307,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                     moveAndUpdate(caret, latest.match, latest.direction, breadcrumb.state == SEARCH)
                 }
             }
-            val (isRegexp, searchString) = applyWhitespaceRegexp()
+            val (isRegexp, searchString) = getSearchModelArguments()
             CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
         }
     }
@@ -326,7 +323,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         ui.flashLax(ISearchHandler.lax)
 
         removeHighlighters(false)
-        val (isRegexp, searchString) = applyWhitespaceRegexp()
+        val (isRegexp, searchString) = getSearchModelArguments()
         CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
     }
 
@@ -431,7 +428,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         start + if (type == TEXT) text.length else Regex(text).matchAt(editor.text, start)?.value?.length ?: 0
 
     private fun findAllAndHighlight(offset: Int?, highlight: Boolean) {
-        val (isRegexp, searchString) = applyWhitespaceRegexp()
+        val (isRegexp, searchString) = getSearchModelArguments()
         CommonHighlighter.findAllAndHighlight(
             editor,
             searchString,
@@ -445,7 +442,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun findString(offset: Int): FindResult {
-        val (isRegexp, searchString) = applyWhitespaceRegexp()
+        val (isRegexp, searchString) = getSearchModelArguments()
         return FindManager.getInstance(editor.project).findString(
             editor.text,
             offset,
@@ -458,7 +455,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         )
     }
 
-    private fun applyWhitespaceRegexp(): Pair<Boolean, String> =
+    private fun getSearchModelArguments(): Pair<Boolean, String> =
         if (type == TEXT && ISearchHandler.lax) {
             Pair(
                 true,

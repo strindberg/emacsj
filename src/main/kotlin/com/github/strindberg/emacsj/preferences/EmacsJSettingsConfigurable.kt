@@ -6,7 +6,7 @@ import com.intellij.openapi.options.Configurable
 
 class EmacsJSettingsConfigurable : Configurable {
 
-    var component: EmacsJSettingsComponent = EmacsJSettingsComponent()
+    private var component = EmacsJSettingsComponent()
 
     override fun getDisplayName(): String = "EmacsJ"
 
