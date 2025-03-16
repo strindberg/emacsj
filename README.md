@@ -89,7 +89,7 @@ While searching, the following commands are available:
 
 - `ESCAPE` or `ctrl-g`: abort the search and return the caret to the point where the search started.
 - `ENTER`: finish search and leave the caret where it currently is.
-- `ctrl-ENTER`: finish search and leave the caret at the start of the final match.
+- `ctrl-ENTER`: finish search and leave the caret at the start of the final match (or end of match if reverse search).
 - `alt-ENTER`: finish search and mark the final match as selected.
 - `BACKSPACE`: if several matches with the current search string have been visited, go back in the history of matches. If not, remove
   the last character from the search string.
