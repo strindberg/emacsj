@@ -13,11 +13,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorCopyPasteHelper
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
-import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 
 enum class Type { STANDARD, PREFIX, HISTORY }
+
+private val LAST_PASTED_REGIONS = Key.create<List<TextRange>>("PasteHandler.LAST_PASTED_REGIONS")
 
 private val pasteCommands =
     listOf("Paste: Leave Caret at Point", "Paste: Leave Caret After Pasted Region", "Paste: Previous Item in Clipboard History")
@@ -26,7 +28,9 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     companion object {
         private var clipboardHistory = listOf<Transferable>()
+
         private var clipboaardHistoryPos = 0
+
         private var pasteType = STANDARD
     }
 
@@ -40,9 +44,11 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
             HISTORY -> {
-                editor.getUserData(EditorEx.LAST_PASTED_REGION)?.let { region ->
+                editor.getUserData(LAST_PASTED_REGIONS)?.let { regions ->
                     if (EmacsJCommandListener.lastCommandName() in pasteCommands) {
-                        editor.document.deleteString(region.startOffset, region.endOffset)
+                        regions.sortedByDescending { it.startOffset }.forEach { region ->
+                            editor.document.deleteString(region.startOffset, region.endOffset)
+                        }
                         editor.pasteAndMove()
                     }
                 }
@@ -52,11 +58,16 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     private fun Editor.pasteAndMove() {
         clipboardContents(clipboardHistory)?.let { contents ->
-            pasteTransferable(contents)?.let { range ->
-                putUserData(EditorEx.LAST_PASTED_REGION, range)
-                caretModel.primaryCaret.moveToOffset(if (pasteType == STANDARD) range.startOffset else range.endOffset)
-                MarkHandler.pushPlaceInfo(this)
-                caretModel.primaryCaret.moveToOffset(if (pasteType == STANDARD) range.endOffset else range.startOffset)
+            val ranges = pasteTransferable(contents)
+            putUserData(LAST_PASTED_REGIONS, ranges)
+            ranges.forEach { range ->
+                caretModel.allCarets.firstOrNull { it.offset == range.endOffset }?.let { caret ->
+                    if (caretModel.allCarets.size == 1) {
+                        caret.moveToOffset(if (pasteType == STANDARD) range.startOffset else range.endOffset)
+                        MarkHandler.pushPlaceInfo(this)
+                    }
+                    caret.moveToOffset(if (pasteType == STANDARD) range.endOffset else range.startOffset)
+                }
             }
         }
     }
@@ -76,6 +87,6 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             }
             .distinctBy { it.getTransferData(DataFlavor.stringFlavor) as String }
 
-    private fun Editor.pasteTransferable(contents: Transferable): TextRange? =
-        EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.takeUnless { it.isEmpty() }?.get(0)
+    private fun Editor.pasteTransferable(contents: Transferable): List<TextRange> =
+        EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.toList() ?: emptyList()
 }
