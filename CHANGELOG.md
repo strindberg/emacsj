@@ -8,7 +8,7 @@
 
 ### Added
 
-- Isearch can be finished with mark at start of final match.
+- Isearch can be finished with caret at start of final match.
 - Isearch can be finished with the final match selected.
 
 ### Fixed
