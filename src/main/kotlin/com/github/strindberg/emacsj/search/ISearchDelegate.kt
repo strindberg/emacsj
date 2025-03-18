@@ -186,6 +186,93 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         ui.show()
     }
 
+    internal fun initTitleText() {
+        ui.title = titleText()
+    }
+
+    internal fun hide(): Boolean {
+        unregisterHandlers()
+
+        editor.markupModel.removeAllHighlighters()
+
+        editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
+
+        editor.caretModel.removeCaretListener(caretListener)
+
+        editor.document.setReadOnly(false)
+
+        ISearchHandler.searchConcluded(text, type)
+
+        ui.cancelUI()
+
+        ISearchHandler.delegate = null
+
+        editor.caretModel.runForEachCaret {
+            it.clearData()
+        }
+
+        return true
+    }
+
+    internal fun startPreviousSearch() {
+        state = SEARCH
+        searchAllCarets(direction, text.also { text = "" }, keepStart = true)
+    }
+
+    internal fun renewState() {
+        state = SEARCH
+        updateUI(title = titleText(found = true, wrapped = false), text = text, found = true)
+        ui.flashLax(ISearchHandler.lax)
+
+        removeHighlighters(false)
+        val (isRegexp, searchString) = getSearchModelArguments()
+        CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
+    }
+
+    internal fun searchAllCarets(newDirection: Direction, newText: String = "", keepStart: Boolean) {
+        pushBreadcrumb()
+
+        val isNewText = newText.isNotEmpty()
+        val firstSearch = isNewText || newDirection != direction
+        val wraparound = state == FAILED && !firstSearch
+        val single = editor.caretModel.caretCount == 1
+
+        direction = newDirection
+        text += newText
+
+        if (single || !wraparound) {
+            removeHighlighters(isNewText)
+            val results = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
+                searchAndUpdate(caret, keepStart, firstSearch, wraparound)
+            }
+            val result = if (single) results[0] else SearchResult(results.any { it.found }, null, false)
+            state = if (result.found) SEARCH else FAILED
+            findAllAndHighlight(result.offset, isNewText)
+            updateUI(result)
+        }
+        lastLax = ISearchHandler.lax
+    }
+
+    internal fun swapSearchStopAndThenCancel() {
+        editor.caretModel.allCarets.forEach { caret ->
+            if (caret.isValid) {
+                caret.moveToOffset(if (direction == FORWARD) caret.search.match.start else caret.search.match.end)
+            }
+        }
+        cancel()
+    }
+
+    internal fun markSearchStopAndThenCancel() {
+        (editor as? EditorEx)?.let {
+            editor.caretModel.currentCaret.let { caret ->
+                caret.moveToOffset(if (direction == FORWARD) caret.search.match.start else caret.search.match.end)
+                editor.startStickySelection()
+                caret.moveToOffset(if (direction == FORWARD) caret.search.match.end else caret.search.match.start)
+            }
+        }
+        cancel()
+    }
+
     private fun editorActions(): List<String> {
         val actionManager = ActionManager.getInstance()
         return actionManager.getActionIdList("").filter { actionId ->
@@ -218,36 +305,8 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         return false
     }
 
-    internal fun initTitleText() {
-        ui.title = titleText()
-    }
-
     private fun cancel() {
         ui.cancelUI()
-    }
-
-    internal fun hide(): Boolean {
-        unregisterHandlers()
-
-        editor.markupModel.removeAllHighlighters()
-
-        editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
-
-        editor.caretModel.removeCaretListener(caretListener)
-
-        editor.document.setReadOnly(false)
-
-        ISearchHandler.searchConcluded(text, type)
-
-        ui.cancelUI()
-
-        ISearchHandler.delegate = null
-
-        editor.caretModel.runForEachCaret {
-            it.clearData()
-        }
-
-        return true
     }
 
     private fun unregisterHandlers() {
@@ -310,65 +369,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             val (isRegexp, searchString) = getSearchModelArguments()
             CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
         }
-    }
-
-    internal fun startPreviousSearch() {
-        state = SEARCH
-        searchAllCarets(direction, text.also { text = "" }, keepStart = true)
-    }
-
-    internal fun renewState() {
-        state = SEARCH
-        updateUI(title = titleText(found = true, wrapped = false), text = text, found = true)
-        ui.flashLax(ISearchHandler.lax)
-
-        removeHighlighters(false)
-        val (isRegexp, searchString) = getSearchModelArguments()
-        CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
-    }
-
-    internal fun searchAllCarets(newDirection: Direction, newText: String = "", keepStart: Boolean) {
-        pushBreadcrumb()
-
-        val isNewText = newText.isNotEmpty()
-        val firstSearch = isNewText || newDirection != direction
-        val wraparound = state == FAILED && !firstSearch
-        val single = editor.caretModel.caretCount == 1
-
-        direction = newDirection
-        text += newText
-
-        if (single || !wraparound) {
-            removeHighlighters(isNewText)
-            val results = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
-                searchAndUpdate(caret, keepStart, firstSearch, wraparound)
-            }
-            val result = if (single) results[0] else SearchResult(results.any { it.found }, null, false)
-            state = if (result.found) SEARCH else FAILED
-            findAllAndHighlight(result.offset, isNewText)
-            updateUI(result)
-        }
-        lastLax = ISearchHandler.lax
-    }
-
-    internal fun swapSearchStopAndThenCancel() {
-        editor.caretModel.allCarets.forEach { caret ->
-            if (caret.isValid) {
-                caret.moveToOffset(if (direction == FORWARD) caret.search.match.start else caret.search.match.end)
-            }
-        }
-        cancel()
-    }
-
-    internal fun markSearchStopAndThenCancel() {
-        (editor as? EditorEx)?.let {
-            editor.caretModel.currentCaret.let { caret ->
-                caret.moveToOffset(if (direction == FORWARD) caret.search.match.start else caret.search.match.end)
-                editor.startStickySelection()
-                caret.moveToOffset(if (direction == FORWARD) caret.search.match.end else caret.search.match.start)
-            }
-        }
-        cancel()
     }
 
     private fun removeHighlighters(isNewText: Boolean) {

@@ -78,22 +78,6 @@ internal class CommonUI(
             }
         }
 
-    private fun displayText(text: String): String = text.replace("\n", "\\n")
-
-    private fun scrubText(text: String): String = text.replace("\\n", "\n")
-
-    internal fun flashLax(lax: Boolean) {
-        if (lax) {
-            countLabel.text = "[match spaces loosely]"
-        } else {
-            countLabel.text = "[match spaces literally]"
-        }
-        thread(start = true) {
-            Thread.sleep(1500)
-            countLabel.text = ""
-        }
-    }
-
     internal var count: Pair<Int, Int>? = null
         set(newCount) {
             field = newCount
@@ -141,13 +125,17 @@ internal class CommonUI(
             .createPopup()
     }
 
-    private fun newLabel(bold: Boolean): JLabel =
-        JLabel("").apply {
-            font = if (bold) standardFont.deriveFont(Font.BOLD) else standardFont
-            background = HintUtil.getInformationColor()
-            foreground = JBColor.foreground()
-            isOpaque = true
+    internal fun flashLax(lax: Boolean) {
+        if (lax) {
+            countLabel.text = "[match spaces loosely]"
+        } else {
+            countLabel.text = "[match spaces literally]"
         }
+        thread(start = true) {
+            Thread.sleep(1500)
+            countLabel.text = ""
+        }
+    }
 
     internal fun selectText() {
         textField.selectAll()
@@ -180,6 +168,18 @@ internal class CommonUI(
 
         titleLabel.requestFocus()
     }
+
+    private fun displayText(text: String): String = text.replace("\n", "\\n")
+
+    private fun scrubText(text: String): String = text.replace("\\n", "\n")
+
+    private fun newLabel(bold: Boolean): JLabel =
+        JLabel("").apply {
+            font = if (bold) standardFont.deriveFont(Font.BOLD) else standardFont
+            background = HintUtil.getInformationColor()
+            foreground = JBColor.foreground()
+            isOpaque = true
+        }
 
     private fun setReadonlyComponents() {
         panel.add(textLabel, GridBagConstraints().apply { gridx = 2 })
