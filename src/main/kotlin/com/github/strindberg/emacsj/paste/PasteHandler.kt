@@ -57,7 +57,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
     }
 
     private fun Editor.pasteAndMove() {
-        clipboardContents(clipboardHistory)?.let { contents ->
+        nextHistoryClipboard()?.let { contents ->
             val ranges = pasteTransferable(contents)
             putUserData(LAST_PASTED_REGIONS, ranges)
             ranges.forEach { range ->
@@ -72,13 +72,6 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
         }
     }
 
-    private fun clipboardContents(allContents: List<Transferable>): Transferable? =
-        allContents.takeUnless {
-            it.isEmpty()
-        }?.let { history ->
-            history[clipboaardHistoryPos++ % history.size]
-        }
-
     private fun filteredContents(): List<Transferable> =
         CopyPasteManager.getInstance().allContents
             .filter {
@@ -86,6 +79,9 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
                     (it.getTransferData(DataFlavor.stringFlavor) as String).isNotBlank()
             }
             .distinctBy { it.getTransferData(DataFlavor.stringFlavor) as String }
+
+    private fun nextHistoryClipboard(): Transferable? =
+        clipboardHistory.takeUnless { it.isEmpty() }?.let { history -> history[clipboaardHistoryPos++ % history.size] }
 
     private fun Editor.pasteTransferable(contents: Transferable): List<TextRange> =
         EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.toList() ?: emptyList()

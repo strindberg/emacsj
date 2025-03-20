@@ -12,6 +12,7 @@ const val FILE = "file.txt"
 private const val ACTION_PREFIX_PASTE = "com.github.strindberg.emacsj.actions.paste.pasteprefix"
 private const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.paste.pastehistory"
 private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
+private const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
 
 class PasteTest : BasePlatformTestCase() {
 
@@ -138,5 +139,109 @@ class PasteTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
         myFixture.checkResult("foobazB<caret>AZ")
+    }
+
+    fun `test Paste with multiple carets works as expected`() {
+        myFixture.configureByText(
+            FILE,
+            """foo<caret>BAR
+            |foo<caret>BAZ
+            """.trimMargin()
+        )
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        CopyPasteManager.getInstance().setContents(StringSelection("xxx"))
+
+        myFixture.performEditorAction(ACTION_PASTE)
+        myFixture.checkResult(
+            """fooxxx<caret>BAR
+            |fooxxx<caret>BAZ
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+        myFixture.checkResult(
+            """foo<caret>xxxBAR
+            |foo<caret>xxxBAZ
+            """.trimMargin()
+        )
+    }
+
+    fun `test Prefix paste with multiple carets works as expected`() {
+        myFixture.configureByText(
+            FILE,
+            """foo<caret>BAR
+            |foo<caret>BAZ
+            """.trimMargin()
+        )
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        CopyPasteManager.getInstance().setContents(StringSelection("xxx"))
+
+        myFixture.performEditorAction(ACTION_PREFIX_PASTE)
+        myFixture.checkResult(
+            """foo<caret>xxxBAR
+            |foo<caret>xxxBAZ
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+        myFixture.checkResult(
+            """foo<caret>xxxBAR
+            |foo<caret>xxxBAZ
+            """.trimMargin()
+        )
+    }
+
+    fun `test Paste history with multiple carets works as expected`() {
+        myFixture.configureByText(
+            FILE,
+            """foo<caret>BAR
+            |foo<caret>BAZ
+            """.trimMargin()
+        )
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        CopyPasteManager.getInstance().setContents(StringSelection("barbar"))
+        CopyPasteManager.getInstance().setContents(StringSelection("baz"))
+
+        myFixture.performEditorAction(ACTION_PASTE)
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        myFixture.checkResult(
+            """foobarbar<caret>BAR
+            |foobarbar<caret>BAZ
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+        myFixture.checkResult(
+            """foo<caret>barbarBAR
+            |foo<caret>barbarBAZ
+            """.trimMargin()
+        )
+    }
+
+    fun `test Paste history after prefix paste with multiple carets works as expected`() {
+        myFixture.configureByText(
+            FILE,
+            """foo<caret>BAR
+            |foo<caret>BAZ
+            """.trimMargin()
+        )
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        CopyPasteManager.getInstance().setContents(StringSelection("barbar"))
+        CopyPasteManager.getInstance().setContents(StringSelection("baz"))
+
+        myFixture.performEditorAction(ACTION_PREFIX_PASTE)
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        myFixture.checkResult(
+            """foo<caret>barbarBAR
+            |foo<caret>barbarBAZ
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+        myFixture.checkResult(
+            """foo<caret>barbarBAR
+            |foo<caret>barbarBAZ
+            """.trimMargin()
+        )
     }
 }
