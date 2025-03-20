@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.mark.MarkHandler
-import com.github.strindberg.emacsj.preferences.EmacsJSettings
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
@@ -28,6 +27,7 @@ private const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions
 private const val ACTION_ISEARCH_SWAP = "com.github.strindberg.emacsj.actions.search.isearchswap"
 private const val ACTION_ISEARCH_MARK = "com.github.strindberg.emacsj.actions.search.isearchmark"
 private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
+private const val ACTION_TOGGLE_LAX_SEARCH = "com.github.strindberg.emacsj.actions.search.togglelaxsearch"
 
 class ISearchTest : BasePlatformTestCase() {
 
@@ -1423,31 +1423,50 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo <selection><caret>foo</selection> bar baz")
     }
 
-    fun `test Simple search with whitespace regexp works 1`() {
+    fun `test Isearch with lax search works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar yes sir")
-        EmacsJSettings.getInstance().state.searchWhitespaceRegexp = ".*?"
-
-        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
-        myFixture.type("o")
-        myFixture.checkResult("fo<caret>o bar yes sir")
-    }
-
-    fun `test Simple search with whitespace regexp works 2`() {
-        myFixture.configureByText(FILE, "<caret>foo bar yes sir")
-        EmacsJSettings.getInstance().state.searchWhitespaceRegexp = ".*?"
+        ISearchHandler.lax = true
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("o e")
         myFixture.checkResult("foo bar ye<caret>s sir")
     }
 
-    fun `test Simple search with whitespace regexp works 3`() {
+    fun `test Isearch with lax search works 2`() {
         myFixture.configureByText(FILE, "<caret>foo bar yes sir")
-        EmacsJSettings.getInstance().state.searchWhitespaceRegexp = ".*?"
+        ISearchHandler.lax = true
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("o e i")
         myFixture.checkResult("foo bar yes si<caret>r")
+    }
+
+    fun `test Search can be toggled from lax to non-lax`() {
+        myFixture.configureByText(FILE, "<caret>foo bar foo bar foo bar")
+        ISearchHandler.lax = true
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("f r")
+        myFixture.checkResult("foo bar<caret> foo bar foo bar")
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo bar foo bar<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_TOGGLE_LAX_SEARCH)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo bar foo bar<caret> foo bar")
+    }
+
+    fun `test Search can be toggled from non-lax to lax`() {
+        myFixture.configureByText(FILE, "<caret>foo bar foo bar foo bar")
+        ISearchHandler.lax = false
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("f r")
+        myFixture.checkResult("f<caret>oo bar foo bar foo bar")
+
+        myFixture.performEditorAction(ACTION_TOGGLE_LAX_SEARCH)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo bar foo bar<caret> foo bar")
     }
 
     private fun pressEnter() {
