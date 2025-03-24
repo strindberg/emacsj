@@ -81,17 +81,6 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         ui.show()
     }
 
-    private fun editorActions(): List<String> {
-        val actionManager = ActionManager.getInstance()
-        return actionManager.getActionIdList("").filter { actionId ->
-            !actionManager.isGroup(actionId) && actionManager.getAction(actionId)?.let { it is EditorAction } == true
-        }
-    }
-
-    private fun cancel() {
-        ui.cancelUI()
-    }
-
     internal fun hide(): Boolean {
         unregisterHandlers()
 
@@ -108,6 +97,17 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     private fun keyEventHandler(e: KeyEvent): Boolean {
         cancel()
         return false
+    }
+
+    private fun editorActions(): List<String> {
+        val actionManager = ActionManager.getInstance()
+        return actionManager.getActionIdList("").filter { actionId ->
+            !actionManager.isGroup(actionId) && actionManager.getAction(actionId)?.let { it is EditorAction } == true
+        }
+    }
+
+    private fun cancel() {
+        ui.cancelUI()
     }
 
     private fun unregisterHandlers() {

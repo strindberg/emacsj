@@ -11,6 +11,12 @@
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/EmacsJDarcula.xml"/>
         <bundledKeymap file="EmacsJ.xml"/>
         <colorSettingsPage implementation="com.github.strindberg.emacsj.preferences.EmacsJColorSettingsPage"/>
+        <applicationConfigurable
+            parentId="editor"
+            instance="com.github.strindberg.emacsj.preferences.EmacsJSettingsConfigurable"
+            id="com.github.strindberg.emacsj.preferences.EmacsJSettingsConfigurable"
+            displayName="EmacsJ"/>
+        <applicationService serviceImplementation="com.github.strindberg.emacsj.preferences.EmacsJSettings"/>
     </extensions>
 
     <applicationListeners>
@@ -89,6 +95,12 @@
                 text="Isearch: Finish Search and Mark Final Match as Selected">
             <keyboard-shortcut first-keystroke="alt ENTER" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt ENTER" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch"
+                class="com.github.strindberg.emacsj.actions.search.ISearchToggleLaxSearchAction"
+                text="Isearch: Toggle Lax-Whitespace Searching on or Off">
+            <keyboard-shortcut first-keystroke="alt s" second-keystroke="SPACE" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt s" second-keystroke="SPACE" keymap="Emacs"/>
         </action>
 
         <action id="com.github.strindberg.emacsj.actions.search.replacetext"

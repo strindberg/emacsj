@@ -1,7 +1,6 @@
 package com.github.strindberg.emacsj.search
 
 import kotlin.concurrent.thread
-import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
@@ -36,14 +35,14 @@ class CommonHighlighter {
         internal fun findAllAndHighlight(
             editor: Editor,
             searchArg: String,
-            type: SearchType,
+            useRegexp: Boolean,
             useCase: Boolean,
             range: IntRange? = null,
             callback: (List<FindResult>) -> Unit = {},
             highlight: Boolean = true,
         ) {
             if (testing) {
-                doFindAllAndHighlight(editor, searchArg, type, useCase, range, callback, highlight)
+                doFindAllAndHighlight(editor, searchArg, useRegexp, useCase, range, callback, highlight)
             } else {
                 val indicator = ProgressIndicatorBase()
                 progressIndicators.add(indicator)
@@ -52,7 +51,7 @@ class CommonHighlighter {
                         .runProcess(
                             {
                                 Thread.sleep(50)
-                                doFindAllAndHighlight(editor, searchArg, type, useCase, range, callback, highlight)
+                                doFindAllAndHighlight(editor, searchArg, useRegexp, useCase, range, callback, highlight)
                             },
                             indicator
                         )
@@ -63,7 +62,7 @@ class CommonHighlighter {
         private fun doFindAllAndHighlight(
             editor: Editor,
             searchArg: String,
-            type: SearchType,
+            useRegexp: Boolean,
             useCase: Boolean,
             range: IntRange?,
             callback: (List<FindResult>) -> Unit,
@@ -75,7 +74,7 @@ class CommonHighlighter {
                 val findModel = FindModel().apply {
                     stringToFind = searchArg
                     isCaseSensitive = useCase
-                    isRegularExpressions = type == REGEXP
+                    isRegularExpressions = useRegexp
                 }
                 val text = editor.text.substring(0, range?.last ?: editor.text.length)
                 var offset = range?.start ?: 0

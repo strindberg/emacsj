@@ -113,11 +113,11 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                 } else if (e.id == KeyEvent.KEY_RELEASED) {
                     editor.markupModel.removeAllHighlighters()
                     CommonHighlighter.findAllAndHighlight(
-                        editor,
-                        ui.text,
-                        type,
-                        type == REGEXP || caseSensitive(ui.text),
-                        selection
+                        editor = editor,
+                        searchArg = ui.text,
+                        useRegexp = type == REGEXP,
+                        useCase = type == REGEXP || caseSensitive(ui.text),
+                        range = selection
                     )
                 }
             }
@@ -253,11 +253,11 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
             if (highlight) {
                 editor.markupModel.removeAllHighlighters()
                 CommonHighlighter.findAllAndHighlight(
-                    editor,
-                    searchArg,
-                    type,
-                    replaceModel.isCaseSensitive,
-                    selection
+                    editor = editor,
+                    searchArg = searchArg,
+                    useRegexp = type == REGEXP,
+                    useCase = replaceModel.isCaseSensitive,
+                    range = selection
                 )
                 editor.markupModel.addRangeHighlighter(
                     EMACSJ_PRIMARY,

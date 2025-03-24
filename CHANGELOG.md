@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- Lax search can be configured in settings page.
+- Lax search can be toggled on and off during Isearch.
+
+### Fixed
+- Paste no longer disables multiple carets.
+
 ## [1.3.4] - 2025-02-28
 
 ### Added

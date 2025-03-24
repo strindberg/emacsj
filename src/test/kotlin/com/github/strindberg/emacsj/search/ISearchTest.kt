@@ -27,6 +27,7 @@ private const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions
 private const val ACTION_ISEARCH_SWAP = "com.github.strindberg.emacsj.actions.search.isearchswap"
 private const val ACTION_ISEARCH_MARK = "com.github.strindberg.emacsj.actions.search.isearchmark"
 private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
+private const val ACTION_TOGGLE_LAX_SEARCH = "com.github.strindberg.emacsj.actions.search.togglelaxsearch"
 
 class ISearchTest : BasePlatformTestCase() {
 
@@ -1420,6 +1421,52 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo <caret>foo bar baz")
         myFixture.performEditorAction(ACTION_ISEARCH_MARK)
         myFixture.checkResult("foo <selection><caret>foo</selection> bar baz")
+    }
+
+    fun `test Isearch with lax search works 1`() {
+        myFixture.configureByText(FILE, "<caret>foo bar yes sir")
+        ISearchHandler.lax = true
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("o e")
+        myFixture.checkResult("foo bar ye<caret>s sir")
+    }
+
+    fun `test Isearch with lax search works 2`() {
+        myFixture.configureByText(FILE, "<caret>foo bar yes sir")
+        ISearchHandler.lax = true
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("o e i")
+        myFixture.checkResult("foo bar yes si<caret>r")
+    }
+
+    fun `test Search can be toggled from lax to non-lax`() {
+        myFixture.configureByText(FILE, "<caret>foo bar foo bar foo bar")
+        ISearchHandler.lax = true
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("f r")
+        myFixture.checkResult("foo bar<caret> foo bar foo bar")
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo bar foo bar<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_TOGGLE_LAX_SEARCH)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo bar foo bar<caret> foo bar")
+    }
+
+    fun `test Search can be toggled from non-lax to lax`() {
+        myFixture.configureByText(FILE, "<caret>foo bar foo bar foo bar")
+        ISearchHandler.lax = false
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("f r")
+        myFixture.checkResult("f<caret>oo bar foo bar foo bar")
+
+        myFixture.performEditorAction(ACTION_TOGGLE_LAX_SEARCH)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo bar foo bar<caret> foo bar")
     }
 
     private fun pressEnter() {
