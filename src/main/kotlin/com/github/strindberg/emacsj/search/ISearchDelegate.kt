@@ -221,7 +221,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     internal fun renewState() {
         state = SEARCH
-        updateUI(title = titleText(found = true, wrapped = false), text = text, found = true)
+        updateUI(title = titleText(), text = text, found = true)
         ui.flashLax(ISearchHandler.lax)
 
         removeHighlighters(false)
@@ -321,7 +321,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun updateUI(result: SearchResult) {
-        updateUI(titleText(result.found, result.wrapped), text, result.found)
+        updateUI(titleText(found = result.found, wrapped = result.wrapped), text, result.found)
     }
 
     private fun updateUI(title: String, text: String, found: Boolean) {
