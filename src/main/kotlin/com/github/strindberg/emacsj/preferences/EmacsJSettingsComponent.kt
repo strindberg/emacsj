@@ -19,7 +19,7 @@ class EmacsJSettingsComponent {
     private val useLaxISearch: JCheckBox = JCheckBox()
 
     private val description =
-        JBLabel("If enabled, space is replaced with given regexp in Isearch. Default is '.*?'. Emacs default is '[ 	]+'.")
+        JBLabel("If enabled, whitespace is replaced with the specified regexp in Isearch. Default is '.*?'. Emacs default is '[ 	]+'.")
 
     init {
         description.font = description.font.deriveFont(Font.ITALIC)

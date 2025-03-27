@@ -51,7 +51,7 @@
         <keyboard-shortcut first-keystroke="control shift ENTER"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch">
-        <keyboard-shortcut first-keystroke="alt s" second-keystroke="SPACE"/>
+        <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.word.movenextword">
         <keyboard-shortcut first-keystroke="alt F"/>

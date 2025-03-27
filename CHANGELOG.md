@@ -4,12 +4,15 @@
 
 ## [Unreleased]
 
+## [1.3.5] - 2025-03-31
+
 ### Added
 
-- Lax search can be configured in settings page.
-- Lax search can be toggled on and off during Isearch.
+- Lax search - which replaces spaces in Isearch with a specified regular expression - can be toggled on and off during Isearch and default
+  mode configured under Settings.
 
 ### Fixed
+
 - Paste no longer disables multiple carets.
 
 ## [1.3.4] - 2025-02-28
@@ -124,7 +127,8 @@
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.3.4...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.3.5...HEAD
+[1.3.5]: https://github.com/strindberg/emacsj/compare/v1.3.4...v1.3.5
 [1.3.4]: https://github.com/strindberg/emacsj/compare/v1.3.3...v1.3.4
 [1.3.3]: https://github.com/strindberg/emacsj/compare/v1.3.2...v1.3.3
 [1.3.2]: https://github.com/strindberg/emacsj/compare/v1.3.1...v1.3.2

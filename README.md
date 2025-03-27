@@ -6,14 +6,13 @@ A collection of useful, Emacs-inspired commands for text editing and search.
 Documentation: EmacsJ on [GitHub](https://github.com/strindberg/emacsj)
 
 This plugin is a collection of commands adding Emacs-inspired functionality to IntelliJ-based IDEs. It is mainly intended as an
-extension to IntelliJ's Emacs keymap. While the Emacs keymap in IntelliJ is already quite good, it still lacks some functionality that an
-Emacs user will miss. Moreover, many commands work slightly differently in IntelliJ and Emacs. This plugin's aim is to
-offer features that bridge that gap, so that switching between Emacs and IntelliJ becomes easy. Many of these commands could also be of
-interest to non-Emacs users.
+extension to IntelliJ's Emacs keymap, which lacks some functionality that an Emacs user will miss. Moreover, many commands work slightly
+differently in IntelliJ and Emacs. EmacsJ's aim is to offer features that bridge that gap, so that switching between Emacs and IntelliJ
+becomes easy. Many of these commands could also be of interest to non-Emacs users.
 
 There are two main ways of using EmacsJ: the plugin installs a number of commands which you can either pick-and-choose from, or
-activate all at once by choosing the *EmacsJ* keymap. If you want the former, study the available commands under Preferences -> Keymap ->
-Plugins -> EmacsJ and activate the ones you find interesting. Alternatively, you can choose the keymap *EmacsJ* under Preferences ->
+activate all at once by choosing the *EmacsJ* keymap. If you want the former, study the available commands under Settings -> Keymap ->
+Plugins -> EmacsJ and activate the ones you find interesting. Alternatively, you can choose the keymap *EmacsJ* under Settings ->
 Keymap. This keymap is an extension of the standard *Emacs* keymap, and this way all the EmacsJ commands are activated. You can then
 deactivate the ones you don't want to use.
 
@@ -58,16 +57,21 @@ Documentation: EmacsJ on [GitHub](https://github.com/strindberg/emacsj)
 
 ## Features
 
+The EmacsJ plugin enables the following commands.
+
 ### Isearch
 
 Incremental search. Each letter typed is added to the search, and the nearest match is highlighted, as well as all other visible matches.
-The order of the current match among all matches is displayed together with the total number of matches. Keep adding letters to narrow
+The place of the current match among all matches is displayed together with the total number of matches. Keep adding letters to narrow
 the search.
 
 While searching, pressing the search keybinding again jumps to the next match, if available. Once the matches are exhausted at the end of
 the file, the search bar indicates that no more matches can be found. Pressing the search key again at this stage restarts the search at the
 beginning of the file (or the end if reverse search is active). The direction of the search can be changed at any time with the
 corresponding key.
+
+The way Isearch interprets white space in the search string can be configured (see [below](#isearch-configuration---lax-mode)) between
+literal and lax interpretation, and also changed during search.
 
 There are four ways to start a search:
 
@@ -80,9 +84,9 @@ There are four ways to start a search:
 
 Directly after a search has been initiated, pressing one of the search keys again will bring up the previous text used for search. This is
 the quickest way to resume a search. History is kept separate between text search and regexp search, so only previous searches by the same
-type are offered. The search history does not separate forward and backward searches.
+type are offered. The search history does not distinguish between forward and backward searches.
 
-Except for the keys below, any command key will abort search and execute the command. This makes Isearch very useful as a navigation command
+Except for the keys below, any command key will abort search and execute the command. This makes Isearch very useful as a navigation tool
 as well: just search for the word where you want to end up, and keep on navigating with no extra key press required.
 
 While searching, the following commands are available:
@@ -93,14 +97,16 @@ While searching, the following commands are available:
 - `alt-ENTER`: finish search and mark the final match as selected.
 - `BACKSPACE`: if several matches with the current search string have been visited, go back in the history of matches. If not, remove
   the last character from the search string.
+- `ctrl-c SPACE`: toggle between lax and strict handling of whitespace in search string (only text search). The mode stays unchanged between
+  searches, so that a new search starts with the mode from the last search. The default mode can
+  be [changed](#isearch-configuration---lax-mode) under Settings.
 - `ctrl-w`: add the word at point in the editor to the search string.
 - `ctrl-alt-e`: add the rest of the current editor line to the search string.
 - `ctrl-alt-y`: add the character at point to the search string.
 - `ctrl-shift-ENTER`: add a new line character to the search string.
 - `alt-p`: browse backward in the list of previous searches (of the current type).
 - `alt-n`: browse forward in the list of previous searches (of the current type).
-- `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search. This works both with the
-  plugin's *Recenter Caret* and IntelliJ's *Scroll to Center*.
+- `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search.
 
 Text from the clipboard can be pasted while searching: the contents of the clipboard will be added to the current search string.
 
@@ -111,14 +117,30 @@ Isearch text uses smart case, such that the search will be performed without cas
 case characters, but switch to case-sensitive search if the search string contains one or more capital letters. If you need to search for a
 lower case string, and not match upper case letters, use regexp search which is always case-sensitive.
 
-Isearch works with multiple carets.
+*Isearch* works with multiple carets.
+
+#### Isearch configuration - lax mode
+
+When lax mode is enabled in Settings, Isearch will replace every space in the search string with the supplied regular expression. This
+makes it possible to search for string parts that are not adjacent. The default regular expression is '.*?' which means that a space will be
+replaced with the shortest possible text that makes the whole search string match. The lax mode can be toggled during search as described
+above. Lax search only works with text search, not regexp search.
+
+The default mode (lax or strict) can be changed, as well as the regular expression used to replace space in Isearch, under Settings ->
+Editor -> EmacsJ.
+
+![Isearch settings](images/settings.png "Isearch Settings")
+
+#### Isearch configuration - colors
 
 To change the colors used by Isearch to mark matches, go to Settings -> Editor -> Color Schemes -> EmacsJ. The colors chosen for primary
 and secondary matches are used by both Isearch and Search/replace (below).
 
+![configuring colors](images/colors.png "Configuring Colors")
+
 ### Search/replace (query-replace)
 
-Search/replace (query-replace) asks for a text or regexp to search for, and then the replacement to be used. When replacement starts, each
+Search/replace (query-replace) asks for a text or regexp to search for, and the replacement to be used. When replacement starts, each
 match found triggers a request for confirmation.
 
 There are two variants:
@@ -161,16 +183,16 @@ whole replacement string consist of lower case characters, but switch to case-se
 contains one or more capital letters. If you need to search and replace two lower case strings, and not match upper case letters, use regexp
 Search/replace which is always case-sensitive.
 
-Colors used by Search/replace can be configured as described under Isearch (above).
+Colors used by Search/replace can be configured as described under Isearch [above](#isearch-configuration---colors).
 
 ### Word Movement
 
-The plugin's word movement commands are similar to the default IntelliJ word movements, but with a slight difference in how word boundaries
+EmacsJ's word movement commands are similar to the default IntelliJ word movements, but with a slight difference in how word boundaries
 and non-word characters are handled. In standard IntelliJ, *Kill to Word End* will delete characters up to the next non-word character,
-whereas the corresponding command *Delete Next Word* in this plugin will delete past non-word characters and to the end of the following
+whereas the corresponding command *Delete Next Word* in EmacsJ will delete past non-word characters and to the end of the following
 proper word. The same goes for word movements such as *Next Word* and *Previous Word*.
 
-If the IDE's setting "use camel case" is true, these commands take that into account.
+These commands honor the IDE's setting "Use camel case".
 
 The commands are:
 
@@ -181,7 +203,7 @@ The commands are:
 - Delete Next Word (`alt-d`). Delete characters to the end of the current word (defined as above).
 - Delete Previous Word (`alt-BACKSPACE`). Delete characters back to the start of the current word (defined as above).
 
-The word movement commands work with multiple carets.
+The *Word Movement* commands work with multiple carets.
 
 ### Modify Word
 
@@ -200,7 +222,7 @@ The commands are:
 - Capitalize Word at Point or Region (`alt-c`).
 - Capitalize Previous Word (`shift-alt-c`).
 
-The modify word commands work with multiple carets.
+The *Modify Word* commands work with multiple carets.
 
 ### Transpose Words
 
@@ -220,7 +242,7 @@ The commands are:
 - Transpose Current and Next Word (`alt-t`). Change the order of the word at point (or region) and the following word.
 - Transpose Previous and Current Word (`shift-alt-t`). Change the order of the word at point (or region) and the previous word.
 
-The transpose word commands work with multiple carets.
+The *Transpose Word* commands work with multiple carets.
 
 ### Delete whitespace on current line
 
@@ -231,7 +253,7 @@ The commands are:
 - Delete All Whitespace Around Point (`ctrl-BACKSPACE`). Delete whitespace before and after caret.
 - Leave One Space at Point (`alt-SPACE`). Reduce all whitespace around point to only one space.
 
-The delete whitespace commands work with multiple carets.
+The *Delete Whitespace* commands work with multiple carets.
 
 ### Delete Blank Lines
 
@@ -249,7 +271,7 @@ The commands are:
 The duplicate commands duplicate the current line or the selected region. *Duplicate Line/Region and Comment* also comments the
 original region or line.
 
-The difference between IntelliJ's standard duplicate command and the plugin command *Duplicate Region* is that the latter leaves the caret
+The difference between IntelliJ's standard duplicate command and the EmacsJ command *Duplicate Region* is that the latter leaves the caret
 at its original position, and doesn't move it to the end of the new copy.
 
 *Comment DWIM (Do What I Mean)* will comment the current line if no selection is active. If the selection is active, it will comment the
@@ -262,7 +284,7 @@ The commands are:
 - Duplicate Line/Region and Comment (`ctrl-c c`).
 - Comment DWIM (Do What I Mean) (`alt-SEMICOLON`).
 
-The duplicate commands work with multiple carets.
+The *Duplicate* commands work with multiple carets.
 
 ### Rectangles
 
@@ -270,9 +292,10 @@ A rectangle is defined as the rectangular region limited by the upper left corne
 these commands, first select a region and then use the proper command. No characters outside the rectangle will be affected (although
 they might move left or right).
 
+Please note that unlike Emacs, IntelliJ cannot display the selected rectangle as a rectangle, but the commands work as described.
+
 The *Rectangle: Paste* command does not require a current selection, but will paste multiple lines starting at the same column as the
-current
-caret on each line.
+current caret on each line.
 
 The commands are:
 
@@ -304,22 +327,24 @@ The commands are:
   pasted text.
 - Paste: Previous Item in Clipboard History (`alt-y`). Cycle through the history of killed text, replacing the previously pasted text.
 
+The *Paste* commands work with multiple carets.
+
 ### Mark Ring
 
-The plugin maintains a mark history (mark ring), if the plugin's *Set/Push Mark for Selection* command is used. This makes it possible to
+EmacsJ maintains a mark history (mark ring) if the plugin's *Set/Push Mark for Selection* command is used. This makes it possible to
 pop previous marks and go back to these previous locations. A separate mark history is maintained for each file where it is used. The
 history only contains unique positions: a new mark replaces any earlier item at the same position in the file.
 
-Besides maintaining a mark history, another difference between the plugin's command and the standard IntelliJ set-mark command, is that the
+Besides maintaining a mark history, another difference between EmacsJ's command and the standard IntelliJ set-mark command, is that the
 former always starts a new selection, whereas IntelliJ's command toggles selection. In other words, if a selection is already active, using
-the plugin command starts a new selection at the current point, instead of only turning off the selection.
+the EmacsJ command starts a new selection at the current point, instead of only turning off the selection.
 
 Adding to the mark history without starting a new selection can be achieved by hitting the *Set/Push Mark for Selection* command
 twice in the same position.
 
-The commands [Isearch](#isearch) and [Search/replace](#searchreplace-query-replace) set the mark at the beginning of a search so that one can return to
-the position where the latest search started. The command [Exchange Point and Mark](#exchange-point-and-mark) also uses the mark history, as
-described below.
+The commands [Isearch](#isearch) and [Search/replace](#searchreplace-query-replace) set the mark at the beginning of a search so that one
+can return to the position where the latest search started. The command [Exchange Point and Mark](#exchange-point-and-mark) also uses the
+mark history, as described below.
 
 The commands are:
 
@@ -367,7 +392,7 @@ The *Zap to Character* commands work with multiple carets.
 
 ### Go back in XRef History
 
-When using any of the (IntelliJ standard) commands *Go to Declaration* or *Go to Declaration or Usages*, the plugin saves the caret position
+When using any of the (IntelliJ standard) commands *Go to Declaration* or *Go to Declaration or Usages*, EmacsJ saves the caret position
 from which the jump is made, creating a stack of previous positions. This stack can be popped with the command *Go Back to Previous Position
 After Jumping to Declaration*, and one can thus easily go back to previous positions.
 
@@ -379,7 +404,7 @@ The commands are:
 ### Kill Line
 
 *Kill Line* (`ctrl-k`) works as the standard IntelliJ command *Cut up to Line End*: it kills (and copies) the rest of the current line. If
-there is only whitespace between caret and end of the line, the newline character is also killed. This plugin command expands the standard
+there is only whitespace between caret and end of the line, the newline character is also killed. This EmacsJ command expands the standard
 command such that the newline character is also killed if the caret is positioned on the very first position of the line.
 
 The commands are:
