@@ -8,8 +8,9 @@
 
 ### Added
 
-- Lax search - which replaces spaces in Isearch with a specified regular expression - can be toggled on and off during Isearch and default
-  mode configured under Settings.
+- Isearch lax search (replacing spaces in search text with a specified regular expression) implemented.
+- Lax search can be toggled on and off during Isearch (mode persists between searches).
+- Lax search regexp and default mode can be configured under Settings.
 
 ### Fixed
 
@@ -24,7 +25,7 @@
 
 ### Fixed
 
-- Reversing search direction with empty search string no longer trigger retrieval of previous search.
+- Reversing search direction with empty search string no longer triggers retrieval of previous search.
 - Updating plugin will less often require a restart.
 - Multi-caret search can now be reversed after failed match.
 
@@ -128,17 +129,31 @@
 - Initial release.
 
 [Unreleased]: https://github.com/strindberg/emacsj/compare/v1.3.5...HEAD
+
 [1.3.5]: https://github.com/strindberg/emacsj/compare/v1.3.4...v1.3.5
+
 [1.3.4]: https://github.com/strindberg/emacsj/compare/v1.3.3...v1.3.4
+
 [1.3.3]: https://github.com/strindberg/emacsj/compare/v1.3.2...v1.3.3
+
 [1.3.2]: https://github.com/strindberg/emacsj/compare/v1.3.1...v1.3.2
+
 [1.3.1]: https://github.com/strindberg/emacsj/compare/v1.3.0...v1.3.1
+
 [1.3.0]: https://github.com/strindberg/emacsj/compare/v1.2.2...v1.3.0
+
 [1.2.2]: https://github.com/strindberg/emacsj/compare/v1.2.1...v1.2.2
+
 [1.2.1]: https://github.com/strindberg/emacsj/compare/v1.2.0...v1.2.1
+
 [1.2.0]: https://github.com/strindberg/emacsj/compare/v1.1.0...v1.2.0
+
 [1.1.0]: https://github.com/strindberg/emacsj/compare/v1.0.2...v1.1.0
+
 [1.0.2]: https://github.com/strindberg/emacsj/compare/v1.0.1...v1.0.2
+
 [1.0.1]: https://github.com/strindberg/emacsj/compare/v0.9.3...v1.0.1
+
 [0.9.3]: https://github.com/strindberg/emacsj/compare/v0.9.2...v0.9.3
+
 [0.9.2]: https://github.com/strindberg/emacsj/commits/v0.9.2
