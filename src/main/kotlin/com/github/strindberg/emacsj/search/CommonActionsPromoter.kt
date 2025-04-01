@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.actions.BackspaceAction
 import com.intellij.openapi.editor.actions.EnterAction
 import com.intellij.openapi.editor.actions.PasteAction
 
-class CommonActionsPromoter : ActionPromoter {
+internal class CommonActionsPromoter : ActionPromoter {
 
     override fun promote(actions: MutableList<out AnAction>, context: DataContext): List<AnAction> {
         val newList = actions.toMutableList()

@@ -9,7 +9,7 @@ import com.intellij.openapi.components.Storage
     name = "com.github.strindberg.emacsj.EmacsJSettings",
     storages = [Storage("EmacsJSettings.xml")],
 )
-class EmacsJSettings : PersistentStateComponent<EmacsJState> {
+internal class EmacsJSettings : PersistentStateComponent<EmacsJState> {
 
     private var state = EmacsJState()
 
