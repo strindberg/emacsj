@@ -13,7 +13,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
 import com.intellij.psi.tree.IElementType
 
-class EmacsJColorSettingsPage : ColorSettingsPage {
+internal class EmacsJColorSettingsPage : ColorSettingsPage {
 
     override fun getAttributeDescriptors(): Array<AttributesDescriptor> =
         arrayOf(

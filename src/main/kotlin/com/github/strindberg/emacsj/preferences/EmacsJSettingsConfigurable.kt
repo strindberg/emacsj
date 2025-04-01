@@ -4,7 +4,7 @@ import javax.swing.JComponent
 import com.github.strindberg.emacsj.search.ISearchHandler
 import com.intellij.openapi.options.Configurable
 
-class EmacsJSettingsConfigurable : Configurable {
+internal class EmacsJSettingsConfigurable : Configurable {
 
     private var component = EmacsJSettingsComponent()
 

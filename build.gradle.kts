@@ -104,6 +104,14 @@ intellijPlatform {
     }
 }
 
+tasks {
+    runIde {
+        jvmArgumentProviders += CommandLineArgumentProvider {
+            listOf("-Dide.show.tips.on.startup.default.value=false", "-Dide.experimental.ui=true", "-Didea.trust.all.projects=true")
+        }
+    }
+}
+
 changelog {
     groups.empty()
     repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
