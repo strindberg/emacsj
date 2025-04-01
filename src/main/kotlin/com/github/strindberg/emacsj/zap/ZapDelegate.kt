@@ -2,7 +2,7 @@ package com.github.strindberg.emacsj.zap
 
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
-import java.util.*
+import java.util.UUID
 import com.github.strindberg.emacsj.search.CommonUI
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler

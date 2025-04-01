@@ -1,6 +1,6 @@
 package com.github.strindberg.emacsj.word
 
-import java.util.*
+import java.util.Locale
 import com.github.strindberg.emacsj.word.ChangeType.CAPITAL
 import com.github.strindberg.emacsj.word.ChangeType.CAPITAL_PREVIOUS
 import com.github.strindberg.emacsj.word.ChangeType.DELETE
