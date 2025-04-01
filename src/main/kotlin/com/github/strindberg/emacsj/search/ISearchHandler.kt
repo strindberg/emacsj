@@ -13,6 +13,11 @@ import org.jetbrains.annotations.VisibleForTesting
 class ISearchHandler(private val direction: Direction, private val type: SearchType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
+        // Access to ApplicationManager.getApplication() is prohibited during class loading, so we delay until first use of Isearch action.
+        if (!initialized) {
+            lax = EmacsJSettings.getInstance().state.useLaxISearch
+            initialized = true
+        }
         val current = delegate
         if (current != null) {
             when (current.state) {
@@ -46,7 +51,9 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
 
         private var savedPos = -1
 
-        internal var lax: Boolean = EmacsJSettings.getInstance().state.useLaxISearch
+        internal var lax: Boolean = false
+
+        private var initialized = false
 
         internal fun swapLax() {
             lax = !lax
