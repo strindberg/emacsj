@@ -15,7 +15,9 @@ enum class MovementType { START, END }
 class TextMovementHandler(val type: MovementType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        MarkHandler.pushPlaceInfo(editor)
+        if (!editor.selectionModel.hasSelection()) {
+            MarkHandler.pushPlaceInfo(editor)
+        }
         when (type) {
             START -> EditorActionUtil.moveCaretToTextStart(editor, CommonDataKeys.PROJECT.getData(dataContext))
             END -> EditorActionUtil.moveCaretToTextEnd(editor, CommonDataKeys.PROJECT.getData(dataContext))
