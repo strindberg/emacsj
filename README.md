@@ -413,3 +413,13 @@ The commands are:
   line or there is only whitespace between caret and line end.
 
 The *Kill Line* command works with multiple carets.
+
+### Buffer Movement
+
+*Beginning of Buffer* and *End of Buffer* work as the IntelliJ commands *Move Caret to Text Start* and *Move Caret to Text End*,
+respectively. They also set a mark at the point whence the command is invoked, unless a selection is active.
+
+The commands are:
+
+- Beginning of Buffer (`alt-<`). Move caret to the beginning of the current editor text.
+- End of Buffer (`alt->`). Move caret to the end of the current editor text.

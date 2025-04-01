@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added
+
+- New commands "Beginning of buffer" and "End of buffer"
+
+### Fixed
+
 ## [1.3.6] - 2025-04-01
 
 ### Added
