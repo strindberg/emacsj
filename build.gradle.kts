@@ -107,7 +107,34 @@ intellijPlatform {
 tasks {
     runIde {
         jvmArgumentProviders += CommandLineArgumentProvider {
-            listOf("-Dide.show.tips.on.startup.default.value=false", "-Dide.experimental.ui=true", "-Didea.trust.all.projects=true")
+            listOf(
+                "-Dide.show.tips.on.startup.default.value=false",
+                "-Dide.experimental.ui=true",
+                "-Didea.trust.all.projects=true"
+            )
+        }
+    }
+
+    prepareSandbox {
+        doLast {
+            sandboxConfigDirectory.file("options/keymap.xml").get().asFile.writeText(
+                """
+              <application>
+                <component name="KeymapManager">
+                  <active_keymap name="EmacsJ" />
+                </component>
+              </application>
+                """.trimIndent()
+            )
+            sandboxConfigDirectory.file("options/ide.general.xml").get().asFile.writeText(
+                """
+              <application>
+                <component name="GeneralSettings">
+                  <option name="confirmExit" value="false" />
+                </component>
+              </application>
+                """.trimIndent()
+            )
         }
     }
 }
