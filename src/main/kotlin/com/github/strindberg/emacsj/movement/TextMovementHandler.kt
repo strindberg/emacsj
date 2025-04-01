@@ -1,6 +1,8 @@
 package com.github.strindberg.emacsj.movement
 
 import com.github.strindberg.emacsj.mark.MarkHandler
+import com.github.strindberg.emacsj.movement.MovementType.END
+import com.github.strindberg.emacsj.movement.MovementType.START
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
@@ -15,8 +17,8 @@ class TextMovementHandler(val type: MovementType) : EditorActionHandler() {
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         MarkHandler.pushPlaceInfo(editor)
         when (type) {
-            MovementType.START -> EditorActionUtil.moveCaretToTextStart(editor, CommonDataKeys.PROJECT.getData(dataContext))
-            MovementType.END -> EditorActionUtil.moveCaretToTextEnd(editor, CommonDataKeys.PROJECT.getData(dataContext))
+            START -> EditorActionUtil.moveCaretToTextStart(editor, CommonDataKeys.PROJECT.getData(dataContext))
+            END -> EditorActionUtil.moveCaretToTextEnd(editor, CommonDataKeys.PROJECT.getData(dataContext))
         }
     }
 }
