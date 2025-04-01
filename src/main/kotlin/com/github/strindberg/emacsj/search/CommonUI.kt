@@ -114,7 +114,8 @@ internal class CommonUI(
             setReadonlyComponents()
         }
 
-        popup = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, if (writeable) textField else null)
+        popup = JBPopupFactory.getInstance()
+            .createComponentPopupBuilder(panel, if (writeable) textField else null)
             .setCancelOnClickOutside(true)
             .setCancelOnOtherWindowOpen(true)
             .setMovable(false)
