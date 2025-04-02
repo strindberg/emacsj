@@ -93,7 +93,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         return true
     }
 
-    @Suppress("unused_parameter")
+    @Suppress("UnusedParameter")
     private fun keyEventHandler(e: KeyEvent): Boolean {
         cancel()
         return false

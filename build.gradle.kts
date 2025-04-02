@@ -6,6 +6,7 @@ fun properties(key: String) = providers.gradleProperty(key)
 
 plugins {
     alias(libs.plugins.changelog)
+    alias(libs.plugins.detekt)
     alias(libs.plugins.intellij.platform)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.kover)
@@ -26,6 +27,8 @@ repositories {
 
 dependencies {
     testImplementation(libs.junit)
+
+    detektPlugins(libs.detekt)
 
     intellijPlatform {
         create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
@@ -157,4 +160,8 @@ kover {
             }
         }
     }
+}
+
+detekt {
+    config.setFrom(file("$rootDir/detekt.yml"))
 }
