@@ -266,6 +266,8 @@ The commands are:
 
 - Delete Blank Lines(`ctrl-x ctrl-o`).
 
+The *Delete Blank Lines* command works with multiple carets.
+
 ### Duplicate and Comment
 
 The duplicate commands duplicate the current line or the selected region. *Duplicate Line/Region and Comment* also comments the
