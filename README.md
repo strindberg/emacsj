@@ -423,5 +423,5 @@ respectively. They also set a mark at the point whence the command is invoked, u
 
 The commands are:
 
-- Beginning of Buffer (`alt-<`). Move caret to the beginning of the current editor text.
-- End of Buffer (`alt->`). Move caret to the end of the current editor text.
+- Beginning of Buffer (`alt-LESS`). Move caret to the beginning of the current editor text.
+- End of Buffer (`alt-GREATER`). Move caret to the end of the current editor text.
