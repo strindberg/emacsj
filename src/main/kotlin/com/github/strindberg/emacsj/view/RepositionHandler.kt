@@ -18,6 +18,7 @@ class RepositionHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val primary = caret ?: editor.caretModel.primaryCaret
+        editor.caretModel.removeSecondaryCarets()
 
         val viewOffset = editor.scrollingModel.verticalScrollOffset
         val viewHeight = editor.scrollingModel.visibleArea.height
