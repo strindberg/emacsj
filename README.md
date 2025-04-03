@@ -210,6 +210,9 @@ The *Word Movement* commands work with multiple carets.
 The modify word commands use word boundaries in the same way as the word movement commands defined [above](#word-movement).
 They will modify the characters in the current or previous word or -- if selection is active -- modify the current selection.
 
+The commands modifying the following word also moves caret to the end of this word. The commands modifying the previous word do not move the
+caret.
+
 The Capitalize Word commands will skip over non-word characters until it finds a word to capitalize. If Capitalize Word is used with an
 active selection, each word in the region is capitalized.
 
