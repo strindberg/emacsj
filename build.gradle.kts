@@ -107,6 +107,22 @@ intellijPlatform {
     }
 }
 
+val keymapConfig = """
+    <application>
+      <component name="KeymapManager">
+        <active_keymap name="EmacsJ" />
+      </component>
+    </application>
+  """.trimIndent()
+
+val exitConfig = """
+    <application>
+      <component name="GeneralSettings">
+        <option name="confirmExit" value="false" />
+      </component>
+    </application>
+  """.trimIndent()
+
 tasks {
     runIde {
         jvmArgumentProviders += CommandLineArgumentProvider {
@@ -120,24 +136,28 @@ tasks {
 
     prepareSandbox {
         doLast {
-            sandboxConfigDirectory.file("options/keymap.xml").get().asFile.writeText(
-                """
-              <application>
-                <component name="KeymapManager">
-                  <active_keymap name="EmacsJ" />
-                </component>
-              </application>
-                """.trimIndent()
-            )
-            sandboxConfigDirectory.file("options/ide.general.xml").get().asFile.writeText(
-                """
-              <application>
-                <component name="GeneralSettings">
-                  <option name="confirmExit" value="false" />
-                </component>
-              </application>
-                """.trimIndent()
-            )
+            sandboxConfigDirectory.file("options/keymap.xml").get().asFile.writeText(keymapConfig)
+            sandboxConfigDirectory.file("options/ide.general.xml").get().asFile.writeText(exitConfig)
+        }
+    }
+}
+
+val runIde42 by intellijPlatformTesting.runIde.registering {
+    version = "2024.2.5"
+    prepareSandboxTask {
+        doLast {
+            sandboxConfigDirectory.file("options/keymap.xml").get().asFile.writeText(keymapConfig)
+            sandboxConfigDirectory.file("options/ide.general.xml").get().asFile.writeText(exitConfig)
+        }
+    }
+}
+
+val runIde43 by intellijPlatformTesting.runIde.registering {
+    version = "2024.3.5"
+    prepareSandboxTask {
+        doLast {
+            sandboxConfigDirectory.file("options/keymap.xml").get().asFile.writeText(keymapConfig)
+            sandboxConfigDirectory.file("options/ide.general.xml").get().asFile.writeText(exitConfig)
         }
     }
 }
