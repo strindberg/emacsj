@@ -146,7 +146,7 @@
     <action id="com.github.strindberg.emacsj.actions.view.reposition">
         <keyboard-shortcut first-keystroke="alt R"/>
     </action>
-    <action id="com.github.strindberg.emacsj.actions.kill.kill">
+    <action id="com.github.strindberg.emacsj.actions.kill.line">
         <keyboard-shortcut first-keystroke="control K"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.zap.zapto">

@@ -7,9 +7,9 @@ import junit.framework.TestCase
 
 const val FILE = "file.txt"
 
-private const val ACTION_KILL_LINE = "com.github.strindberg.emacsj.actions.kill.kill"
+private const val ACTION_KILL_LINE = "com.github.strindberg.emacsj.actions.kill.line"
 
-class KillTest : BasePlatformTestCase() {
+class KillLineTest : BasePlatformTestCase() {
 
     fun `test Line is killed to line end`() {
         myFixture.configureByText(

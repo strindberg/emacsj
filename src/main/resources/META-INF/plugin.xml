@@ -329,8 +329,8 @@
             <keyboard-shortcut first-keystroke="alt R" keymap="Emacs"/>
         </action>
 
-        <action id="com.github.strindberg.emacsj.actions.kill.kill"
-                class="com.github.strindberg.emacsj.actions.kill.KillAction"
+        <action id="com.github.strindberg.emacsj.actions.kill.line"
+                class="com.github.strindberg.emacsj.actions.kill.KillLineAction"
                 text="Kill Line">
             <keyboard-shortcut first-keystroke="control K" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control K" keymap="Emacs"/>

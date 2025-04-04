@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.actions.KillRingUtil
 import com.intellij.util.DocumentUtil
 import com.intellij.util.text.CharArrayUtil
 
-class KillHandler : EditorWriteActionHandler.ForEachCaret() {
+class KillLineHandler : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         KillRingUtil.cut(editor, caret.offset, getEndOffset(caret.offset, editor.document))
