@@ -62,4 +62,23 @@ class KillLineTest : BasePlatformTestCase() {
         )
         TestCase.assertEquals("    \n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
+
+    fun `test End of document is properly handled`() {
+        myFixture.configureByText(
+            FILE,
+            """zoo    
+               |bar
+            <caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_KILL_LINE)
+
+        myFixture.checkResult(
+            """zoo    
+               |bar
+            <caret>
+            """.trimMargin()
+        )
+    }
 }

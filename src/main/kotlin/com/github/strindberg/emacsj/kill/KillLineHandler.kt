@@ -12,8 +12,10 @@ import com.intellij.util.text.CharArrayUtil
 class KillLineHandler : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
-        KillRingUtil.cut(editor, caret.offset, getEndOffset(caret.offset, editor.document))
+        KillRingUtil.cut(editor, getStartOffset(caret.offset, editor.document), getEndOffset(caret.offset, editor.document))
     }
+
+    private fun getStartOffset(offset: Int, document: Document): Int = minOf(document.textLength - 1, offset)
 
     private fun getEndOffset(offset: Int, document: Document): Int {
         val endOffset = DocumentUtil.getLineEndOffset(offset, document)
