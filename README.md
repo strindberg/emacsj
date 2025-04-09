@@ -289,7 +289,7 @@ The commands are:
 - Duplicate Line/Region and Comment (`ctrl-c c`).
 - Comment DWIM (Do What I Mean) (`alt-SEMICOLON`).
 
-The *Duplicate* commands work with multiple carets.
+The *Duplicate and Comment* commands work with multiple carets.
 
 ### Rectangles
 

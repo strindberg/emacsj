@@ -1,6 +1,7 @@
 package com.github.strindberg.emacsj.word
 
 import java.util.Locale
+import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.word.ChangeType.CAPITAL
 import com.github.strindberg.emacsj.word.ChangeType.CAPITAL_PREVIOUS
 import com.github.strindberg.emacsj.word.ChangeType.DELETE
@@ -39,7 +40,7 @@ class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler
 
         if (start != null) {
             when (type) {
-                DELETE, DELETE_PREVIOUS -> editor.document.deleteString(start, end)
+                DELETE, DELETE_PREVIOUS -> if (start != end) KillUtil.cut(editor, start, end, type == DELETE_PREVIOUS)
                 UPPER, UPPER_PREVIOUS -> replaceTextAndMove(editor.document, start, end, caret) { uppercase() }
                 LOWER, LOWER_PREVIOUS -> replaceTextAndMove(editor.document, start, end, caret) { lowercase() }
                 CAPITAL, CAPITAL_PREVIOUS -> capitalizeRegion(editor, start, end, caret)

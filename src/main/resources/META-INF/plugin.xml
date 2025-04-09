@@ -335,6 +335,30 @@
             <keyboard-shortcut first-keystroke="control K" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control K" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.kill.wholeline"
+                class="com.github.strindberg.emacsj.actions.kill.KillWholeLineAction"
+                text="Kill Whole Line">
+            <keyboard-shortcut first-keystroke="control alt K" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt K" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.kill.append"
+                class="com.github.strindberg.emacsj.actions.kill.AppendNextKillAction"
+                text="Append Next Kill">
+            <keyboard-shortcut first-keystroke="control alt W" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt W" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.kill.copy"
+                class="com.github.strindberg.emacsj.actions.kill.CopyAction"
+                text="Kill Ring Copy">
+            <keyboard-shortcut first-keystroke="alt W" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt W" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.kill.cut"
+                class="com.github.strindberg.emacsj.actions.kill.CutAction"
+                text="Kill Ring Cut">
+            <keyboard-shortcut first-keystroke="control W" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control W" keymap="Emacs"/>
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.zap.zapto"
                 class="com.github.strindberg.emacsj.actions.zap.ZapToCharAction"

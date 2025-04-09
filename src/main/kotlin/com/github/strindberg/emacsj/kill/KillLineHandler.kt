@@ -5,14 +5,30 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
-import com.intellij.openapi.editor.actions.KillRingUtil
 import com.intellij.util.DocumentUtil
 import com.intellij.util.text.CharArrayUtil
 
-class KillLineHandler : EditorWriteActionHandler.ForEachCaret() {
+enum class KillType { REST_OF_LINE, WHOLE_LINE }
+
+class KillLineHandler(val type: KillType) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
-        KillRingUtil.cut(editor, getStartOffset(caret.offset, editor.document), getEndOffset(caret.offset, editor.document))
+        when (type) {
+            KillType.REST_OF_LINE -> {
+                KillUtil.cut(
+                    editor,
+                    getStartOffset(caret.offset, editor.document),
+                    getEndOffset(caret.offset, editor.document)
+                )
+            }
+            KillType.WHOLE_LINE -> {
+                KillUtil.cut(
+                    editor,
+                    DocumentUtil.getLineStartOffset(caret.offset, editor.document),
+                    minOf(editor.document.textLength, DocumentUtil.getLineEndOffset(caret.offset, editor.document) + 1),
+                )
+            }
+        }
     }
 
     private fun getStartOffset(offset: Int, document: Document): Int = minOf(document.textLength - 1, offset)

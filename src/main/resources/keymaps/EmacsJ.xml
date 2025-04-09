@@ -149,6 +149,18 @@
     <action id="com.github.strindberg.emacsj.actions.kill.line">
         <keyboard-shortcut first-keystroke="control K"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.kill.wholeline">
+        <keyboard-shortcut first-keystroke="control alt K"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.kill.append">
+        <keyboard-shortcut first-keystroke="control alt W"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.kill.copy">
+        <keyboard-shortcut first-keystroke="alt W"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.kill.cut">
+        <keyboard-shortcut first-keystroke="control W"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.zap.zapto">
         <keyboard-shortcut first-keystroke="alt Z"/>
     </action>
@@ -218,6 +230,9 @@
     <action id="$Paste">
         <keyboard-shortcut first-keystroke="shift INSERT"/>
     </action>
+    <action id="EditorKillRegion"/>
+    <action id="EditorKillRingSave"/>
+    <action id="EditorSelectWord" />
 
     <!--Conflicting shortcuts from $default.xml removed-->
     <action id="ReplaceInPath"/>

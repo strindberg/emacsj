@@ -6,6 +6,9 @@
 
 ### Added
 
+- New command "Append Next Kill".
+- New commands "Kill Ring Copy" and "Kill Ring Cut".
+- New command "Kill Whole Line".
 - New commands "Beginning of buffer" and "End of buffer".
 
 ### Fixed
