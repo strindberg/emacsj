@@ -5,13 +5,12 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 
-class EditHandler(val type: Type) : EditorWriteActionHandler() {
+class CutRegionHandler : EditorWriteActionHandler() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val primary = caret ?: editor.caretModel.primaryCaret
         if (editor.selectionModel.hasSelection()) {
-            KillUtil.cutOrCopy(
-                type = type,
+            KillUtil.cut(
                 editor = editor,
                 textStartOffset = editor.selectionModel.selectionStart,
                 textEndOffset = editor.selectionModel.selectionEnd,

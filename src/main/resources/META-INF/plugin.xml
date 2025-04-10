@@ -348,13 +348,13 @@
             <keyboard-shortcut first-keystroke="control alt W" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.kill.copy"
-                class="com.github.strindberg.emacsj.actions.kill.CopyAction"
+                class="com.github.strindberg.emacsj.actions.kill.CopyRegionAction"
                 text="Kill Ring Copy">
             <keyboard-shortcut first-keystroke="alt W" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt W" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.kill.cut"
-                class="com.github.strindberg.emacsj.actions.kill.CutAction"
+                class="com.github.strindberg.emacsj.actions.kill.CutRegionAction"
                 text="Kill Ring Cut">
             <keyboard-shortcut first-keystroke="control W" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control W" keymap="Emacs"/>
