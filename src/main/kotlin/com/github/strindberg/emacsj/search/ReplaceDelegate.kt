@@ -10,6 +10,8 @@ import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
 import com.intellij.find.FindResult
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
@@ -135,6 +137,11 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
             ReplaceState.SEARCH_FOUND -> {
                 if (e.id == KeyEvent.KEY_TYPED) {
                     when (e.keyChar.lowercaseChar()) {
+                        '\u000c' -> { // Ctrl-L
+                            val recenterAction = ActionManager.getInstance().getAction(ACTION_RECENTER)
+                            ActionUtil.invokeAction(recenterAction, editor.component, "Recenter", null, null)
+                        }
+
                         'y', ' ' -> {
                             try {
                                 replaceInEditor()

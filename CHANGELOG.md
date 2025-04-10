@@ -6,6 +6,7 @@
 
 ### Added
 
+- Recenter (Ctrl-L) can be invoked during Search/replace.
 - New command "Append Next Kill".
 - New commands "Kill Ring Copy" and "Kill Ring Cut".
 - New command "Kill Whole Line".
