@@ -14,7 +14,7 @@ class CopyRegionHandler : EditorActionHandler() {
                 editor = editor,
                 textStartOffset = editor.selectionModel.selectionStart,
                 textEndOffset = editor.selectionModel.selectionEnd,
-                primary.offset == editor.selectionModel.selectionStart,
+                prepend = primary.offset == editor.selectionModel.selectionStart,
             )
         }
     }

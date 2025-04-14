@@ -52,9 +52,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                                 BACKWARD_TO, BACKWARD_UP_TO -> Pair(previousCharacter(editor.text, caret.offset, charTyped), caret.offset)
                             }
                             WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
-                                if (start != end) {
-                                    KillUtil.cut(editor, start, end, type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
-                                }
+                                KillUtil.cut(editor, start, end, prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
                             })
                         }
                         cancel()
