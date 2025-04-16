@@ -67,7 +67,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     private val actionHandlers: List<RestorableActionHandler<ISearchDelegate>>
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
+    internal val ui = CommonUI(editor, false, ::hide, ::keyEventHandler)
 
     internal var state: ISearchState = SEARCH
 

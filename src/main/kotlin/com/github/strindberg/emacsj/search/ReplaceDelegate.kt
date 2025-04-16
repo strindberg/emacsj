@@ -65,7 +65,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         }
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, true, ::keyEventHandler, ::hide)
+    internal val ui = CommonUI(editor, true, ::hide, ::keyEventHandler)
 
     init {
         lastSearch?.let { (search, replace) ->

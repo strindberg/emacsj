@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj.zap
 
-import java.awt.event.KeyEvent
 import java.util.UUID
 import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.search.CommonUI
@@ -30,7 +29,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     private val actionHandlers = mutableListOf<RestorableActionHandler<ZapDelegate>>()
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
+    internal val ui = CommonUI(editor, false, ::hide)
 
     init {
         ui.title = when (type) {
@@ -88,12 +87,6 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         ZapHandler.delegate = null
 
         return true
-    }
-
-    @Suppress("UnusedParameter")
-    private fun keyEventHandler(e: KeyEvent): Boolean {
-        cancel()
-        return false
     }
 
     private fun editorActions(): List<String> {

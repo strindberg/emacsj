@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj.universal
 
-import java.awt.event.KeyEvent
 import kotlin.math.pow
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_BACKWARD
@@ -49,7 +48,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
     private var counter = 1
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
+    internal val ui = CommonUI(editor, false, ::hide)
 
     init {
         ui.title = "Argument: "
@@ -123,9 +122,6 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
     }
 
     private fun getTimes(): Int = numeric ?: (4.0.pow(counter).toInt())
-
-    @Suppress("UnusedParameter", "FunctionOnlyReturningConstant")
-    private fun keyEventHandler(e: KeyEvent): Boolean = false
 
     private fun editorActions(): List<String> {
         val actionManager = ActionManager.getInstance()

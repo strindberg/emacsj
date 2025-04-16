@@ -31,8 +31,8 @@ import org.jetbrains.annotations.VisibleForTesting
 internal class CommonUI(
     val editor: Editor,
     private var writeable: Boolean,
-    keyEventHandler: (KeyEvent) -> Boolean,
     cancelCallback: () -> Boolean,
+    keyEventHandler: (KeyEvent) -> Boolean = { false },
 ) {
 
     private val standardFont =
