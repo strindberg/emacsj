@@ -86,7 +86,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         ui.show()
     }
 
-    internal fun hide(): Boolean {
+    internal fun hide() {
         editor.markupModel.removeAllHighlighters()
 
         editor.caretModel.removeCaretListener(caretListener)
@@ -96,11 +96,9 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         ui.cancelUI()
 
         ReplaceHandler.delegate = null
-
-        return true
     }
 
-    private fun keyEventHandler(e: KeyEvent): Boolean {
+    private fun keyEventHandler(e: KeyEvent) {
         when (state) {
             ReplaceState.GET_SEARCH_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED && e.modifiersEx == 0) {
@@ -193,7 +191,6 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                 }
             }
         }
-        return false
     }
 
     private fun startSearch() {

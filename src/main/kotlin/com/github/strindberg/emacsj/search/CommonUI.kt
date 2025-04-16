@@ -31,8 +31,8 @@ import org.jetbrains.annotations.VisibleForTesting
 internal class CommonUI(
     val editor: Editor,
     private var writeable: Boolean,
-    cancelCallback: () -> Boolean,
-    keyEventHandler: (KeyEvent) -> Boolean = { false },
+    cancelCallback: () -> Unit,
+    keyEventHandler: (KeyEvent) -> Unit = { },
 ) {
 
     private val standardFont =
@@ -121,8 +121,14 @@ internal class CommonUI(
             .setMovable(false)
             .setResizable(false)
             .setRequestFocus(writeable)
-            .setCancelCallback(cancelCallback)
-            .setKeyEventHandler(keyEventHandler)
+            .setCancelCallback {
+                cancelCallback()
+                true
+            }
+            .setKeyEventHandler { event ->
+                keyEventHandler(event)
+                false
+            }
             .createPopup()
     }
 

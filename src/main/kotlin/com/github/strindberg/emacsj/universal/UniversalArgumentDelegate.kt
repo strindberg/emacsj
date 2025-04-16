@@ -111,7 +111,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
         ui.text = getTimes().toString()
     }
 
-    internal fun hide(): Boolean {
+    internal fun hide() {
         unregisterHandlers()
 
         document.setReadOnly(false)
@@ -119,8 +119,6 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
         ui.cancelUI()
 
         UniversalArgumentHandler.delegate = null
-
-        return true
     }
 
     private fun getTimes(): Int = numeric ?: (4.0.pow(counter).toInt())

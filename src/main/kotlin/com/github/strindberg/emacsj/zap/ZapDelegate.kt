@@ -77,7 +77,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         ui.show()
     }
 
-    internal fun hide(): Boolean {
+    internal fun hide() {
         unregisterHandlers()
 
         document.setReadOnly(false)
@@ -85,8 +85,6 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         ui.cancelUI()
 
         ZapHandler.delegate = null
-
-        return true
     }
 
     private fun editorActions(): List<String> {

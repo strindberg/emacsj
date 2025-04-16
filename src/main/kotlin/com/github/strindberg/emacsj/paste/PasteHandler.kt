@@ -42,11 +42,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             STANDARD, PREFIX -> {
                 clipboardHistory = filteredContents().take(64)
                 clipboaardHistoryPos = 0
-                if (EmacsJCommandListener.lastCommandName() == COMMAND_UNIVERSAL_ARGUMENT) {
-                    pasteType = PREFIX
-                } else {
-                    pasteType = type
-                }
+                pasteType = if (EmacsJCommandListener.lastCommandName() == COMMAND_UNIVERSAL_ARGUMENT) PREFIX else type
                 editor.pasteAndMove()
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }

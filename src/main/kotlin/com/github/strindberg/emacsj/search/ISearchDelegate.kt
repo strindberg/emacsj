@@ -195,7 +195,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         ui.title = titleText()
     }
 
-    internal fun hide(): Boolean {
+    internal fun hide() {
         unregisterHandlers()
 
         editor.markupModel.removeAllHighlighters()
@@ -215,8 +215,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         editor.caretModel.runForEachCaret {
             it.clearData()
         }
-
-        return true
     }
 
     internal fun startPreviousSearch() {
@@ -294,7 +292,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
     }
 
-    private fun keyEventHandler(e: KeyEvent): Boolean {
+    private fun keyEventHandler(e: KeyEvent) {
         // ESC or ctrl-g pressed
         if (e.id == KeyEvent.KEY_PRESSED &&
             (e.keyCode == VK_ESCAPE || (e.keyCode == VK_G && (e.modifiersEx and CTRL_DOWN_MASK == CTRL_DOWN_MASK)))
@@ -307,7 +305,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                 }
             }
         }
-        return false
     }
 
     private fun cancel() {
