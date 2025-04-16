@@ -1,8 +1,9 @@
 package com.github.strindberg.emacsj.mark
 
+import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.github.strindberg.emacsj.mark.Type.POP
-import com.github.strindberg.emacsj.mark.Type.PUSH
 import com.github.strindberg.emacsj.search.prependElement
+import com.github.strindberg.emacsj.universal.COMMAND_UNIVERSAL_ARGUMENT
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -69,20 +70,17 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         (editor as? EditorEx)?.let { ex ->
             ex.virtualFile?.let { virtualFile ->
-                when (type) {
-                    PUSH -> {
-                        val previousSticky = ex.isStickySelection
-                        ex.isStickySelection = false
-                        placeInfo(ex, ex.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
-                            if (placeInfo != peek(ex) || !previousSticky) {
-                                places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
-                                ex.isStickySelection = true
-                            }
-                        }
+                if (type == POP || EmacsJCommandListener.lastCommandName() == COMMAND_UNIVERSAL_ARGUMENT) {
+                    places[virtualFile.hashCode()]?.pop()?.let { place ->
+                        gotoPlaceInfo(editor, place)
                     }
-                    POP -> {
-                        places[virtualFile.hashCode()]?.pop()?.let { place ->
-                            gotoPlaceInfo(editor, place)
+                } else {
+                    val previousSticky = ex.isStickySelection
+                    ex.isStickySelection = false
+                    placeInfo(ex, ex.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
+                        if (placeInfo != peek(ex) || !previousSticky) {
+                            places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
+                            ex.isStickySelection = true
                         }
                     }
                 }

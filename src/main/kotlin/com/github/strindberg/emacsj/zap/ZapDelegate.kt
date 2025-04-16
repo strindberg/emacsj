@@ -113,7 +113,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         }
         EditorActionManager.getInstance().apply {
             actionHandlers.forEach {
-                setActionHandler(it.action, it.originalHandler)
+                setActionHandler(it.actionId, it.originalHandler)
             }
         }
     }

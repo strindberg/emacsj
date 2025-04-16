@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.actionSystem.TypedActionHandler
 
 internal class RestorableActionHandler<T>(
-    val action: String,
+    val actionId: String,
     val originalHandler: EditorActionHandler,
     val getDelegate: () -> T?,
     val doExecute: T.(caret: Caret?, dataContext: DataContext) -> Unit,

@@ -281,8 +281,6 @@
         <action id="com.github.strindberg.emacsj.actions.paste.pasteprefix"
                 class="com.github.strindberg.emacsj.actions.paste.PastePrefixAction"
                 text="Paste: Leave Caret at Point">
-            <keyboard-shortcut first-keystroke="control U" second-keystroke="control Y" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="control U" second-keystroke="control Y" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.paste.paste"
                 class="com.github.strindberg.emacsj.actions.paste.PasteAction"
@@ -306,8 +304,6 @@
         <action id="com.github.strindberg.emacsj.actions.mark.popmark"
                 class="com.github.strindberg.emacsj.actions.mark.PopMarkAction"
                 text="Pop Mark">
-            <keyboard-shortcut first-keystroke="control U" second-keystroke="control SPACE" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="control U" second-keystroke="control SPACE" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.mark.exchangepointandmark"
                 class="com.github.strindberg.emacsj.actions.mark.ExchangePointAndMarkAction"
@@ -405,6 +401,13 @@
             <keyboard-shortcut first-keystroke="alt GREATER" keymap="Emacs"/>
             <keyboard-shortcut first-keystroke="shift alt LESS" keymap="$default"/>
             <keyboard-shortcut first-keystroke="shift alt LESS" keymap="Emacs"/>
+        </action>
+
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgumentAction"
+                text="Universal Argument">
+            <keyboard-shortcut first-keystroke="control U" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control U" keymap="Emacs"/>
         </action>
     </actions>
 

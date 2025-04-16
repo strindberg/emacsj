@@ -122,9 +122,6 @@
     <action id="com.github.strindberg.emacsj.actions.rectangle.rectanglepaste">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="alt Y"/>
     </action>
-    <action id="com.github.strindberg.emacsj.actions.paste.pasteprefix">
-        <keyboard-shortcut first-keystroke="control U" second-keystroke="control Y"/>
-    </action>
     <action id="com.github.strindberg.emacsj.actions.paste.paste">
         <keyboard-shortcut first-keystroke="control Y"/>
     </action>
@@ -133,9 +130,6 @@
     </action>
     <action id="com.github.strindberg.emacsj.actions.mark.pushmark">
         <keyboard-shortcut first-keystroke="control SPACE"/>
-    </action>
-    <action id="com.github.strindberg.emacsj.actions.mark.popmark">
-        <keyboard-shortcut first-keystroke="control U" second-keystroke="control SPACE"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.mark.exchangepointandmark">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="control X"/>

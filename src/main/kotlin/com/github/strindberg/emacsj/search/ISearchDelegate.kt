@@ -15,6 +15,7 @@ import com.github.strindberg.emacsj.search.ISearchState.FAILED
 import com.github.strindberg.emacsj.search.ISearchState.SEARCH
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.search.SearchType.TEXT
+import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
@@ -44,8 +45,12 @@ import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
+internal const val ACTION_ISEARCH_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchtextbackward"
+internal const val ACTION_ISEARCH_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchtextforward"
+internal const val ACTION_ISEARCH_REGEXP_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpforward"
+internal const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
+
 private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
-internal const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.recenter"
 
 internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
 
@@ -315,7 +320,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
         EditorActionManager.getInstance().apply {
             actionHandlers.forEach {
-                setActionHandler(it.action, it.originalHandler)
+                setActionHandler(it.actionId, it.originalHandler)
             }
         }
     }

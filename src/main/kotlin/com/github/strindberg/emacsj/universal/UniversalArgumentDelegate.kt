@@ -1,0 +1,153 @@
+package com.github.strindberg.emacsj.universal
+
+import java.awt.event.KeyEvent
+import kotlin.math.pow
+import com.github.strindberg.emacsj.paste.ACTION_PASTE
+import com.github.strindberg.emacsj.search.ACTION_ISEARCH_BACKWARD
+import com.github.strindberg.emacsj.search.ACTION_ISEARCH_FORWARD
+import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_BACKWARD
+import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_FORWARD
+import com.github.strindberg.emacsj.search.ACTION_REPLACE_REGEXP
+import com.github.strindberg.emacsj.search.ACTION_REPLACE_TEXT
+import com.github.strindberg.emacsj.search.CommonUI
+import com.github.strindberg.emacsj.search.RestorableActionHandler
+import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.actionSystem.EditorAction
+import com.intellij.openapi.editor.actionSystem.EditorActionManager
+import com.intellij.openapi.editor.actionSystem.TypedAction
+import org.jetbrains.annotations.VisibleForTesting
+
+internal const val ACTION_UNIVERSAL_ARGUMENT = "com.github.strindberg.emacsj.actions.universal.universalargument"
+
+internal const val COMMAND_UNIVERSAL_ARGUMENT = "Universal Argument"
+
+private val singleActions = listOf(
+    ACTION_ISEARCH_BACKWARD,
+    ACTION_ISEARCH_FORWARD,
+    ACTION_ISEARCH_REGEXP_FORWARD,
+    ACTION_ISEARCH_REGEXP_BACKWARD,
+    ACTION_REPLACE_TEXT,
+    ACTION_REPLACE_REGEXP,
+    ACTION_PASTE,
+)
+
+class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext) {
+
+    // Prevent dead keys such as '^' and '~' from showing in editor by setting document to read only.
+    private val document: Document = this.editor.document.apply { setReadOnly(true) }
+
+    private val typedHandler: RestorableTypedActionHandler
+
+    private val actionHandlers = mutableListOf<RestorableActionHandler<UniversalArgumentDelegate>>()
+
+    private var numeric: Int? = null
+
+    private var counter = 1
+
+    @VisibleForTesting
+    internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
+
+    init {
+        ui.title = "Argument: "
+        ui.text = getTimes().toString()
+
+        TypedAction.getInstance().apply {
+            setupRawHandler(
+                object : RestorableTypedActionHandler(rawHandler) {
+                    override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
+                        // TODO: is this null check necessary?
+                        val delegate = UniversalArgumentHandler.delegate
+                        if (delegate != null) {
+                            if (charTyped.isDigit()) {
+                                val digit = charTyped.digitToInt()
+                                numeric = numeric?.let { 10 * it + digit } ?: digit.takeIf { it > 0 }
+                                ui.text = getTimes().toString()
+                            } else {
+                                cancel()
+                                repeat(getTimes()) { myOriginalHandler?.execute(editor, charTyped, dataContext) }
+                            }
+                        } else {
+                            myOriginalHandler?.execute(editor, charTyped, dataContext)
+                        }
+                    }
+                }.also { typedHandler = it }
+            )
+        }
+
+        EditorActionManager.getInstance().apply {
+            editorActions().forEach { actionId ->
+                getActionHandler(actionId)?.let { originalHandler ->
+                    setActionHandler(
+                        actionId,
+                        RestorableActionHandler(
+                            actionId,
+                            originalHandler,
+                            { UniversalArgumentHandler.delegate }
+                        ) { caret, dataContext ->
+                            cancel()
+                            if (actionId in singleActions) {
+                                originalHandler.execute(editor, caret, dataContext)
+                            } else {
+                                repeat(getTimes()) {
+                                    originalHandler.execute(editor, caret, dataContext)
+                                }
+                            }
+                        }.also { actionHandlers.add(it) }
+                    )
+                }
+            }
+        }
+
+        ui.show()
+    }
+
+    internal fun multiply() {
+        counter++
+        ui.text = getTimes().toString()
+    }
+
+    internal fun hide(): Boolean {
+        unregisterHandlers()
+
+        document.setReadOnly(false)
+
+        ui.cancelUI()
+
+        UniversalArgumentHandler.delegate = null
+
+        return true
+    }
+
+    private fun getTimes(): Int = numeric ?: (4.0.pow(counter).toInt())
+
+    @Suppress("UnusedParameter", "FunctionOnlyReturningConstant")
+    private fun keyEventHandler(e: KeyEvent): Boolean = false
+
+    private fun editorActions(): List<String> {
+        val actionManager = ActionManager.getInstance()
+        return actionManager.getActionIdList("").filter { actionId ->
+            actionId != ACTION_UNIVERSAL_ARGUMENT &&
+                !actionManager.isGroup(actionId) &&
+                actionManager.getAction(actionId)?.let { it is EditorAction } == true
+        }
+    }
+
+    private fun cancel() {
+        ui.cancelUI()
+    }
+
+    private fun unregisterHandlers() {
+        TypedAction.getInstance().apply {
+            setupRawHandler(typedHandler.originalHandler)
+        }
+        EditorActionManager.getInstance().apply {
+            actionHandlers.forEach {
+                setActionHandler(it.actionId, it.originalHandler)
+            }
+        }
+    }
+}

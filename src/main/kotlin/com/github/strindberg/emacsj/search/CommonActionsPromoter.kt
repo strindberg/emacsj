@@ -2,6 +2,7 @@ package com.github.strindberg.emacsj.search
 
 import com.github.strindberg.emacsj.actions.search.ISearchAction
 import com.github.strindberg.emacsj.actions.search.ReplaceAction
+import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.ActionPromoter
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DataContext
@@ -28,6 +29,16 @@ internal class CommonActionsPromoter : ActionPromoter {
                 if (a is ReplaceAction) {
                     -1
                 } else if (b is ReplaceAction) {
+                    1
+                } else {
+                    0
+                }
+            }
+        } else if (UniversalArgumentHandler.delegate != null) {
+            newList.sortWith { a, b ->
+                if (a is EnterAction) {
+                    -1
+                } else if (b is EnterAction) {
                     1
                 } else {
                     0
