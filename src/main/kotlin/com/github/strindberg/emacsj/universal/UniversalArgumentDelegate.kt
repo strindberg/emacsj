@@ -129,8 +129,8 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
         val actionManager = ActionManager.getInstance()
         return actionManager.getActionIdList("").filter { actionId ->
             actionId != ACTION_UNIVERSAL_ARGUMENT &&
-                    !actionManager.isGroup(actionId) &&
-                    actionManager.getAction(actionId)?.let { it is EditorAction } == true
+                !actionManager.isGroup(actionId) &&
+                actionManager.getAction(actionId)?.let { it is EditorAction } == true
         }
     }
 
