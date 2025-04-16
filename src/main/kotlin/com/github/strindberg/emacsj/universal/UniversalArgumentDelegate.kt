@@ -1,6 +1,7 @@
 package com.github.strindberg.emacsj.universal
 
 import kotlin.math.pow
+import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_BACKWARD
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_FORWARD
@@ -32,6 +33,7 @@ private val singleActions = listOf(
     ACTION_REPLACE_TEXT,
     ACTION_REPLACE_REGEXP,
     ACTION_PASTE,
+    ACTION_PUSH_MARK,
 )
 
 class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext) {
@@ -127,8 +129,8 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
         val actionManager = ActionManager.getInstance()
         return actionManager.getActionIdList("").filter { actionId ->
             actionId != ACTION_UNIVERSAL_ARGUMENT &&
-                !actionManager.isGroup(actionId) &&
-                actionManager.getAction(actionId)?.let { it is EditorAction } == true
+                    !actionManager.isGroup(actionId) &&
+                    actionManager.getAction(actionId)?.let { it is EditorAction } == true
         }
     }
 

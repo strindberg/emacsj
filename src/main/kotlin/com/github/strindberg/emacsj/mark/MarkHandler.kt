@@ -17,6 +17,8 @@ import com.intellij.openapi.vfs.VirtualFile
 
 enum class Type { PUSH, POP }
 
+internal const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
+
 class MarkHandler(val type: Type) : EditorActionHandler() {
 
     companion object {
