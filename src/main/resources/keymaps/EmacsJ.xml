@@ -226,7 +226,7 @@
     </action>
     <action id="EditorKillRegion"/>
     <action id="EditorKillRingSave"/>
-    <action id="EditorSelectWord" />
+    <action id="EditorSelectWord"/>
 
     <!--Conflicting shortcuts from $default.xml removed-->
     <action id="ReplaceInPath"/>
@@ -236,4 +236,6 @@
     <action id="Terminal.DeletePreviousWord"/>
     <action id="Terminal.SearchInCommandHistory"/>
 
+    <!--Conflicting shortcuts from VCS implementation removed-->
+    <action id="CheckinProject"/>
 </keymap>
