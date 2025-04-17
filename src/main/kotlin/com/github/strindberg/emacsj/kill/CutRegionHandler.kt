@@ -5,6 +5,8 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 
+internal const val ACTION_CUT = "com.github.strindberg.emacsj.actions.kill.cut"
+
 class CutRegionHandler : EditorWriteActionHandler() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {

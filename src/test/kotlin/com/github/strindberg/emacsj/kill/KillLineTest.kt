@@ -3,11 +3,8 @@ package com.github.strindberg.emacsj.kill
 import java.awt.datatransfer.DataFlavor
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import junit.framework.TestCase
 
 const val FILE = "file.txt"
-
-private const val ACTION_KILL_LINE = "com.github.strindberg.emacsj.actions.kill.line"
 
 class KillLineTest : BasePlatformTestCase() {
 
@@ -26,7 +23,7 @@ class KillLineTest : BasePlatformTestCase() {
               |bar
             """.trimMargin()
         )
-        TestCase.assertEquals("zoo", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+        assertEquals("zoo", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
     fun `test Line is killed including new line when caret at line start`() {
@@ -43,7 +40,7 @@ class KillLineTest : BasePlatformTestCase() {
             """<caret>bar
             """.trimMargin()
         )
-        TestCase.assertEquals("zoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+        assertEquals("zoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
     fun `test Line is killed including new line when only whitespace after caret`() {
@@ -60,7 +57,7 @@ class KillLineTest : BasePlatformTestCase() {
             """zoo<caret>bar
             """.trimMargin()
         )
-        TestCase.assertEquals("    \n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+        assertEquals("    \n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
     fun `test End of document is properly handled`() {

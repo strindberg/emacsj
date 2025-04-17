@@ -43,18 +43,26 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
                     override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
-                        val undoGroupId = UUID.randomUUID().toString()
-                        document.setReadOnly(false)
-                        editor.caretModel.allCarets.reversed().forEach { caret ->
-                            val (start, end) = when (type) {
-                                FORWARD_TO, FORWARD_UP_TO -> Pair(caret.offset, nextCharacter(editor.text, caret.offset, charTyped))
-                                BACKWARD_TO, BACKWARD_UP_TO -> Pair(previousCharacter(editor.text, caret.offset, charTyped), caret.offset)
+                        val delegate = ZapHandler.delegate
+                        if (delegate != null) {
+                            val undoGroupId = UUID.randomUUID().toString()
+                            document.setReadOnly(false)
+                            editor.caretModel.allCarets.reversed().forEach { caret ->
+                                val (start, end) = when (type) {
+                                    FORWARD_TO, FORWARD_UP_TO -> Pair(caret.offset, nextCharacter(editor.text, caret.offset, charTyped))
+                                    BACKWARD_TO, BACKWARD_UP_TO -> Pair(
+                                        previousCharacter(editor.text, caret.offset, charTyped),
+                                        caret.offset
+                                    )
+                                }
+                                WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
+                                    KillUtil.cut(editor, start, end, prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
+                                })
                             }
-                            WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
-                                KillUtil.cut(editor, start, end, prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
-                            })
+                            cancel()
+                        } else {
+                            myOriginalHandler?.execute(editor, charTyped, dataContext)
                         }
-                        cancel()
                     }
                 }.also { typedHandler = it }
             )

@@ -60,7 +60,6 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
                     override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
-                        // TODO: is this null check necessary?
                         val delegate = UniversalArgumentHandler.delegate
                         if (delegate != null) {
                             if (charTyped.isDigit()) {
@@ -68,8 +67,9 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
                                 numeric = numeric?.let { 10 * it + digit } ?: digit.takeIf { it > 0 }
                                 ui.text = getTimes().toString()
                             } else {
-                                cancel()
+                                document.setReadOnly(false)
                                 repeat(getTimes()) { myOriginalHandler?.execute(editor, charTyped, dataContext) }
+                                cancel()
                             }
                         } else {
                             myOriginalHandler?.execute(editor, charTyped, dataContext)

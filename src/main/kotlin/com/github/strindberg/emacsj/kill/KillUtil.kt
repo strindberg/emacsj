@@ -52,6 +52,7 @@ object KillUtil {
             }
         }
 
+        editor.selectionModel.removeSelection()
         if (editor is EditorEx) {
             editor.isStickySelection = false
         }

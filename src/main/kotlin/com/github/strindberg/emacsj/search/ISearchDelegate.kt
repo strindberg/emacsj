@@ -107,13 +107,13 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                 object : RestorableTypedActionHandler(rawHandler) {
                     override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
                         val delegate = ISearchHandler.delegate
-                        if (delegate == null) {
-                            myOriginalHandler?.execute(editor, charTyped, dataContext)
-                        } else {
+                        if (delegate != null) {
                             when (delegate.state) {
                                 CHOOSE_PREVIOUS -> delegate.text += charTyped.toString()
                                 SEARCH, FAILED -> delegate.searchAllCarets(delegate.direction, charTyped.toString(), keepStart = true)
                             }
+                        } else {
+                            myOriginalHandler?.execute(editor, charTyped, dataContext)
                         }
                     }
                 }.also { typedHandler = it }

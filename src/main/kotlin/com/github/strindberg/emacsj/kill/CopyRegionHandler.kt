@@ -5,6 +5,8 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
+internal const val ACTION_COPY = "com.github.strindberg.emacsj.actions.kill.copy"
+
 class CopyRegionHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
