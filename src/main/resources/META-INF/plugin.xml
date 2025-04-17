@@ -98,7 +98,7 @@
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch"
                 class="com.github.strindberg.emacsj.actions.search.ISearchToggleLaxSearchAction"
-                text="Isearch: Toggle Lax-Whitespace Searching on or Off">
+                text="Isearch: Toggle Lax-Whitespace Searching On or Off">
             <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE" keymap="Emacs"/>
         </action>
