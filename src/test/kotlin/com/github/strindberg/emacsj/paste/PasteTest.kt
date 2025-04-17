@@ -1,7 +1,6 @@
 package com.github.strindberg.emacsj.paste
 
 import java.awt.datatransfer.StringSelection
-import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.ide.CopyPasteManager
