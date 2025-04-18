@@ -47,7 +47,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
 
     private var numeric: Int? = null
 
-    private var counter = 1
+    private var counter = 4
 
     @VisibleForTesting
     internal val ui = CommonUI(editor, false, ::hide)
@@ -107,7 +107,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
     }
 
     internal fun multiply() {
-        counter++
+        counter *= 4
         ui.text = getTimes().toString()
     }
 
@@ -121,7 +121,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
         UniversalArgumentHandler.delegate = null
     }
 
-    private fun getTimes(): Int = numeric ?: (4.0.pow(counter).toInt())
+    private fun getTimes(): Int = numeric ?: counter
 
     private fun editorActions(): List<String> {
         val actionManager = ActionManager.getInstance()
