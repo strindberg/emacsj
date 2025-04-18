@@ -409,6 +409,66 @@
             <keyboard-shortcut first-keystroke="control U" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control U" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument1"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument1Action"
+                text="Universal Argument 1">
+            <keyboard-shortcut first-keystroke="control alt 1" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 1" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument2"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument2Action"
+                text="Universal Argument 2">
+            <keyboard-shortcut first-keystroke="control alt 2" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 2" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument3"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument3Action"
+                text="Universal Argument 3">
+            <keyboard-shortcut first-keystroke="control alt 3" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 3" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument4"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument4Action"
+                text="Universal Argument 4">
+            <keyboard-shortcut first-keystroke="control alt 4" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 4" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument5"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument5Action"
+                text="Universal Argument 5">
+            <keyboard-shortcut first-keystroke="control alt 5" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 5" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument6"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument6Action"
+                text="Universal Argument 6">
+            <keyboard-shortcut first-keystroke="control alt 6" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 6" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument7"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument7Action"
+                text="Universal Argument 7">
+            <keyboard-shortcut first-keystroke="control alt 7" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 7" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument8"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument8Action"
+                text="Universal Argument 8">
+            <keyboard-shortcut first-keystroke="control alt 8" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 8" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument9"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument9Action"
+                text="Universal Argument 9">
+            <keyboard-shortcut first-keystroke="control alt 9" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 9" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument0"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument0Action"
+                text="Universal Argument 0">
+            <keyboard-shortcut first-keystroke="control alt 0" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 0" keymap="Emacs"/>
+        </action>
     </actions>
 
 </idea-plugin>

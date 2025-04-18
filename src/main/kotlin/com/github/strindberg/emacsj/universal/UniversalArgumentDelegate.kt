@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj.universal
 
-import kotlin.math.pow
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_BACKWARD
@@ -22,6 +21,16 @@ import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
 internal const val ACTION_UNIVERSAL_ARGUMENT = "com.github.strindberg.emacsj.actions.universal.universalargument"
+internal const val ACTION_UNIVERSAL_ARGUMENT1 = "com.github.strindberg.emacsj.actions.universal.universalargument1"
+internal const val ACTION_UNIVERSAL_ARGUMENT2 = "com.github.strindberg.emacsj.actions.universal.universalargument2"
+internal const val ACTION_UNIVERSAL_ARGUMENT3 = "com.github.strindberg.emacsj.actions.universal.universalargument3"
+internal const val ACTION_UNIVERSAL_ARGUMENT4 = "com.github.strindberg.emacsj.actions.universal.universalargument4"
+internal const val ACTION_UNIVERSAL_ARGUMENT5 = "com.github.strindberg.emacsj.actions.universal.universalargument5"
+internal const val ACTION_UNIVERSAL_ARGUMENT6 = "com.github.strindberg.emacsj.actions.universal.universalargument6"
+internal const val ACTION_UNIVERSAL_ARGUMENT7 = "com.github.strindberg.emacsj.actions.universal.universalargument7"
+internal const val ACTION_UNIVERSAL_ARGUMENT8 = "com.github.strindberg.emacsj.actions.universal.universalargument8"
+internal const val ACTION_UNIVERSAL_ARGUMENT9 = "com.github.strindberg.emacsj.actions.universal.universalargument9"
+internal const val ACTION_UNIVERSAL_ARGUMENT0 = "com.github.strindberg.emacsj.actions.universal.universalargument0"
 
 internal const val COMMAND_UNIVERSAL_ARGUMENT = "Universal Argument"
 
@@ -36,7 +45,7 @@ private val singleActions = listOf(
     ACTION_PUSH_MARK,
 )
 
-class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext) {
+class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext, var numeric: Int?) {
 
     // Prevent dead keys such as '^' and '~' from showing in editor by setting document to read only.
     private val document: Document = this.editor.document.apply { setReadOnly(true) }
@@ -44,8 +53,6 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
     private val typedHandler: RestorableTypedActionHandler
 
     private val actionHandlers = mutableListOf<RestorableActionHandler<UniversalArgumentDelegate>>()
-
-    private var numeric: Int? = null
 
     private var counter = 4
 
@@ -64,8 +71,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
                         if (delegate != null) {
                             if (charTyped.isDigit()) {
                                 val digit = charTyped.digitToInt()
-                                numeric = numeric?.let { 10 * it + digit } ?: digit.takeIf { it > 0 }
-                                ui.text = getTimes().toString()
+                                addDigit(digit)
                             } else {
                                 document.setReadOnly(false)
                                 repeat(getTimes()) { myOriginalHandler?.execute(editor, charTyped, dataContext) }
@@ -111,6 +117,11 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
         ui.text = getTimes().toString()
     }
 
+    internal fun addDigit(digit: Int) {
+        numeric = numeric?.let { 10 * it + digit } ?: digit.takeIf { it > 0 }
+        ui.text = getTimes().toString()
+    }
+
     internal fun hide() {
         unregisterHandlers()
 
@@ -126,7 +137,19 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
     private fun editorActions(): List<String> {
         val actionManager = ActionManager.getInstance()
         return actionManager.getActionIdList("").filter { actionId ->
-            actionId != ACTION_UNIVERSAL_ARGUMENT &&
+            actionId !in listOf(
+                ACTION_UNIVERSAL_ARGUMENT,
+                ACTION_UNIVERSAL_ARGUMENT1,
+                ACTION_UNIVERSAL_ARGUMENT2,
+                ACTION_UNIVERSAL_ARGUMENT3,
+                ACTION_UNIVERSAL_ARGUMENT4,
+                ACTION_UNIVERSAL_ARGUMENT5,
+                ACTION_UNIVERSAL_ARGUMENT6,
+                ACTION_UNIVERSAL_ARGUMENT7,
+                ACTION_UNIVERSAL_ARGUMENT8,
+                ACTION_UNIVERSAL_ARGUMENT9,
+                ACTION_UNIVERSAL_ARGUMENT0,
+            ) &&
                 !actionManager.isGroup(actionId) &&
                 actionManager.getAction(actionId)?.let { it is EditorAction } == true
         }
