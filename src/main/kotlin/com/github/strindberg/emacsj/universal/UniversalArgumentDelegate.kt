@@ -109,7 +109,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
     }
 
     internal fun addDigit(digit: Int) {
-        numeric = numeric?.let { 10 * it + digit } ?: digit.takeIf { it > 0 }
+        numeric = numeric?.let { 10 * it + digit } ?: digit
         ui.text = getTimes().toString()
     }
 
