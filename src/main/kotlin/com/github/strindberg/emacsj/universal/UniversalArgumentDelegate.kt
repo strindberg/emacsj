@@ -2,6 +2,7 @@ package com.github.strindberg.emacsj.universal
 
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
+import com.github.strindberg.emacsj.paste.ACTION_PREFIX_PASTE
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_BACKWARD
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_FORWARD
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_BACKWARD
@@ -30,6 +31,7 @@ private val singleActions = listOf(
     ACTION_REPLACE_TEXT,
     ACTION_REPLACE_REGEXP,
     ACTION_PASTE,
+    ACTION_PREFIX_PASTE,
     ACTION_PUSH_MARK,
 )
 
@@ -83,7 +85,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
                             originalHandler,
                             { UniversalArgumentHandler.delegate }
                         ) { caret, dataContext ->
-                            cancel()
+                            document.setReadOnly(false)
                             if (actionId in singleActions) {
                                 originalHandler.execute(editor, caret, dataContext)
                             } else {
@@ -91,6 +93,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
                                     originalHandler.execute(editor, caret, dataContext)
                                 }
                             }
+                            cancel()
                         }.also { actionHandlers.add(it) }
                     )
                 }
