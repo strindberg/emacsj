@@ -8,6 +8,8 @@ import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
 
+internal const val ACTION_EXCHANGE_MARK = "com.github.strindberg.emacsj.actions.mark.exchangepointandmark"
+
 class ExchangePointAndMarkHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {

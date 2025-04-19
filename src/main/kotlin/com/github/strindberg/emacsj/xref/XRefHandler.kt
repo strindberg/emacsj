@@ -8,6 +8,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
 
+internal const val ACTION_XREF_BACK = "com.github.strindberg.emacsj.actions.xref.xrefback"
+
 class XRefHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {

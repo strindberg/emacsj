@@ -18,6 +18,10 @@ import com.intellij.util.DocumentUtil.isAtLineStart
 
 enum class Type { DUPLICATE, COMMENT, DWIM }
 
+internal const val ACTION_COMMENT = "com.github.strindberg.emacsj.actions.duplicate.commentdwim"
+internal const val ACTION_DUPLICATE = "com.github.strindberg.emacsj.actions.duplicate.duplicate"
+internal const val ACTION_DUPLICATE_COMMENT = "com.github.strindberg.emacsj.actions.duplicate.duplicateandcomment"
+
 class DuplicateAndCommentHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {

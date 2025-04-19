@@ -11,6 +11,11 @@ import com.intellij.openapi.ide.CopyPasteManager
 
 enum class Type { COPY, CUT, OPEN, CLEAR }
 
+internal const val ACTION_COPY_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.copyrectangle"
+internal const val ACTION_CUT_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.cutrectangle"
+internal const val ACTION_OPEN_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.openrectangle"
+internal const val ACTION_CLEAR_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.clearrectangle"
+
 class RectangleHandler(val type: Type) : EditorWriteActionHandler() {
 
     override fun executeWriteAction(editor: Editor, editorCaret: Caret?, dataContext: DataContext) {

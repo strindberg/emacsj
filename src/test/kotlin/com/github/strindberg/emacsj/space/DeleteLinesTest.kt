@@ -2,8 +2,6 @@ package com.github.strindberg.emacsj.space
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-private const val ACTION_DELETE_LINES = "com.github.strindberg.emacsj.actions.space.deletelines"
-
 class DeleteLinesTest : BasePlatformTestCase() {
 
     fun `test Do nothing on non-empty lines`() {

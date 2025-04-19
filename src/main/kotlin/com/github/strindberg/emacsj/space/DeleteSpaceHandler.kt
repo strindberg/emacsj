@@ -10,6 +10,9 @@ import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 
 enum class Type { DELETE, ONE_SPACE }
 
+internal const val ACTION_DELETE_SPACE = "com.github.strindberg.emacsj.actions.space.deletespace"
+internal const val ACTION_ONE_SPACE = "com.github.strindberg.emacsj.actions.space.onespace"
+
 class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {

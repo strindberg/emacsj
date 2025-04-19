@@ -2,8 +2,6 @@ package com.github.strindberg.emacsj.space
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-private const val ACTION_ONE_SPACE = "com.github.strindberg.emacsj.actions.space.onespace"
-
 class OneSpaceTest : BasePlatformTestCase() {
 
     fun `test Nothing to delete`() {

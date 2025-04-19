@@ -10,6 +10,8 @@ import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.openapi.ide.CopyPasteManager
 
+internal const val ACTION_PASTE_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.rectanglepaste"
+
 class RectanglePasteHandler : EditorWriteActionHandler() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {

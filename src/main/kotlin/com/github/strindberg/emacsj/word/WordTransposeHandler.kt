@@ -8,6 +8,9 @@ import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 
 enum class Direction { FORWARD, BACKWARD }
 
+internal const val ACTION_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.actions.word.transposewords"
+internal const val ACTION_REVERSE_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.actions.word.transposewordsreverse"
+
 class WordTransposeHandler(private val direction: Direction) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {

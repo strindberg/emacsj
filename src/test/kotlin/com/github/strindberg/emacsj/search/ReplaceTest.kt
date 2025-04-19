@@ -4,13 +4,11 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import javax.swing.JComponent
+import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_START
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-
-private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
-private const val ACTION_REPLACE_PREVIOUS = "com.github.strindberg.emacsj.actions.search.replaceprevious"
 
 class ReplaceTest : BasePlatformTestCase() {
 

@@ -27,9 +27,6 @@ import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
-internal const val ACTION_REPLACE_REGEXP = "com.github.strindberg.emacsj.actions.search.replaceregexp"
-internal const val ACTION_REPLACE_TEXT = "com.github.strindberg.emacsj.actions.search.replacetext"
-
 internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val selection: IntRange?, lastSearch: Replace?) {
 
     private val caretListener = object : CaretListener {

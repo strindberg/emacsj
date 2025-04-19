@@ -9,6 +9,8 @@ import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.util.DocumentUtil
 
+internal const val ACTION_DELETE_LINES = "com.github.strindberg.emacsj.actions.space.deletelines"
+
 class DeleteLinesHandler : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {

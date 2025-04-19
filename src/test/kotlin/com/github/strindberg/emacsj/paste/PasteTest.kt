@@ -1,15 +1,14 @@
 package com.github.strindberg.emacsj.paste
 
 import java.awt.datatransfer.StringSelection
+import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
+import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
-
-private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
-private const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
 
 class PasteTest : BasePlatformTestCase() {
 

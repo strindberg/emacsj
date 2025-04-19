@@ -45,11 +45,6 @@ import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
-internal const val ACTION_ISEARCH_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchtextbackward"
-internal const val ACTION_ISEARCH_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchtextforward"
-internal const val ACTION_ISEARCH_REGEXP_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpforward"
-internal const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
-
 private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
 
 internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {

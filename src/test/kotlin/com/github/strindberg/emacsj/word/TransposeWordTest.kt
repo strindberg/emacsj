@@ -4,9 +4,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
 
-private const val ACTION_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.actions.word.transposewords"
-private const val ACTION_REVERSE_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.actions.word.transposewordsreverse"
-
 class TransposeWordTest : BasePlatformTestCase() {
 
     fun `test Transpose 00`() {

@@ -2,9 +2,6 @@ package com.github.strindberg.emacsj.word
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-private const val ACTION_NEXT_WORD = "com.github.strindberg.emacsj.actions.word.movenextword"
-private const val ACTION_PREVIOUS_WORD = "com.github.strindberg.emacsj.actions.word.movepreviousword"
-
 class WordMovementTest : BasePlatformTestCase() {
 
     fun `test Next word 00`() {
