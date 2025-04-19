@@ -78,4 +78,42 @@ class KillLineTest : BasePlatformTestCase() {
             """.trimMargin()
         )
     }
+
+    fun `test Whole line is killed`() {
+        myFixture.configureByText(
+            FILE,
+            """zed
+               |baz<caret>zoo
+               |bar
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_KILL_WHOLE_LINE)
+
+        myFixture.checkResult(
+            """zed
+                |<caret>bar
+            """.trimMargin()
+        )
+        assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+    }
+
+    fun `test End of document is properly handled by kill whole line`() {
+        myFixture.configureByText(
+            FILE,
+            """zoo    
+               |bar
+            <caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_KILL_WHOLE_LINE)
+
+        myFixture.checkResult(
+            """zoo    
+               |bar
+            |<caret>
+            """.trimMargin()
+        )
+    }
 }

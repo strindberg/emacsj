@@ -1,12 +1,9 @@
 package com.github.strindberg.emacsj.movement
 
+import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.word.FILE
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-
-private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
-private const val ACTION_TEXT_START = "com.github.strindberg.emacsj.actions.movement.textstart"
-private const val ACTION_TEXT_END = "com.github.strindberg.emacsj.actions.movement.textend"
 
 class TextMovementTest : BasePlatformTestCase() {
 

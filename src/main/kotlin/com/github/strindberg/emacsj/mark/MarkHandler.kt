@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile
 enum class Type { PUSH, POP }
 
 internal const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
+internal const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
 
 class MarkHandler(val type: Type) : EditorActionHandler() {
 

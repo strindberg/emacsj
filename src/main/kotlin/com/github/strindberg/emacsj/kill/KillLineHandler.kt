@@ -11,6 +11,7 @@ import com.intellij.util.text.CharArrayUtil
 enum class KillType { REST_OF_LINE, WHOLE_LINE }
 
 internal const val ACTION_KILL_LINE = "com.github.strindberg.emacsj.actions.kill.line"
+internal const val ACTION_KILL_WHOLE_LINE = "com.github.strindberg.emacsj.actions.kill.wholeline"
 
 class KillLineHandler(val type: KillType) : EditorWriteActionHandler.ForEachCaret() {
 

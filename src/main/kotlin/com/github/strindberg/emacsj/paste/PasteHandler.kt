@@ -21,6 +21,8 @@ import com.intellij.openapi.util.TextRange
 enum class Type { STANDARD, PREFIX, HISTORY }
 
 internal const val ACTION_PASTE = "com.github.strindberg.emacsj.actions.paste.paste"
+internal const val ACTION_PREFIX_PASTE = "com.github.strindberg.emacsj.actions.paste.pasteprefix"
+internal const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.paste.pastehistory"
 
 private val LAST_PASTED_REGIONS = Key.create<List<TextRange>>("PasteHandler.LAST_PASTED_REGIONS")
 

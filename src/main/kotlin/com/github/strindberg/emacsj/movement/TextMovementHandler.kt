@@ -12,6 +12,9 @@ import com.intellij.openapi.editor.actions.EditorActionUtil
 
 enum class MovementType { START, END }
 
+internal const val ACTION_TEXT_START = "com.github.strindberg.emacsj.actions.movement.textstart"
+internal const val ACTION_TEXT_END = "com.github.strindberg.emacsj.actions.movement.textend"
+
 class TextMovementHandler(val type: MovementType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
