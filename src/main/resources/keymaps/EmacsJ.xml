@@ -1,4 +1,4 @@
-<keymap name="EmacsJ" parent="Emacs" version="1.2.0">
+<keymap name="EmacsJ" parent="Emacs" version="2">
     <action id="com.github.strindberg.emacsj.actions.search.isearchtextforward">
         <keyboard-shortcut first-keystroke="control S"/>
     </action>
@@ -35,6 +35,9 @@
     <action id="com.github.strindberg.emacsj.actions.search.isearchmark">
         <keyboard-shortcut first-keystroke="alt ENTER"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch">
+        <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.replacetext">
         <keyboard-shortcut first-keystroke="alt S"/>
     </action>
@@ -49,9 +52,6 @@
     </action>
     <action id="com.github.strindberg.emacsj.actions.search.replacenewline">
         <keyboard-shortcut first-keystroke="control shift ENTER"/>
-    </action>
-    <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch">
-        <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.word.movenextword">
         <keyboard-shortcut first-keystroke="alt F"/>
@@ -163,6 +163,16 @@
     </action>
     <action id="com.github.strindberg.emacsj.actions.xref.xrefback">
         <keyboard-shortcut first-keystroke="alt COMMA"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.movement.textstart">
+        <keyboard-shortcut first-keystroke="alt LESS"/>
+        <keyboard-shortcut first-keystroke="alt LESS"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.movement.textend">
+        <keyboard-shortcut first-keystroke="alt GREATER"/>
+        <keyboard-shortcut first-keystroke="alt GREATER"/>
+        <keyboard-shortcut first-keystroke="shift alt LESS"/>
+        <keyboard-shortcut first-keystroke="shift alt LESS"/>
     </action>
 
     <!--Conflicting shortcuts from Emacs.xml removed-->

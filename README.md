@@ -210,6 +210,9 @@ The *Word Movement* commands work with multiple carets.
 The modify word commands use word boundaries in the same way as the word movement commands defined [above](#word-movement).
 They will modify the characters in the current or previous word or -- if selection is active -- modify the current selection.
 
+The commands modifying the following word also moves caret to the end of this word. The commands modifying the previous word do not move the
+caret.
+
 The Capitalize Word commands will skip over non-word characters until it finds a word to capitalize. If Capitalize Word is used with an
 active selection, each word in the region is capitalized.
 
@@ -266,6 +269,8 @@ The commands are:
 
 - Delete Blank Lines(`ctrl-x ctrl-o`).
 
+The *Delete Blank Lines* command works with multiple carets.
+
 ### Duplicate and Comment
 
 The duplicate commands duplicate the current line or the selected region. *Duplicate Line/Region and Comment* also comments the
@@ -284,7 +289,7 @@ The commands are:
 - Duplicate Line/Region and Comment (`ctrl-c c`).
 - Comment DWIM (Do What I Mean) (`alt-SEMICOLON`).
 
-The *Duplicate* commands work with multiple carets.
+The *Duplicate and Comment* commands work with multiple carets.
 
 ### Rectangles
 
@@ -413,3 +418,13 @@ The commands are:
   line or there is only whitespace between caret and line end.
 
 The *Kill Line* command works with multiple carets.
+
+### Buffer Movement
+
+*Beginning of Buffer* and *End of Buffer* work as the IntelliJ commands *Move Caret to Text Start* and *Move Caret to Text End*,
+respectively. They also set a mark at the point whence the command is invoked, unless a selection is active.
+
+The commands are:
+
+- Beginning of Buffer (`alt-LESS`). Move caret to the beginning of the current editor text.
+- End of Buffer (`alt-GREATER`). Move caret to the end of the current editor text.

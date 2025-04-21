@@ -367,6 +367,20 @@
             <keyboard-shortcut first-keystroke="alt COMMA" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt COMMA" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.movement.textstart"
+                class="com.github.strindberg.emacsj.actions.movement.TextStartAction"
+                text="Beginning of Buffer - Move Caret to Text Start">
+            <keyboard-shortcut first-keystroke="alt LESS" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt LESS" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.movement.textend"
+                class="com.github.strindberg.emacsj.actions.movement.TextEndAction"
+                text="End of Buffer - Move Caret to Text End">
+            <keyboard-shortcut first-keystroke="alt GREATER" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt GREATER" keymap="Emacs"/>
+            <keyboard-shortcut first-keystroke="shift alt LESS" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="shift alt LESS" keymap="Emacs"/>
+        </action>
     </actions>
 
 </idea-plugin>
