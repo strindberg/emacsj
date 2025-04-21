@@ -6,6 +6,7 @@ fun properties(key: String) = providers.gradleProperty(key)
 
 plugins {
     alias(libs.plugins.changelog)
+    alias(libs.plugins.detekt)
     alias(libs.plugins.intellij.platform)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.kover)
@@ -27,6 +28,8 @@ repositories {
 dependencies {
     testImplementation(libs.junit)
 
+    detektPlugins(libs.detekt)
+
     intellijPlatform {
         create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
 
@@ -34,18 +37,12 @@ dependencies {
 
         plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
 
-        pluginVerifier()
-        zipSigner()
         testFramework(TestFrameworkType.Platform)
     }
 }
 
 kotlin {
-    @Suppress("UnstableApiUsage")
-    jvmToolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-        vendor = JvmVendorSpec.JETBRAINS
-    }
+    jvmToolchain(17)
     compilerOptions.freeCompilerArgs.addAll("-Xjsr305=strict")
 }
 
@@ -104,6 +101,61 @@ intellijPlatform {
     }
 }
 
+val keymapConfig = """
+    <application>
+      <component name="KeymapManager">
+        <active_keymap name="EmacsJ" />
+      </component>
+    </application>
+  """.trimIndent()
+
+val exitConfig = """
+    <application>
+      <component name="GeneralSettings">
+        <option name="confirmExit" value="false" />
+      </component>
+    </application>
+  """.trimIndent()
+
+tasks {
+    runIde {
+        jvmArgumentProviders += CommandLineArgumentProvider {
+            listOf(
+                "-Dide.show.tips.on.startup.default.value=false",
+                "-Dide.experimental.ui=true",
+                "-Didea.trust.all.projects=true"
+            )
+        }
+    }
+
+    prepareSandbox {
+        doLast {
+            sandboxConfigDirectory.file("options/keymap.xml").get().asFile.writeText(keymapConfig)
+            sandboxConfigDirectory.file("options/ide.general.xml").get().asFile.writeText(exitConfig)
+        }
+    }
+}
+
+val runIde42 by intellijPlatformTesting.runIde.registering {
+    version = "2024.2.5"
+    prepareSandboxTask {
+        doLast {
+            sandboxConfigDirectory.file("options/keymap.xml").get().asFile.writeText(keymapConfig)
+            sandboxConfigDirectory.file("options/ide.general.xml").get().asFile.writeText(exitConfig)
+        }
+    }
+}
+
+val runIde43 by intellijPlatformTesting.runIde.registering {
+    version = "2024.3.5"
+    prepareSandboxTask {
+        doLast {
+            sandboxConfigDirectory.file("options/keymap.xml").get().asFile.writeText(keymapConfig)
+            sandboxConfigDirectory.file("options/ide.general.xml").get().asFile.writeText(exitConfig)
+        }
+    }
+}
+
 changelog {
     groups.empty()
     repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
@@ -122,4 +174,8 @@ kover {
             }
         }
     }
+}
+
+detekt {
+    config.setFrom(file("$rootDir/detekt.yml"))
 }
