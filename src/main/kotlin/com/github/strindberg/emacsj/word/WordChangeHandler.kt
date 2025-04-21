@@ -1,6 +1,7 @@
 package com.github.strindberg.emacsj.word
 
-import java.util.*
+import java.util.Locale
+import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.word.ChangeType.CAPITAL
 import com.github.strindberg.emacsj.word.ChangeType.CAPITAL_PREVIOUS
 import com.github.strindberg.emacsj.word.ChangeType.DELETE
@@ -16,6 +17,15 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 
 enum class ChangeType { UPPER, LOWER, CAPITAL, UPPER_PREVIOUS, LOWER_PREVIOUS, CAPITAL_PREVIOUS, DELETE, DELETE_PREVIOUS }
+
+internal const val ACTION_CAPITAL_CASE = "com.github.strindberg.emacsj.actions.word.capitalcase"
+internal const val ACTION_UPPER_CASE = "com.github.strindberg.emacsj.actions.word.uppercase"
+internal const val ACTION_LOWER_CASE = "com.github.strindberg.emacsj.actions.word.lowercase"
+internal const val ACTION_CAPITAL_CASE_PREVIOUS = "com.github.strindberg.emacsj.actions.word.capitalcaseprevious"
+internal const val ACTION_UPPER_CASE_PREVIOUS = "com.github.strindberg.emacsj.actions.word.uppercaseprevious"
+internal const val ACTION_LOWER_CASE_PREVIOUS = "com.github.strindberg.emacsj.actions.word.lowercaseprevious"
+internal const val ACTION_DELETE_NEXT_WORD = "com.github.strindberg.emacsj.actions.word.deletenextword"
+internal const val ACTION_DELETE_PREVIOUS_WORD = "com.github.strindberg.emacsj.actions.word.deletepreviousword"
 
 class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler.ForEachCaret() {
 

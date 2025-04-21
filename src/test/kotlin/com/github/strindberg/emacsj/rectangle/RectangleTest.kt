@@ -6,11 +6,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
 
-private const val ACTION_COPY_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.copyrectangle"
-private const val ACTION_CUT_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.cutrectangle"
-private const val ACTION_OPEN_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.openrectangle"
-private const val ACTION_CLEAR_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.clearrectangle"
-
 class RectangleTest : BasePlatformTestCase() {
 
     fun `test copy works 01`() {

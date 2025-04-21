@@ -4,8 +4,6 @@ import java.awt.datatransfer.StringSelection
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-private const val ACTION_PASTE_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.rectanglepaste"
-
 class RectanglePasteTest : BasePlatformTestCase() {
 
     fun `test Paste works 01`() {

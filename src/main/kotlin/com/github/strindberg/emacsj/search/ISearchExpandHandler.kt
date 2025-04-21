@@ -16,6 +16,11 @@ import com.intellij.util.DocumentUtil
 
 enum class Type { WORD, LINE, CHARACTER, NEW_LINE }
 
+internal const val ACTION_ISEARCH_WORD = "com.github.strindberg.emacsj.actions.search.isearchword"
+internal const val ACTION_ISEARCH_LINE = "com.github.strindberg.emacsj.actions.search.isearchline"
+internal const val ACTION_ISEARCH_CHAR = "com.github.strindberg.emacsj.actions.search.isearchchar"
+internal const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions.search.isearchnewline"
+
 class ISearchExpandHandler(val type: Type) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {

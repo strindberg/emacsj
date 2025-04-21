@@ -7,11 +7,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
 
-private const val ACTION_ZAP_FORWARD_TO = "com.github.strindberg.emacsj.actions.zap.zapto"
-private const val ACTION_ZAP_FORWARD_UP_TO = "com.github.strindberg.emacsj.actions.zap.zapupto"
-private const val ACTION_ZAP_BACKWARD_TO = "com.github.strindberg.emacsj.actions.zap.zapbackto"
-private const val ACTION_ZAP_BACKWARD_UP_TO = "com.github.strindberg.emacsj.actions.zap.zapbackupto"
-
 class ZapTest : BasePlatformTestCase() {
 
     override fun tearDown() {

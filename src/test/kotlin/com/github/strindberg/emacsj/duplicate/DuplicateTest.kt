@@ -5,9 +5,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.java"
 
-private const val ACTION_DUPLICATE = "com.github.strindberg.emacsj.actions.duplicate.duplicate"
-private const val ACTION_DUPLICATE_COMMENT = "com.github.strindberg.emacsj.actions.duplicate.duplicateandcomment"
-
 class DuplicateTest : BasePlatformTestCase() {
 
     fun `test Line is duplicated`() {

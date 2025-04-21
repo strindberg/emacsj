@@ -45,7 +45,6 @@ import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
 private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
-private const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.recenter"
 
 internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
 

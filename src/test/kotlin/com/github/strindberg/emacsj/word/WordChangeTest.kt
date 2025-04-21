@@ -2,15 +2,6 @@ package com.github.strindberg.emacsj.word
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-private const val ACTION_CAPITAL_CASE = "com.github.strindberg.emacsj.actions.word.capitalcase"
-private const val ACTION_UPPER_CASE = "com.github.strindberg.emacsj.actions.word.uppercase"
-private const val ACTION_LOWER_CASE = "com.github.strindberg.emacsj.actions.word.lowercase"
-private const val ACTION_CAPITAL_CASE_PREVIOUS = "com.github.strindberg.emacsj.actions.word.capitalcaseprevious"
-private const val ACTION_UPPER_CASE_PREVIOUS = "com.github.strindberg.emacsj.actions.word.uppercaseprevious"
-private const val ACTION_LOWER_CASE_PREVIOUS = "com.github.strindberg.emacsj.actions.word.lowercaseprevious"
-private const val ACTION_DELETE_NEXT_WORD = "com.github.strindberg.emacsj.actions.word.deletenextword"
-private const val ACTION_DELETE_PREVIOUS_WORD = "com.github.strindberg.emacsj.actions.word.deletepreviousword"
-
 class WordChangeTest : BasePlatformTestCase() {
 
     fun `test Capitalize word 00`() {

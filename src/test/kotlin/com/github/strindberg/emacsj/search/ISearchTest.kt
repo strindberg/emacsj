@@ -1,11 +1,13 @@
+
 package com.github.strindberg.emacsj.search
 
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
-import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
+import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.MarkHandler
+import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
@@ -13,21 +15,6 @@ import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
-
-private const val ACTION_ISEARCH_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchtextbackward"
-private const val ACTION_ISEARCH_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchtextforward"
-private const val ACTION_ISEARCH_PREVIOUS = "com.github.strindberg.emacsj.actions.search.isearchprevious"
-private const val ACTION_ISEARCH_NEXT = "com.github.strindberg.emacsj.actions.search.isearchnext"
-private const val ACTION_ISEARCH_REGEXP_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpforward"
-private const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
-private const val ACTION_ISEARCH_WORD = "com.github.strindberg.emacsj.actions.search.isearchword"
-private const val ACTION_ISEARCH_LINE = "com.github.strindberg.emacsj.actions.search.isearchline"
-private const val ACTION_ISEARCH_CHAR = "com.github.strindberg.emacsj.actions.search.isearchchar"
-private const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions.search.isearchnewline"
-private const val ACTION_ISEARCH_SWAP = "com.github.strindberg.emacsj.actions.search.isearchswap"
-private const val ACTION_ISEARCH_MARK = "com.github.strindberg.emacsj.actions.search.isearchmark"
-private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
-private const val ACTION_TOGGLE_LAX_SEARCH = "com.github.strindberg.emacsj.actions.search.togglelaxsearch"
 
 class ISearchTest : BasePlatformTestCase() {
 

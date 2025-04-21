@@ -26,7 +26,10 @@ class EmacsJCommandListener : CommandListener {
     }
 
     override fun commandFinished(event: CommandEvent) {
-        lastCommandName = event.commandName
+        // Empty or "Undefined" commands are present when running tests
+        if (event.commandName != "" && event.commandName != "Undefined") {
+            lastCommandName = event.commandName
+        }
     }
 
     override fun commandStarted(event: CommandEvent) {

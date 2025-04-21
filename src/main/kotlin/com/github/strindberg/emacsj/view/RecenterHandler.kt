@@ -9,9 +9,11 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
-private const val COMMAND_RECENTER = "Recenter Caret"
-
 enum class Position { TOP, MIDDLE, BOTTOM }
+
+internal const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.recenter"
+
+private const val COMMAND_RECENTER = "Recenter Caret"
 
 class RecenterHandler : EditorActionHandler() {
 

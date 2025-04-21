@@ -7,10 +7,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
 
-private const val ACTION_EXCHANGE_MARK = "com.github.strindberg.emacsj.actions.mark.exchangepointandmark"
-private const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
-private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
-
 class MarkTest : BasePlatformTestCase() {
 
     override fun setUp() {

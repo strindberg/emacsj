@@ -6,8 +6,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "MyClass.kt"
 
-private const val ACTION_XREF_BACK = "com.github.strindberg.emacsj.actions.xref.xrefback"
-
 class XRefTest : BasePlatformTestCase() {
 
     fun `test XRef back works`() {
