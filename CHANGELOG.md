@@ -4,7 +4,14 @@
 
 ## [Unreleased]
 
+- New command "Append Next Kill".
+- New commands "Kill Ring Copy" and "Kill Ring Cut".
+- New command "Kill Whole Line".
 - New commands "Beginning of buffer" and "End of buffer".
+
+### Fixed
+
+- Kill line at end of file no longer throws exception.
 
 ## [1.3.6] - 2025-04-01
 

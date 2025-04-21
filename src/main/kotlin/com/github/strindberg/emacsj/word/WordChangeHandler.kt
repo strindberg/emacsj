@@ -39,7 +39,7 @@ class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler
 
         if (start != null) {
             when (type) {
-                DELETE, DELETE_PREVIOUS -> editor.document.deleteString(start, end)
+                DELETE, DELETE_PREVIOUS -> KillUtil.cut(editor, start, end, prepend = type == DELETE_PREVIOUS)
                 UPPER, UPPER_PREVIOUS -> replaceTextAndMove(editor.document, start, end, caret) { uppercase() }
                 LOWER, LOWER_PREVIOUS -> replaceTextAndMove(editor.document, start, end, caret) { lowercase() }
                 CAPITAL, CAPITAL_PREVIOUS -> capitalizeRegion(editor, start, end, caret)
