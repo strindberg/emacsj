@@ -98,7 +98,7 @@
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch"
                 class="com.github.strindberg.emacsj.actions.search.ISearchToggleLaxSearchAction"
-                text="Isearch: Toggle Lax-Whitespace Searching on or Off">
+                text="Isearch: Toggle Lax-Whitespace Searching On or Off">
             <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE" keymap="Emacs"/>
         </action>
@@ -281,8 +281,6 @@
         <action id="com.github.strindberg.emacsj.actions.paste.pasteprefix"
                 class="com.github.strindberg.emacsj.actions.paste.PastePrefixAction"
                 text="Paste: Leave Caret at Point">
-            <keyboard-shortcut first-keystroke="control U" second-keystroke="control Y" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="control U" second-keystroke="control Y" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.paste.paste"
                 class="com.github.strindberg.emacsj.actions.paste.PasteAction"
@@ -306,8 +304,6 @@
         <action id="com.github.strindberg.emacsj.actions.mark.popmark"
                 class="com.github.strindberg.emacsj.actions.mark.PopMarkAction"
                 text="Pop Mark">
-            <keyboard-shortcut first-keystroke="control U" second-keystroke="control SPACE" keymap="$default"/>
-            <keyboard-shortcut first-keystroke="control U" second-keystroke="control SPACE" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.mark.exchangepointandmark"
                 class="com.github.strindberg.emacsj.actions.mark.ExchangePointAndMarkAction"
@@ -391,6 +387,7 @@
             <keyboard-shortcut first-keystroke="alt COMMA" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt COMMA" keymap="Emacs"/>
         </action>
+
         <action id="com.github.strindberg.emacsj.actions.movement.textstart"
                 class="com.github.strindberg.emacsj.actions.movement.TextStartAction"
                 text="Beginning of Buffer - Move Caret to Text Start">
@@ -404,6 +401,73 @@
             <keyboard-shortcut first-keystroke="alt GREATER" keymap="Emacs"/>
             <keyboard-shortcut first-keystroke="shift alt LESS" keymap="$default"/>
             <keyboard-shortcut first-keystroke="shift alt LESS" keymap="Emacs"/>
+        </action>
+
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgumentAction"
+                text="Universal Argument">
+            <keyboard-shortcut first-keystroke="control U" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control U" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument1"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument1Action"
+                text="Universal Argument 1">
+            <keyboard-shortcut first-keystroke="control alt 1" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 1" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument2"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument2Action"
+                text="Universal Argument 2">
+            <keyboard-shortcut first-keystroke="control alt 2" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 2" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument3"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument3Action"
+                text="Universal Argument 3">
+            <keyboard-shortcut first-keystroke="control alt 3" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 3" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument4"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument4Action"
+                text="Universal Argument 4">
+            <keyboard-shortcut first-keystroke="control alt 4" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 4" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument5"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument5Action"
+                text="Universal Argument 5">
+            <keyboard-shortcut first-keystroke="control alt 5" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 5" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument6"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument6Action"
+                text="Universal Argument 6">
+            <keyboard-shortcut first-keystroke="control alt 6" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 6" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument7"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument7Action"
+                text="Universal Argument 7">
+            <keyboard-shortcut first-keystroke="control alt 7" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 7" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument8"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument8Action"
+                text="Universal Argument 8">
+            <keyboard-shortcut first-keystroke="control alt 8" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 8" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument9"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument9Action"
+                text="Universal Argument 9">
+            <keyboard-shortcut first-keystroke="control alt 9" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 9" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.universalargument0"
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgument0Action"
+                text="Universal Argument 0">
+            <keyboard-shortcut first-keystroke="control alt 0" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt 0" keymap="Emacs"/>
         </action>
     </actions>
 

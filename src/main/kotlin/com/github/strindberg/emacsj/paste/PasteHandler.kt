@@ -7,6 +7,7 @@ import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.paste.Type.HISTORY
 import com.github.strindberg.emacsj.paste.Type.PREFIX
 import com.github.strindberg.emacsj.paste.Type.STANDARD
+import com.github.strindberg.emacsj.universal.COMMAND_UNIVERSAL_ARGUMENT
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -18,6 +19,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 
 enum class Type { STANDARD, PREFIX, HISTORY }
+
+internal const val ACTION_PASTE = "com.github.strindberg.emacsj.actions.paste.paste"
+internal const val ACTION_PREFIX_PASTE = "com.github.strindberg.emacsj.actions.paste.pasteprefix"
+internal const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.paste.pastehistory"
 
 private val LAST_PASTED_REGIONS = Key.create<List<TextRange>>("PasteHandler.LAST_PASTED_REGIONS")
 
@@ -39,7 +44,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             STANDARD, PREFIX -> {
                 clipboardHistory = filteredContents().take(64)
                 clipboaardHistoryPos = 0
-                pasteType = type
+                pasteType = if (EmacsJCommandListener.lastCommandName() == COMMAND_UNIVERSAL_ARGUMENT) PREFIX else type
                 editor.pasteAndMove()
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }

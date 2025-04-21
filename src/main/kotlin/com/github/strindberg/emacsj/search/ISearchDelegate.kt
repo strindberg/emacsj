@@ -5,8 +5,8 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_G
 import java.util.regex.Pattern
-import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.actions.search.ISearchAction
+import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.preferences.EmacsJSettings
 import com.github.strindberg.emacsj.search.Direction.BACKWARD
 import com.github.strindberg.emacsj.search.Direction.FORWARD
@@ -15,6 +15,7 @@ import com.github.strindberg.emacsj.search.ISearchState.FAILED
 import com.github.strindberg.emacsj.search.ISearchState.SEARCH
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.search.SearchType.TEXT
+import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
@@ -61,7 +62,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     private val actionHandlers: List<RestorableActionHandler<ISearchDelegate>>
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
+    internal val ui = CommonUI(editor, false, ::hide, ::keyEventHandler)
 
     internal var state: ISearchState = SEARCH
 
@@ -101,13 +102,13 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                 object : RestorableTypedActionHandler(rawHandler) {
                     override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
                         val delegate = ISearchHandler.delegate
-                        if (delegate == null) {
-                            myOriginalHandler?.execute(editor, charTyped, dataContext)
-                        } else {
+                        if (delegate != null) {
                             when (delegate.state) {
                                 CHOOSE_PREVIOUS -> delegate.text += charTyped.toString()
                                 SEARCH, FAILED -> delegate.searchAllCarets(delegate.direction, charTyped.toString(), keepStart = true)
                             }
+                        } else {
+                            myOriginalHandler?.execute(editor, charTyped, dataContext)
                         }
                     }
                 }.also { typedHandler = it }
@@ -189,7 +190,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         ui.title = titleText()
     }
 
-    internal fun hide(): Boolean {
+    internal fun hide() {
         unregisterHandlers()
 
         editor.markupModel.removeAllHighlighters()
@@ -209,8 +210,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         editor.caretModel.runForEachCaret {
             it.clearData()
         }
-
-        return true
     }
 
     internal fun startPreviousSearch() {
@@ -288,7 +287,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
     }
 
-    private fun keyEventHandler(e: KeyEvent): Boolean {
+    private fun keyEventHandler(e: KeyEvent) {
         // ESC or ctrl-g pressed
         if (e.id == KeyEvent.KEY_PRESSED &&
             (e.keyCode == VK_ESCAPE || (e.keyCode == VK_G && (e.modifiersEx and CTRL_DOWN_MASK == CTRL_DOWN_MASK)))
@@ -301,7 +300,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                 }
             }
         }
-        return false
     }
 
     private fun cancel() {
@@ -314,7 +312,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
         EditorActionManager.getInstance().apply {
             actionHandlers.forEach {
-                setActionHandler(it.action, it.originalHandler)
+                setActionHandler(it.actionId, it.originalHandler)
             }
         }
     }

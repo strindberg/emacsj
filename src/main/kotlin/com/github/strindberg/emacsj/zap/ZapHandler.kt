@@ -7,6 +7,11 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 
 enum class ZapType { FORWARD_TO, FORWARD_UP_TO, BACKWARD_TO, BACKWARD_UP_TO }
 
+internal const val ACTION_ZAP_FORWARD_TO = "com.github.strindberg.emacsj.actions.zap.zapto"
+internal const val ACTION_ZAP_FORWARD_UP_TO = "com.github.strindberg.emacsj.actions.zap.zapupto"
+internal const val ACTION_ZAP_BACKWARD_TO = "com.github.strindberg.emacsj.actions.zap.zapbackto"
+internal const val ACTION_ZAP_BACKWARD_UP_TO = "com.github.strindberg.emacsj.actions.zap.zapbackupto"
+
 class ZapHandler(private val type: ZapType) : EditorActionHandler() {
 
     companion object {

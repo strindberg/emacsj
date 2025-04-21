@@ -2,14 +2,17 @@ package com.github.strindberg.emacsj.search
 
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ENTER
-import java.util.*
+import java.util.UUID
 import com.github.strindberg.emacsj.search.ReplaceHandler.Companion.addPrevious
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
+import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.github.strindberg.emacsj.word.substring
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
 import com.intellij.find.FindResult
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
@@ -59,7 +62,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         }
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, true, ::keyEventHandler, ::hide)
+    internal val ui = CommonUI(editor, true, ::hide, ::keyEventHandler)
 
     init {
         lastSearch?.let { (search, replace) ->
@@ -80,7 +83,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         ui.show()
     }
 
-    internal fun hide(): Boolean {
+    internal fun hide() {
         editor.markupModel.removeAllHighlighters()
 
         editor.caretModel.removeCaretListener(caretListener)
@@ -90,11 +93,9 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         ui.cancelUI()
 
         ReplaceHandler.delegate = null
-
-        return true
     }
 
-    private fun keyEventHandler(e: KeyEvent): Boolean {
+    private fun keyEventHandler(e: KeyEvent) {
         when (state) {
             ReplaceState.GET_SEARCH_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED && e.modifiersEx == 0) {
@@ -187,7 +188,6 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                 }
             }
         }
-        return false
     }
 
     private fun startSearch() {

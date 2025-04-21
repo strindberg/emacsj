@@ -1,12 +1,10 @@
 package com.github.strindberg.emacsj.zap
 
-import java.awt.datatransfer.StringSelection
-import java.awt.event.KeyEvent
-import java.util.*
+import java.util.UUID
+import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.search.CommonUI
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
-import com.github.strindberg.emacsj.word.substring
 import com.github.strindberg.emacsj.word.text
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
@@ -20,7 +18,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
-import com.intellij.openapi.ide.CopyPasteManager
 import org.jetbrains.annotations.VisibleForTesting
 
 class ZapDelegate(val editor: Editor, val type: ZapType) {
@@ -32,7 +29,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     private val actionHandlers = mutableListOf<RestorableActionHandler<ZapDelegate>>()
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::keyEventHandler, ::hide)
+    internal val ui = CommonUI(editor, false, ::hide)
 
     init {
         ui.title = when (type) {
@@ -46,19 +43,26 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
                     override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
-                        val undoGroupId = UUID.randomUUID().toString()
-                        document.setReadOnly(false)
-                        editor.caretModel.allCarets.reversed().forEach { caret ->
-                            val (start, end) = when (type) {
-                                FORWARD_TO, FORWARD_UP_TO -> Pair(caret.offset, nextCharacter(editor.text, caret.offset, charTyped))
-                                BACKWARD_TO, BACKWARD_UP_TO -> Pair(previousCharacter(editor.text, caret.offset, charTyped), caret.offset)
+                        val delegate = ZapHandler.delegate
+                        if (delegate != null) {
+                            val undoGroupId = UUID.randomUUID().toString()
+                            document.setReadOnly(false)
+                            editor.caretModel.allCarets.reversed().forEach { caret ->
+                                val (start, end) = when (type) {
+                                    FORWARD_TO, FORWARD_UP_TO -> Pair(caret.offset, nextCharacter(editor.text, caret.offset, charTyped))
+                                    BACKWARD_TO, BACKWARD_UP_TO -> Pair(
+                                        previousCharacter(editor.text, caret.offset, charTyped),
+                                        caret.offset
+                                    )
+                                }
+                                WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
+                                    KillUtil.cut(editor, start, end, prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
+                                })
                             }
-                            WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
-                                CopyPasteManager.getInstance().setContents(StringSelection(document.substring(start, end)))
-                                document.deleteString(start, end)
-                            })
+                            cancel()
+                        } else {
+                            myOriginalHandler?.execute(editor, charTyped, dataContext)
                         }
-                        cancel()
                     }
                 }.also { typedHandler = it }
             )
@@ -81,7 +85,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         ui.show()
     }
 
-    internal fun hide(): Boolean {
+    internal fun hide() {
         unregisterHandlers()
 
         document.setReadOnly(false)
@@ -89,14 +93,6 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         ui.cancelUI()
 
         ZapHandler.delegate = null
-
-        return true
-    }
-
-    @Suppress("unused_parameter")
-    private fun keyEventHandler(e: KeyEvent): Boolean {
-        cancel()
-        return false
     }
 
     private fun editorActions(): List<String> {
@@ -116,7 +112,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         }
         EditorActionManager.getInstance().apply {
             actionHandlers.forEach {
-                setActionHandler(it.action, it.originalHandler)
+                setActionHandler(it.actionId, it.originalHandler)
             }
         }
     }

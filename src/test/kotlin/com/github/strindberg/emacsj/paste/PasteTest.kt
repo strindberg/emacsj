@@ -1,18 +1,16 @@
 package com.github.strindberg.emacsj.paste
 
 import java.awt.datatransfer.StringSelection
-import com.github.strindberg.emacsj.actions.paste.ACTION_PASTE
+import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
+import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.mark.MarkHandler
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
+import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
-
-private const val ACTION_PREFIX_PASTE = "com.github.strindberg.emacsj.actions.paste.pasteprefix"
-private const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.paste.pastehistory"
-private const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
-private const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
 
 class PasteTest : BasePlatformTestCase() {
 
@@ -45,7 +43,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("BAR<caret>barBAZ")
     }
 
-    fun `test Prefix paste works`() {
+    fun `test Prefix paste works 1`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -57,7 +55,21 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `test Prefix paste works with selection`() {
+    fun `test Prefix paste works 2`() {
+        myFixture.configureByText(FILE, "foo<caret>")
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_PASTE)
+
+        myFixture.checkResult("foo<caret>bar")
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+        myFixture.checkResult("foobar<caret>")
+        UniversalArgumentHandler.delegate?.hide()
+    }
+
+    fun `test Prefix paste works with selection 1`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -67,6 +79,20 @@ class PasteTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult("BARbar<caret>BAZ")
+    }
+
+    fun `test Prefix paste works with selection 2`() {
+        myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
+        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_PASTE)
+
+        myFixture.checkResult("BAR<caret>barBAZ")
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+        myFixture.checkResult("BARbar<caret>BAZ")
+        UniversalArgumentHandler.delegate?.hide()
     }
 
     fun `test Paste history after paste works`() {
@@ -106,9 +132,9 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    /* Clipboard access is unreliable when tests are run from the command line. This test is thus disabled for now. */
-    fun `Paste history is rotated`() {
+    fun `test Paste history is rotated`() {
         myFixture.configureByText(FILE, "foo<caret>")
+
         CopyPasteManager.getInstance().setContents(StringSelection("zed"))
         CopyPasteManager.getInstance().setContents(StringSelection("baz")) // discarded duplicate
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
@@ -124,7 +150,9 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foozed<caret>")
 
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
-        myFixture.checkResult("foobaz<caret>")
+        // I have found no way of resetting the contents of CopyPasteManger before test.
+        // Therefore, there is no way of knowing when the history is rotated.
+        // myFixture.checkResult("foobaz<caret>")
     }
 
     fun `test Paste history is not invoked after movement`() {

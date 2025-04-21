@@ -1,5 +1,7 @@
 package com.github.strindberg.emacsj.mark
 
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
+import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_END
@@ -14,7 +16,7 @@ class MarkTest : BasePlatformTestCase() {
         super.setUp()
     }
 
-    fun `test Set mark and pop mark works`() {
+    fun `test Set mark and pop mark works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -24,6 +26,20 @@ class MarkTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult("<caret>foo bar baz")
+    }
+
+    fun `test Set mark and pop mark works 2`() {
+        myFixture.configureByText(FILE, "<caret>foo bar baz")
+
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_END)
+        myFixture.checkResult("<selection>foo bar baz</selection><caret>")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        myFixture.checkResult("<caret>foo bar baz")
+        UniversalArgumentHandler.delegate?.hide()
     }
 
     fun `test Pressing mark twice pushes mark without starting selection`() {

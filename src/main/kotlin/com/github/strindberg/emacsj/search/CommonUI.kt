@@ -31,8 +31,8 @@ import org.jetbrains.annotations.VisibleForTesting
 internal class CommonUI(
     val editor: Editor,
     private var writeable: Boolean,
-    keyEventHandler: (KeyEvent) -> Boolean,
-    cancelCallback: () -> Boolean,
+    cancelCallback: () -> Unit,
+    keyEventHandler: (KeyEvent) -> Unit = { },
 ) {
 
     private val standardFont =
@@ -114,14 +114,21 @@ internal class CommonUI(
             setReadonlyComponents()
         }
 
-        popup = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, if (writeable) textField else null)
+        popup = JBPopupFactory.getInstance()
+            .createComponentPopupBuilder(panel, if (writeable) textField else null)
             .setCancelOnClickOutside(true)
             .setCancelOnOtherWindowOpen(true)
             .setMovable(false)
             .setResizable(false)
             .setRequestFocus(writeable)
-            .setCancelCallback(cancelCallback)
-            .setKeyEventHandler(keyEventHandler)
+            .setCancelCallback {
+                cancelCallback()
+                true
+            }
+            .setKeyEventHandler { event ->
+                keyEventHandler(event)
+                false
+            }
             .createPopup()
     }
 

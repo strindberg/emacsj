@@ -122,9 +122,6 @@
     <action id="com.github.strindberg.emacsj.actions.rectangle.rectanglepaste">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="alt Y"/>
     </action>
-    <action id="com.github.strindberg.emacsj.actions.paste.pasteprefix">
-        <keyboard-shortcut first-keystroke="control U" second-keystroke="control Y"/>
-    </action>
     <action id="com.github.strindberg.emacsj.actions.paste.paste">
         <keyboard-shortcut first-keystroke="control Y"/>
     </action>
@@ -133,9 +130,6 @@
     </action>
     <action id="com.github.strindberg.emacsj.actions.mark.pushmark">
         <keyboard-shortcut first-keystroke="control SPACE"/>
-    </action>
-    <action id="com.github.strindberg.emacsj.actions.mark.popmark">
-        <keyboard-shortcut first-keystroke="control U" second-keystroke="control SPACE"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.mark.exchangepointandmark">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="control X"/>
@@ -185,6 +179,50 @@
         <keyboard-shortcut first-keystroke="alt GREATER"/>
         <keyboard-shortcut first-keystroke="shift alt LESS"/>
         <keyboard-shortcut first-keystroke="shift alt LESS"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument">
+        <keyboard-shortcut first-keystroke="control U"/>
+        <keyboard-shortcut first-keystroke="control U"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument1">
+        <keyboard-shortcut first-keystroke="control alt 1"/>
+        <keyboard-shortcut first-keystroke="control alt 1"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument2">
+        <keyboard-shortcut first-keystroke="control alt 2"/>
+        <keyboard-shortcut first-keystroke="control alt 2"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument3">
+        <keyboard-shortcut first-keystroke="control alt 3"/>
+        <keyboard-shortcut first-keystroke="control alt 3"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument4">
+        <keyboard-shortcut first-keystroke="control alt 4"/>
+        <keyboard-shortcut first-keystroke="control alt 4"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument5">
+        <keyboard-shortcut first-keystroke="control alt 5"/>
+        <keyboard-shortcut first-keystroke="control alt 5"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument6">
+        <keyboard-shortcut first-keystroke="control alt 6"/>
+        <keyboard-shortcut first-keystroke="control alt 6"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument7">
+        <keyboard-shortcut first-keystroke="control alt 7"/>
+        <keyboard-shortcut first-keystroke="control alt 7"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument8">
+        <keyboard-shortcut first-keystroke="control alt 8"/>
+        <keyboard-shortcut first-keystroke="control alt 8"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument9">
+        <keyboard-shortcut first-keystroke="control alt 9"/>
+        <keyboard-shortcut first-keystroke="control alt 9"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.universal.universalargument0">
+        <keyboard-shortcut first-keystroke="control alt 0"/>
+        <keyboard-shortcut first-keystroke="control alt 0"/>
     </action>
 
     <!--Conflicting shortcuts from Emacs.xml removed-->
@@ -242,4 +280,6 @@
     <action id="Terminal.DeletePreviousWord"/>
     <action id="Terminal.SearchInCommandHistory"/>
 
+    <!--Conflicting shortcuts from VCS implementation removed-->
+    <action id="CheckinProject"/>
 </keymap>
