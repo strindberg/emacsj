@@ -135,6 +135,11 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
             ReplaceState.SEARCH_FOUND -> {
                 if (e.id == KeyEvent.KEY_TYPED) {
                     when (e.keyChar.lowercaseChar()) {
+                        '\u000c' -> { // Ctrl-L
+                            val recenterAction = ActionManager.getInstance().getAction(ACTION_RECENTER)
+                            ActionUtil.invokeAction(recenterAction, editor.component, "Recenter", null, null)
+                        }
+
                         'y', ' ' -> {
                             try {
                                 replaceInEditor()
