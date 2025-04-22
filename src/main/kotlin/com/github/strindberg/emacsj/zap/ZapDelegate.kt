@@ -26,7 +26,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
 
     private val typedHandler: RestorableTypedActionHandler
 
-    private val actionHandlers = mutableListOf<RestorableActionHandler<ZapDelegate>>()
+    private val actionHandlers: List<RestorableActionHandler<ZapDelegate>>
 
     @VisibleForTesting
     internal val ui = CommonUI(editor, false, ::hide)
@@ -69,15 +69,17 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         }
 
         EditorActionManager.getInstance().apply {
-            editorActions().forEach { actionId ->
-                getActionHandler(actionId)?.let { originalHandler ->
-                    setActionHandler(
-                        actionId,
-                        RestorableActionHandler(actionId, originalHandler, { ZapHandler.delegate }) { caret, dataContext ->
-                            cancel()
-                            originalHandler.execute(editor, caret, dataContext)
-                        }.also { actionHandlers.add(it) }
-                    )
+            actionHandlers = buildList {
+                editorActions().forEach { actionId ->
+                    getActionHandler(actionId)?.let { originalHandler ->
+                        setActionHandler(
+                            actionId,
+                            RestorableActionHandler(actionId, originalHandler, { ZapHandler.delegate }) { caret, dataContext ->
+                                cancel()
+                                originalHandler.execute(editor, caret, dataContext)
+                            }.also { add(it) }
+                        )
+                    }
                 }
             }
         }

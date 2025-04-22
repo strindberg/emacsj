@@ -42,17 +42,17 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
 
     private val typedHandler: RestorableTypedActionHandler
 
-    private val actionHandlers = mutableListOf<RestorableActionHandler<UniversalArgumentDelegate>>()
+    private val actionHandlers: List<RestorableActionHandler<UniversalArgumentDelegate>>
 
     private var counter = 4
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::hide)
+    internal val ui = CommonUI(editor, false, ::hide).apply {
+        title = "Argument: "
+        text = getTimes().toString()
+    }
 
     init {
-        ui.title = "Argument: "
-        ui.text = getTimes().toString()
-
         TypedAction.getInstance().apply {
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
@@ -76,26 +76,28 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
         }
 
         EditorActionManager.getInstance().apply {
-            editorActions().forEach { actionId ->
-                getActionHandler(actionId)?.let { originalHandler ->
-                    setActionHandler(
-                        actionId,
-                        RestorableActionHandler(
+            actionHandlers = buildList {
+                editorActions().forEach { actionId ->
+                    getActionHandler(actionId)?.let { originalHandler ->
+                        setActionHandler(
                             actionId,
-                            originalHandler,
-                            { UniversalArgumentHandler.delegate }
-                        ) { caret, dataContext ->
-                            document.setReadOnly(false)
-                            if (actionId in singleActions) {
-                                originalHandler.execute(editor, caret, dataContext)
-                            } else {
-                                repeat(getTimes()) {
+                            RestorableActionHandler(
+                                actionId,
+                                originalHandler,
+                                { UniversalArgumentHandler.delegate }
+                            ) { caret, dataContext ->
+                                document.setReadOnly(false)
+                                if (actionId in singleActions) {
                                     originalHandler.execute(editor, caret, dataContext)
+                                } else {
+                                    repeat(getTimes()) {
+                                        originalHandler.execute(editor, caret, dataContext)
+                                    }
                                 }
-                            }
-                            cancel()
-                        }.also { actionHandlers.add(it) }
-                    )
+                                cancel()
+                            }.also { add(it) }
+                        )
+                    }
                 }
             }
         }
