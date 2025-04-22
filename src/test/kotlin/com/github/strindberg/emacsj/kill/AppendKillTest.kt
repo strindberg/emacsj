@@ -29,6 +29,24 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("baz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
+    fun `test Basic copy with empty selection copies whole line`() {
+        myFixture.configureByText(
+            FILE,
+            """baz<caret>zoo
+               |bar
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_COPY)
+
+        myFixture.checkResult(
+            """baz<caret>zoo
+              |bar
+            """.trimMargin()
+        )
+        assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+    }
+
     fun `test Basic cut works`() {
         myFixture.configureByText(
             FILE,
@@ -45,6 +63,23 @@ class AppendKillTest : BasePlatformTestCase() {
             """.trimMargin()
         )
         assertEquals("baz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+    }
+
+    fun `test Basic cut with empty selection cuts whole line`() {
+        myFixture.configureByText(
+            FILE,
+            """baz<caret>zoo
+               |bar
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_CUT)
+
+        myFixture.checkResult(
+            """bar
+            """.trimMargin()
+        )
+        assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
     fun `test Append next kill before copy works`() {
@@ -136,7 +171,14 @@ class AppendKillTest : BasePlatformTestCase() {
     }
 
     fun `test Append next kill with empty selection is ignored`() {
-        myFixture.configureByText(FILE, "baz<selection></selection><caret>zoo")
+        myFixture.configureByText(
+            FILE,
+            """
+            |baz
+            |zoo
+            |<caret>
+            """.trimMargin()
+        )
         CopyPasteManager.getInstance().setContents(StringSelection("zed"))
 
         myFixture.performEditorAction(ACTION_APPEND_NEXT_KILL)
