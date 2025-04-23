@@ -29,16 +29,16 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     private val actionHandlers: List<RestorableActionHandler<ZapDelegate>>
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::hide)
-
-    init {
-        ui.title = when (type) {
+    internal val ui = CommonUI(editor, false, ::hide).apply {
+        title = when (type) {
             FORWARD_TO -> "Zap to char: "
             FORWARD_UP_TO -> "Zap up to char: "
             BACKWARD_TO -> "Zap back to char: "
             BACKWARD_UP_TO -> "Zap back up to char: "
         }
+    }
 
+    init {
         TypedAction.getInstance().apply {
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
