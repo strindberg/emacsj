@@ -6,7 +6,7 @@ junit = "4.13.2"
 kotlin = "2.1.20"
 kotlinter = "5.0.2"
 kover = "0.9.1"
-qodana = "2024.3.4"
+qodana = "2025.1.0"
 
 [libraries]
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
