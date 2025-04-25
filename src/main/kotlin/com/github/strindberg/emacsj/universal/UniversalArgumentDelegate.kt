@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.universal
 
+import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.paste.ACTION_PREFIX_PASTE
@@ -33,6 +34,7 @@ private val singleActions = listOf(
     ACTION_PASTE,
     ACTION_PREFIX_PASTE,
     ACTION_PUSH_MARK,
+    ACTION_POP_MARK,
 )
 
 class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext, var numeric: Int?) {

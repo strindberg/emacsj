@@ -55,6 +55,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                                         caret.offset
                                     )
                                 }
+                                document.setReadOnly(false)
                                 WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
                                     KillUtil.cut(editor, start, end, prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
                                 })
