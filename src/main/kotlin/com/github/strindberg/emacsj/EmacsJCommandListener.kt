@@ -14,11 +14,10 @@ class EmacsJCommandListener : CommandListener {
     companion object {
         private val places = LimitedStack<PlaceInfo>()
 
-        private var lastCommandName: String? = null
+        internal var lastCommandName: String? = null
+            private set
 
-        fun popPlace(): PlaceInfo? = places.pop()
-
-        fun lastCommandName() = lastCommandName
+        internal fun popPlace(): PlaceInfo? = places.pop()
     }
 
     override fun commandFinished(event: CommandEvent) {

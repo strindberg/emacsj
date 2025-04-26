@@ -71,7 +71,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         (editor as? EditorEx)?.let { ex ->
             ex.virtualFile?.let { virtualFile ->
-                if (type == POP || EmacsJCommandListener.lastCommandName() == COMMAND_UNIVERSAL_ARGUMENT) {
+                if (type == POP || EmacsJCommandListener.lastCommandName == COMMAND_UNIVERSAL_ARGUMENT) {
                     places[virtualFile.hashCode()]?.pop()?.let { place ->
                         gotoPlaceInfo(editor, place)
                     }
