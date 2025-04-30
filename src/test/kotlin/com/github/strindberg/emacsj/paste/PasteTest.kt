@@ -5,6 +5,7 @@ import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
+import com.intellij.ide.ClientCopyPasteManager
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -128,6 +129,7 @@ class PasteTest : BasePlatformTestCase() {
 
     fun `test Paste history is rotated`() {
         myFixture.configureByText(FILE, "foo<caret>")
+        ClientCopyPasteManager.getCurrentInstance().removeIf { true }
 
         CopyPasteManager.getInstance().setContents(StringSelection("zed"))
         CopyPasteManager.getInstance().setContents(StringSelection("baz")) // discarded duplicate
@@ -144,9 +146,7 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.checkResult("foozed<caret>")
 
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
-        // I have found no way of resetting the contents of CopyPasteManger before test.
-        // Therefore, there is no way of knowing when the history is rotated.
-        // myFixture.checkResult("foobaz<caret>")
+        myFixture.checkResult("foobaz<caret>")
     }
 
     fun `test Paste history is not invoked after movement`() {
