@@ -27,10 +27,10 @@ class RepositionHandler : EditorActionHandler() {
         val middlePos = VisualPosition((viewOffset + viewHeight / 2) / editor.lineHeight, 0)
         val bottomPos = VisualPosition((viewOffset + viewHeight) / editor.lineHeight - 1, 0)
 
-        if (EmacsJCommandListener.lastCommandName() == COMMAND_REPOSITION && lastPosition == MIDDLE) {
+        if (EmacsJCommandListener.lastCommandName == COMMAND_REPOSITION && lastPosition == MIDDLE) {
             lastPosition = TOP
             primary.moveToVisualPosition(topPos)
-        } else if (EmacsJCommandListener.lastCommandName() == COMMAND_REPOSITION && lastPosition == TOP) {
+        } else if (EmacsJCommandListener.lastCommandName == COMMAND_REPOSITION && lastPosition == TOP) {
             lastPosition = BOTTOM
             primary.moveToVisualPosition(bottomPos)
         } else {

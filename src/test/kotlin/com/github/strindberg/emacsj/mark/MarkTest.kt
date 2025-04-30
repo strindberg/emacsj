@@ -11,11 +11,6 @@ const val FILE = "file.txt"
 
 class MarkTest : BasePlatformTestCase() {
 
-    override fun setUp() {
-        MarkHandler.editorTypeId = ""
-        super.setUp()
-    }
-
     fun `test Set mark and pop mark works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 

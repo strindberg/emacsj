@@ -15,6 +15,7 @@
 ### Fixed
 
 - Kill line at end of file no longer throws exception.
+- Pop mark now works for all editor types, not only text editors.
 
 ## [1.3.6] - 2025-04-01
 

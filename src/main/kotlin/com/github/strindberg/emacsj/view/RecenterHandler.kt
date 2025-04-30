@@ -29,10 +29,10 @@ class RecenterHandler : EditorActionHandler() {
         val scrollMiddle = caretOffset - viewHeight / 2
         val scrollBottom = caretOffset - viewHeight + 2 * editor.lineHeight
 
-        if (EmacsJCommandListener.lastCommandName() == COMMAND_RECENTER && lastPosition == MIDDLE) {
+        if (EmacsJCommandListener.lastCommandName == COMMAND_RECENTER && lastPosition == MIDDLE) {
             lastPosition = TOP
             editor.scrollingModel.scrollVertically(scrollTop)
-        } else if (EmacsJCommandListener.lastCommandName() == COMMAND_RECENTER && lastPosition == TOP) {
+        } else if (EmacsJCommandListener.lastCommandName == COMMAND_RECENTER && lastPosition == TOP) {
             lastPosition = BOTTOM
             editor.scrollingModel.scrollVertically(scrollBottom)
         } else {

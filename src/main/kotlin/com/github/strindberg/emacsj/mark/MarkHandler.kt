@@ -12,7 +12,6 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditorState
 import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.vfs.VirtualFile
 
 enum class Type { PUSH, POP }
@@ -25,13 +24,10 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     companion object {
         private val places = mutableMapOf<Int, LimitedStack<PlaceInfo>>()
 
-        // Used for testing
-        internal var editorTypeId: String? = null
-
         internal fun pushPlaceInfo(editor: Editor) {
             if (editor is EditorEx) {
                 editor.virtualFile?.let { virtualFile ->
-                    placeInfo(editor, editor.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
+                    placeInfo(editor, virtualFile)?.let { placeInfo ->
                         places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
                     }
                 }
@@ -45,15 +41,17 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
                 }
             }
 
-        private fun placeInfo(editor: EditorEx, offset: Int, virtualFile: VirtualFile): PlaceInfo? =
+        internal fun placeInfo(editor: Editor, virtualFile: VirtualFile): PlaceInfo? =
             editor.project?.let { project ->
-                FileEditorManagerEx.getInstanceEx(project).getSelectedEditor(virtualFile)?.let { fileEditor ->
-                    PlaceInfo(
-                        virtualFile,
-                        fileEditor.getState(FileEditorStateLevel.UNDO),
-                        editorTypeId ?: TextEditorProvider.getInstance().editorTypeId,
-                        offset,
-                    )
+                FileEditorManagerEx.getInstanceExIfCreated(project)?.let { fileEditorManager ->
+                    fileEditorManager.getSelectedEditorWithProvider(virtualFile)?.let { editorWithProvider ->
+                        PlaceInfo(
+                            virtualFile,
+                            editorWithProvider.fileEditor.getState(FileEditorStateLevel.UNDO),
+                            editorWithProvider.provider.editorTypeId,
+                            editor.caretModel.primaryCaret.offset,
+                        )
+                    }
                 }
             }
 
@@ -73,14 +71,14 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         (editor as? EditorEx)?.let { ex ->
             ex.virtualFile?.let { virtualFile ->
-                if (type == POP || EmacsJCommandListener.lastCommandName() == COMMAND_UNIVERSAL_ARGUMENT) {
+                if (type == POP || EmacsJCommandListener.lastCommandName == COMMAND_UNIVERSAL_ARGUMENT) {
                     places[virtualFile.hashCode()]?.pop()?.let { place ->
                         gotoPlaceInfo(editor, place)
                     }
                 } else {
                     val previousSticky = ex.isStickySelection
                     ex.isStickySelection = false
-                    placeInfo(ex, ex.caretModel.primaryCaret.offset, virtualFile)?.let { placeInfo ->
+                    placeInfo(ex, virtualFile)?.let { placeInfo ->
                         if (placeInfo != peek(ex) || !previousSticky) {
                             places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
                             ex.isStickySelection = true

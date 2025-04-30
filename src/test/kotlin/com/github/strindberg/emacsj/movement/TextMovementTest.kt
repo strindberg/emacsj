@@ -1,16 +1,10 @@
 package com.github.strindberg.emacsj.movement
 
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
-import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.word.FILE
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class TextMovementTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        MarkHandler.editorTypeId = ""
-        super.setUp()
-    }
 
     fun `test Text start sets mark`() {
         myFixture.configureByText(FILE, "foo<caret>bar")

@@ -44,13 +44,13 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             STANDARD, PREFIX -> {
                 clipboardHistory = filteredContents().take(64)
                 clipboaardHistoryPos = 0
-                pasteType = if (EmacsJCommandListener.lastCommandName() == COMMAND_UNIVERSAL_ARGUMENT) PREFIX else type
+                pasteType = if (EmacsJCommandListener.lastCommandName == COMMAND_UNIVERSAL_ARGUMENT) PREFIX else type
                 editor.pasteAndMove()
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
             HISTORY -> {
                 editor.getUserData(LAST_PASTED_REGIONS)?.let { regions ->
-                    if (EmacsJCommandListener.lastCommandName() in pasteCommands) {
+                    if (EmacsJCommandListener.lastCommandName in pasteCommands) {
                         regions.sortedByDescending { it.startOffset }.forEach { region ->
                             editor.document.deleteString(region.startOffset, region.endOffset)
                         }

@@ -31,7 +31,7 @@ object KillUtil {
             val previousKill = copyPasteManager.allContents.getOrNull(0)
             val newText = StringUtil.convertLineSeparators(editor.document.substring(textStartOffset, textEndOffset))
 
-            if (EmacsJCommandListener.lastCommandName() == APPEND_NEXT_KILL && (previousKill != null)) {
+            if (EmacsJCommandListener.lastCommandName == APPEND_NEXT_KILL && (previousKill != null)) {
                 val previousText = previousKill.getTransferData(DataFlavor.stringFlavor) as String
                 copyPasteManager.removeContent(previousKill)
                 copyPasteManager.setContents(

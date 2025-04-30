@@ -3,7 +3,6 @@ package com.github.strindberg.emacsj.paste
 import java.awt.datatransfer.StringSelection
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
-import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
@@ -13,11 +12,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 const val FILE = "file.txt"
 
 class PasteTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        MarkHandler.editorTypeId = ""
-        super.setUp()
-    }
 
     fun `test Paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")

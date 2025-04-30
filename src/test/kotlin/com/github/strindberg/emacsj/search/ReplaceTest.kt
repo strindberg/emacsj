@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import javax.swing.JComponent
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
-import com.github.strindberg.emacsj.mark.MarkHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_START
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -396,7 +395,6 @@ class ReplaceTest : BasePlatformTestCase() {
     }
 
     fun `test Mark is set when replace starts`() {
-        MarkHandler.editorTypeId = ""
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
