@@ -19,16 +19,18 @@ deactivate the ones you don't want to use.
 The main features are:
 
 - Incremental search modeled on Emacs' Isearch, with text and regexp search.
-- Query-replace as in Emacs with text or regexps, with a very light-weight interface.
+- Query-replace with text or regexps, with a very light-weight interface.
 - Word commands: transpose, upper-case, lower-case, capitalize, move, delete.
-- Rectangle commands: copy, open, clear, paste.
-- Whitespace commands: delete space around point, delete empty lines.
 - Easy access to clipboard history à la Emacs (kill ring).
 - A mark history with ability to pop mark (mark ring), and exchange point and mark.
-- Duplicate and comment regions and lines.
-- Recenter and relocate caret.
+- Universal argument: repeat commands a specified number of times.
+- Append-next-kill: append copied/cut text to previous kill.
+- Rectangle commands: copy, open, clear, paste.
 - Zap to character.
 - Go back in XRef history.
+- Whitespace commands: delete space around point, delete empty lines.
+- Duplicate and comment regions and lines.
+- Recenter and relocate caret.
 
 Documentation: EmacsJ on [GitHub](https://github.com/strindberg/emacsj)
 <!-- Plugin description end -->
@@ -185,6 +187,32 @@ Search/replace which is always case-sensitive.
 
 Colors used by Search/replace can be configured as described under Isearch [above](#isearch-configuration---colors).
 
+### Universal Argument
+
+*Universal Argument* can be used to repeat any following command. The argument can be specified as described below, and any following
+command will be executed the specified number of times.
+
+*Universal Argument* can be invoked in one of three ways:
+
+- Pressing the *Universal Argument* key one or more times. The first keypress sets the argument to 4, and each successive keypress
+  multiplies the argument by four: 4, 16, 64, 256, ...
+- Pressing the *Universal Argument* key and then specify the argument by digits. Specifying digits takes precedence over the default
+  sequence of multiples of four.
+- Starting *Universal Argument \[0,1,...,9]* with one of the dedicated numeric commands. The number can then be further specified by typing
+  more
+  digits.
+
+A few commands &mdash; [Paste: Leave Caret at Point](#paste) and [Pop Mark](#mark-ring) &mdash; are invoked by using *Universal Argument*
+before invoking their standard counterparts (*Paste: Leave Caret After Pasted Region* and *Push Mark*, respectively).
+
+The commands are:
+
+- Universal Argument (`ctrl-u`). Start accepting an argument, with default value 4. Repeated invocations multiply the argument by four.
+  Typing digits after activation specifies the argument.
+- Universal Argument\[0,1,...,9] (`ctrl-alt-[0,1,...,9]`). Use the key value as first digit in the specified argument. Further digits can be
+  typed
+  before the command to be repeated.
+
 ### Word Movement
 
 EmacsJ's word movement commands are similar to the default IntelliJ word movements, but with a slight difference in how word boundaries
@@ -318,6 +346,9 @@ The paste commands enable the use of a paste history (kill ring) where a pasted 
 repeatedly pressing *Paste: Previous Item in Clipboard History* after use of *Paste: Leave Caret After Pasted Region* or *Paste: Leave Caret
 at Point*, the pasted text is replaced by the next item in the list of previously killed texts.
 
+*Paste: Leave Caret at Point* is triggered when using *Paste: Leave Caret After Pasted Region* after [Universal
+Argument](#universal-argument). It can also be invoked explicitly with a dedicated key binding, but by default it is not bound to any key.
+
 All paste commands push the opposite end of the pasted region as a mark to the [mark ring](#mark-ring) (without starting a selection). In
 other words, when using *Paste: Leave Caret After Pasted Region*, a mark is pushed at the beginning of the pasted region, and vice versa
 for *Paste: Leave Caret at Point*.
@@ -328,8 +359,8 @@ The commands are:
 
 - Paste: Leave Caret After Pasted Region (`ctrl-y`). This command works as standard IntelliJ *Paste*, but it sets up the paste history so
   that further invocations of *Paste: Previous Item in Clipboard History* can suggest previously killed/copied texts.
-- Paste: Leave Caret at Point (`ctrl-u ctrl y`). Works as Paste, but also leaves the caret at the current point and not at the end of the
-  pasted text.
+- Paste: Leave Caret at Point. Works as Paste, but also leaves the caret at the current point and not at the end of the pasted text.
+  Triggered when used after *Universal Argument*.
 - Paste: Previous Item in Clipboard History (`alt-y`). Cycle through the history of killed text, replacing the previously pasted text.
 
 The *Paste* commands work with multiple carets.
@@ -347,6 +378,9 @@ the EmacsJ command starts a new selection at the current point, instead of only 
 Adding to the mark history without starting a new selection can be achieved by hitting the *Set/Push Mark for Selection* command
 twice in the same position.
 
+*Pop Mark* is triggered when using *Push Mark* after [Universal Argument](#universal-argument). It can also be invoked explicitly with a
+dedicated key binding, but by default it is not bound to any key.
+
 The commands [Isearch](#isearch) and [Search/replace](#searchreplace-query-replace) set the mark at the beginning of a search so that one
 can return to the position where the latest search started. The command [Exchange Point and Mark](#exchange-point-and-mark) also uses the
 mark history, as described below.
@@ -355,7 +389,7 @@ The commands are:
 
 - Set/Push Mark for Selection (`ctrl-SPACE`). Set the mark (and activate sticky selection). The mark is saved to the mark history. To only
   save the mark to history without starting selection, hit the key binding twice (`ctrl-SPACE ctrl-SPACE`).
-- Pop Mark (`ctrl-u ctrl-SPACE`). Pop an item from the mark history and return caret to the saved position. History is maintained per file.
+- Pop Mark. Pop an item from the mark history and return caret to the saved position. Triggered when used after *Universal Argument*.
 
 ### Exchange Point and Mark
 
@@ -406,25 +440,51 @@ The commands are:
 - Go Back to Previous Position After Jumping to Declaration (`alt-COMMA`). Pop one item from stack of previous positions, and return caret
   to that position.
 
-### Kill Line
+### Kill commands and Append Next Kill
 
-*Kill Line* (`ctrl-k`) works as the standard IntelliJ command *Cut up to Line End*: it kills (and copies) the rest of the current line. If
+Kill commands in Emacs (and EmacsJ) refer to cutting or copying text, and adding the text to the clipboard. Killed text is added as a new
+element in the kill ring, unless the killed text is adjacent to the previously killed text. These kill ring items can be cycled through with
+the paste history command, documented [above](#paste).
+
+*Kill Line* works like the standard IntelliJ command *Cut up to Line End*: it kills (and copies) the rest of the current line. If
 there is only whitespace between caret and end of the line, the newline character is also killed. This EmacsJ command expands the standard
 command such that the newline character is also killed if the caret is positioned on the very first position of the line.
+
+*Kill Whole Line* kills (and copies) the whole current line, including the newline character. It places the caret at the start of the
+following line.
+
+*Kill Ring Copy* and *Kill Ring Cut* kill the current selection with copy or cut. If the selection is not active, the commands affect the
+whole current line, including the newline character.
+
+The command *Append Next Kill* will set up a waiting state so that if the next command is a cut or copy, the killed text is joined (appended
+or prepended) with the previous kill ring item. All the commands documented in this section respect the *Append Next Kill* command.
+Furthermore, the delete word commands &mdash; *Delete Previous Word* and *Delete Next Word* &mdash; (See [Word Movement](#word-movement))
+also respect *Append Next Kill*.
+
+If the kill is "backwards" after *Append Next Kill*, i.e. if the caret is in front of the killed region, the region is prepended to the
+existing kill ring item. This means that *Kill Ring Copy* and *Kill Ring Cut* both prepend if the caret is before the selection. *Delete
+Previous Word* also prepends after *Append Next Kill*.
 
 The commands are:
 
 - Kill Line (`ctrl-k`). Kill and copy the rest of the current line, including the final newline character if caret is on first position of
   line or there is only whitespace between caret and line end.
+- Kill Whole Line (`ctrl-alt-k`). Kill and copy the whole the current line, including the final newline character.
+- Kill Ring Copy (`alt-w`). Kill and copy the active selection. If no selection is active, the whole line including the newline
+  character is used as selection.
+- Kill Ring Cut (`ctrl-w`). Kill and cut the active selection. If no selection is active, the whole line including the newline character
+  is used as selection.
+- Append Next Kill (`ctrl-alt-w`). If the next action is a kill command (or delete previous/next word), the killed text will be appended or
+  prepended to the current clipboard entity.
 
-The *Kill Line* command works with multiple carets.
+The *Kill* commands work with multiple carets.
 
-### Buffer Movement
+### Buffer Beginning/End Movement
 
 *Beginning of Buffer* and *End of Buffer* work as the IntelliJ commands *Move Caret to Text Start* and *Move Caret to Text End*,
-respectively. They also set a mark at the point whence the command is invoked, unless a selection is active.
+respectively. They also set a mark at the point where the command is invoked, unless a selection is active.
 
 The commands are:
 
-- Beginning of Buffer (`alt-LESS`). Move caret to the beginning of the current editor text.
-- End of Buffer (`alt-GREATER`). Move caret to the end of the current editor text.
+- Beginning of Buffer (`alt-LESS`). Move caret to the beginning of the current editor text. Set the mark where command is invoked.
+- End of Buffer (`alt-GREATER`). Move caret to the end of the current editor text. Set the mark where command is invoked.

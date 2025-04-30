@@ -4,9 +4,14 @@
 
 ## [Unreleased]
 
+Note: This release introduces *Universal Argument*, which affects the two commands *Paste: Leave Caret at Point* and *Pop Mark*. The two
+commands are no longer bound to any key since they are obsolete when used with *Universal Argument*, but they are still available as
+independent commands if you for some reason prefer not to use *Universal Argument*.
+
 ### Added
 
-- Recenter (Ctrl-L) can be invoked during Search/replace.
+- New command "Universal Argument".
+- Digit-argument variants of "Universal Argument".
 - New command "Append Next Kill".
 - New commands "Kill Ring Copy" and "Kill Ring Cut".
 - New command "Kill Whole Line".
@@ -155,18 +160,33 @@
 - Initial release.
 
 [Unreleased]: https://github.com/strindberg/emacsj/compare/v1.3.6...HEAD
+
 [1.3.6]: https://github.com/strindberg/emacsj/compare/v1.3.5...v1.3.6
+
 [1.3.5]: https://github.com/strindberg/emacsj/compare/v1.3.4...v1.3.5
+
 [1.3.4]: https://github.com/strindberg/emacsj/compare/v1.3.3...v1.3.4
+
 [1.3.3]: https://github.com/strindberg/emacsj/compare/v1.3.2...v1.3.3
+
 [1.3.2]: https://github.com/strindberg/emacsj/compare/v1.3.1...v1.3.2
+
 [1.3.1]: https://github.com/strindberg/emacsj/compare/v1.3.0...v1.3.1
+
 [1.3.0]: https://github.com/strindberg/emacsj/compare/v1.2.2...v1.3.0
+
 [1.2.2]: https://github.com/strindberg/emacsj/compare/v1.2.1...v1.2.2
+
 [1.2.1]: https://github.com/strindberg/emacsj/compare/v1.2.0...v1.2.1
+
 [1.2.0]: https://github.com/strindberg/emacsj/compare/v1.1.0...v1.2.0
+
 [1.1.0]: https://github.com/strindberg/emacsj/compare/v1.0.2...v1.1.0
+
 [1.0.2]: https://github.com/strindberg/emacsj/compare/v1.0.1...v1.0.2
+
 [1.0.1]: https://github.com/strindberg/emacsj/compare/v0.9.3...v1.0.1
+
 [0.9.3]: https://github.com/strindberg/emacsj/compare/v0.9.2...v0.9.3
+
 [0.9.2]: https://github.com/strindberg/emacsj/commits/v0.9.2
