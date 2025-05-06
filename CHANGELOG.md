@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- The zap commands no longer remove anything if the supplied character never matches.
+- The zap commands now respect Append next kill.
+
 ## [1.4.0] - 2025-04-30
 
 Note: This release introduces *Universal Argument*, which affects the two commands *Paste: Leave Caret at Point* and *Pop Mark*. The two

@@ -7,10 +7,13 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import org.intellij.lang.annotations.Language
 
+@Language("devkit-action-id")
 internal const val ACTION_REPLACE_REGEXP = "com.github.strindberg.emacsj.actions.search.replaceregexp"
+
+@Language("devkit-action-id")
 internal const val ACTION_REPLACE_TEXT = "com.github.strindberg.emacsj.actions.search.replacetext"
-internal const val ACTION_REPLACE_PREVIOUS = "com.github.strindberg.emacsj.actions.search.replaceprevious"
 
 class ReplaceHandler(private val type: SearchType) : EditorActionHandler() {
 

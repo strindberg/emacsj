@@ -22,8 +22,6 @@ import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
-internal const val COMMAND_UNIVERSAL_ARGUMENT = "Universal Argument"
-
 private val singleActions = listOf(
     ACTION_ISEARCH_BACKWARD,
     ACTION_ISEARCH_FORWARD,

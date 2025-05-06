@@ -55,7 +55,7 @@ class UniversalArgumentTest : BasePlatformTestCase() {
         myFixture.checkResult("aaaaaaaaaaaaaaaa<caret>")
     }
 
-    fun `test Pressing 'Escacpe' aborts universal argument`() {
+    fun `test Pressing 'Escape' aborts universal argument`() {
         myFixture.configureByText(FILE, "<caret>foobar")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         pressEscape()
@@ -63,7 +63,7 @@ class UniversalArgumentTest : BasePlatformTestCase() {
         myFixture.checkResult("f<caret>oobar")
     }
 
-    fun `test Numeric universal arguments work 1`() {
+    fun `test Numeric universal arguments work`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.type("a")
