@@ -23,13 +23,13 @@ class ZapTest : BasePlatformTestCase() {
         myFixture.checkResult("bar <caret>l baz")
     }
 
-    fun `test Zap up to works with no match`() {
+    fun `test Zap up to does not remove anything when no match is found`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_UP_TO)
         myFixture.type("q")
 
-        myFixture.checkResult("bar <caret>")
+        myFixture.checkResult("bar <caret>fool baz")
     }
 
     fun `test Zap up to works when matching next char`() {
@@ -59,13 +59,13 @@ class ZapTest : BasePlatformTestCase() {
         myFixture.checkResult("bar <caret> baz")
     }
 
-    fun `test Zap to works with no match`() {
+    fun `test Zap to does not remove anything when no match is found`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
         myFixture.type("q")
 
-        myFixture.checkResult("bar <caret>")
+        myFixture.checkResult("bar <caret>fool baz")
     }
 
     fun `test Zap to works when matching next char`() {
@@ -95,13 +95,13 @@ class ZapTest : BasePlatformTestCase() {
         myFixture.checkResult("bar f<caret> baz")
     }
 
-    fun `test Zap back up to works with no match`() {
+    fun `test Zap back up to does not remove anything when no match is found`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_UP_TO)
         myFixture.type("q")
 
-        myFixture.checkResult("<caret> baz")
+        myFixture.checkResult("bar fool<caret> baz")
     }
 
     fun `test Zap back up to works when matching previous char`() {
@@ -131,13 +131,13 @@ class ZapTest : BasePlatformTestCase() {
         myFixture.checkResult("bar <caret> baz")
     }
 
-    fun `test Zap back to works with no match`() {
+    fun `test Zap back to does not remove anything when no match is found`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
         myFixture.type("q")
 
-        myFixture.checkResult("<caret> baz")
+        myFixture.checkResult("bar fool<caret> baz")
     }
 
     fun `test Zap back to works when matching previous char`() {

@@ -15,11 +15,17 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.DocumentUtil
 import com.intellij.util.DocumentUtil.isAtLineEnd
 import com.intellij.util.DocumentUtil.isAtLineStart
+import org.intellij.lang.annotations.Language
 
 enum class Type { DUPLICATE, COMMENT, DWIM }
 
+@Language("devkit-action-id")
 internal const val ACTION_COMMENT = "com.github.strindberg.emacsj.actions.duplicate.commentdwim"
+
+@Language("devkit-action-id")
 internal const val ACTION_DUPLICATE = "com.github.strindberg.emacsj.actions.duplicate.duplicate"
+
+@Language("devkit-action-id")
 internal const val ACTION_DUPLICATE_COMMENT = "com.github.strindberg.emacsj.actions.duplicate.duplicateandcomment"
 
 class DuplicateAndCommentHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret() {

@@ -6,12 +6,14 @@ import com.github.strindberg.emacsj.movement.ACTION_TEXT_END
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.word.ACTION_DELETE_NEXT_WORD
 import com.github.strindberg.emacsj.word.ACTION_DELETE_PREVIOUS_WORD
+import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
+import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class AppendKillTest : BasePlatformTestCase() {
 
-    fun `test Basic copy works`() {
+    fun `test Basic Copy works`() {
         myFixture.configureByText(
             FILE,
             """<selection>baz</selection><caret>zoo
@@ -29,7 +31,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("baz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Basic copy with empty selection copies whole line`() {
+    fun `test Basic Copy with empty selection copies whole line`() {
         myFixture.configureByText(
             FILE,
             """baz<caret>zoo
@@ -47,7 +49,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Basic cut works`() {
+    fun `test Basic Cut works`() {
         myFixture.configureByText(
             FILE,
             """<selection>baz</selection><caret>zoo
@@ -65,7 +67,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("baz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Basic cut with empty selection cuts whole line`() {
+    fun `test Basic Cut with empty selection cuts whole line`() {
         myFixture.configureByText(
             FILE,
             """baz<caret>zoo
@@ -82,7 +84,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Append next kill before copy works`() {
+    fun `test Append next kill before Copy works`() {
         myFixture.configureByText(
             FILE,
             """<selection>baz</selection><caret>zoo
@@ -104,7 +106,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("zedbaz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Append next kill before cut works`() {
+    fun `test Append next kill before Cut works`() {
         myFixture.configureByText(
             FILE,
             """<selection>baz</selection><caret>zoo
@@ -126,7 +128,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("zedbaz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Append next kill before copy where caret is before selection prepends new text`() {
+    fun `test Append next kill before Copy where caret is before selection prepends new text`() {
         myFixture.configureByText(
             FILE,
             """<caret><selection>baz</selection>zoo
@@ -148,7 +150,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("bazzed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Append next kill before cut where caret is before selection prepends new text`() {
+    fun `test Append next kill before Cut where caret is before selection prepends new text`() {
         myFixture.configureByText(
             FILE,
             """<caret><selection>baz</selection>zoo
@@ -187,7 +189,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("zed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Append next kill before kill line works`() {
+    fun `test Append next kill before Kill line works`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -211,7 +213,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("zedzoo", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Append next kill before kill whole line works`() {
+    fun `test Append next kill before Kill whole line works`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -235,7 +237,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("zedbazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Append next kill before delete next word works`() {
+    fun `test Append next kill before Delete next word works and word is appended`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -259,7 +261,7 @@ class AppendKillTest : BasePlatformTestCase() {
         assertEquals("zedbaz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
     }
 
-    fun `test Append next kill before delete previous word works and word is appended`() {
+    fun `test Append next kill before Delete previous word works and word is prepended`() {
         myFixture.configureByText(
             FILE,
             """foo
@@ -277,6 +279,56 @@ class AppendKillTest : BasePlatformTestCase() {
         myFixture.checkResult(
             """foo
               | zoo
+              |barbazzed<caret>
+            """.trimMargin()
+        )
+        assertEquals("bazzed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+    }
+
+    fun `test Append next kill before Zap forward works and text is appended`() {
+        myFixture.configureByText(
+            FILE,
+            """foo
+               |baz<caret> zoop
+               |bar
+            """.trimMargin()
+        )
+        CopyPasteManager.getInstance().setContents(StringSelection("zed"))
+
+        myFixture.performEditorAction(ACTION_APPEND_NEXT_KILL)
+        myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
+        myFixture.type("p")
+        myFixture.performEditorAction(ACTION_TEXT_END)
+        myFixture.performEditorAction(ACTION_PASTE)
+
+        myFixture.checkResult(
+            """foo
+              |baz
+              |barzed zoop<caret>
+            """.trimMargin()
+        )
+        assertEquals("zed zoop", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+    }
+
+    fun `test Append next kill before Zap backward works and text is prepended`() {
+        myFixture.configureByText(
+            FILE,
+            """foo
+               |baz<caret> zoop
+               |bar
+            """.trimMargin()
+        )
+        CopyPasteManager.getInstance().setContents(StringSelection("zed"))
+
+        myFixture.performEditorAction(ACTION_APPEND_NEXT_KILL)
+        myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
+        myFixture.type("b")
+        myFixture.performEditorAction(ACTION_TEXT_END)
+        myFixture.performEditorAction(ACTION_PASTE)
+
+        myFixture.checkResult(
+            """foo
+              | zoop
               |barbazzed<caret>
             """.trimMargin()
         )
