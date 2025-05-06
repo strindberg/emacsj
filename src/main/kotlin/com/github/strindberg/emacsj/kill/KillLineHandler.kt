@@ -7,10 +7,14 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.util.DocumentUtil
 import com.intellij.util.text.CharArrayUtil
+import org.intellij.lang.annotations.Language
 
 enum class KillType { REST_OF_LINE, WHOLE_LINE }
 
+@Language("devkit-action-id")
 internal const val ACTION_KILL_LINE = "com.github.strindberg.emacsj.actions.kill.line"
+
+@Language("devkit-action-id")
 internal const val ACTION_KILL_WHOLE_LINE = "com.github.strindberg.emacsj.actions.kill.wholeline"
 
 class KillLineHandler(val type: KillType) : EditorWriteActionHandler.ForEachCaret() {

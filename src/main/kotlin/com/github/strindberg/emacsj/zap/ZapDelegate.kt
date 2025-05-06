@@ -10,6 +10,7 @@ import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_UP_TO
+import com.intellij.codeInsight.hint.HintManager
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.command.WriteCommandAction
@@ -56,9 +57,13 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                                     )
                                 }
                                 document.setReadOnly(false)
-                                WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
-                                    KillUtil.cut(editor, start, end, prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
-                                })
+                                if (start != null && end != null) {
+                                    WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
+                                        KillUtil.cut(editor, start, end, prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
+                                    })
+                                } else {
+                                    HintManager.getInstance().showInformationHint(editor, "Search failed: $charTyped")
+                                }
                             }
                             cancel()
                         } else {
@@ -120,10 +125,10 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         }
     }
 
-    private fun nextCharacter(text: CharSequence, offset: Int, character: Char): Int {
-        tailrec fun next(offset: Int): Int =
+    private fun nextCharacter(text: CharSequence, offset: Int, character: Char): Int? {
+        tailrec fun next(offset: Int): Int? =
             if (offset >= text.length) {
-                text.length
+                null
             } else if (matches(text[offset], character)) {
                 if (type == FORWARD_UP_TO) {
                     offset
@@ -136,10 +141,10 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         return next(offset)
     }
 
-    private fun previousCharacter(text: CharSequence, offset: Int, character: Char): Int {
-        tailrec fun previous(offset: Int): Int =
+    private fun previousCharacter(text: CharSequence, offset: Int, character: Char): Int? {
+        tailrec fun previous(offset: Int): Int? =
             if (offset <= 0) {
-                0
+                null
             } else if (matches(text[offset - 1], character)) {
                 if (type == BACKWARD_UP_TO) {
                     offset

@@ -8,12 +8,20 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.ide.CopyPasteManager
+import org.intellij.lang.annotations.Language
 
 enum class Type { COPY, CUT, OPEN, CLEAR }
 
+@Language("devkit-action-id")
 internal const val ACTION_COPY_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.copyrectangle"
+
+@Language("devkit-action-id")
 internal const val ACTION_CUT_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.cutrectangle"
+
+@Language("devkit-action-id")
 internal const val ACTION_OPEN_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.openrectangle"
+
+@Language("devkit-action-id")
 internal const val ACTION_CLEAR_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.clearrectangle"
 
 class RectangleHandler(val type: Type) : EditorWriteActionHandler() {

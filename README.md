@@ -222,6 +222,8 @@ proper word. The same goes for word movements such as *Next Word* and *Previous 
 
 These commands honor the IDE's setting "Use camel case".
 
+The commands *Delete Next Word* and *Delete Previous Word* respect the *Append Next Kill* command.
+
 The commands are:
 
 - Move Caret to Next Word (`alt-f`). Move the caret to the end of the current word (where current word is defined as everything up
@@ -420,6 +422,10 @@ After activating one of the *Zap to character* commands, type the character whic
 between the caret and the next occurrence of the given character is deleted. The deleted part is added to the kill ring. There are four
 variants of this command: kill the text including or not including the given character, forward or backward respectively.
 
+If the given character is not found, no text is removed.
+
+All these commands respect the *Append Next Kill* command.
+
 The commands are:
 
 - Zap To Character (`alt-z`). Kill everything up to and including the given character.
@@ -458,12 +464,13 @@ whole current line, including the newline character.
 
 The command *Append Next Kill* will set up a waiting state so that if the next command is a cut or copy, the killed text is joined (appended
 or prepended) with the previous kill ring item. All the commands documented in this section respect the *Append Next Kill* command.
-Furthermore, the delete word commands &mdash; *Delete Previous Word* and *Delete Next Word* &mdash; (See [Word Movement](#word-movement))
-also respect *Append Next Kill*.
+Furthermore, the delete word commands &mdash; *Delete Previous Word* and *Delete Next Word* &mdash; (See [Word Movement](#word-movement)),
+as well as the zap commands &mdash; *Zap To Character*, *Zap Up To Character*, *Zap Back To Character* and *Zap Back Up To Character*
+&mdash; (See [Zap to Character](#zap-to-character)), also respect *Append Next Kill*.
 
-If the kill is "backwards" after *Append Next Kill*, i.e. if the caret is in front of the killed region, the region is prepended to the
+If the kill is "backwards" after *Append Next Kill* or if the caret is in front of the killed region, the region is prepended to the
 existing kill ring item. This means that *Kill Ring Copy* and *Kill Ring Cut* both prepend if the caret is before the selection. *Delete
-Previous Word* also prepends after *Append Next Kill*.
+Previous Word*, *Zap Back To Character* and *Zap Back Up To Character* also prepend after *Append Next Kill*.
 
 The commands are:
 
