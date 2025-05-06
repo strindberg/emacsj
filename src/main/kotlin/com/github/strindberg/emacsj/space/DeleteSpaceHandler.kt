@@ -7,10 +7,14 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
+import org.intellij.lang.annotations.Language
 
 enum class Type { DELETE, ONE_SPACE }
 
+@Language("devkit-action-id")
 internal const val ACTION_DELETE_SPACE = "com.github.strindberg.emacsj.actions.space.deletespace"
+
+@Language("devkit-action-id")
 internal const val ACTION_ONE_SPACE = "com.github.strindberg.emacsj.actions.space.onespace"
 
 class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret() {

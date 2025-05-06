@@ -9,7 +9,9 @@ import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.openapi.ide.CopyPasteManager
+import org.intellij.lang.annotations.Language
 
+@Language("devkit-action-id")
 internal const val ACTION_PASTE_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.rectanglepaste"
 
 class RectanglePasteHandler : EditorWriteActionHandler() {

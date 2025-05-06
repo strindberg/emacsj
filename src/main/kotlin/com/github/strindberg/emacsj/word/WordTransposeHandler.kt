@@ -5,10 +5,14 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
+import org.intellij.lang.annotations.Language
 
 enum class Direction { FORWARD, BACKWARD }
 
+@Language("devkit-action-id")
 internal const val ACTION_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.actions.word.transposewords"
+
+@Language("devkit-action-id")
 internal const val ACTION_REVERSE_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.actions.word.transposewordsreverse"
 
 class WordTransposeHandler(private val direction: Direction) : EditorWriteActionHandler.ForEachCaret() {

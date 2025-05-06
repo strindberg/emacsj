@@ -11,7 +11,9 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import org.intellij.lang.annotations.Language
 
+@Language("devkit-action-id")
 internal const val ACTION_XREF_BACK = "com.github.strindberg.emacsj.actions.xref.xrefback"
 
 class XRefHandler : EditorActionHandler() {

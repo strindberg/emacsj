@@ -1,9 +1,10 @@
 package com.github.strindberg.emacsj.mark
 
+import com.github.strindberg.emacsj.EmacsJBundle
 import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.github.strindberg.emacsj.mark.Type.POP
 import com.github.strindberg.emacsj.search.prependElement
-import com.github.strindberg.emacsj.universal.COMMAND_UNIVERSAL_ARGUMENT
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -13,10 +14,14 @@ import com.intellij.openapi.fileEditor.FileEditorState
 import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.vfs.VirtualFile
+import org.intellij.lang.annotations.Language
 
 enum class Type { PUSH, POP }
 
+@Language("devkit-action-id")
 internal const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
+
+@Language("devkit-action-id")
 internal const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
 
 class MarkHandler(val type: Type) : EditorActionHandler() {
@@ -71,7 +76,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         (editor as? EditorEx)?.let { ex ->
             ex.virtualFile?.let { virtualFile ->
-                if (type == POP || EmacsJCommandListener.lastCommandName == COMMAND_UNIVERSAL_ARGUMENT) {
+                if (type == POP || EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)) {
                     places[virtualFile.hashCode()]?.pop()?.let { place ->
                         gotoPlaceInfo(editor, place)
                     }

@@ -2,12 +2,13 @@ package com.github.strindberg.emacsj.paste
 
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
+import com.github.strindberg.emacsj.EmacsJBundle
 import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.paste.Type.HISTORY
 import com.github.strindberg.emacsj.paste.Type.PREFIX
 import com.github.strindberg.emacsj.paste.Type.STANDARD
-import com.github.strindberg.emacsj.universal.COMMAND_UNIVERSAL_ARGUMENT
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -17,24 +18,34 @@ import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
+import org.intellij.lang.annotations.Language
 
 enum class Type { STANDARD, PREFIX, HISTORY }
 
+@Language("devkit-action-id")
 internal const val ACTION_PASTE = "com.github.strindberg.emacsj.actions.paste.paste"
+
+@Language("devkit-action-id")
 internal const val ACTION_PREFIX_PASTE = "com.github.strindberg.emacsj.actions.paste.pasteprefix"
+
+@Language("devkit-action-id")
 internal const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.paste.pastehistory"
 
 private val LAST_PASTED_REGIONS = Key.create<List<TextRange>>("PasteHandler.LAST_PASTED_REGIONS")
 
 private val pasteCommands =
-    listOf("Paste: Leave Caret at Point", "Paste: Leave Caret After Pasted Region", "Paste: Previous Item in Clipboard History")
+    listOf(
+        EmacsJBundle.actionText(ACTION_PASTE),
+        EmacsJBundle.actionText(ACTION_PREFIX_PASTE),
+        EmacsJBundle.actionText(ACTION_HISTORY_PASTE)
+    )
 
 class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     companion object {
         private var clipboardHistory = listOf<Transferable>()
 
-        private var clipboaardHistoryPos = 0
+        private var clipboardHistoryPos = 0
 
         private var pasteType = STANDARD
     }
@@ -43,8 +54,9 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
         when (type) {
             STANDARD, PREFIX -> {
                 clipboardHistory = filteredContents().take(64)
-                clipboaardHistoryPos = 0
-                pasteType = if (EmacsJCommandListener.lastCommandName == COMMAND_UNIVERSAL_ARGUMENT) PREFIX else type
+                clipboardHistoryPos = 0
+                pasteType =
+                    if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)) PREFIX else type
                 editor.pasteAndMove()
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
@@ -86,7 +98,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             .distinctBy { it.getTransferData(DataFlavor.stringFlavor) as String }
 
     private fun nextHistoryClipboard(): Transferable? =
-        clipboardHistory.takeUnless { it.isEmpty() }?.let { history -> history[clipboaardHistoryPos++ % history.size] }
+        clipboardHistory.takeUnless { it.isEmpty() }?.let { history -> history[clipboardHistoryPos++ % history.size] }
 
     private fun Editor.pasteTransferable(contents: Transferable): List<TextRange> =
         EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.toList() ?: emptyList()
