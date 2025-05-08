@@ -202,7 +202,7 @@ command will be executed the specified number of times.
   more
   digits.
 
-A few commands &mdash; [Paste: Leave Caret at Point](#paste) and [Pop Mark](#mark-ring) &mdash; are invoked by using *Universal Argument*
+A few commands &mdash; [Paste: Leave Caret at Point](#paste-kill-ring) and [Pop Mark](#mark-ring) &mdash; are invoked by using *Universal Argument*
 before invoking their standard counterparts (*Paste: Leave Caret After Pasted Region* and *Push Mark*, respectively).
 
 The commands are:
@@ -342,7 +342,7 @@ The commands are:
 - Rectangle: Paste (`ctrl-x alt-p`). Paste the contents of the clipboard, starting at the same column on each line. Text to the right of the
   insertion point is shifted rightward.
 
-### Paste
+### Paste (kill ring)
 
 The paste commands enable the use of a paste history (kill ring) where a pasted snippet of text can be replaced by previous copied texts. By
 repeatedly pressing *Paste: Previous Item in Clipboard History* after use of *Paste: Leave Caret After Pasted Region* or *Paste: Leave Caret
@@ -424,7 +424,7 @@ variants of this command: kill the text including or not including the given cha
 
 If the given character is not found, no text is removed.
 
-All these commands respect the *Append Next Kill* command.
+All these commands respect the *Append Next Kill* command (see [below](#kill-commands-and-append-next-kill)).
 
 The commands are:
 
@@ -450,7 +450,7 @@ The commands are:
 
 Kill commands in Emacs (and EmacsJ) refer to cutting or copying text, and adding the text to the clipboard. Killed text is added as a new
 element in the kill ring, unless the killed text is adjacent to the previously killed text. These kill ring items can be cycled through with
-the paste history command, documented [above](#paste).
+the paste history command, documented [above](#paste-kill-ring).
 
 *Kill Line* works like the standard IntelliJ command *Cut up to Line End*: it kills (and copies) the rest of the current line. If
 there is only whitespace between caret and end of the line, the newline character is also killed. This EmacsJ command expands the standard
