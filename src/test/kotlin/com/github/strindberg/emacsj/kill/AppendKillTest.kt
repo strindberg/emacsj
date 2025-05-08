@@ -8,6 +8,7 @@ import com.github.strindberg.emacsj.word.ACTION_DELETE_NEXT_WORD
 import com.github.strindberg.emacsj.word.ACTION_DELETE_PREVIOUS_WORD
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
+import com.github.strindberg.emacsj.zap.ZapHandler
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
@@ -308,6 +309,8 @@ class AppendKillTest : BasePlatformTestCase() {
             """.trimMargin()
         )
         assertEquals("zed zoop", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+
+        ZapHandler.delegate?.hide()
     }
 
     fun `test Append next kill before Zap backward works and text is prepended`() {
@@ -333,5 +336,7 @@ class AppendKillTest : BasePlatformTestCase() {
             """.trimMargin()
         )
         assertEquals("bazzed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String)
+
+        ZapHandler.delegate?.hide()
     }
 }
