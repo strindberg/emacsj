@@ -19,7 +19,7 @@ internal const val ACTION_XREF_BACK = "com.github.strindberg.emacsj.actions.xref
 class XRefHandler : EditorActionHandler() {
 
     companion object {
-        private val places = LimitedStack<PlaceInfo>()
+        private val places = mutableMapOf<Int, LimitedStack<PlaceInfo>>()
 
         internal fun pushPlace(event: CommandEvent) {
             event.project?.let { project ->
@@ -28,7 +28,7 @@ class XRefHandler : EditorActionHandler() {
                         fileEditorManager.getSelectedEditor(virtualFile)?.let { fileEditor ->
                             (fileEditor as? TextEditor)?.editor?.let { editor ->
                                 MarkHandler.placeInfo(editor, virtualFile)?.let {
-                                    places.push(it)
+                                    places.getOrPut(project.hashCode()) { LimitedStack() }.push(it)
                                 }
                             }
                         }
@@ -40,7 +40,7 @@ class XRefHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         (editor as? EditorEx)?.let { ex ->
-            places.pop()?.let { place ->
+            places[ex.project.hashCode()]?.pop()?.let { place ->
                 MarkHandler.gotoPlaceInfo(editor, place)
             }
         }
