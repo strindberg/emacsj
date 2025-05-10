@@ -28,7 +28,6 @@ class EmacsJCommandListener : CommandListener {
                 ActionsBundle.actionText("GotoDeclaration"),
                 ActionsBundle.actionText("GotoDeclarationOnly"),
                 ActionsBundle.actionText("GotoTypeDeclaration"),
-                ActionsBundle.actionText("GotoSuperMethod"),
             )
         ) {
             XRefHandler.pushPlace(event)
