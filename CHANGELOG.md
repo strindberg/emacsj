@@ -8,6 +8,7 @@
 
 - The zap commands no longer remove anything if the supplied character never matches.
 - The zap commands now respect Append next kill.
+- XRef back now separates history between projects.
 
 ## [1.4.0] - 2025-04-30
 
