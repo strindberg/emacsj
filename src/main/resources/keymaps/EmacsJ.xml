@@ -35,6 +35,13 @@
     <action id="com.github.strindberg.emacsj.actions.search.isearchmark">
         <keyboard-shortcut first-keystroke="alt ENTER"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchfirstmatch">
+        <keyboard-shortcut first-keystroke="alt LESS"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchlastmatch">
+        <keyboard-shortcut first-keystroke="alt GREATER"/>
+        <keyboard-shortcut first-keystroke="shift alt LESS"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch">
         <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE"/>
     </action>
@@ -172,56 +179,42 @@
     </action>
     <action id="com.github.strindberg.emacsj.actions.movement.textstart">
         <keyboard-shortcut first-keystroke="alt LESS"/>
-        <keyboard-shortcut first-keystroke="alt LESS"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.movement.textend">
         <keyboard-shortcut first-keystroke="alt GREATER"/>
-        <keyboard-shortcut first-keystroke="alt GREATER"/>
-        <keyboard-shortcut first-keystroke="shift alt LESS"/>
         <keyboard-shortcut first-keystroke="shift alt LESS"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument">
         <keyboard-shortcut first-keystroke="control U"/>
-        <keyboard-shortcut first-keystroke="control U"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument1">
-        <keyboard-shortcut first-keystroke="control alt 1"/>
         <keyboard-shortcut first-keystroke="control alt 1"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument2">
         <keyboard-shortcut first-keystroke="control alt 2"/>
-        <keyboard-shortcut first-keystroke="control alt 2"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument3">
-        <keyboard-shortcut first-keystroke="control alt 3"/>
         <keyboard-shortcut first-keystroke="control alt 3"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument4">
         <keyboard-shortcut first-keystroke="control alt 4"/>
-        <keyboard-shortcut first-keystroke="control alt 4"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument5">
-        <keyboard-shortcut first-keystroke="control alt 5"/>
         <keyboard-shortcut first-keystroke="control alt 5"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument6">
         <keyboard-shortcut first-keystroke="control alt 6"/>
-        <keyboard-shortcut first-keystroke="control alt 6"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument7">
-        <keyboard-shortcut first-keystroke="control alt 7"/>
         <keyboard-shortcut first-keystroke="control alt 7"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument8">
         <keyboard-shortcut first-keystroke="control alt 8"/>
-        <keyboard-shortcut first-keystroke="control alt 8"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument9">
         <keyboard-shortcut first-keystroke="control alt 9"/>
-        <keyboard-shortcut first-keystroke="control alt 9"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument0">
-        <keyboard-shortcut first-keystroke="control alt 0"/>
         <keyboard-shortcut first-keystroke="control alt 0"/>
     </action>
 
