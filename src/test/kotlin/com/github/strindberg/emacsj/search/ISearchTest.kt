@@ -1,4 +1,3 @@
-
 package com.github.strindberg.emacsj.search
 
 import java.awt.datatransfer.StringSelection
@@ -1452,6 +1451,88 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_TOGGLE_LAX_SEARCH)
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult("foo bar foo bar<caret> foo bar")
+    }
+
+    fun `test First match can be reached when searching forward`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |import
+            |<caret>import
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("import")
+        myFixture.checkResult(
+            """
+            |import
+            |import<caret>
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
+        myFixture.checkResult(
+            """
+            |import<caret>
+            |import
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult(
+            """
+            |import
+            |import<caret>
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test First match can be reached when searching backward`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |import
+            |import<caret>
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("import")
+        myFixture.checkResult(
+            """
+            |import
+            |<caret>import
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
+        myFixture.checkResult(
+            """
+            |<caret>import
+            |import
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult(
+            """
+            |import
+            |<caret>import
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
     }
 
     private fun pressEnter() {
