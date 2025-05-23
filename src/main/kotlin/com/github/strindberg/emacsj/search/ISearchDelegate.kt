@@ -75,8 +75,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     private val rangeHighlighters = mutableListOf<RangeHighlighter>()
 
-    private var lastLax = ISearchHandler.lax
-
     internal var text: String
         get() = ui.text
         set(newText) {
@@ -229,11 +227,11 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     internal fun findFirst() {
-        findFirstLast(FORWARD, direction)
+        findFirstLast(FORWARD, direction == BACKWARD)
     }
 
     internal fun findLast() {
-        findFirstLast(BACKWARD, direction)
+        findFirstLast(BACKWARD, direction == FORWARD)
     }
 
     internal fun renewState() {
@@ -241,7 +239,8 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         updateUI(title = titleText(), text = text, found = true)
         ui.flashLax(ISearchHandler.lax)
 
-        removeHighlighters(false)
+        removeAllHighlighters()
+
         val (isRegexp, searchString) = getSearchModelArguments()
         CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
     }
@@ -275,7 +274,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             findAllAndHighlight(result.offset, isNewText)
             updateUI(result)
         }
-        lastLax = ISearchHandler.lax
     }
 
     internal fun swapSearchStopAndThenCancel() {
@@ -354,13 +352,14 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         ui.textColor = if (found) JBColor.foreground() else JBColor.RED
     }
 
-    private fun findFirstLast(findDirection: Direction, searchDirection: Direction) {
+    private fun findFirstLast(findDirection: Direction, switchDirection: Boolean) {
         removeAllHighlighters()
         editor.caretModel.removeSecondaryCarets()
 
         searchAllCarets(searchDirection = findDirection, newText = "", forceWraparound = true)
-        if (findDirection != searchDirection) {
-            searchAllCarets(searchDirection = searchDirection, newText = "", saveBreadcrumb = false)
+
+        if (switchDirection) {
+            searchAllCarets(searchDirection = findDirection.reverse, newText = "", saveBreadcrumb = false)
         }
     }
 
@@ -406,7 +405,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun removeHighlighters(isNewText: Boolean) {
-        if (isNewText || lastLax != ISearchHandler.lax) {
+        if (isNewText) {
             CommonHighlighter.cancel(editor)
         } else {
             rangeHighlighters.forEach {
