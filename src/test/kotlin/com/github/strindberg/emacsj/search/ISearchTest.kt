@@ -1530,8 +1530,8 @@ class ISearchTest : BasePlatformTestCase() {
             FILE,
             """
             |import
-            |import
             |import<caret>
+            |import
             """.trimMargin()
         )
 
@@ -1541,7 +1541,7 @@ class ISearchTest : BasePlatformTestCase() {
             """
             |import
             |import
-            |import<caret>
+            |imp<caret>ort
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -1551,7 +1551,7 @@ class ISearchTest : BasePlatformTestCase() {
             """
             |import
             |import
-            |import<caret>
+            |imp<caret>ort
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -1665,8 +1665,8 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |<caret>import
             |import
+            |<caret>import
             |import
             """.trimMargin()
         )
@@ -1675,7 +1675,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("purport")
         myFixture.checkResult(
             """
-            |<caret>import
+            |im<caret>port
             |import
             |import
             """.trimMargin()
@@ -1685,7 +1685,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
         myFixture.checkResult(
             """
-            |<caret>import
+            |im<caret>port
             |import
             |import
             """.trimMargin()
@@ -1723,6 +1723,278 @@ class ISearchTest : BasePlatformTestCase() {
             """.trimMargin()
         )
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Last match can be reached when searching backward`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |import
+            |import<caret>
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("import")
+        myFixture.checkResult(
+            """
+            |import
+            |<caret>import
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_LAST)
+        myFixture.checkResult(
+            """
+            |import
+            |import
+            |<caret>import
+            """.trimMargin()
+        )
+        assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult(
+            """
+            |import
+            |<caret>import
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Last match when already on last match is handled in backward search`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |import
+            |import
+            |import<caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("import")
+        myFixture.checkResult(
+            """
+            |import
+            |import
+            |<caret>import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_LAST)
+        myFixture.checkResult(
+            """
+            |import
+            |import
+            |<caret>import
+            """.trimMargin()
+        )
+        assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Last match when no match is handled in backward search`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |import
+            |import<caret>
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("purport")
+        myFixture.checkResult(
+            """
+            |import
+            |im<caret>port
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_LAST)
+        myFixture.checkResult(
+            """
+            |import
+            |im<caret>port
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Last match when search has failed is handled in backward search`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |<caret>import
+            |import
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("import")
+        myFixture.checkResult(
+            """
+            |<caret>import
+            |import
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_LAST)
+        myFixture.checkResult(
+            """
+            |import
+            |import
+            |<caret>import
+            """.trimMargin()
+        )
+        assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Last match can be reached when searching forward`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |import
+            |<caret>import
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("import")
+        myFixture.checkResult(
+            """
+            |import
+            |import<caret>
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_LAST)
+        myFixture.checkResult(
+            """
+            |import
+            |import
+            |import<caret>
+            """.trimMargin()
+        )
+        assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult(
+            """
+            |import
+            |import<caret>
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Last match when already on last match is handled in forward search`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |import
+            |import
+            |<caret>import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("import")
+        myFixture.checkResult(
+            """
+            |import
+            |import
+            |import<caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_LAST)
+        myFixture.checkResult(
+            """
+            |import
+            |import
+            |import<caret>
+            """.trimMargin()
+        )
+        assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Last match when no match is handled in forward search`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |import<caret>
+            |import
+            |import
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("purport")
+        myFixture.checkResult(
+            """
+            |import
+            |imp<caret>ort
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_LAST)
+        myFixture.checkResult(
+            """
+            |import
+            |imp<caret>ort
+            |import
+            """.trimMargin()
+        )
+        assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Last match when search has failed is handled in forward search`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |import
+            |import
+            |import<caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("import")
+        myFixture.checkResult(
+            """
+            |import
+            |import
+            |import<caret>
+            """.trimMargin()
+        )
+        assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_LAST)
+        myFixture.checkResult(
+            """
+            |import
+            |import
+            |import<caret>
+            """.trimMargin()
+        )
+        assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
     }
 
     private fun pressEnter() {
