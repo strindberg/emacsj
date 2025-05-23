@@ -110,7 +110,10 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                         if (delegate != null) {
                             when (delegate.state) {
                                 CHOOSE_PREVIOUS -> delegate.text += charTyped.toString()
-                                SEARCH, FAILED -> delegate.searchAllCarets(delegate.direction, charTyped.toString(), keepStart = true)
+                                SEARCH, FAILED -> delegate.searchAllCarets(
+                                    searchDirection = delegate.direction,
+                                    newText = charTyped.toString()
+                                )
                             }
                         } else {
                             myOriginalHandler?.execute(editor, charTyped, dataContext)
@@ -162,7 +165,10 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                         ) { _, _ ->
                             when (state) {
                                 CHOOSE_PREVIOUS -> text += ClipboardUtil.getTextInClipboard()
-                                SEARCH, FAILED -> searchAllCarets(direction, ClipboardUtil.getTextInClipboard() ?: "", keepStart = true)
+                                SEARCH, FAILED -> searchAllCarets(
+                                    searchDirection = direction,
+                                    newText = ClipboardUtil.getTextInClipboard() ?: ""
+                                )
                             }
                         }.also { add(it) }
                     )
@@ -219,7 +225,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     internal fun startPreviousSearch() {
         state = SEARCH
-        searchAllCarets(direction, text.also { text = "" }, keepStart = true)
+        searchAllCarets(searchDirection = direction, newText = text.also { text = "" })
     }
 
     internal fun findFirst() {
@@ -241,9 +247,9 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     internal fun searchAllCarets(
-        newDirection: Direction,
-        newText: String = "",
-        keepStart: Boolean,
+        searchDirection: Direction,
+        newText: String,
+        keepStart: Boolean = true,
         forceWraparound: Boolean = false,
         saveBreadcrumb: Boolean = true,
     ) {
@@ -252,11 +258,11 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
 
         val isNewText = newText.isNotEmpty()
-        val firstSearch = isNewText || newDirection != direction
+        val firstSearch = isNewText || searchDirection != direction
         val wraparound = state == FAILED && !firstSearch
         val single = editor.caretModel.caretCount == 1
 
-        direction = newDirection
+        direction = searchDirection
         text += newText
 
         if (single || !wraparound) {
@@ -352,9 +358,9 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         removeAllHighlighters()
         editor.caretModel.removeSecondaryCarets()
 
-        searchAllCarets(findDirection, keepStart = false, forceWraparound = true)
+        searchAllCarets(searchDirection = findDirection, newText = "", forceWraparound = true)
         if (findDirection != searchDirection) {
-            searchAllCarets(searchDirection, keepStart = false, saveBreadcrumb = false)
+            searchAllCarets(searchDirection = searchDirection, newText = "", saveBreadcrumb = false)
         }
     }
 
