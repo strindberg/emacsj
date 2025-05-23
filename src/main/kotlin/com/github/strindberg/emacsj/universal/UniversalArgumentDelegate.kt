@@ -37,7 +37,7 @@ private val singleActions = listOf(
 
 class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext, var numeric: Int?) {
 
-    // Prevent dead keys such as '^' and '~' from showing in editor by setting document to read only.
+    // Prevent dead keys such as '^' and '~' from showing up in the editor when collecting arguments.
     private val document: Document = this.editor.document.apply { setReadOnly(true) }
 
     private val typedHandler: RestorableTypedActionHandler

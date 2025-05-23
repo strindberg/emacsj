@@ -22,7 +22,7 @@ import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
 class ZapDelegate(val editor: Editor, val type: ZapType) {
-    // Prevent dead keys such as '^' and '~' from showing in editor by setting document to read only.
+    // Prevent dead keys such as '^' and '~' from showing up in the editor when collecting arguments.
     private val document: Document = this.editor.document.apply { setReadOnly(true) }
 
     private val typedHandler: RestorableTypedActionHandler
