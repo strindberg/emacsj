@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- New commands "Isearch: Go to First Search Match" and "Isearch: Go to Last Search Match"
+- Improve descriptions of keyboard shortcuts in Keymap settings.
+
 ### Fixed
 
 - The zap commands no longer remove anything if the supplied character never matches.
