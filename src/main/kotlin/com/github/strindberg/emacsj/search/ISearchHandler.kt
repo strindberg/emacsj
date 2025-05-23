@@ -38,13 +38,13 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
                 ISearchState.SEARCH, ISearchState.FAILED ->
                     if (current.text.isEmpty()) {
                         if (current.direction == direction) {
-                            current.searchAllCarets(direction, getPrevious(current.type), keepStart = true)
+                            current.searchAllCarets(searchDirection = direction, newText = getPrevious(current.type))
                         } else {
                             current.direction = direction
                             current.initTitleText()
                         }
                     } else {
-                        current.searchAllCarets(direction, keepStart = false)
+                        current.searchAllCarets(searchDirection = direction, newText = "")
                     }
             }
         } else {
