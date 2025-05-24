@@ -235,13 +235,14 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         state = ReplaceState.REPLACE_FAILED
     }
 
-    private fun getReplaceTitle() = when (state) {
-        ReplaceState.GET_SEARCH_ARG -> if (type == REGEXP) "Query replace regexp: " else "Query replace: "
-        ReplaceState.GET_REPLACE_ARG, ReplaceState.SEARCHING -> "Replace with: "
-        ReplaceState.SEARCH_FOUND -> "Replace? "
-        ReplaceState.REPLACE_DONE -> if (replaced == 1) "Replaced 1 occurrence." else "Replaced $replaced occurrences."
-        ReplaceState.REPLACE_FAILED -> "Replacement failed. "
-    }
+    private fun getReplaceTitle() =
+        when (state) {
+            ReplaceState.GET_SEARCH_ARG -> if (type == REGEXP) "Query replace regexp: " else "Query replace: "
+            ReplaceState.GET_REPLACE_ARG, ReplaceState.SEARCHING -> "Replace with: "
+            ReplaceState.SEARCH_FOUND -> "Replace? "
+            ReplaceState.REPLACE_DONE -> if (replaced == 1) "Replaced 1 occurrence." else "Replaced $replaced occurrences."
+            ReplaceState.REPLACE_FAILED -> "Replacement failed. "
+        }
 
     private fun getReplaceChoiceText(): String = "$searchArg -> $replaceArg"
 

@@ -446,34 +446,35 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             NEXT_SEARCH
         }
 
-    private fun searchStart(search: CaretSearch, keepStart: Boolean, startType: StartType): Int = when (direction) {
-        FORWARD ->
-            minOf(
-                when (startType) {
-                    WRAPAROUND -> 0
-                    FIRST_SEARCH -> search.match.start
-                    NEXT_SEARCH -> search.match.start + 1
-                },
-                editor.text.length
-            )
-        BACKWARD ->
-            minOf(
-                when (startType) {
-                    WRAPAROUND -> editor.text.length + 1
-                    FIRST_SEARCH ->
-                        // Mimic Emacs' behavior here:
-                        // - When starting reverse search, always search from where the caret is.
-                        // - When adding letters after a previous search, move search start rightward to include the new letters.
-                        if (keepStart && search.origin == search.match.end) {
-                            search.origin + 1
-                        } else {
-                            matchEnd(search.match.start) + 1
-                        }
-                    NEXT_SEARCH -> search.match.end
-                },
-                editor.text.length + 1
-            )
-    }
+    private fun searchStart(search: CaretSearch, keepStart: Boolean, startType: StartType): Int =
+        when (direction) {
+            FORWARD ->
+                minOf(
+                    when (startType) {
+                        WRAPAROUND -> 0
+                        FIRST_SEARCH -> search.match.start
+                        NEXT_SEARCH -> search.match.start + 1
+                    },
+                    editor.text.length
+                )
+            BACKWARD ->
+                minOf(
+                    when (startType) {
+                        WRAPAROUND -> editor.text.length + 1
+                        FIRST_SEARCH ->
+                            // Mimic Emacs' behavior here:
+                            // - When starting reverse search, always search from where the caret is.
+                            // - When adding letters after a previous search, move search start rightward to include the new letters.
+                            if (keepStart && search.origin == search.match.end) {
+                                search.origin + 1
+                            } else {
+                                matchEnd(search.match.start) + 1
+                            }
+                        NEXT_SEARCH -> search.match.end
+                    },
+                    editor.text.length + 1
+                )
+        }
 
     private fun matchEnd(start: Int): Int =
         start + if (type == TEXT) text.length else Regex(text).matchAt(editor.text, start)?.value?.length ?: 0
