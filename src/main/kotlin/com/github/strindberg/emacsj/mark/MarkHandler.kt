@@ -1,9 +1,10 @@
 package com.github.strindberg.emacsj.mark
 
+import com.github.strindberg.emacsj.EmacsJBundle
 import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.github.strindberg.emacsj.mark.Type.POP
 import com.github.strindberg.emacsj.search.prependElement
-import com.github.strindberg.emacsj.universal.COMMAND_UNIVERSAL_ARGUMENT
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -75,7 +76,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         (editor as? EditorEx)?.let { ex ->
             ex.virtualFile?.let { virtualFile ->
-                if (type == POP || EmacsJCommandListener.lastCommandName == COMMAND_UNIVERSAL_ARGUMENT) {
+                if (type == POP || EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)) {
                     places[virtualFile.hashCode()]?.pop()?.let { place ->
                         gotoPlaceInfo(editor, place)
                     }
