@@ -23,22 +23,24 @@ internal class EmacsJColorSettingsPage : ColorSettingsPage {
 
     override fun getDisplayName(): String = "EmacsJ"
 
-    override fun getHighlighter(): SyntaxHighlighter = object : SyntaxHighlighterBase() {
-        override fun getHighlightingLexer(): Lexer = EmacsJLexer()
+    override fun getHighlighter(): SyntaxHighlighter =
+        object : SyntaxHighlighterBase() {
+            override fun getHighlightingLexer(): Lexer = EmacsJLexer()
 
-        override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> =
-            when (tokenType) {
-                PRIMARY_TOKEN_TYPE -> arrayOf(EMACSJ_PRIMARY)
-                SECONDARY_TOKEN_TYPE -> arrayOf(EMACSJ_SECONDARY)
-                else -> arrayOf(DefaultLanguageHighlighterColors.IDENTIFIER)
-            }
-    }
+            override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> =
+                when (tokenType) {
+                    PRIMARY_TOKEN_TYPE -> arrayOf(EMACSJ_PRIMARY)
+                    SECONDARY_TOKEN_TYPE -> arrayOf(EMACSJ_SECONDARY)
+                    else -> arrayOf(DefaultLanguageHighlighterColors.IDENTIFIER)
+                }
+        }
 
-    override fun getDemoText(): String = """
+    override fun getDemoText(): String =
+        """
         |Below, the first search match is the primary match, the following are secondary:
         |While searching, the primary result is the one where the caret is positioned.
         |Other results are indicated as a secondary result.
-    """.trimMargin()
+        """.trimMargin()
 
     override fun getIcon(): Icon? = null
 

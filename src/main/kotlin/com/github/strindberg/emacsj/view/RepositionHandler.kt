@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.view
 
+import com.github.strindberg.emacsj.EmacsJBundle
 import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.github.strindberg.emacsj.view.Position.BOTTOM
 import com.github.strindberg.emacsj.view.Position.MIDDLE
@@ -29,10 +30,10 @@ class RepositionHandler : EditorActionHandler() {
         val middlePos = VisualPosition((viewOffset + viewHeight / 2) / editor.lineHeight, 0)
         val bottomPos = VisualPosition((viewOffset + viewHeight) / editor.lineHeight - 1, 0)
 
-        if (EmacsJCommandListener.lastCommandName == COMMAND_REPOSITION && lastPosition == MIDDLE) {
+        if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_REPOSITION) && lastPosition == MIDDLE) {
             lastPosition = TOP
             primary.moveToVisualPosition(topPos)
-        } else if (EmacsJCommandListener.lastCommandName == COMMAND_REPOSITION && lastPosition == TOP) {
+        } else if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_REPOSITION) && lastPosition == TOP) {
             lastPosition = BOTTOM
             primary.moveToVisualPosition(bottomPos)
         } else {

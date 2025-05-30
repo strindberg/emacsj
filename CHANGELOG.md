@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### Added
+
+- New commands "Isearch: Go to First Search Match" and "Isearch: Go to Last Search Match"
+- Improve descriptions of keyboard shortcuts in Keymap settings.
+
+### Fixed
+
+- The zap commands no longer remove anything if the supplied character never matches.
+- The zap commands now respect "Append next kill".
+- "XRef Back" now separates history between projects.
+
 ## [1.4.0] - 2025-04-30
 
 Note: This release introduces *Universal Argument*, which affects the two commands *Paste: Leave Caret at Point* and *Pop Mark*. The two

@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.view
 
+import com.github.strindberg.emacsj.EmacsJBundle
 import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.github.strindberg.emacsj.view.Position.BOTTOM
 import com.github.strindberg.emacsj.view.Position.MIDDLE
@@ -15,8 +16,6 @@ enum class Position { TOP, MIDDLE, BOTTOM }
 @Language("devkit-action-id")
 internal const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.recenter"
 
-private const val COMMAND_RECENTER = "Recenter Caret"
-
 class RecenterHandler : EditorActionHandler() {
 
     private var lastPosition = MIDDLE
@@ -31,10 +30,10 @@ class RecenterHandler : EditorActionHandler() {
         val scrollMiddle = caretOffset - viewHeight / 2
         val scrollBottom = caretOffset - viewHeight + 2 * editor.lineHeight
 
-        if (EmacsJCommandListener.lastCommandName == COMMAND_RECENTER && lastPosition == MIDDLE) {
+        if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_RECENTER) && lastPosition == MIDDLE) {
             lastPosition = TOP
             editor.scrollingModel.scrollVertically(scrollTop)
-        } else if (EmacsJCommandListener.lastCommandName == COMMAND_RECENTER && lastPosition == TOP) {
+        } else if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_RECENTER) && lastPosition == TOP) {
             lastPosition = BOTTOM
             editor.scrollingModel.scrollVertically(scrollBottom)
         } else {

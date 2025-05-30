@@ -13,7 +13,9 @@ class ReplaceNewLineHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ReplaceHandler.delegate?.let { delegate ->
-            delegate.text += "\n"
+            if (delegate.state in listOf(ReplaceState.GET_SEARCH_ARG, ReplaceState.GET_REPLACE_ARG)) {
+                delegate.text += "\n"
+            }
         }
     }
 }
