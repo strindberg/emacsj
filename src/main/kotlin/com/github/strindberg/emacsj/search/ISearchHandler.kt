@@ -8,14 +8,20 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.VisibleForTesting
 
+@Language("devkit-action-id")
 internal const val ACTION_ISEARCH_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchtextbackward"
+
+@Language("devkit-action-id")
 internal const val ACTION_ISEARCH_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchtextforward"
+
+@Language("devkit-action-id")
 internal const val ACTION_ISEARCH_REGEXP_FORWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpforward"
+
+@Language("devkit-action-id")
 internal const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
-internal const val ACTION_ISEARCH_PREVIOUS = "com.github.strindberg.emacsj.actions.search.isearchprevious"
-internal const val ACTION_ISEARCH_NEXT = "com.github.strindberg.emacsj.actions.search.isearchnext"
 
 class ISearchHandler(private val direction: Direction, private val type: SearchType) : EditorActionHandler() {
 

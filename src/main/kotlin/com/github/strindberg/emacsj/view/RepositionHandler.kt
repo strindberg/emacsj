@@ -9,8 +9,10 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import org.intellij.lang.annotations.Language
 
-private const val COMMAND_REPOSITION = "Reposition Caret"
+@Language("devkit-action-id")
+internal const val ACTION_REPOSITION = "com.github.strindberg.emacsj.actions.view.reposition"
 
 class RepositionHandler : EditorActionHandler() {
 

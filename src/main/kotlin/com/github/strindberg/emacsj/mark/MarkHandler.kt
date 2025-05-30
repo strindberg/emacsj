@@ -13,10 +13,14 @@ import com.intellij.openapi.fileEditor.FileEditorState
 import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.vfs.VirtualFile
+import org.intellij.lang.annotations.Language
 
 enum class Type { PUSH, POP }
 
+@Language("devkit-action-id")
 internal const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
+
+@Language("devkit-action-id")
 internal const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
 
 class MarkHandler(val type: Type) : EditorActionHandler() {

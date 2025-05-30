@@ -8,9 +8,11 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import org.intellij.lang.annotations.Language
 
 enum class Position { TOP, MIDDLE, BOTTOM }
 
+@Language("devkit-action-id")
 internal const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.recenter"
 
 private const val COMMAND_RECENTER = "Recenter Caret"

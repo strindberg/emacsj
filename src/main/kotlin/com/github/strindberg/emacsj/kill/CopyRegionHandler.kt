@@ -5,7 +5,9 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.util.DocumentUtil
+import org.intellij.lang.annotations.Language
 
+@Language("devkit-action-id")
 internal const val ACTION_COPY = "com.github.strindberg.emacsj.actions.kill.copy"
 
 class CopyRegionHandler : EditorActionHandler() {

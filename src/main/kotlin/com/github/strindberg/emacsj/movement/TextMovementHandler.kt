@@ -9,10 +9,14 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.actions.EditorActionUtil
+import org.intellij.lang.annotations.Language
 
 enum class MovementType { START, END }
 
+@Language("devkit-action-id")
 internal const val ACTION_TEXT_START = "com.github.strindberg.emacsj.actions.movement.textstart"
+
+@Language("devkit-action-id")
 internal const val ACTION_TEXT_END = "com.github.strindberg.emacsj.actions.movement.textend"
 
 class TextMovementHandler(val type: MovementType) : EditorActionHandler() {

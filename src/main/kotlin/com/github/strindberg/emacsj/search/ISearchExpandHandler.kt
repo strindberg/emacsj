@@ -13,12 +13,20 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.util.DocumentUtil
+import org.intellij.lang.annotations.Language
 
 enum class Type { WORD, LINE, CHARACTER, NEW_LINE }
 
+@Language("devkit-action-id")
 internal const val ACTION_ISEARCH_WORD = "com.github.strindberg.emacsj.actions.search.isearchword"
+
+@Language("devkit-action-id")
 internal const val ACTION_ISEARCH_LINE = "com.github.strindberg.emacsj.actions.search.isearchline"
+
+@Language("devkit-action-id")
 internal const val ACTION_ISEARCH_CHAR = "com.github.strindberg.emacsj.actions.search.isearchchar"
+
+@Language("devkit-action-id")
 internal const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions.search.isearchnewline"
 
 class ISearchExpandHandler(val type: Type) : EditorActionHandler() {
@@ -31,7 +39,7 @@ class ISearchExpandHandler(val type: Type) : EditorActionHandler() {
                 CHARACTER -> getChar(editor, editor.caretModel.currentCaret.search.match.end)
                 NEW_LINE -> "\n"
             }
-            delegate.searchAllCarets(delegate.direction, newText, keepStart = false)
+            delegate.searchAllCarets(searchDirection = delegate.direction, newText = newText, keepStart = false)
         }
     }
 

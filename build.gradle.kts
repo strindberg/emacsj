@@ -78,7 +78,6 @@ intellijPlatform {
 
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
-            untilBuild = providers.gradleProperty("pluginUntilBuild")
         }
     }
 
@@ -145,7 +144,7 @@ val runIde43 by intellijPlatformTesting.runIde.registering {
 }
 
 val runIde51 by intellijPlatformTesting.runIde.registering {
-    version = "2025.1"
+    version = "2025.1.1"
 }
 
 changelog {

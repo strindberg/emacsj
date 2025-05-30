@@ -17,11 +17,17 @@ import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
+import org.intellij.lang.annotations.Language
 
 enum class Type { STANDARD, PREFIX, HISTORY }
 
+@Language("devkit-action-id")
 internal const val ACTION_PASTE = "com.github.strindberg.emacsj.actions.paste.paste"
+
+@Language("devkit-action-id")
 internal const val ACTION_PREFIX_PASTE = "com.github.strindberg.emacsj.actions.paste.pasteprefix"
+
+@Language("devkit-action-id")
 internal const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.paste.pastehistory"
 
 private val LAST_PASTED_REGIONS = Key.create<List<TextRange>>("PasteHandler.LAST_PASTED_REGIONS")
