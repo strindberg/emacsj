@@ -15,6 +15,9 @@ import com.github.strindberg.emacsj.search.ISearchState.FAILED
 import com.github.strindberg.emacsj.search.ISearchState.SEARCH
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.search.SearchType.TEXT
+import com.github.strindberg.emacsj.search.StartType.FIRST_SEARCH
+import com.github.strindberg.emacsj.search.StartType.NEXT_SEARCH
+import com.github.strindberg.emacsj.search.StartType.WRAPAROUND
 import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
@@ -47,6 +50,8 @@ import org.jetbrains.annotations.VisibleForTesting
 
 private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
 
+private enum class StartType { WRAPAROUND, FIRST_SEARCH, NEXT_SEARCH }
+
 internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
 
     private val caretListener = object : CaretListener {
@@ -70,8 +75,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     private val rangeHighlighters = mutableListOf<RangeHighlighter>()
 
-    private var lastLax = ISearchHandler.lax
-
     internal var text: String
         get() = ui.text
         set(newText) {
@@ -79,7 +82,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
 
     init {
-        editor.document.setReadOnly(true) // Prevent dead keys such as '^' and '~' from showing up in editor while searching.
+        editor.document.setReadOnly(true) // Prevent dead keys such as '^' and '~' from showing up in the editor while searching.
 
         identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
@@ -105,7 +108,10 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                         if (delegate != null) {
                             when (delegate.state) {
                                 CHOOSE_PREVIOUS -> delegate.text += charTyped.toString()
-                                SEARCH, FAILED -> delegate.searchAllCarets(delegate.direction, charTyped.toString(), keepStart = true)
+                                SEARCH, FAILED -> delegate.searchAllCarets(
+                                    searchDirection = delegate.direction,
+                                    newText = charTyped.toString()
+                                )
                             }
                         } else {
                             myOriginalHandler?.execute(editor, charTyped, dataContext)
@@ -157,7 +163,10 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                         ) { _, _ ->
                             when (state) {
                                 CHOOSE_PREVIOUS -> text += ClipboardUtil.getTextInClipboard()
-                                SEARCH, FAILED -> searchAllCarets(direction, ClipboardUtil.getTextInClipboard() ?: "", keepStart = true)
+                                SEARCH, FAILED -> searchAllCarets(
+                                    searchDirection = direction,
+                                    newText = ClipboardUtil.getTextInClipboard() ?: ""
+                                )
                             }
                         }.also { add(it) }
                     )
@@ -214,7 +223,15 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     internal fun startPreviousSearch() {
         state = SEARCH
-        searchAllCarets(direction, text.also { text = "" }, keepStart = true)
+        searchAllCarets(searchDirection = direction, newText = text.also { text = "" })
+    }
+
+    internal fun findFirst() {
+        findFirstLast(FORWARD, direction == BACKWARD)
+    }
+
+    internal fun findLast() {
+        findFirstLast(BACKWARD, direction == FORWARD)
     }
 
     internal fun renewState() {
@@ -222,33 +239,41 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         updateUI(title = titleText(), text = text, found = true)
         ui.flashLax(ISearchHandler.lax)
 
-        removeHighlighters(false)
+        removeAllHighlighters()
+
         val (isRegexp, searchString) = getSearchModelArguments()
         CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
     }
 
-    internal fun searchAllCarets(newDirection: Direction, newText: String = "", keepStart: Boolean) {
-        pushBreadcrumb()
+    internal fun searchAllCarets(
+        searchDirection: Direction,
+        newText: String,
+        keepStart: Boolean = true,
+        forceWraparound: Boolean = false,
+        saveBreadcrumb: Boolean = true,
+    ) {
+        if (saveBreadcrumb) {
+            pushBreadcrumb()
+        }
 
         val isNewText = newText.isNotEmpty()
-        val firstSearch = isNewText || newDirection != direction
+        val firstSearch = isNewText || searchDirection != direction
         val wraparound = state == FAILED && !firstSearch
         val single = editor.caretModel.caretCount == 1
 
-        direction = newDirection
+        direction = searchDirection
         text += newText
 
         if (single || !wraparound) {
             removeHighlighters(isNewText)
             val results = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
-                searchAndUpdate(caret, keepStart, firstSearch, wraparound)
+                searchAndUpdate(caret, keepStart, startType(firstSearch, wraparound, forceWraparound))
             }
             val result = if (single) results[0] else SearchResult(results.any { it.found }, null, false)
             state = if (result.found) SEARCH else FAILED
             findAllAndHighlight(result.offset, isNewText)
             updateUI(result)
         }
-        lastLax = ISearchHandler.lax
     }
 
     internal fun swapSearchStopAndThenCancel() {
@@ -327,6 +352,17 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         ui.textColor = if (found) JBColor.foreground() else JBColor.RED
     }
 
+    private fun findFirstLast(findDirection: Direction, switchDirection: Boolean) {
+        removeAllHighlighters()
+        editor.caretModel.removeSecondaryCarets()
+
+        searchAllCarets(searchDirection = findDirection, newText = "", forceWraparound = true)
+
+        if (switchDirection) {
+            searchAllCarets(searchDirection = findDirection.reverse, newText = "", saveBreadcrumb = false)
+        }
+    }
+
     private fun updateCount(count: Pair<Int?, Int>?) {
         ui.count = if (count != null) Pair(count.first ?: 0, count.second) else null
     }
@@ -369,7 +405,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun removeHighlighters(isNewText: Boolean) {
-        if (isNewText || lastLax != ISearchHandler.lax) {
+        if (isNewText) {
             CommonHighlighter.cancel(editor)
         } else {
             rangeHighlighters.forEach {
@@ -378,44 +414,63 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
     }
 
-    private fun searchAndUpdate(caret: Caret, keepStart: Boolean, firstSearch: Boolean, wraparound: Boolean): SearchResult {
-        val result = findString(searchStart(caret.search, keepStart, firstSearch, wraparound))
+    private fun removeAllHighlighters() {
+        CommonHighlighter.cancel(editor)
+        rangeHighlighters.forEach {
+            editor.markupModel.removeHighlighter(it)
+        }
+    }
+
+    private fun searchAndUpdate(
+        caret: Caret,
+        keepStart: Boolean,
+        startType: StartType,
+    ): SearchResult {
+        val result = findString(searchStart(caret.search, keepStart, startType))
 
         if (result.isStringFound) {
             moveAndUpdate(caret, Match(result.startOffset, result.endOffset), direction, true)
         }
 
-        return SearchResult(result.isStringFound, if (result.isStringFound) result.startOffset else null, wraparound)
+        return SearchResult(result.isStringFound, if (result.isStringFound) result.startOffset else null, startType == WRAPAROUND)
     }
 
-    private fun searchStart(search: CaretSearch, keepStart: Boolean, firstSearch: Boolean, wraparound: Boolean) =
+    private fun startType(firstSearch: Boolean, wraparound: Boolean, forceWraparound: Boolean): StartType =
+        if (forceWraparound) {
+            WRAPAROUND
+        } else if (firstSearch) {
+            FIRST_SEARCH
+        } else if (wraparound) {
+            WRAPAROUND
+        } else {
+            NEXT_SEARCH
+        }
+
+    private fun searchStart(search: CaretSearch, keepStart: Boolean, startType: StartType): Int =
         when (direction) {
             FORWARD ->
                 minOf(
-                    if (firstSearch) {
-                        search.match.start
-                    } else if (wraparound) {
-                        0
-                    } else {
-                        search.match.start + 1
+                    when (startType) {
+                        WRAPAROUND -> 0
+                        FIRST_SEARCH -> search.match.start
+                        NEXT_SEARCH -> search.match.start + 1
                     },
                     editor.text.length
                 )
             BACKWARD ->
                 minOf(
-                    if (firstSearch) {
-                        // Mimic Emacs' behavior here:
-                        // - When starting reverse search, always search from where the caret is.
-                        // - When adding letters after previous search, move search start rightward to include the new letters.
-                        if (keepStart && search.origin == search.match.end) {
-                            search.origin + 1
-                        } else {
-                            matchEnd(search.match.start) + 1
-                        }
-                    } else if (wraparound) {
-                        editor.text.length + 1
-                    } else {
-                        search.match.end
+                    when (startType) {
+                        WRAPAROUND -> editor.text.length + 1
+                        FIRST_SEARCH ->
+                            // Mimic Emacs' behavior here:
+                            // - When starting reverse search, always search from where the caret is.
+                            // - When adding letters after a previous search, move search start rightward to include the new letters.
+                            if (keepStart && search.origin == search.match.end) {
+                                search.origin + 1
+                            } else {
+                                matchEnd(search.match.start) + 1
+                            }
+                        NEXT_SEARCH -> search.match.end
                     },
                     editor.text.length + 1
                 )

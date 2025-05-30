@@ -433,7 +433,6 @@ class ReplaceTest : BasePlatformTestCase() {
 
         ReplaceHandler.delegate?.hide()
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_START)
-        myFixture.checkResult("<caret>bar")
 
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -450,7 +449,6 @@ class ReplaceTest : BasePlatformTestCase() {
 
         ReplaceHandler.delegate?.hide()
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_START)
-        myFixture.checkResult("<caret>foo")
 
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -466,6 +464,61 @@ class ReplaceTest : BasePlatformTestCase() {
         popup3.typeChar('y', textField3)
 
         myFixture.checkResult("bar<caret>")
+
+        ReplaceHandler.delegate?.hide()
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_START)
+    }
+
+    fun `test Next item in replace history works as intended`() {
+        myFixture.configureByText(FILE, "<caret>foo")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        val textField = ReplaceHandler.delegate!!.ui.textField
+        val popup = ReplaceHandler.delegate!!.ui.popup
+
+        textField.text = "o"
+        popup.pressEnter(textField)
+        textField.text = "a"
+        popup.pressEnter(textField)
+        popup.typeChar('!', textField)
+
+        myFixture.checkResult("faa<caret>")
+
+        ReplaceHandler.delegate?.hide()
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_START)
+
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        val textField2 = ReplaceHandler.delegate!!.ui.textField
+        val popup2 = ReplaceHandler.delegate!!.ui.popup
+
+        textField2.text = "a"
+        popup2.pressEnter(textField2)
+        textField2.text = "aa"
+        popup2.pressEnter(textField2)
+        popup2.typeChar('!', textField2)
+
+        myFixture.checkResult("faaaa<caret>")
+
+        ReplaceHandler.delegate?.hide()
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_START)
+
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        val textField3 = ReplaceHandler.delegate!!.ui.textField
+        val popup3 = ReplaceHandler.delegate!!.ui.popup
+
+        myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
+        myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
+        myFixture.performEditorAction(ACTION_REPLACE_NEXT)
+        popup3.pressEnter(textField3)
+        myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
+        myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
+        myFixture.performEditorAction(ACTION_REPLACE_NEXT)
+        popup3.pressEnter(textField3)
+        popup3.typeChar('!', textField3)
+
+        myFixture.checkResult("faaaaaaaa<caret>")
     }
 
     fun `test Previous replace command can be accepted with ENTER`() {
@@ -493,6 +546,68 @@ class ReplaceTest : BasePlatformTestCase() {
         popup2.typeChar('.', textField2)
 
         myFixture.checkResult("bar bar<caret>")
+    }
+
+    fun `test New line character can be added to search string`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |<caret>foo foo
+            |foo bar
+            """.trimMargin()
+        )
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        val textField = ReplaceHandler.delegate!!.ui.textField
+        val popup = ReplaceHandler.delegate!!.ui.popup
+
+        textField.text = "foo"
+        myFixture.performEditorAction(ACTION_REPLACE_NEWLINE)
+        popup.pressEnter(textField)
+
+        textField.text = "bar"
+        popup.pressEnter(textField)
+
+        popup.typeChar('!', textField)
+
+        myFixture.checkResult(
+            """
+            |foo bar<caret>foo bar
+            """.trimMargin()
+        )
+    }
+
+    fun `test New line character can be added to replacement string`() {
+        myFixture.configureByText(
+            FILE,
+            """
+            |<caret>foo foo
+            |foo bar
+            """.trimMargin()
+        )
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        val textField = ReplaceHandler.delegate!!.ui.textField
+        val popup = ReplaceHandler.delegate!!.ui.popup
+
+        textField.text = "foo"
+        popup.pressEnter(textField)
+
+        textField.text = "bar"
+        myFixture.performEditorAction(ACTION_REPLACE_NEWLINE)
+        popup.pressEnter(textField)
+
+        popup.typeChar('!', textField)
+
+        myFixture.checkResult(
+            """
+            |bar
+            | bar
+            |
+            |bar
+            |<caret> bar
+            """.trimMargin()
+        )
     }
 
     private fun JBPopup.pressEnter(component: JComponent) {

@@ -35,4 +35,15 @@ internal enum class ISearchState { SEARCH, FAILED, CHOOSE_PREVIOUS }
 
 internal data class SearchResult(val found: Boolean, val offset: Int?, val wrapped: Boolean)
 
-enum class Direction { FORWARD, BACKWARD }
+enum class Direction {
+    FORWARD,
+    BACKWARD,
+    ;
+
+    val reverse: Direction
+        get() =
+            when (this) {
+                FORWARD -> BACKWARD
+                BACKWARD -> FORWARD
+            }
+}
