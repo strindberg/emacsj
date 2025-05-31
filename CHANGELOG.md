@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.4.1] - 2025-05-31
+
 ### Added
 
 - New commands "Isearch: Go to First Search Match" and "Isearch: Go to Last Search Match"
@@ -172,7 +174,8 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/strindberg/emacsj/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/strindberg/emacsj/compare/v1.3.6...v1.4.0
 [1.3.6]: https://github.com/strindberg/emacsj/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/strindberg/emacsj/compare/v1.3.4...v1.3.5
