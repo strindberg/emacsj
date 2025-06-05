@@ -39,10 +39,12 @@ internal const val ACTION_UNIVERSAL_ARGUMENT9 = "com.github.strindberg.emacsj.ac
 @Language("devkit-action-id")
 internal const val ACTION_UNIVERSAL_ARGUMENT0 = "com.github.strindberg.emacsj.actions.universal.universalargument0"
 
-class UniversalArgumentHandler(val numeric: Int?) : EditorActionHandler() {
+class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 
     companion object {
         internal var delegate: UniversalArgumentDelegate? = null
+
+        internal var lastCount = 1
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
@@ -54,7 +56,7 @@ class UniversalArgumentHandler(val numeric: Int?) : EditorActionHandler() {
                 current.addDigit(numeric)
             }
         } else {
-            delegate = UniversalArgumentDelegate(editor, dataContext, numeric)
+            delegate = UniversalArgumentDelegate(editor, dataContext, numeric).apply { multiply() }
         }
     }
 }
