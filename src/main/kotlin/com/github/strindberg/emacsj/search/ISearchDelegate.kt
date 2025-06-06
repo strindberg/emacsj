@@ -258,22 +258,23 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
         val isNewText = newText.isNotEmpty()
         val firstSearch = isNewText || searchDirection != direction
-        val wraparound = state == FAILED && !firstSearch
-        val single = editor.caretModel.caretCount == 1
 
         direction = searchDirection
         text += newText
 
-        if (single || !wraparound) {
-            removeHighlighters(isNewText)
-            val results = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
-                searchAndUpdate(caret, keepStart, startType(firstSearch, wraparound, forceWraparound))
-            }
-            val result = if (single) results[0] else SearchResult(results.any { it.found }, null, false)
-            state = if (result.found) SEARCH else FAILED
-            findAllAndHighlight(result.offset, isNewText)
-            updateUI(result)
+        val startType = startType(firstSearch, forceWraparound)
+        if (startType == WRAPAROUND) {
+            editor.caretModel.removeSecondaryCarets()
         }
+        removeHighlighters(isNewText)
+
+        val results = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
+            searchAndUpdate(caret, keepStart, startType)
+        }
+        val result = if (editor.caretModel.caretCount == 1) results[0] else SearchResult(results.any { it.found }, null, false)
+        state = if (result.found) SEARCH else FAILED
+        findAllAndHighlight(result.offset, isNewText)
+        updateUI(result)
     }
 
     internal fun swapSearchStopAndThenCancel() {
@@ -354,7 +355,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
     private fun findFirstLast(findDirection: Direction, switchDirection: Boolean) {
         removeAllHighlighters()
-        editor.caretModel.removeSecondaryCarets()
 
         searchAllCarets(searchDirection = findDirection, newText = "", forceWraparound = true)
 
@@ -435,12 +435,12 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         return SearchResult(result.isStringFound, if (result.isStringFound) result.startOffset else null, startType == WRAPAROUND)
     }
 
-    private fun startType(firstSearch: Boolean, wraparound: Boolean, forceWraparound: Boolean): StartType =
+    private fun startType(firstSearch: Boolean, forceWraparound: Boolean): StartType =
         if (forceWraparound) {
             WRAPAROUND
         } else if (firstSearch) {
             FIRST_SEARCH
-        } else if (wraparound) {
+        } else if (state == FAILED) {
             WRAPAROUND
         } else {
             NEXT_SEARCH

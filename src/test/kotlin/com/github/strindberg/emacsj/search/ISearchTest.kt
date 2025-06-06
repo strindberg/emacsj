@@ -1238,8 +1238,7 @@ class ISearchTest : BasePlatformTestCase() {
             """.trimMargin()
         )
         assertEquals("fool", ISearchHandler.delegate?.text)
-        // Pair(0, 1) b/c multi caret search does not display occurrence number
-        assertEquals(Pair(0, 1), ISearchHandler.delegate?.ui?.count)
+        assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
     }
 
     fun `test Multiple caret search works over overlapping texts`() {
