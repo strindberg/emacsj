@@ -257,22 +257,23 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
 
         val isNewText = newText.isNotEmpty()
-        val firstSearch = isNewText || searchDirection != direction
+        val startType = startType(firstSearch = isNewText || searchDirection != direction, forceWraparound = forceWraparound)
 
         direction = searchDirection
         text += newText
 
-        val startType = startType(firstSearch, forceWraparound)
         if (startType == WRAPAROUND) {
             editor.caretModel.removeSecondaryCarets()
         }
         removeHighlighters(isNewText)
 
-        val results = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
+        val result = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
             searchAndUpdate(caret, keepStart, startType)
+        }.let { results ->
+            if (editor.caretModel.caretCount == 1) results[0] else SearchResult(results.any { it.found }, null, false)
         }
-        val result = if (editor.caretModel.caretCount == 1) results[0] else SearchResult(results.any { it.found }, null, false)
         state = if (result.found) SEARCH else FAILED
+
         findAllAndHighlight(result.offset, isNewText)
         updateUI(result)
     }
