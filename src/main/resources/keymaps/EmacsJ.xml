@@ -35,6 +35,9 @@
     <action id="com.github.strindberg.emacsj.actions.search.isearchmark">
         <keyboard-shortcut first-keystroke="alt ENTER"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchedit">
+        <keyboard-shortcut first-keystroke="alt E"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.isearchfirstmatch">
         <keyboard-shortcut first-keystroke="alt LESS"/>
     </action>

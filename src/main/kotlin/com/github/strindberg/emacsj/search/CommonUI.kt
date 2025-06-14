@@ -29,10 +29,10 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.VisibleForTesting
 
 internal class CommonUI(
-    val editor: Editor,
+    private val editor: Editor,
     private var writeable: Boolean,
-    cancelCallback: () -> Unit,
-    keyEventHandler: (KeyEvent) -> Unit = { },
+    private val cancelCallback: () -> Unit,
+    private val keyEventHandler: (KeyEvent) -> Unit = { },
 ) {
 
     private val standardFont =
@@ -102,34 +102,12 @@ internal class CommonUI(
         panel.add(titleLabel, GridBagConstraints().apply { gridx = 1 })
 
         if (writeable) {
-            panel.add(
-                textField,
-                GridBagConstraints().apply {
-                    gridx = 2
-                    weightx = 1.0
-                    fill = GridBagConstraints.HORIZONTAL
-                }
-            )
+            setWriteableComponents()
         } else {
             setReadonlyComponents()
         }
 
-        popup = JBPopupFactory.getInstance()
-            .createComponentPopupBuilder(panel, if (writeable) textField else null)
-            .setCancelOnClickOutside(true)
-            .setCancelOnOtherWindowOpen(true)
-            .setMovable(false)
-            .setResizable(false)
-            .setRequestFocus(writeable)
-            .setCancelCallback {
-                cancelCallback()
-                true
-            }
-            .setKeyEventHandler { event ->
-                keyEventHandler(event)
-                false
-            }
-            .createPopup()
+        popup = initPopup()
     }
 
     internal fun flashLax(lax: Boolean) {
@@ -138,7 +116,7 @@ internal class CommonUI(
         } else {
             countLabel.text = "[match spaces literally]"
         }
-        thread(start = true) {
+        thread {
             Thread.sleep(1500)
             countLabel.text = ""
         }
@@ -166,15 +144,49 @@ internal class CommonUI(
         popup.setBounds(rectangle)
     }
 
-    internal fun makeReadonly(text: String) {
-        panel.remove(textField)
+    internal fun makeReadonly(text: String, requestFocus: Boolean) {
+        writeable = false
+
         setReadonlyComponents()
 
         textLabel.text = text
-        writeable = false
 
-        titleLabel.requestFocus()
+        if (requestFocus) {
+            titleLabel.requestFocus()
+        }
     }
+
+    internal fun makeWriteable() {
+        writeable = true
+
+        setWriteableComponents()
+
+        recreatePopup()
+    }
+
+    private fun recreatePopup() {
+        popup.cancel()
+        popup = initPopup()
+        show()
+    }
+
+    private fun initPopup(
+    ): JBPopup = JBPopupFactory.getInstance()
+        .createComponentPopupBuilder(panel, if (writeable) textField else null)
+        .setCancelOnClickOutside(true)
+        .setCancelOnOtherWindowOpen(true)
+        .setMovable(false)
+        .setResizable(false)
+        .setRequestFocus(writeable)
+        .setCancelCallback {
+            cancelCallback()
+            true
+        }
+        .setKeyEventHandler { event ->
+            keyEventHandler(event)
+            false
+        }
+        .createPopup()
 
     private fun displayText(text: String): String = text.replace("\n", "\\n")
 
@@ -189,12 +201,32 @@ internal class CommonUI(
         }
 
     private fun setReadonlyComponents() {
+        panel.remove(textField)
+
         panel.add(textLabel, GridBagConstraints().apply { gridx = 2 })
         panel.add(spaceLabel2, GridBagConstraints().apply { gridx = 3 })
         panel.add(
             countLabel,
             GridBagConstraints().apply {
                 gridx = 4
+                weightx = 1.0
+                fill = GridBagConstraints.HORIZONTAL
+            }
+        )
+        panel.repaint()
+    }
+
+    private fun setWriteableComponents() {
+        panel.remove(textLabel)
+        panel.remove(spaceLabel2)
+        panel.remove(countLabel)
+
+        textField.text = textLabel.text
+
+        panel.add(
+            textField,
+            GridBagConstraints().apply {
+                gridx = 2
                 weightx = 1.0
                 fill = GridBagConstraints.HORIZONTAL
             }

@@ -87,6 +87,11 @@
             <keyboard-shortcut first-keystroke="alt ENTER" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt ENTER" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchedit"
+                class="com.github.strindberg.emacsj.actions.search.ISearchEditAction">
+            <keyboard-shortcut first-keystroke="alt E" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="alt E" keymap="Emacs"/>
+        </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchfirstmatch"
                 class="com.github.strindberg.emacsj.actions.search.ISearchFirstMatchAction">
             <keyboard-shortcut first-keystroke="alt LESS" keymap="$default"/>
