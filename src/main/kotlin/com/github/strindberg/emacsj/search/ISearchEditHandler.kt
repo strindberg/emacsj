@@ -7,12 +7,11 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import org.intellij.lang.annotations.Language
 
 @Language("devkit-action-id")
-internal const val ACTION_TOGGLE_LAX_SEARCH = "com.github.strindberg.emacsj.actions.search.togglelaxsearch"
+internal const val ACTION_ISEARCH_EDIT = "com.github.strindberg.emacsj.actions.search.isearchedit"
 
-class ISearchToggleLaxSearchHandler : EditorActionHandler() {
+class ISearchEditHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        ISearchHandler.toggleLax()
-        ISearchHandler.delegate?.renewLaxState()
+        ISearchHandler.delegate?.edit()
     }
 }

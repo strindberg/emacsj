@@ -3,10 +3,8 @@ package com.github.strindberg.emacsj.search
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
-import javax.swing.JComponent
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_START
-import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class ReplaceTest : BasePlatformTestCase() {
@@ -25,16 +23,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("foo")
+        pressEnter()
 
-        textField.text = "foo"
-        popup.pressEnter(textField)
+        setText("bar")
+        pressEnter()
 
-        textField.text = "bar"
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
+        typeChar('y')
 
         myFixture.checkResult("bar<caret>")
     }
@@ -43,18 +38,15 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("null")
+        pressEnter()
 
-        textField.text = "null"
-        popup.pressEnter(textField)
+        setText("\"label\"")
+        pressEnter()
 
-        textField.text = "\"label\""
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
-        popup.typeChar('y', textField)
-        popup.typeChar('n', textField)
+        typeChar('y')
+        typeChar('y')
+        typeChar('n')
 
         myFixture.checkResult(""""label" () "label" () null<caret>""")
     }
@@ -63,18 +55,15 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("null")
+        pressEnter()
 
-        textField.text = "null"
-        popup.pressEnter(textField)
+        setText("\"label\"")
+        pressEnter()
 
-        textField.text = "\"label\""
-        popup.pressEnter(textField)
-
-        popup.typeChar(' ', textField)
-        popup.typeChar(' ', textField)
-        popup.typeChar('n', textField)
+        typeChar(' ')
+        typeChar(' ')
+        typeChar('n')
 
         myFixture.checkResult(""""label" () "label" () null<caret>""")
     }
@@ -83,18 +72,15 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("foo")
+        pressEnter()
 
-        textField.text = "foo"
-        popup.pressEnter(textField)
+        setText("bar")
+        pressEnter()
 
-        textField.text = "bar"
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
-        popup.typeChar('n', textField)
-        popup.typeChar('y', textField)
+        typeChar('y')
+        typeChar('n')
+        typeChar('y')
 
         myFixture.checkResult("bar foo bar<caret>")
     }
@@ -103,17 +89,14 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret><selection>foo foo</selection> foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("foo")
+        pressEnter()
 
-        textField.text = "foo"
-        popup.pressEnter(textField)
+        setText("bar")
+        pressEnter()
 
-        textField.text = "bar"
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
-        popup.typeChar('y', textField)
+        typeChar('y')
+        typeChar('y')
 
         ReplaceHandler.delegate!!.hide()
 
@@ -124,17 +107,14 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("foo")
+        pressEnter()
 
-        textField.text = "foo"
-        popup.pressEnter(textField)
+        setText("bar")
+        pressEnter()
 
-        textField.text = "bar"
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
-        popup.typeChar('.', textField)
+        typeChar('y')
+        typeChar('.')
 
         myFixture.checkResult("bar bar<caret> foo")
     }
@@ -143,16 +123,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("foo")
+        pressEnter()
 
-        textField.text = "foo"
-        popup.pressEnter(textField)
+        setText("bar")
+        pressEnter()
 
-        textField.text = "bar"
-        popup.pressEnter(textField)
-
-        popup.typeChar('!', textField)
+        typeChar('!')
 
         myFixture.checkResult("bar Bar BAR<caret>")
     }
@@ -161,16 +138,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("foo")
+        pressEnter()
 
-        textField.text = "foo"
-        popup.pressEnter(textField)
+        setText("BAR")
+        pressEnter()
 
-        textField.text = "BAR"
-        popup.pressEnter(textField)
-
-        popup.typeChar('!', textField)
+        typeChar('!')
 
         myFixture.checkResult("BAR<caret> Foo FOO")
     }
@@ -179,16 +153,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("Foo")
+        pressEnter()
 
-        textField.text = "Foo"
-        popup.pressEnter(textField)
+        setText("bar")
+        pressEnter()
 
-        textField.text = "bar"
-        popup.pressEnter(textField)
-
-        popup.typeChar('!', textField)
+        typeChar('!')
 
         myFixture.checkResult("foo bar<caret> FOO")
     }
@@ -197,16 +168,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("Foo")
+        pressEnter()
 
-        textField.text = "Foo"
-        popup.pressEnter(textField)
+        setText("foo")
+        pressEnter()
 
-        textField.text = "foo"
-        popup.pressEnter(textField)
-
-        popup.typeChar('!', textField)
+        typeChar('!')
 
         myFixture.checkResult("foo foo<caret> FOO")
     }
@@ -215,16 +183,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("foo")
+        pressEnter()
 
-        textField.text = "foo"
-        popup.pressEnter(textField)
+        setText("Foo")
+        pressEnter()
 
-        textField.text = "Foo"
-        popup.pressEnter(textField)
-
-        popup.typeChar('!', textField)
+        typeChar('!')
 
         myFixture.checkResult("Foo<caret> Foo FOO")
     }
@@ -233,16 +198,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("(.)aaa(.)")
+        pressEnter()
 
-        textField.text = "(.)aaa(.)"
-        popup.pressEnter(textField)
+        setText("$1å$2")
+        pressEnter()
 
-        textField.text = "$1å$2"
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
+        typeChar('y')
 
         myFixture.checkResult("båt<caret>")
     }
@@ -251,16 +213,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("(.)aaa(.)")
+        pressEnter()
 
-        textField.text = "(.)aaa(.)"
-        popup.pressEnter(textField)
+        setText("""\$1å\$2""")
+        pressEnter()
 
-        textField.text = """\$1å\$2"""
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
+        typeChar('y')
 
         myFixture.checkResult("""$1å$2<caret>""")
     }
@@ -269,16 +228,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("(.)aaa(.)")
+        pressEnter()
 
-        textField.text = "(.)aaa(.)"
-        popup.pressEnter(textField)
+        setText("""\1å\2""")
+        pressEnter()
 
-        textField.text = """\1å\2"""
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
+        typeChar('y')
 
         myFixture.checkResult("båt<caret>")
     }
@@ -287,16 +243,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("(.)aaa(.)")
+        pressEnter()
 
-        textField.text = "(.)aaa(.)"
-        popup.pressEnter(textField)
+        setText("""\\1å\\2""")
+        pressEnter()
 
-        textField.text = """\\1å\\2"""
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
+        typeChar('y')
 
         myFixture.checkResult("""\1å\2<caret>""")
     }
@@ -305,17 +258,14 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("a")
+        pressEnter()
 
-        textField.text = "a"
-        popup.pressEnter(textField)
+        setText("$0$0")
+        pressEnter()
 
-        textField.text = "$0$0"
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
-        popup.typeChar('y', textField)
+        typeChar('y')
+        typeChar('y')
 
         myFixture.checkResult("baaaa<caret>t")
     }
@@ -324,17 +274,14 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("a")
+        pressEnter()
 
-        textField.text = "a"
-        popup.pressEnter(textField)
+        setText("""\&\&""")
+        pressEnter()
 
-        textField.text = """\&\&"""
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
-        popup.typeChar('y', textField)
+        typeChar('y')
+        typeChar('y')
 
         myFixture.checkResult("baaaa<caret>t")
     }
@@ -343,16 +290,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("aaa")
+        pressEnter()
 
-        textField.text = "aaa"
-        popup.pressEnter(textField)
+        setText("""\\&\\&""")
+        pressEnter()
 
-        textField.text = """\\&\\&"""
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
+        typeChar('y')
 
         myFixture.checkResult("""b\&\&<caret>t""")
     }
@@ -361,16 +305,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("a")
+        pressEnter()
 
-        textField.text = "a"
-        popup.pressEnter(textField)
+        setText("""\&\&""")
+        pressEnter()
 
-        textField.text = """\&\&"""
-        popup.pressEnter(textField)
-
-        popup.typeChar('!', textField)
+        typeChar('!')
 
         myFixture.checkResult("baaaa<caret>t")
         ReplaceHandler.delegate = null
@@ -380,16 +321,13 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>aa")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("a")
+        pressEnter()
 
-        textField.text = "a"
-        popup.pressEnter(textField)
+        setText("b")
+        pressEnter()
 
-        textField.text = "b"
-        popup.pressEnter(textField)
-
-        popup.typeChar('!', textField)
+        typeChar('!')
 
         myFixture.checkResult("bb<caret>")
     }
@@ -398,18 +336,15 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("null")
+        pressEnter()
 
-        textField.text = "null"
-        popup.pressEnter(textField)
+        setText("\"label\"")
+        pressEnter()
 
-        textField.text = "\"label\""
-        popup.pressEnter(textField)
-
-        popup.typeChar('y', textField)
-        popup.typeChar('y', textField)
-        popup.typeChar('n', textField)
+        typeChar('y')
+        typeChar('y')
+        typeChar('n')
 
         myFixture.checkResult(""""label" () "label" () null<caret>""")
         myFixture.performEditorAction(ACTION_POP_MARK)
@@ -420,14 +355,11 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
-
-        textField.text = "foo"
-        popup.pressEnter(textField)
-        textField.text = "bar"
-        popup.pressEnter(textField)
-        popup.typeChar('y', textField)
+        setText("foo")
+        pressEnter()
+        setText("bar")
+        pressEnter()
+        typeChar('y')
 
         myFixture.checkResult("bar<caret>")
 
@@ -436,14 +368,11 @@ class ReplaceTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField2 = ReplaceHandler.delegate!!.ui.textField
-        val popup2 = ReplaceHandler.delegate!!.ui.popup
-
-        textField2.text = "bar"
-        popup2.pressEnter(textField2)
-        textField2.text = "foo"
-        popup2.pressEnter(textField2)
-        popup2.typeChar('y', textField2)
+        setText("bar")
+        pressEnter()
+        setText("foo")
+        pressEnter()
+        typeChar('y')
 
         myFixture.checkResult("foo<caret>")
 
@@ -452,16 +381,13 @@ class ReplaceTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField3 = ReplaceHandler.delegate!!.ui.textField
-        val popup3 = ReplaceHandler.delegate!!.ui.popup
-
         myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
         myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
-        popup3.pressEnter(textField3)
+        pressEnter()
         myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
         myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
-        popup3.pressEnter(textField3)
-        popup3.typeChar('y', textField3)
+        pressEnter()
+        typeChar('y')
 
         myFixture.checkResult("bar<caret>")
 
@@ -473,14 +399,11 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
-
-        textField.text = "o"
-        popup.pressEnter(textField)
-        textField.text = "a"
-        popup.pressEnter(textField)
-        popup.typeChar('!', textField)
+        setText("o")
+        pressEnter()
+        setText("a")
+        pressEnter()
+        typeChar('!')
 
         myFixture.checkResult("faa<caret>")
 
@@ -489,14 +412,11 @@ class ReplaceTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField2 = ReplaceHandler.delegate!!.ui.textField
-        val popup2 = ReplaceHandler.delegate!!.ui.popup
-
-        textField2.text = "a"
-        popup2.pressEnter(textField2)
-        textField2.text = "aa"
-        popup2.pressEnter(textField2)
-        popup2.typeChar('!', textField2)
+        setText("a")
+        pressEnter()
+        setText("aa")
+        pressEnter()
+        typeChar('!')
 
         myFixture.checkResult("faaaa<caret>")
 
@@ -505,18 +425,15 @@ class ReplaceTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField3 = ReplaceHandler.delegate!!.ui.textField
-        val popup3 = ReplaceHandler.delegate!!.ui.popup
-
         myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
         myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
         myFixture.performEditorAction(ACTION_REPLACE_NEXT)
-        popup3.pressEnter(textField3)
+        pressEnter()
         myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
         myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
         myFixture.performEditorAction(ACTION_REPLACE_NEXT)
-        popup3.pressEnter(textField3)
-        popup3.typeChar('!', textField3)
+        pressEnter()
+        typeChar('!')
 
         myFixture.checkResult("faaaaaaaa<caret>")
     }
@@ -525,25 +442,19 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "<caret>foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
-
-        textField.text = "foo"
-        popup.pressEnter(textField)
-        textField.text = "bar"
-        popup.pressEnter(textField)
-        popup.typeChar('.', textField)
+        setText("foo")
+        pressEnter()
+        setText("bar")
+        pressEnter()
+        typeChar('.')
 
         myFixture.checkResult("bar<caret> foo")
         ReplaceHandler.delegate?.hide()
 
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField2 = ReplaceHandler.delegate!!.ui.textField
-        val popup2 = ReplaceHandler.delegate!!.ui.popup
-
-        popup2.pressEnter(textField2)
-        popup2.typeChar('.', textField2)
+        pressEnter()
+        typeChar('.')
 
         myFixture.checkResult("bar bar<caret>")
     }
@@ -558,17 +469,14 @@ class ReplaceTest : BasePlatformTestCase() {
         )
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
-
-        textField.text = "foo"
+        setText("foo")
         myFixture.performEditorAction(ACTION_REPLACE_NEWLINE)
-        popup.pressEnter(textField)
+        pressEnter()
 
-        textField.text = "bar"
-        popup.pressEnter(textField)
+        setText("bar")
+        pressEnter()
 
-        popup.typeChar('!', textField)
+        typeChar('!')
 
         myFixture.checkResult(
             """
@@ -587,17 +495,14 @@ class ReplaceTest : BasePlatformTestCase() {
         )
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        val popup = ReplaceHandler.delegate!!.ui.popup
+        setText("foo")
+        pressEnter()
 
-        textField.text = "foo"
-        popup.pressEnter(textField)
-
-        textField.text = "bar"
+        setText("bar")
         myFixture.performEditorAction(ACTION_REPLACE_NEWLINE)
-        popup.pressEnter(textField)
+        pressEnter()
 
-        popup.typeChar('!', textField)
+        typeChar('!')
 
         myFixture.checkResult(
             """
@@ -610,12 +515,20 @@ class ReplaceTest : BasePlatformTestCase() {
         )
     }
 
-    private fun JBPopup.pressEnter(component: JComponent) {
-        dispatchKeyEvent(KeyEvent(component, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
-        dispatchKeyEvent(KeyEvent(component, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
+    private fun setText(text: String) {
+        ReplaceHandler.delegate!!.ui.text = (text)
     }
 
-    private fun JBPopup.typeChar(char: Char, component: JComponent) {
-        dispatchKeyEvent(KeyEvent(component, KeyEvent.KEY_TYPED, 1234L, 0, KeyEvent.VK_UNDEFINED, char))
+    private fun pressEnter() {
+        val textField = ReplaceHandler.delegate!!.ui.textField
+        ReplaceHandler.delegate!!.ui.popup.apply {
+            dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
+            dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
+        }
+    }
+
+    private fun typeChar(char: Char) {
+        val textField = ReplaceHandler.delegate!!.ui.textField
+        ReplaceHandler.delegate!!.ui.popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_TYPED, 1234L, 0, KeyEvent.VK_UNDEFINED, char))
     }
 }

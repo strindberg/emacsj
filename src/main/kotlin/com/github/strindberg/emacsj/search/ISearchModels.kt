@@ -31,7 +31,7 @@ internal data class CaretBreadcrumb(val match: Match, val direction: Direction)
 
 internal data class EditorBreadcrumb(val title: String, val text: String, val state: ISearchState, val count: Pair<Int, Int>?)
 
-internal enum class ISearchState { SEARCH, FAILED, CHOOSE_PREVIOUS }
+internal enum class ISearchState { SEARCH, FAILED, EDIT }
 
 internal data class SearchResult(val found: Boolean, val offset: Int?, val wrapped: Boolean)
 

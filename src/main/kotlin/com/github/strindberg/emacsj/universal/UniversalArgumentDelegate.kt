@@ -35,7 +35,7 @@ private val singleActions = listOf(
     ACTION_POP_MARK,
 )
 
-class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext, var numeric: Int?) {
+class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext, private var numeric: Int?) {
 
     // Prevent dead keys such as '^' and '~' from showing up in the editor when collecting arguments.
     private val document: Document = this.editor.document.apply { setReadOnly(true) }
@@ -57,15 +57,11 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
                     override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
-                        val delegate = UniversalArgumentHandler.delegate
-                        if (delegate != null) {
+                        if (UniversalArgumentHandler.delegate != null) {
                             if (charTyped.isDigit()) {
-                                val digit = charTyped.digitToInt()
-                                addDigit(digit)
+                                addDigit(charTyped.digitToInt())
                             } else {
-                                document.setReadOnly(false)
-                                repeat(getTimes()) { myOriginalHandler?.execute(editor, charTyped, dataContext) }
-                                cancel()
+                                repeatAction(getTimes()) { myOriginalHandler?.execute(editor, charTyped, dataContext) }
                             }
                         } else {
                             myOriginalHandler?.execute(editor, charTyped, dataContext)
@@ -86,15 +82,8 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
                                 originalHandler,
                                 { UniversalArgumentHandler.delegate }
                             ) { caret, dataContext ->
-                                document.setReadOnly(false)
-                                if (actionId in singleActions) {
-                                    originalHandler.execute(editor, caret, dataContext)
-                                } else {
-                                    repeat(getTimes()) {
-                                        originalHandler.execute(editor, caret, dataContext)
-                                    }
-                                }
-                                cancel()
+                                val times = if (actionId in singleActions) 1 else getTimes()
+                                repeatAction(times) { originalHandler.execute(editor, caret, dataContext) }
                             }.also { add(it) }
                         )
                     }
@@ -103,6 +92,15 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
         }
 
         ui.show()
+    }
+
+    @Suppress("UnusedPrivateProperty")
+    private fun repeatAction(times: Int, action: () -> Unit) {
+        document.setReadOnly(false)
+        repeat(times) {
+            action()
+        }
+        cancel()
     }
 
     internal fun multiply() {

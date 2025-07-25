@@ -49,5 +49,9 @@ internal class CommonActionsPromoter : ActionPromoter {
     }
 
     private fun isISearchAction(action: AnAction?) =
-        action is ISearchAction || action is BackspaceAction || action is EnterAction || action is PasteAction
+        action is ISearchAction ||
+            action is BackspaceAction ||
+            action is EnterAction ||
+            action is PasteAction ||
+            action is com.github.strindberg.emacsj.actions.paste.PasteAction
 }

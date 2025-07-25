@@ -195,7 +195,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
 
         addPrevious(searchArg, replaceArg, type)
 
-        ui.makeReadonly(getReplaceChoiceText())
+        ui.makeReadonly(getReplaceChoiceText(), true)
         setupModel()
 
         editor.selectionModel.removeSelection()
