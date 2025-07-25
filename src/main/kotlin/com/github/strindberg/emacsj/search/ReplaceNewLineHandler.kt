@@ -12,10 +12,6 @@ internal const val ACTION_REPLACE_NEWLINE = "com.github.strindberg.emacsj.action
 class ReplaceNewLineHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        ReplaceHandler.delegate?.let { delegate ->
-            if (delegate.state in listOf(ReplaceState.GET_SEARCH_ARG, ReplaceState.GET_REPLACE_ARG)) {
-                delegate.text += "\n"
-            }
-        }
+        ReplaceHandler.delegate?.addNewLine()
     }
 }

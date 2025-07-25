@@ -49,7 +49,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
 
     private val identifierAttributes: TextAttributes
 
-    internal var state: ReplaceState = ReplaceState.GET_SEARCH_ARG
+    private var state: ReplaceState = ReplaceState.GET_SEARCH_ARG
         set(state) {
             field = state
             ui.title = getReplaceTitle()
@@ -93,6 +93,20 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         ui.cancelUI()
 
         ReplaceHandler.delegate = null
+    }
+
+    internal fun addNewLine() {
+        if (state in listOf(ReplaceState.GET_SEARCH_ARG, ReplaceState.GET_REPLACE_ARG)) {
+            text += "\n"
+        }
+    }
+
+    internal fun setTextFromPrevious(previous: Replace) {
+        if (state == ReplaceState.GET_SEARCH_ARG) {
+            text = previous.search
+        } else if (state == ReplaceState.GET_REPLACE_ARG) {
+            text = previous.replace
+        }
     }
 
     private fun keyEventHandler(e: KeyEvent) {
