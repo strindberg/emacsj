@@ -70,6 +70,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     @VisibleForTesting
     internal val ui = CommonUI(editor, false, ::hide, ::keyEventHandler)
 
+    @VisibleForTesting
     internal var state: ISearchState = SEARCH
 
     private val breadcrumbs = mutableListOf<EditorBreadcrumb>()
@@ -113,6 +114,8 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     internal fun initTitleText() {
         ui.title = titleText()
     }
+
+    internal fun isActive() = state in listOf(SEARCH, FAILED)
 
     internal fun hide() {
         if (!inhibitCancel) {

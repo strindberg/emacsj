@@ -32,7 +32,7 @@ internal const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.action
 class ISearchExpandHandler(val type: Type) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        ISearchHandler.delegate?.takeIf { it.state == ISearchState.SEARCH }?.let { delegate ->
+        ISearchHandler.delegate?.takeIf { it.isActive() }?.let { delegate ->
             val newText = when (type) {
                 WORD -> getWord(editor, editor.caretModel.currentCaret.search.match.end)
                 LINE -> getLine(editor, editor.caretModel.currentCaret.search.match.end)

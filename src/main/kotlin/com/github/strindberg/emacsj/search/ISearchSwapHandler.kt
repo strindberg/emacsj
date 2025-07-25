@@ -12,7 +12,6 @@ internal const val ACTION_ISEARCH_SWAP = "com.github.strindberg.emacsj.actions.s
 class ISearchSwapHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        ISearchHandler.delegate?.takeIf { it.state == ISearchState.SEARCH || it.state == ISearchState.FAILED }
-            ?.swapSearchStopAndThenCancel()
+        ISearchHandler.delegate?.takeIf { it.isActive() }?.swapSearchStopAndThenCancel()
     }
 }

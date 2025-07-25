@@ -2,9 +2,6 @@ package com.github.strindberg.emacsj.search
 
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.preferences.EmacsJSettings
-import com.github.strindberg.emacsj.search.ISearchState.EDIT
-import com.github.strindberg.emacsj.search.ISearchState.FAILED
-import com.github.strindberg.emacsj.search.ISearchState.SEARCH
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.search.SearchType.TEXT
 import com.intellij.openapi.actionSystem.DataContext
@@ -36,19 +33,19 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
         }
         val current = delegate
         if (current != null) {
-            when (current.state) {
-                EDIT -> current.startEditedSearch()
-                SEARCH, FAILED ->
-                    if (current.text.isEmpty()) {
-                        if (current.direction == direction) {
-                            current.searchAllCarets(searchDirection = direction, newText = getPrevious(current.type))
-                        } else {
-                            current.direction = direction
-                            current.initTitleText()
-                        }
+            if (current.isActive()) {
+                if (current.text.isEmpty()) {
+                    if (current.direction == direction) {
+                        current.searchAllCarets(searchDirection = direction, newText = getPrevious(current.type))
                     } else {
-                        current.searchAllCarets(searchDirection = direction, newText = "")
+                        current.direction = direction
+                        current.initTitleText()
                     }
+                } else {
+                    current.searchAllCarets(searchDirection = direction, newText = "")
+                }
+            } else {
+                current.startEditedSearch()
             }
         } else {
             MarkHandler.pushPlaceInfo(editor)

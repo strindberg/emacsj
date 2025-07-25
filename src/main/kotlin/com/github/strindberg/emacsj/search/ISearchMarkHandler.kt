@@ -12,7 +12,6 @@ internal const val ACTION_ISEARCH_MARK = "com.github.strindberg.emacsj.actions.s
 class ISearchMarkHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        ISearchHandler.delegate?.takeIf { it.state == ISearchState.SEARCH || it.state == ISearchState.FAILED }
-            ?.markSearchStopAndThenCancel()
+        ISearchHandler.delegate?.takeIf { it.isActive() }?.markSearchStopAndThenCancel()
     }
 }

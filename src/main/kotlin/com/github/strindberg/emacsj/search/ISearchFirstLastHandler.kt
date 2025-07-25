@@ -17,7 +17,7 @@ internal const val ACTION_ISEARCH_LAST = "com.github.strindberg.emacsj.actions.s
 class ISearchFirstLastHandler(private val type: FirstLastType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        ISearchHandler.delegate?.takeIf { it.state == ISearchState.SEARCH || it.state == ISearchState.FAILED }?.let { delegate ->
+        ISearchHandler.delegate?.takeIf { it.isActive() }?.let { delegate ->
             when (type) {
                 FirstLastType.FIRST -> delegate.findFirst()
                 FirstLastType.LAST -> delegate.findLast()
