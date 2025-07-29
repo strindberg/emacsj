@@ -1,5 +1,5 @@
 [versions]
-changelog = "2.2.1"
+changelog = "2.3.0"
 detekt = "1.23.8"
 intellij-platform = "2.6.0"
 junit = "4.13.2"
