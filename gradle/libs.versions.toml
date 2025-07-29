@@ -4,7 +4,7 @@ detekt = "1.23.8"
 intellij-platform = "2.6.0"
 junit = "4.13.2"
 kotlin = "2.2.0"
-kotlinter = "5.1.1"
+kotlinter = "5.2.0"
 kover = "0.9.1"
 qodana = "2025.1.1"
 
