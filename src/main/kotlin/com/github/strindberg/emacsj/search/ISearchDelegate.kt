@@ -17,7 +17,7 @@ import com.github.strindberg.emacsj.search.ISearchState.SEARCH
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.search.SearchType.TEXT
 import com.github.strindberg.emacsj.search.StartType.FIRST_SEARCH
-import com.github.strindberg.emacsj.search.StartType.NEXT_SEARCH
+import com.github.strindberg.emacsj.search.StartType.REPEATED_SEARCH
 import com.github.strindberg.emacsj.search.StartType.WRAPAROUND
 import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.github.strindberg.emacsj.word.text
@@ -51,9 +51,9 @@ import org.jetbrains.annotations.VisibleForTesting
 
 private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
 
-private enum class StartType { WRAPAROUND, FIRST_SEARCH, NEXT_SEARCH }
+private enum class StartType { WRAPAROUND, FIRST_SEARCH, REPEATED_SEARCH }
 
-internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
+internal class ISearchDelegate(private val editor: Editor, val type: SearchType, var direction: Direction) {
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -487,7 +487,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         } else if (state == FAILED) {
             WRAPAROUND
         } else {
-            NEXT_SEARCH
+            REPEATED_SEARCH
         }
 
     private fun searchStart(search: CaretSearch, keepStart: Boolean, startType: StartType): Int =
@@ -497,7 +497,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                     when (startType) {
                         WRAPAROUND -> 0
                         FIRST_SEARCH -> search.match.start
-                        NEXT_SEARCH -> search.match.start + 1
+                        REPEATED_SEARCH -> search.match.start + 1
                     },
                     editor.text.length
                 )
@@ -514,7 +514,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                             } else {
                                 matchEnd(search.match.start) + 1
                             }
-                        NEXT_SEARCH -> search.match.end
+                        REPEATED_SEARCH -> search.match.end
                     },
                     editor.text.length + 1
                 )
@@ -555,7 +555,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         if (type == TEXT && ISearchHandler.lax) {
             Pair(
                 true,
-                text.split(" +".toRegex()).filter { it.isNotBlank() }
+                text.split(Regex(" +")).filter { it.isNotBlank() }
                     .joinToString(EmacsJSettings.getInstance().state.searchWhitespaceRegexp) {
                         Pattern.quote(it)
                     }
