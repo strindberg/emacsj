@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.4.2] - 2025-07-31
+
 ### Added
 
 - New command "Isearch: Edit Search Term".
@@ -178,7 +180,8 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.4.2...HEAD
+[1.4.2]: https://github.com/strindberg/emacsj/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/strindberg/emacsj/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/strindberg/emacsj/compare/v1.3.6...v1.4.0
 [1.3.6]: https://github.com/strindberg/emacsj/compare/v1.3.5...v1.3.6
