@@ -102,6 +102,7 @@ While searching, the following commands are available:
 - `ctrl-c SPACE`: toggle between lax and strict handling of whitespace in search string (only text search). The mode stays unchanged between
   searches so that a new search starts with the mode from the last search. The default mode can
   be [changed](#isearch-configuration---lax-mode) under Settings.
+- `alt-e`: enable editing of the search string. Searching (with the new search string) is resumed when pressing `ENTER`.
 - `ctrl-w`: add the word at point in the editor to the search string.
 - `ctrl-alt-e`: add the rest of the current editor line to the search string.
 - `ctrl-alt-y`: add the character at point to the search string.

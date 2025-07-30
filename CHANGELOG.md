@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- New command "Isearch: Edit Search Term".
+
 ## [1.4.1] - 2025-05-31
 
 ### Added
