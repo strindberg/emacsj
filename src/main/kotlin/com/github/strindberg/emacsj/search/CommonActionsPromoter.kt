@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.search
 
+import com.github.strindberg.emacsj.actions.macro.RepeatAction
 import com.github.strindberg.emacsj.actions.search.ISearchAction
 import com.github.strindberg.emacsj.actions.search.ReplaceAction
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
@@ -39,6 +40,16 @@ internal class CommonActionsPromoter : ActionPromoter {
                 if (a is EnterAction) {
                     -1
                 } else if (b is EnterAction) {
+                    1
+                } else {
+                    0
+                }
+            }
+        } else if (UniversalArgumentHandler.repeating) {
+            newList.sortWith { a, b ->
+                if (a is RepeatAction) {
+                    -1
+                } else if (b is RepeatAction) {
                     1
                 } else {
                     0

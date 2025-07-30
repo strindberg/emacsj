@@ -19,16 +19,20 @@ internal class EmacsJSettingsConfigurable : Configurable {
 
     override fun isModified(): Boolean =
         component.getSearchWhitespaceRegexp() != EmacsJSettings.getInstance().getState().searchWhitespaceRegexp ||
-            component.getUseLaxISearch() != EmacsJSettings.getInstance().getState().useLaxISearch
+            component.getUseLaxISearch() != EmacsJSettings.getInstance().getState().useLaxISearch ||
+            component.getRepeatedMacroTimeout() != EmacsJSettings.getInstance().getState().repeatedMacroTimeoutSeconds
 
     override fun reset() {
         component.setSearchWhitespaceRegexp(EmacsJSettings.getInstance().getState().searchWhitespaceRegexp)
         component.setUseLaxISearch(EmacsJSettings.getInstance().getState().useLaxISearch)
+        component.setRepeatedMacroTimeout(EmacsJSettings.getInstance().getState().repeatedMacroTimeoutSeconds)
     }
 
     override fun apply() {
         EmacsJSettings.getInstance().getState().searchWhitespaceRegexp = component.getSearchWhitespaceRegexp()
         EmacsJSettings.getInstance().getState().useLaxISearch = component.getUseLaxISearch()
         ISearchHandler.lax = component.getUseLaxISearch()
+
+        EmacsJSettings.getInstance().getState().repeatedMacroTimeoutSeconds = component.getRepeatedMacroTimeout()
     }
 }
