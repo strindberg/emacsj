@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.universal
 
+import com.github.strindberg.emacsj.macro.ACTION_RUN_LAST_MACRO
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
@@ -33,6 +34,7 @@ private val singleActions = listOf(
     ACTION_PREFIX_PASTE,
     ACTION_PUSH_MARK,
     ACTION_POP_MARK,
+    ACTION_RUN_LAST_MACRO,
 )
 
 class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext, private var numeric: Int?) {
@@ -44,7 +46,7 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
 
     private val actionHandlers: List<RestorableActionHandler<UniversalArgumentDelegate>>
 
-    private var counter = 4
+    private var counter = 1
 
     @VisibleForTesting
     internal val ui = CommonUI(editor, false, ::hide).apply {
@@ -106,11 +108,13 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
     internal fun multiply() {
         counter *= 4
         ui.text = getTimes().toString()
+        UniversalArgumentHandler.lastCount = getTimes()
     }
 
     internal fun addDigit(digit: Int) {
         numeric = numeric?.let { 10 * it + digit } ?: digit
         ui.text = getTimes().toString()
+        UniversalArgumentHandler.lastCount = getTimes()
     }
 
     internal fun hide() {

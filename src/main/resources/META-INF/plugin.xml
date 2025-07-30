@@ -417,6 +417,18 @@
             <keyboard-shortcut first-keystroke="control alt 0" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control alt 0" keymap="Emacs"/>
         </action>
+
+        <action id="com.github.strindberg.emacsj.actions.macro.runlastmacro"
+                class="com.github.strindberg.emacsj.actions.macro.RunLastMacroAction">
+            <keyboard-shortcut first-keystroke="control X" second-keystroke="E" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control X" second-keystroke="E" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.macro.cancelrepeat"
+                class="com.github.strindberg.emacsj.actions.macro.CancelRepeatAction">
+            <keyboard-shortcut first-keystroke="control G" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control G" keymap="Emacs"/>
+        </action>
+
     </actions>
 
 </idea-plugin>
