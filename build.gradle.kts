@@ -42,7 +42,7 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
     compilerOptions.freeCompilerArgs.addAll("-Xjsr305=strict")
 }
 
@@ -135,16 +135,16 @@ tasks {
     }
 }
 
-val runIde42 by intellijPlatformTesting.runIde.registering {
-    version = "2024.2.5"
-}
-
 val runIde43 by intellijPlatformTesting.runIde.registering {
     version = "2024.3.5"
 }
 
 val runIde51 by intellijPlatformTesting.runIde.registering {
     version = "2025.1.1"
+}
+
+val runIde52 by intellijPlatformTesting.runIde.registering {
+    version = "2025.2.0"
 }
 
 changelog {
