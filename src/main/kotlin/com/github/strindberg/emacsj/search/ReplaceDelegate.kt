@@ -365,25 +365,28 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
 
     private fun visitReplacement(item: Replaced) {
         editor.caretModel.moveToOffset(item.startOffset)
-        highlight(item.startOffset, item.endOffset)
         editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
+
+        highlight(item.startOffset, item.endOffset)
     }
 
     private fun highlight(startOffset: Int, endOffset: Int) {
         editor.markupModel.removeAllHighlighters()
-        CommonHighlighter.findAllAndHighlight(
-            editor = editor,
-            searchArg = searchArg,
-            useRegexp = type == REGEXP,
-            useCase = replaceModel.isCaseSensitive,
-            range = selection
-        )
+
         editor.markupModel.addRangeHighlighter(
             EMACSJ_PRIMARY,
             startOffset,
             endOffset,
             HighlighterLayer.LAST + 2,
             HighlighterTargetArea.EXACT_RANGE
+        )
+
+        CommonHighlighter.findAllAndHighlight(
+            editor = editor,
+            searchArg = searchArg,
+            useRegexp = type == REGEXP,
+            useCase = replaceModel.isCaseSensitive,
+            range = selection
         )
     }
 }
