@@ -515,6 +515,86 @@ class ReplaceTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test Undo replacing works`() {
+        myFixture.configureByText(FILE, "<caret>null () null () null null")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("null")
+        pressEnter()
+
+        setText("\"label\"")
+        pressEnter()
+
+        typeChar('y')
+        typeChar('n')
+        typeChar('y')
+
+        myFixture.checkResult(""""label" () null () "label" null<caret>""")
+
+        typeChar('u')
+
+        myFixture.checkResult(""""label" () null () null<caret> null""")
+
+        typeChar('u')
+
+        myFixture.checkResult("""null<caret> () null () null null""")
+    }
+
+    fun `test Replacements can be visited`() {
+        myFixture.configureByText(FILE, "<caret>foo foo foo foo")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("foo")
+        pressEnter()
+
+        setText("foo")
+        pressEnter()
+
+        typeChar('y')
+        typeChar('y')
+        typeChar('y')
+
+        myFixture.checkResult("foo foo foo foo<caret>")
+
+        typeChar('^')
+
+        myFixture.checkResult("foo foo foo<caret> foo")
+
+        typeChar('^')
+
+        myFixture.checkResult("foo foo<caret> foo foo")
+
+        typeChar('^')
+
+        myFixture.checkResult("foo<caret> foo foo foo")
+    }
+
+    fun `test Replacement can be edited`() {
+        myFixture.configureByText(FILE, "<caret>null () null () null")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("null")
+        pressEnter()
+
+        setText("\"label\"")
+        pressEnter()
+
+        typeChar('y')
+
+        myFixture.checkResult(""""label" () null<caret> () null""")
+
+        typeChar('e')
+
+        setText("other")
+        pressEnter()
+
+        myFixture.checkResult(""""label" () other () null<caret>""")
+
+        typeChar('y')
+
+        myFixture.checkResult(""""label" () other () other<caret>""")
+    }
+
     private fun setText(text: String) {
         ReplaceHandler.delegate!!.ui.text = (text)
     }

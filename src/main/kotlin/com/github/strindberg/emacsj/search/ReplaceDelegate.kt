@@ -214,11 +214,21 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
                         }
                         'u' -> {
-                            replacements.removeLastOrNull()?.let { undoReplacement(it) }
+                            val lastReplacement = replacements.removeLastOrNull()
+                            if (lastReplacement != null) {
+                                undoReplacement(lastReplacement)
+                            } else {
+                                ui.flashText("Nothing to undo")
+                            }
                         }
                         '^' -> {
-                            replacements.removeLastOrNull()?.let { visitReplacement(it) }
-                            isReplaced = true
+                            val lastReplacement = replacements.removeLastOrNull()
+                            if (lastReplacement != null) {
+                                visitReplacement(lastReplacement)
+                                isReplaced = true
+                            } else {
+                                ui.flashText("No previous match")
+                            }
                         }
                         else -> {
                             ui.cancelUI()
@@ -342,7 +352,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                 editor.document.replaceString(lastResult.startOffset, lastResult.endOffset, replacement)
             })
 
-            replacements.addLast(Replaced(lastResult.startOffset, foundString))
+            replacements.addLast(Replaced(lastResult.startOffset, foundString, replacement))
 
             editor.caretModel.moveToOffset(lastResult.startOffset + replacement.length)
 
@@ -364,7 +374,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
     }
 
     private fun visitReplacement(item: Replaced) {
-        editor.caretModel.moveToOffset(item.startOffset)
+        editor.caretModel.moveToOffset(item.endOffset)
         editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
 
         highlight(item.startOffset, item.endOffset)
@@ -407,6 +417,6 @@ internal data class Replace(val search: String, val replace: String) {
     }
 }
 
-internal data class Replaced(val startOffset: Int, val original: String) {
-    val endOffset = startOffset + original.length
+internal data class Replaced(val startOffset: Int, val original: String, val replacement: String) {
+    val endOffset = startOffset + replacement.length
 }

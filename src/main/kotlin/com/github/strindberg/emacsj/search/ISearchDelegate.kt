@@ -176,7 +176,8 @@ internal class ISearchDelegate(private val editor: Editor, val type: SearchType,
     internal fun renewLaxState() {
         state = SEARCH
         updateUI(title = titleText(), text = text, found = true)
-        ui.flashLax(ISearchHandler.lax)
+
+        ui.flashText(if (ISearchHandler.lax) "[match spaces loosely]" else "[match spaces literally]")
 
         removeAllHighlighters()
 

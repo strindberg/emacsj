@@ -110,15 +110,11 @@ internal class CommonUI(
         popup = initPopup()
     }
 
-    internal fun flashLax(lax: Boolean) {
-        if (lax) {
-            countLabel.text = "[match spaces loosely]"
-        } else {
-            countLabel.text = "[match spaces literally]"
-        }
+    internal fun flashText(message: String, finalText: String = "") {
+        countLabel.text = message
         thread {
             Thread.sleep(1500)
-            countLabel.text = ""
+            countLabel.text = finalText
         }
     }
 

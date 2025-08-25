@@ -415,7 +415,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
     }
 
-    // This test is disabled b/c paste doesn't work with reopened search popup.
+    // This test is disabled b/c in this test, paste doesn't work with a reopened search popup.
     fun `Text can be pasted into previous search`() {
         myFixture.configureByText(FILE, "<caret>foo fooz foobar")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
