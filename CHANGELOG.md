@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- Four new actions available during search/replace:
+    - `,`: perform the replacement but do not move to the next match.
+    - `e`: edit the replacement text.
+    - `u`: undo the last replacement without exiting search/replace.
+    - `^`: visit the position of the last replacement without exiting search/replace.
+
 ## [1.4.2] - 2025-07-31
 
 ### Added

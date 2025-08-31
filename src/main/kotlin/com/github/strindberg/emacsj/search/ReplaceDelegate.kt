@@ -47,6 +47,8 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
 
     private var replaced = 0
 
+    private val replacements = ArrayDeque<Replaced>()
+
     private val identifierAttributes: TextAttributes
 
     private var state: ReplaceState = ReplaceState.GET_SEARCH_ARG
@@ -54,6 +56,10 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
             field = state
             ui.title = getReplaceTitle()
         }
+
+    private var inhibitCancel = false
+
+    private var isReplaced = false
 
     internal var text: String
         get() = ui.text
@@ -84,15 +90,17 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
     }
 
     internal fun hide() {
-        editor.markupModel.removeAllHighlighters()
+        if (!inhibitCancel) {
+            editor.markupModel.removeAllHighlighters()
 
-        editor.caretModel.removeCaretListener(caretListener)
+            editor.caretModel.removeCaretListener(caretListener)
 
-        editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
+            editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
 
-        ui.cancelUI()
+            ui.cancelUI()
 
-        ReplaceHandler.delegate = null
+            ReplaceHandler.delegate = null
+        }
     }
 
     internal fun addNewLine() {
@@ -144,6 +152,13 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                 }
             }
 
+            ReplaceState.EDIT_REPLACE_ARG -> {
+                if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED) {
+                    replaceArg = ui.text
+                    startEditedSearch()
+                }
+            }
+
             ReplaceState.SEARCHING -> {
             }
 
@@ -154,7 +169,6 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                             val recenterAction = ActionManager.getInstance().getAction(ACTION_RECENTER)
                             ActionUtil.invokeAction(recenterAction, editor.component, "Recenter", null, null)
                         }
-
                         'y', ' ' -> {
                             try {
                                 replaceInEditor()
@@ -163,11 +177,23 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                                 handleReplacementError(e)
                             }
                         }
-
+                        ',' -> {
+                            try {
+                                replaceInEditor()
+                                isReplaced = true
+                            } catch (e: FindManager.MalformedReplacementStringException) {
+                                handleReplacementError(e)
+                            }
+                        }
                         'n' -> {
                             searchForReplacement(true)
                         }
-
+                        'e' -> {
+                            state = ReplaceState.EDIT_REPLACE_ARG
+                            inhibitCancel = true
+                            ui.makeWriteable(replaceArg)
+                            inhibitCancel = false
+                        }
                         '.' -> {
                             try {
                                 replaceInEditor()
@@ -176,7 +202,6 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                             }
                             ui.cancelUI()
                         }
-
                         '!' -> {
                             try {
                                 do {
@@ -188,7 +213,23 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                             }
                             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
                         }
-
+                        'u' -> {
+                            val lastReplacement = replacements.removeLastOrNull()
+                            if (lastReplacement != null) {
+                                undoReplacement(lastReplacement)
+                            } else {
+                                ui.flashText("Nothing to undo")
+                            }
+                        }
+                        '^' -> {
+                            val lastReplacement = replacements.removeLastOrNull()
+                            if (lastReplacement != null) {
+                                visitReplacement(lastReplacement)
+                                isReplaced = true
+                            } else {
+                                ui.flashText("No previous match")
+                            }
+                        }
                         else -> {
                             ui.cancelUI()
                         }
@@ -215,6 +256,22 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         editor.selectionModel.removeSelection()
 
         searchForReplacement(true)
+    }
+
+    private fun startEditedSearch() {
+        state = ReplaceState.SEARCHING
+
+        addPrevious(searchArg, replaceArg, type)
+
+        ui.makeReadonly(getReplaceChoiceText(), true)
+        setupModel()
+
+        try {
+            replaceInEditor()
+            searchForReplacement(true)
+        } catch (e: FindManager.MalformedReplacementStringException) {
+            handleReplacementError(e)
+        }
     }
 
     private fun setupModel() {
@@ -252,7 +309,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
     private fun getReplaceTitle() =
         when (state) {
             ReplaceState.GET_SEARCH_ARG -> if (type == REGEXP) "Query replace regexp: " else "Query replace: "
-            ReplaceState.GET_REPLACE_ARG, ReplaceState.SEARCHING -> "Replace with: "
+            ReplaceState.GET_REPLACE_ARG, ReplaceState.SEARCHING, ReplaceState.EDIT_REPLACE_ARG -> "Replace with: "
             ReplaceState.SEARCH_FOUND -> "Replace? "
             ReplaceState.REPLACE_DONE -> if (replaced == 1) "Replaced 1 occurrence." else "Replaced $replaced occurrences."
             ReplaceState.REPLACE_FAILED -> "Replacement failed. "
@@ -268,24 +325,11 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         }
 
         if (result.isStringFound) {
+            isReplaced = false
             editor.caretModel.moveToOffset(result.endOffset)
 
             if (highlight) {
-                editor.markupModel.removeAllHighlighters()
-                CommonHighlighter.findAllAndHighlight(
-                    editor = editor,
-                    searchArg = searchArg,
-                    useRegexp = type == REGEXP,
-                    useCase = replaceModel.isCaseSensitive,
-                    range = selection
-                )
-                editor.markupModel.addRangeHighlighter(
-                    EMACSJ_PRIMARY,
-                    result.startOffset,
-                    result.endOffset,
-                    HighlighterLayer.LAST + 2,
-                    HighlighterTargetArea.EXACT_RANGE
-                )
+                highlight(result.startOffset, result.endOffset)
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
 
@@ -299,24 +343,80 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
     }
 
     private fun replaceInEditor() {
-        val foundString = editor.document.substring(lastResult.startOffset, lastResult.endOffset)
-        val replacement = FindManager.getInstance(editor.project)
-            .getStringToReplace(foundString, replaceModel, lastResult.startOffset, editor.text)
+        if (!isReplaced) {
+            val foundString = editor.document.substring(lastResult.startOffset, lastResult.endOffset)
+            val replacement = FindManager.getInstance(editor.project)
+                .getStringToReplace(foundString, replaceModel, lastResult.startOffset, editor.text)
 
-        WriteCommandAction.runWriteCommandAction(editor.project, "Replace ${type.name.lowercase()}", undoGroupId, {
-            editor.document.replaceString(lastResult.startOffset, lastResult.endOffset, replacement)
+            WriteCommandAction.runWriteCommandAction(editor.project, "Replace ${type.name.lowercase()}", undoGroupId, {
+                editor.document.replaceString(lastResult.startOffset, lastResult.endOffset, replacement)
+            })
+
+            replacements.addLast(Replaced(lastResult.startOffset, foundString, replacement))
+
+            editor.caretModel.moveToOffset(lastResult.startOffset + replacement.length)
+
+            replaced++
+        }
+    }
+
+    private fun undoReplacement(item: Replaced) {
+        WriteCommandAction.runWriteCommandAction(editor.project, "Undo replace ${type.name.lowercase()}", undoGroupId, {
+            editor.document.replaceString(item.startOffset, item.endOffset, item.original)
         })
 
-        editor.caretModel.moveToOffset(lastResult.startOffset + replacement.length)
+        editor.caretModel.moveToOffset(item.startOffset)
+        editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
 
-        replaced++
+        replaced--
+
+        searchForReplacement(true)
+    }
+
+    private fun visitReplacement(item: Replaced) {
+        editor.caretModel.moveToOffset(item.endOffset)
+        editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
+
+        highlight(item.startOffset, item.endOffset)
+    }
+
+    private fun highlight(startOffset: Int, endOffset: Int) {
+        editor.markupModel.removeAllHighlighters()
+
+        editor.markupModel.addRangeHighlighter(
+            EMACSJ_PRIMARY,
+            startOffset,
+            endOffset,
+            HighlighterLayer.LAST + 2,
+            HighlighterTargetArea.EXACT_RANGE
+        )
+
+        CommonHighlighter.findAllAndHighlight(
+            editor = editor,
+            searchArg = searchArg,
+            useRegexp = type == REGEXP,
+            useCase = replaceModel.isCaseSensitive,
+            range = selection
+        )
     }
 }
 
-internal enum class ReplaceState { GET_SEARCH_ARG, GET_REPLACE_ARG, SEARCHING, SEARCH_FOUND, REPLACE_DONE, REPLACE_FAILED }
+internal enum class ReplaceState {
+    GET_SEARCH_ARG,
+    GET_REPLACE_ARG,
+    SEARCHING,
+    SEARCH_FOUND,
+    REPLACE_DONE,
+    REPLACE_FAILED,
+    EDIT_REPLACE_ARG,
+}
 
 internal data class Replace(val search: String, val replace: String) {
     companion object {
         val EMPTY = Replace("", "")
     }
+}
+
+internal data class Replaced(val startOffset: Int, val original: String, val replacement: String) {
+    val endOffset = startOffset + replacement.length
 }

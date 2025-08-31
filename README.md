@@ -177,11 +177,15 @@ While replacing, the following keys are active:
 
 - `.`: perform the replacement on this match and then stop.
 - `y` `SPACE`: perform the replacement and move to the next match.
+- `,`: perform the replacement but do not move to the next match. The next (valid) key press moves to the next match.
 - `n`: do not perform the replacement and move to the next match.
 - `!`: perform the replacement on this and all the following matches.
+- `e`: edit the replacement text. `ENTER` finishes editing and search/replace is resumed with the new replacement text.
+- `u`: undo the last replacement without exiting search/replace. Can be repeated to undo previous replacements.
+- `^`: visit the position of the last replacement without exiting search/replace. Can be repeated to visit previous replacements.
 
 Note that the keybindings above are only active while using Search/replace, i.e. they do not clash with other commands having the same key
-binding outside Search/replace. The keybindings `y`, `n`, `!`, and `.` are non-configurable.
+binding outside Search/replace. The keybindings `y`, `SPACE`, `,`, `n`, `!`, `e`, `u`, `^` and `.` are non-configurable.
 
 Search/replace text uses smart case, such that the search will be performed without case sensitivity if the whole search string and the
 whole replacement string consist of lower case characters, but switch to case-sensitive search if the search string or replace string
