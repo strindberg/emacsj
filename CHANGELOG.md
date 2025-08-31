@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.4.3] - 2025-08-31
+
 ### Added
 
 - Four new actions available during search/replace:
@@ -188,7 +190,8 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.4.3...HEAD
+[1.4.3]: https://github.com/strindberg/emacsj/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/strindberg/emacsj/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/strindberg/emacsj/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/strindberg/emacsj/compare/v1.3.6...v1.4.0
