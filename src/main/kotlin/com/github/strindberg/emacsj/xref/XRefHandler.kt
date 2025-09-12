@@ -11,15 +11,31 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.project.Project
 import org.intellij.lang.annotations.Language
+
+enum class XRefType { BACK, PUSH }
 
 @Language("devkit-action-id")
 internal const val ACTION_XREF_BACK = "com.github.strindberg.emacsj.actions.xref.xrefback"
 
-class XRefHandler : EditorActionHandler() {
+@Language("devkit-action-id")
+internal const val ACTION_XREF_PUSH = "com.github.strindberg.emacsj.actions.xref.xrefpush"
+
+class XRefHandler(val type: XRefType) : EditorActionHandler() {
 
     companion object {
-        private val places = mutableMapOf<Int, LimitedStack<PlaceInfo>>()
+        internal val places = mutableMapOf<Int, LimitedStack<PlaceInfo>>()
+
+        internal fun pushPlaceInfo(editor: Editor, project: Project) {
+            FileEditorManagerEx.getInstanceExIfCreated(project)?.let { fileEditorManager ->
+                fileEditorManager.currentFile?.let { virtualFile ->
+                    MarkHandler.placeInfo(editor, virtualFile)?.let {
+                        places.getOrPut(project.hashCode()) { LimitedStack() }.push(it)
+                    }
+                }
+            }
+        }
 
         internal fun pushPlace(event: CommandEvent) {
             event.project?.let { project ->
@@ -27,9 +43,7 @@ class XRefHandler : EditorActionHandler() {
                     fileEditorManager.currentFile?.let { virtualFile ->
                         fileEditorManager.getSelectedEditor(virtualFile)?.let { fileEditor ->
                             (fileEditor as? TextEditor)?.editor?.let { editor ->
-                                MarkHandler.placeInfo(editor, virtualFile)?.let {
-                                    places.getOrPut(project.hashCode()) { LimitedStack() }.push(it)
-                                }
+                                pushPlaceInfo(editor, project)
                             }
                         }
                     }
@@ -39,9 +53,18 @@ class XRefHandler : EditorActionHandler() {
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        (editor as? EditorEx)?.let { ex ->
-            places[ex.project.hashCode()]?.pop()?.let { place ->
-                MarkHandler.gotoPlaceInfo(editor, place)
+        when (type) {
+            XRefType.BACK -> {
+                (editor as? EditorEx)?.let { ex ->
+                    places[ex.project.hashCode()]?.pop()?.let { place ->
+                        MarkHandler.gotoPlaceInfo(editor, place)
+                    }
+                }
+            }
+            XRefType.PUSH -> {
+                (editor as? EditorEx)?.project?.let { project ->
+                    pushPlaceInfo(editor, project)
+                }
             }
         }
     }
