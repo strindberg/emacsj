@@ -104,6 +104,79 @@ class PlaceInfo(val file: VirtualFile, val state: FileEditorState, val editorTyp
     override fun hashCode(): Int = 31 * file.hashCode() + caretPosition.hashCode()
 }
 
+/**
+ * A stack designed for undo/redo type functionality.
+ * Undo and Redo operations should not modify the elements in the stack.
+ * Push should drop all elements that could have been Redo-ed before the push.
+ * */
+class UndoStack<T> {
+
+    private var elements = listOf<T>()
+    // 0 when things are being pushed with no BACK actions performed
+    // >0 when a BACK action has just been performed, etc
+    private var currIndex = 0
+
+    /**
+     * prepends a new item to the top of the stack.
+     * drops all items that could have been Redo-ed before the push
+     * */
+    fun push(element: T) {
+
+        // drop everything before current index
+        // this is like dropping a bunch of redo elements after
+        // undo-ing a lot and then performing an action
+        val droppedList = elements.drop(currIndex)
+
+        elements = prependElement(element, droppedList)
+        // reset to 0 since we dropped the old elements
+        currIndex = 0
+    }
+
+    fun isEmpty(): Boolean {
+        return elements.isEmpty()
+    }
+
+    /**
+     *
+     */
+    fun redo(): T? {
+        return null
+    }
+
+    /**
+     * move -> in the stack without modifying it.
+     * If stack is empty, no-op
+     */
+    fun undo(): T? {
+        if (isEmpty()) return null
+
+        val item = elements[currIndex]
+        currIndex++
+        return item
+    }
+
+    /**
+     * move -> in the stack, but if we are at the top of the stack, save the passed
+     * in element as the new first element
+     * */
+    fun undoSaveFirst(element: T): T? {
+        if (isEmpty()) return null
+
+        val currentItem = elements[currIndex]
+
+        if (currIndex == 0) {
+
+            elements = prependElement(element, elements)
+
+            currIndex = 2 // since we are moving 1 AND adding 1 element
+        } else {
+            currIndex++
+        }
+
+        return currentItem
+    }
+}
+
 class LimitedStack<T> {
 
     private var elements = listOf<T>()
