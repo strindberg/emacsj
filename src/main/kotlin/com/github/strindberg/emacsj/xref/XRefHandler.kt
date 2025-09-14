@@ -12,9 +12,10 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.lang.annotations.Language
 
-enum class XRefType { BACK, PUSH }
+enum class XRefType { BACK, PUSH, FORWARD }
 
 @Language("devkit-action-id")
 internal const val ACTION_XREF_BACK = "com.github.strindberg.emacsj.actions.xref.xrefback"
@@ -22,17 +23,24 @@ internal const val ACTION_XREF_BACK = "com.github.strindberg.emacsj.actions.xref
 @Language("devkit-action-id")
 internal const val ACTION_XREF_PUSH = "com.github.strindberg.emacsj.actions.xref.xrefpush"
 
+@Language("devkit-action-id")
+internal const val ACTION_XREF_FORWARD = "com.github.strindberg.emacsj.actions.xref.xrefforward"
+
 class XRefHandler(val type: XRefType) : EditorActionHandler() {
 
     companion object {
         internal val places = mutableMapOf<Int, LimitedStack<PlaceInfo>>()
 
-        internal fun pushPlaceInfo(editor: Editor, project: Project) {
+        private fun pushPlaceInfo(editor: Editor, project: Project, virtualFile: VirtualFile) {
+            MarkHandler.placeInfo(editor, virtualFile)?.let {
+                places.getOrPut(project.hashCode()) { LimitedStack() }.push(it)
+            }
+        }
+
+        internal fun pushPlace(editor: Editor, project: Project) {
             FileEditorManagerEx.getInstanceExIfCreated(project)?.let { fileEditorManager ->
                 fileEditorManager.currentFile?.let { virtualFile ->
-                    MarkHandler.placeInfo(editor, virtualFile)?.let {
-                        places.getOrPut(project.hashCode()) { LimitedStack() }.push(it)
-                    }
+                    pushPlaceInfo(editor, project, virtualFile)
                 }
             }
         }
@@ -43,7 +51,7 @@ class XRefHandler(val type: XRefType) : EditorActionHandler() {
                     fileEditorManager.currentFile?.let { virtualFile ->
                         fileEditorManager.getSelectedEditor(virtualFile)?.let { fileEditor ->
                             (fileEditor as? TextEditor)?.editor?.let { editor ->
-                                pushPlaceInfo(editor, project)
+                                pushPlaceInfo(editor, project, virtualFile)
                             }
                         }
                     }
@@ -63,8 +71,11 @@ class XRefHandler(val type: XRefType) : EditorActionHandler() {
             }
             XRefType.PUSH -> {
                 (editor as? EditorEx)?.project?.let { project ->
-                    pushPlaceInfo(editor, project)
+                    pushPlace(editor, project)
                 }
+            }
+            XRefType.FORWARD -> {
+                // noop
             }
         }
     }

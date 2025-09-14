@@ -351,6 +351,9 @@
         <action id="com.github.strindberg.emacsj.actions.xref.xrefpush"
                 class="com.github.strindberg.emacsj.actions.xref.XRefPushAction">
         </action>
+        <action id="com.github.strindberg.emacsj.actions.xref.xrefforward"
+                class="com.github.strindberg.emacsj.actions.xref.XRefForwardAction">
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.movement.textstart"
                 class="com.github.strindberg.emacsj.actions.movement.TextStartAction">
