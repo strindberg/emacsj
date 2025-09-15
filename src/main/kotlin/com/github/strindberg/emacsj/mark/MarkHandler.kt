@@ -104,76 +104,40 @@ class PlaceInfo(val file: VirtualFile, val state: FileEditorState, val editorTyp
     override fun hashCode(): Int = 31 * file.hashCode() + caretPosition.hashCode()
 }
 
-/**
- * A stack designed for undo/redo type functionality.
- * Undo and Redo operations should not modify the elements in the stack.
- * Push should drop all elements that could have been Redo-ed before the push.
- * */
 class UndoStack<T> {
-
-    private var elements = listOf<T>()
-    // 0 when things are being pushed with no BACK actions performed
-    // >0 when a BACK action has just been performed, etc
-    private var currIndex = 0
+    private val undoStack = ArrayDeque<T>()
+    private val redoStack = ArrayDeque<T>()
 
     /**
-     * prepends a new item to the top of the stack.
-     * drops all items that could have been Redo-ed before the push
-     * */
-    fun push(element: T) {
-
-        // drop everything before current index
-        // this is like dropping a bunch of redo elements after
-        // undo-ing a lot and then performing an action
-        val droppedList = elements.drop(currIndex)
-
-        elements = prependElement(element, droppedList)
-        // reset to 0 since we dropped the old elements
-        currIndex = 0
-    }
-
-    fun isEmpty(): Boolean {
-        return elements.isEmpty()
-    }
-
-    /**
-     *
+     * Push a new position onto the undo stack and clear the redo stack.
      */
-    fun redo(): T? {
-        return null
+    fun push(position: T) {
+        undoStack.addLast(position)
+        redoStack.clear()
     }
 
     /**
-     * move -> in the stack without modifying it.
-     * If stack is empty, no-op
+     * Undo the last cursor movement.
+     * Stores the current position in the redo stack,
+     * and returns the previous position from the undo stack.
      */
-    fun undo(): T? {
-        if (isEmpty()) return null
-
-        val item = elements[currIndex]
-        currIndex++
-        return item
+    fun undo(current: T): T? {
+        if (undoStack.isEmpty()) return null
+        val previous = undoStack.removeLast()
+        redoStack.addLast(current)
+        return previous
     }
 
     /**
-     * move -> in the stack, but if we are at the top of the stack, save the passed
-     * in element as the new first element
-     * */
-    fun undoSaveFirst(element: T): T? {
-        if (isEmpty()) return null
-
-        val currentItem = elements[currIndex]
-
-        if (currIndex == 0) {
-
-            elements = prependElement(element, elements)
-
-            currIndex = 2 // since we are moving 1 AND adding 1 element
-        } else {
-            currIndex++
-        }
-
-        return currentItem
+     * Redo the last undone cursor movement.
+     * Stores the current position in the undo stack,
+     * and returns the redone position from the redo stack.
+     */
+    fun redo(current: T): T? {
+        if (redoStack.isEmpty()) return null
+        val next = redoStack.removeLast()
+        undoStack.addLast(current)
+        return next
     }
 }
 

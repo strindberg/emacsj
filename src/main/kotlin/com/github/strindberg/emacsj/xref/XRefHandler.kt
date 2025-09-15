@@ -45,7 +45,21 @@ class XRefHandler(val type: XRefType) : EditorActionHandler() {
                 fileEditorManager ->
                 fileEditorManager.currentFile?.let { virtualFile ->
                     MarkHandler.placeInfo(editor, virtualFile)?.let { currentPlace ->
-                        return places[project.hashCode()]?.undoSaveFirst(currentPlace)
+                        return places[project.hashCode()]?.undo(currentPlace)
+                    }
+                }
+            }
+            return null
+        }
+
+        internal fun getPlaceForForwardAction(editor: Editor, project: Project): PlaceInfo? {
+
+            // TODO: this is copied logic from pushPlace (both copies I think)
+            FileEditorManagerEx.getInstanceExIfCreated(project)?.let {
+                    fileEditorManager ->
+                fileEditorManager.currentFile?.let { virtualFile ->
+                    MarkHandler.placeInfo(editor, virtualFile)?.let { currentPlace ->
+                        return places[project.hashCode()]?.redo(currentPlace)
                     }
                 }
             }
@@ -98,7 +112,12 @@ class XRefHandler(val type: XRefType) : EditorActionHandler() {
                 }
             }
             XRefType.FORWARD -> {
-                // noop
+                (editor as? EditorEx)?.project?.let { project ->
+
+                    getPlaceForForwardAction(editor, project)?.let { place ->
+                        MarkHandler.gotoPlaceInfo(editor, place)
+                    }
+                }
             }
         }
     }
