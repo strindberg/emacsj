@@ -105,15 +105,16 @@ class PlaceInfo(val file: VirtualFile, val state: FileEditorState, val editorTyp
 }
 
 class UndoStack<T> {
-    private val undoStack = ArrayDeque<T>()
-    private val redoStack = ArrayDeque<T>()
+    private var undoStack = listOf<T>()
+    private var redoStack = listOf<T>()
 
     /**
      * Push a new position onto the undo stack and clear the redo stack.
      */
     fun push(position: T) {
-        undoStack.addLast(position)
-        redoStack.clear()
+
+        undoStack = prependElement(position, undoStack)
+        redoStack = listOf<T>()
     }
 
     /**
@@ -123,8 +124,12 @@ class UndoStack<T> {
      */
     fun undo(current: T): T? {
         if (undoStack.isEmpty()) return null
-        val previous = undoStack.removeLast()
-        redoStack.addLast(current)
+
+        val previous = undoStack.first()
+        undoStack = undoStack.drop(1)
+
+        redoStack = prependElement(current, redoStack)
+
         return previous
     }
 
@@ -135,8 +140,12 @@ class UndoStack<T> {
      */
     fun redo(current: T): T? {
         if (redoStack.isEmpty()) return null
-        val next = redoStack.removeLast()
-        undoStack.addLast(current)
+
+        val next = redoStack.first()
+        redoStack = redoStack.drop(1)
+
+        undoStack = prependElement(current, undoStack)
+
         return next
     }
 }
