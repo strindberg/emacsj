@@ -3,7 +3,6 @@ package com.github.strindberg.emacsj.xref
 import com.github.strindberg.emacsj.mark.UndoStack
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.mark.PlaceInfo
-import com.intellij.debugger.actions.ArrayFilterAction
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.editor.Caret
@@ -27,96 +26,85 @@ internal const val ACTION_XREF_PUSH = "com.github.strindberg.emacsj.actions.xref
 @Language("devkit-action-id")
 internal const val ACTION_XREF_FORWARD = "com.github.strindberg.emacsj.actions.xref.xrefforward"
 
-class XRefHandler(val type: XRefType) : EditorActionHandler() {
+class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
     companion object {
-        internal val places = mutableMapOf<Int, UndoStack<PlaceInfo>>()
+        private val places = mutableMapOf<Int, UndoStack<PlaceInfo>>()
+
+        private fun getStack(project: Project): UndoStack<PlaceInfo> =
+            places.getOrPut(project.hashCode()) { UndoStack() }
+
+        private fun withCurrentEditorAndFile(project: Project, block: (Editor, VirtualFile) -> Unit) {
+            FileEditorManagerEx.getInstanceExIfCreated(project)
+                ?.let { manager ->
+                    val virtualFile = manager.currentFile ?: return
+                    val fileEditor = manager.getSelectedEditor(virtualFile) as? TextEditor ?: return
+                    val editor = fileEditor.editor
+                    block(editor, virtualFile)
+                }
+        }
 
         private fun pushPlaceInfo(editor: Editor, project: Project, virtualFile: VirtualFile) {
             MarkHandler.placeInfo(editor, virtualFile)?.let {
-                places.getOrPut(project.hashCode()) { UndoStack() }.push(it)
+                getStack(project).push(it)
             }
         }
 
-        internal fun getPlaceForBackAction(editor: Editor, project: Project): PlaceInfo? {
-
-            // TODO: this is copied logic from pushPlace (both copies I think)
-            FileEditorManagerEx.getInstanceExIfCreated(project)?.let {
-                fileEditorManager ->
-                fileEditorManager.currentFile?.let { virtualFile ->
-                    MarkHandler.placeInfo(editor, virtualFile)?.let { currentPlace ->
-                        return places[project.hashCode()]?.undo(currentPlace)
-                    }
-                }
-            }
-            return null
+        private fun getPlaceUsingHistory(
+            editor: Editor,
+            project: Project,
+            operation: (UndoStack<PlaceInfo>, PlaceInfo) -> PlaceInfo?
+        ): PlaceInfo? {
+            val stack = places[project.hashCode()] ?: return null
+            val currentFile = FileEditorManagerEx.getInstanceExIfCreated(project)?.currentFile ?: return null
+            val currentPlace = MarkHandler.placeInfo(editor, currentFile) ?: return null
+            return operation(stack, currentPlace)
         }
 
-        internal fun getPlaceForForwardAction(editor: Editor, project: Project): PlaceInfo? {
+        internal fun getPlaceForBackAction(editor: Editor, project: Project): PlaceInfo? =
+            getPlaceUsingHistory(editor, project) { stack, current -> stack.undo(current) }
 
-            // TODO: this is copied logic from pushPlace (both copies I think)
-            FileEditorManagerEx.getInstanceExIfCreated(project)?.let {
-                    fileEditorManager ->
-                fileEditorManager.currentFile?.let { virtualFile ->
-                    MarkHandler.placeInfo(editor, virtualFile)?.let { currentPlace ->
-                        return places[project.hashCode()]?.redo(currentPlace)
-                    }
-                }
-            }
-            return null
-        }
+        internal fun getPlaceForForwardAction(editor: Editor, project: Project): PlaceInfo? =
+            getPlaceUsingHistory(editor, project) { stack, current -> stack.redo(current) }
 
         /**
-         * used directly by the XRef PUSH command
+         * Used directly by the XRef PUSH command
          */
         internal fun pushPlace(editor: Editor, project: Project) {
-            FileEditorManagerEx.getInstanceExIfCreated(project)?.let { fileEditorManager ->
-                fileEditorManager.currentFile?.let { virtualFile ->
-                    pushPlaceInfo(editor, project, virtualFile)
-                }
+            FileEditorManagerEx.getInstanceExIfCreated(project)?.let { manager ->
+                val virtualFile = manager.currentFile ?: return
+                pushPlaceInfo(editor, project, virtualFile)
             }
         }
 
         /**
-         * called by a commandStarted listener for multiple GoTo-esque commands
+         * Called by a commandStarted listener for multiple GoTo-esque commands
          */
         internal fun pushPlace(event: CommandEvent) {
-            event.project?.let { project ->
-                FileEditorManagerEx.getInstanceExIfCreated(project)?.let { fileEditorManager ->
-                    fileEditorManager.currentFile?.let { virtualFile ->
-                        fileEditorManager.getSelectedEditor(virtualFile)?.let { fileEditor ->
-                            (fileEditor as? TextEditor)?.editor?.let { editor ->
-                                pushPlaceInfo(editor, project, virtualFile)
-                            }
-                        }
-                    }
-                }
+            val project = event.project ?: return
+            withCurrentEditorAndFile(project) { editor, file ->
+                pushPlaceInfo(editor, project, file)
             }
         }
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
+        val project = (editor as? EditorEx)?.project ?: return
+
         when (type) {
             XRefType.BACK -> {
-                (editor as? EditorEx)?.let { ex ->
-                    ex.project?.let {
-                        getPlaceForBackAction(ex, it)?.let { place ->
-                            MarkHandler.gotoPlaceInfo(editor, place)
-                        }
-                    }
+                getPlaceForBackAction(editor, project)?.let { place ->
+                    MarkHandler.gotoPlaceInfo(editor, place)
                 }
             }
-            XRefType.PUSH -> {
-                (editor as? EditorEx)?.project?.let { project ->
-                    pushPlace(editor, project)
-                }
-            }
-            XRefType.FORWARD -> {
-                (editor as? EditorEx)?.project?.let { project ->
 
-                    getPlaceForForwardAction(editor, project)?.let { place ->
-                        MarkHandler.gotoPlaceInfo(editor, place)
-                    }
+            XRefType.PUSH -> {
+                pushPlace(editor, project)
+            }
+
+            XRefType.FORWARD -> {
+                getPlaceForForwardAction(editor, project)?.let { place ->
+                    MarkHandler.gotoPlaceInfo(editor, place)
                 }
             }
         }
