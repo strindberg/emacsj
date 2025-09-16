@@ -55,6 +55,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
                             editorWithProvider.fileEditor.getState(FileEditorStateLevel.UNDO),
                             editorWithProvider.provider.editorTypeId,
                             editor.caretModel.primaryCaret.offset,
+                            editor.scrollingModel.verticalScrollOffset,
                         )
                     }
                 }
@@ -67,7 +68,10 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
                     fileEditorManager.setSelectedEditor(info.file, info.editorTypeId)
                     fileEditorManager.getSelectedEditorWithProvider(info.file)?.takeIf {
                         it.provider.editorTypeId == info.editorTypeId
-                    }?.fileEditor?.setState(info.state)
+                    }?.let {
+                        it.fileEditor.setState(info.state)
+                        editor.scrollingModel.scrollVertically(info.scrollOffset)
+                    }
                 }
             }
         }
@@ -95,7 +99,13 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     }
 }
 
-class PlaceInfo(val file: VirtualFile, val state: FileEditorState, val editorTypeId: String, val caretPosition: Int) {
+class PlaceInfo(
+    val file: VirtualFile,
+    val state: FileEditorState,
+    val editorTypeId: String,
+    val caretPosition: Int,
+    val scrollOffset: Int,
+) {
     override fun equals(other: Any?): Boolean =
         (other as? PlaceInfo)?.let {
             file == other.file && caretPosition == other.caretPosition
