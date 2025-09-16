@@ -180,6 +180,9 @@
     <action id="com.github.strindberg.emacsj.actions.xref.xrefback">
         <keyboard-shortcut first-keystroke="alt COMMA"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.xref.xrefforward">
+        <keyboard-shortcut first-keystroke="control alt COMMA"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.movement.textstart">
         <keyboard-shortcut first-keystroke="alt LESS"/>
     </action>

@@ -4,4 +4,4 @@ import com.github.strindberg.emacsj.xref.XRefHandler
 import com.github.strindberg.emacsj.xref.XRefType
 import com.intellij.openapi.editor.actions.TextComponentEditorAction
 
-class XRefBackAction : TextComponentEditorAction(XRefHandler(XRefType.BACK))
+class XRefForwardAction : TextComponentEditorAction(XRefHandler(XRefType.FORWARD))

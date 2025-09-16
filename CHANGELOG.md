@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+-  Two new XRef actions (contributor: Kyle Waldner)
+    - XRef Go Forward: Go forward to the point where a previous XRef Go Back was invoked. Bound to `Control Alt COMMA`.
+    - XRef Push Mark: Push the current position onto the XRef stack. (this action has no default key binding)
+
 ## [1.4.3] - 2025-08-31
 
 ### Added

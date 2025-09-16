@@ -27,7 +27,7 @@ The main features are:
 - Append-next-kill: append copied/cut text to previous kill.
 - Rectangle commands: copy, open, clear, paste.
 - Zap to character.
-- Go back in XRef history.
+- Go back and forward in XRef history.
 - Whitespace commands: delete space around point, delete empty lines.
 - Duplicate and comment regions and lines.
 - Recenter and relocate caret.
@@ -440,16 +440,23 @@ The commands are:
 
 The *Zap to Character* commands work with multiple carets.
 
-### Go back in XRef History
+### XRef History
 
 When using any of the (IntelliJ standard) commands *Go to Declaration* or *Go to Declaration or Usages*, EmacsJ saves the caret position
-from which the jump is made, creating a stack of previous positions. This stack can be popped with the command *Go Back to Previous Position
-After Jumping to Declaration*, and one can thus easily go back to previous positions.
+from which the jump is made, creating a stack of previous positions. This stack can be popped with the command *XRef Go Back*, and one can
+thus easily go back to previous positions.
+
+After *XRef Go Back*, the command *XRef Go Forward* can be invoked to return to the point where *XRef Go Back* was invoked.
+This is supported by a forward/redo stack that can be traversed in multiple levels.
+
+The command *XRef Push Mark* pushes the current position onto the XRef (backward/undo) stack, and clears the foward/redo stack. This command
+does not have a default key binding.
 
 The commands are:
 
-- Go Back to Previous Position After Jumping to Declaration (`alt-COMMA`). Pop one item from the stack of previous positions and return
-  the caret to that position.
+- XRef Go Back (`alt-COMMA`). Pop one item from the stack of previous positions and return the caret to that position.
+- XRef Go Forward (`ctrl-alt-COMMA`). Go forward to the point where a previous XRef Go Back was invoked.
+- XRef. Push the current position onto the XRef (backward) stack.
 
 ### Kill commands and Append Next Kill
 

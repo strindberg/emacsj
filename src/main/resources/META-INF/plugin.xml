@@ -348,6 +348,14 @@
             <keyboard-shortcut first-keystroke="alt COMMA" keymap="$default"/>
             <keyboard-shortcut first-keystroke="alt COMMA" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.xref.xrefforward"
+                class="com.github.strindberg.emacsj.actions.xref.XRefForwardAction">
+            <keyboard-shortcut first-keystroke="control alt COMMA" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control alt COMMA" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.xref.xrefpush"
+                class="com.github.strindberg.emacsj.actions.xref.XRefPushAction">
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.movement.textstart"
                 class="com.github.strindberg.emacsj.actions.movement.TextStartAction">
