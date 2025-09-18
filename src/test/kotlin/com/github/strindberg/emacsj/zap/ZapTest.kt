@@ -3,6 +3,10 @@ package com.github.strindberg.emacsj.zap
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT3
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT5
+import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
@@ -11,6 +15,7 @@ class ZapTest : BasePlatformTestCase() {
 
     override fun tearDown() {
         ZapHandler.delegate?.hide()
+        UniversalArgumentHandler.delegate?.hide()
         super.tearDown()
     }
 
@@ -174,6 +179,68 @@ class ZapTest : BasePlatformTestCase() {
         myFixture.type("F")
 
         myFixture.checkResult("<caret>oo foo")
+    }
+
+    fun `test Zap with universal argument removes 4 occurrences`() {
+        myFixture.configureByText(FILE, "<caret>) ) ) ) )")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
+        myFixture.type(")")
+
+        myFixture.checkResult("<caret> )")
+    }
+
+    fun `test Zap with numeric universal argument removes 5 occurrences`() {
+        myFixture.configureByText(FILE, "<caret>) ) ) ) )")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
+        myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
+        myFixture.type(")")
+
+        myFixture.checkResult("<caret>")
+    }
+
+    fun `test Zap with universal argument higher than existing occurrences removes no text`() {
+        myFixture.configureByText(FILE, "<caret>) ) ) ) )")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
+        myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
+        myFixture.type(")")
+
+        myFixture.checkResult("<caret>) ) ) ) )")
+    }
+
+    fun `test Zap up to backwards with universal argument removes 3 occurrences`() {
+        myFixture.configureByText(FILE, ") ) ) ) )<caret>")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_ZAP_BACKWARD_UP_TO)
+        myFixture.type(")")
+
+        myFixture.checkResult(") )<caret>")
+    }
+
+    fun `test Zap backwards with numeric universal argument removes 3 occurrences`() {
+        myFixture.configureByText(FILE, ") ) ) ) )<caret>")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
+        myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
+        myFixture.type(") ")
+
+        myFixture.checkResult(") )<caret>")
+    }
+
+    fun `test Zap backwards with numeric universal argument higher than existing occurrences removes no text`() {
+        myFixture.configureByText(FILE, ") ) ) ) )<caret>")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
+        myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
+        myFixture.type(") ")
+
+        myFixture.checkResult(") ) ) ) )<caret>")
     }
 
     fun `test Pressing escape aborts`() {

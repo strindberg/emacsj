@@ -13,6 +13,10 @@ import com.github.strindberg.emacsj.search.ACTION_REPLACE_TEXT
 import com.github.strindberg.emacsj.search.CommonUI
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
+import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
+import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_UP_TO
+import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
+import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_UP_TO
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Document
@@ -33,6 +37,10 @@ private val singleActions = listOf(
     ACTION_PREFIX_PASTE,
     ACTION_PUSH_MARK,
     ACTION_POP_MARK,
+    ACTION_ZAP_FORWARD_TO,
+    ACTION_ZAP_FORWARD_UP_TO,
+    ACTION_ZAP_BACKWARD_TO,
+    ACTION_ZAP_BACKWARD_UP_TO,
 )
 
 class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext, private var numeric: Int?) {
@@ -97,10 +105,10 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
     @Suppress("UnusedPrivateProperty")
     private fun repeatAction(times: Int, action: () -> Unit) {
         document.setReadOnly(false)
+        cancel()
         repeat(times) {
             action()
         }
-        cancel()
     }
 
     internal fun multiply() {
@@ -113,6 +121,8 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
         ui.text = getTimes().toString()
     }
 
+    internal fun getTimes(): Int = numeric ?: counter
+
     internal fun hide() {
         unregisterHandlers()
 
@@ -122,8 +132,6 @@ class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext
 
         UniversalArgumentHandler.delegate = null
     }
-
-    private fun getTimes(): Int = numeric ?: counter
 
     private fun editorActions(): List<String> {
         val actionManager = ActionManager.getInstance()

@@ -1,10 +1,13 @@
 package com.github.strindberg.emacsj.zap
 
 import java.util.UUID
+import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.search.CommonUI
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
+import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
+import com.github.strindberg.emacsj.universal.universalCommandNames
 import com.github.strindberg.emacsj.word.text
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
@@ -49,10 +52,19 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                             val undoGroupId = UUID.randomUUID().toString()
                             document.setReadOnly(false)
                             editor.caretModel.allCarets.reversed().forEach { caret ->
+                                val times =
+                                    if (EmacsJCommandListener.lastCommandNames.second in universalCommandNames) {
+                                        UniversalArgumentHandler.lastArgument
+                                    } else {
+                                        1
+                                    }
                                 val (start, end) = when (type) {
-                                    FORWARD_TO, FORWARD_UP_TO -> Pair(caret.offset, nextCharacter(editor.text, caret.offset, charTyped))
+                                    FORWARD_TO, FORWARD_UP_TO -> Pair(
+                                        caret.offset,
+                                        nextCharacter(editor.text, caret.offset, charTyped, times)
+                                    )
                                     BACKWARD_TO, BACKWARD_UP_TO -> Pair(
-                                        previousCharacter(editor.text, caret.offset, charTyped),
+                                        previousCharacter(editor.text, caret.offset, charTyped, times),
                                         caret.offset
                                     )
                                 }
@@ -125,36 +137,44 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         }
     }
 
-    private fun nextCharacter(text: CharSequence, offset: Int, character: Char): Int? {
-        tailrec fun next(offset: Int): Int? =
+    private fun nextCharacter(text: CharSequence, offset: Int, character: Char, times: Int): Int? {
+        tailrec fun next(offset: Int, found: Int): Int? =
             if (offset >= text.length) {
                 null
             } else if (matches(text[offset], character)) {
-                if (type == FORWARD_UP_TO) {
-                    offset
+                if (found < times - 1) {
+                    next(offset + 1, found + 1)
                 } else {
-                    minOf(text.length, offset + 1)
+                    if (type == FORWARD_UP_TO) {
+                        offset
+                    } else {
+                        minOf(text.length, offset + 1)
+                    }
                 }
             } else {
-                next(offset + 1)
+                next(offset + 1, found)
             }
-        return next(offset)
+        return next(offset, 0)
     }
 
-    private fun previousCharacter(text: CharSequence, offset: Int, character: Char): Int? {
-        tailrec fun previous(offset: Int): Int? =
+    private fun previousCharacter(text: CharSequence, offset: Int, character: Char, times: Int): Int? {
+        tailrec fun previous(offset: Int, found: Int): Int? =
             if (offset <= 0) {
                 null
             } else if (matches(text[offset - 1], character)) {
-                if (type == BACKWARD_UP_TO) {
-                    offset
+                if (found < times - 1) {
+                    previous(offset - 1, found + 1)
                 } else {
-                    maxOf(0, offset - 1)
+                    if (type == BACKWARD_UP_TO) {
+                        offset
+                    } else {
+                        maxOf(0, offset - 1)
+                    }
                 }
             } else {
-                previous(offset - 1)
+                previous(offset - 1, found)
             }
-        return previous(offset)
+        return previous(offset, 0)
     }
 }
 

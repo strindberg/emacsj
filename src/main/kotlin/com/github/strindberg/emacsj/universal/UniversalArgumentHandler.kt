@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.universal
 
+import com.github.strindberg.emacsj.EmacsJBundle
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -39,10 +40,26 @@ internal const val ACTION_UNIVERSAL_ARGUMENT9 = "com.github.strindberg.emacsj.ac
 @Language("devkit-action-id")
 internal const val ACTION_UNIVERSAL_ARGUMENT0 = "com.github.strindberg.emacsj.actions.universal.universalargument0"
 
+internal val universalCommandNames = listOf(
+    ACTION_UNIVERSAL_ARGUMENT,
+    ACTION_UNIVERSAL_ARGUMENT1,
+    ACTION_UNIVERSAL_ARGUMENT2,
+    ACTION_UNIVERSAL_ARGUMENT3,
+    ACTION_UNIVERSAL_ARGUMENT4,
+    ACTION_UNIVERSAL_ARGUMENT5,
+    ACTION_UNIVERSAL_ARGUMENT6,
+    ACTION_UNIVERSAL_ARGUMENT7,
+    ACTION_UNIVERSAL_ARGUMENT8,
+    ACTION_UNIVERSAL_ARGUMENT9,
+    ACTION_UNIVERSAL_ARGUMENT0,
+).map { EmacsJBundle.actionText(it) }
+
 class UniversalArgumentHandler(val numeric: Int?) : EditorActionHandler() {
 
     companion object {
         internal var delegate: UniversalArgumentDelegate? = null
+
+        internal var lastArgument = 1
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
@@ -53,8 +70,11 @@ class UniversalArgumentHandler(val numeric: Int?) : EditorActionHandler() {
             } else {
                 current.addDigit(numeric)
             }
+            lastArgument = current.getTimes()
         } else {
-            delegate = UniversalArgumentDelegate(editor, dataContext, numeric)
+            val newDelegate = UniversalArgumentDelegate(editor, dataContext, numeric)
+            delegate = newDelegate
+            lastArgument = newDelegate.getTimes()
         }
     }
 }

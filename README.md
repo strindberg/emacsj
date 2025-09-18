@@ -429,6 +429,9 @@ variants of this command: kill the text including or not including the given cha
 
 If the given character is not found, no text is removed.
 
+If the previous command was *Universal argument*, the zap commands delete to (or up to) the Nth occurrence of the given
+character, with N as the universal argument. If the number of found occurrences is too low, no text is removed.
+
 All these commands respect the *Append Next Kill* command (see [below](#kill-commands-and-append-next-kill)).
 
 The commands are:
