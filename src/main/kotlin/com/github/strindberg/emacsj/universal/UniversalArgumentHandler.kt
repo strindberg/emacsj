@@ -54,16 +54,21 @@ internal val universalCommandNames = listOf(
     ACTION_UNIVERSAL_ARGUMENT0,
 ).map { EmacsJBundle.actionText(it) }
 
-class UniversalArgumentHandler(val numeric: Int?) : EditorActionHandler() {
+class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 
     companion object {
         internal var delegate: UniversalArgumentDelegate? = null
 
         internal var lastArgument = 1
+
+        internal var cancel = false
+
+        internal var repeating = false
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val current = delegate
+        cancel = false
         if (current != null) {
             if (numeric == null) {
                 current.multiply()
