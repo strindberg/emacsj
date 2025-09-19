@@ -9,7 +9,7 @@
 - Two new XRef commands (contributor: Kyle Waldner)
     - XRef Go Forward: Go forward to the point where a previous XRef Go Back was invoked. Bound to `Control Alt COMMA`.
     - XRef Push Mark: Push the current position onto the XRef stack. (this action has no default key binding)
-- The four zap commands now zap to (or up to) the number of found occurrences specified by *Universal Argument*.
+- The four zap commands now remove (or remove up to) the number of found occurrences specified by *Universal Argument*.
 
 ### Fixed
 

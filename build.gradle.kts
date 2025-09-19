@@ -11,7 +11,6 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.kover)
     alias(libs.plugins.ktlint)
-    alias(libs.plugins.qodana)
 }
 
 group = properties("pluginGroup").get()
