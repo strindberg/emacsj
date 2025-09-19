@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.universal
 
+import com.github.strindberg.emacsj.macro.ACTION_RUN_LAST_MACRO
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
@@ -41,6 +42,7 @@ private val singleActions = listOf(
     ACTION_ZAP_FORWARD_UP_TO,
     ACTION_ZAP_BACKWARD_TO,
     ACTION_ZAP_BACKWARD_UP_TO,
+    ACTION_RUN_LAST_MACRO,
 )
 
 class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext, private var numeric: Int?) {

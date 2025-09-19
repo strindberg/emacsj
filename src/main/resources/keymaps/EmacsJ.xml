@@ -223,6 +223,12 @@
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument0">
         <keyboard-shortcut first-keystroke="control alt 0"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.macro.runlastmacro">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="E"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.macro.cancelrepeat">
+        <keyboard-shortcut first-keystroke="control G"/>
+    </action>
 
     <!--Conflicting shortcuts from Emacs.xml removed-->
     <action id="EditorCutLineEnd"/>
