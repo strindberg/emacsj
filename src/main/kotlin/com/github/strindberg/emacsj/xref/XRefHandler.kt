@@ -3,6 +3,7 @@ package com.github.strindberg.emacsj.xref
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.mark.PlaceInfo
 import com.github.strindberg.emacsj.mark.UndoStack
+import com.github.strindberg.emacsj.mark.manager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.editor.Caret
@@ -10,7 +11,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.TextEditor
-import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.lang.annotations.Language
@@ -33,75 +33,59 @@ class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
         internal fun pushPlace(event: CommandEvent) {
             event.project?.let { project ->
-                withCurrentEditorAndFile(project) { editor, file ->
-                    pushPlaceInfo(editor, project, file)
-                }
-            }
-        }
-
-        private fun getPlaceForBackAction(editor: Editor, project: Project): PlaceInfo? =
-            getPlaceUsingHistory(editor, project) { stack, current -> stack.undo(current) }
-
-        private fun getPlaceForForwardAction(editor: Editor, project: Project): PlaceInfo? =
-            getPlaceUsingHistory(editor, project) { stack, current -> stack.redo(current) }
-
-        private fun pushPlace(editor: Editor, project: Project) {
-            FileEditorManagerEx.getInstanceExIfCreated(project)?.let { manager ->
-                manager.currentFile?.let { virtualFile ->
-                    pushPlaceInfo(editor, project, virtualFile)
-                }
-            }
-        }
-
-        private fun withCurrentEditorAndFile(project: Project, block: (Editor, VirtualFile) -> Unit) {
-            FileEditorManagerEx.getInstanceExIfCreated(project)?.let { manager ->
-                manager.currentFile?.let { virtualFile ->
-                    (manager.getSelectedEditor(virtualFile) as? TextEditor)?.let { fileEditor ->
-                        block(fileEditor.editor, virtualFile)
+                project.manager?.let { manager ->
+                    manager.currentFile?.let { virtualFile ->
+                        (manager.getSelectedEditor(virtualFile) as? TextEditor)?.let { fileEditor ->
+                            pushPlaceInfo(fileEditor.editor, project, virtualFile)
+                        }
                     }
                 }
             }
         }
 
+        private fun getPlaceForBackAction(editor: Editor): PlaceInfo? =
+            getPlaceUsingHistory(editor) { stack, current -> stack.undo(current) }
+
+        private fun getPlaceForForwardAction(editor: Editor): PlaceInfo? =
+            getPlaceUsingHistory(editor) { stack, current -> stack.redo(current) }
+
+        private fun pushPlace(editor: EditorEx) {
+            editor.project?.let { project ->
+                pushPlaceInfo(editor, project, editor.virtualFile)
+            }
+        }
+
         private fun pushPlaceInfo(editor: Editor, project: Project, virtualFile: VirtualFile) {
             MarkHandler.placeInfo(editor, virtualFile)?.let {
-                getStack(project).push(it)
+                places.getOrPut(project.hashCode()) { UndoStack() }.push(it)
             }
         }
 
         private fun getPlaceUsingHistory(
             editor: Editor,
-            project: Project,
             operation: (UndoStack<PlaceInfo>, PlaceInfo) -> PlaceInfo?,
-        ): PlaceInfo? = places[project.hashCode()]?.let { stack ->
-            FileEditorManagerEx.getInstanceExIfCreated(project)?.currentFile?.let { currentFile ->
-                MarkHandler.placeInfo(editor, currentFile)?.let { currentPlace ->
-                    operation(stack, currentPlace)
+        ): PlaceInfo? =
+            editor.project?.let { project ->
+                places[project.hashCode()]?.let { stack ->
+                    editor.virtualFile?.let { currentFile ->
+                        MarkHandler.placeInfo(editor, currentFile)?.let { currentPlace ->
+                            operation(stack, currentPlace)
+                        }
+                    }
                 }
             }
-        }
-
-        private fun getStack(project: Project): UndoStack<PlaceInfo> = places.getOrPut(project.hashCode()) { UndoStack() }
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        val project = (editor as? EditorEx)?.project ?: return
-
-        when (type) {
-            XRefType.BACK -> {
-                getPlaceForBackAction(editor, project)?.let { place ->
+        (editor as? EditorEx)?.let {
+            when (type) {
+                XRefType.BACK -> getPlaceForBackAction(editor)?.let { place ->
                     MarkHandler.gotoPlaceInfo(editor, place)
                 }
-            }
-
-            XRefType.FORWARD -> {
-                getPlaceForForwardAction(editor, project)?.let { place ->
+                XRefType.FORWARD -> getPlaceForForwardAction(editor)?.let { place ->
                     MarkHandler.gotoPlaceInfo(editor, place)
                 }
-            }
-
-            XRefType.PUSH -> {
-                pushPlace(editor, project)
+                XRefType.PUSH -> pushPlace(editor)
             }
         }
     }

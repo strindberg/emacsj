@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditorState
 import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.lang.annotations.Language
 
@@ -30,7 +31,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
         private val places = mutableMapOf<Int, LimitedStack<PlaceInfo>>()
 
         internal fun pushPlaceInfo(editor: Editor) {
-            if (editor is EditorEx) {
+            (editor as? EditorEx)?.let {
                 editor.virtualFile?.let { virtualFile ->
                     placeInfo(editor, virtualFile)?.let { placeInfo ->
                         places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
@@ -47,50 +48,44 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
             }
 
         internal fun placeInfo(editor: Editor, virtualFile: VirtualFile): PlaceInfo? =
-            editor.project?.let { project ->
-                FileEditorManagerEx.getInstanceExIfCreated(project)?.let { fileEditorManager ->
-                    fileEditorManager.getSelectedEditorWithProvider(virtualFile)?.let { editorWithProvider ->
-                        PlaceInfo(
-                            virtualFile,
-                            editorWithProvider.fileEditor.getState(FileEditorStateLevel.UNDO),
-                            editorWithProvider.provider.editorTypeId,
-                            editor.caretModel.primaryCaret.offset,
-                            editor.scrollingModel.verticalScrollOffset,
-                        )
-                    }
-                }
+            editor.project?.manager?.getSelectedEditorWithProvider(virtualFile)?.let { editorWithProvider ->
+                PlaceInfo(
+                    virtualFile,
+                    editorWithProvider.fileEditor.getState(FileEditorStateLevel.UNDO),
+                    editorWithProvider.provider.editorTypeId,
+                    editor.caretModel.primaryCaret.offset,
+                    editor.scrollingModel.verticalScrollOffset,
+                )
             }
 
         internal fun gotoPlaceInfo(editor: EditorEx, info: PlaceInfo) {
-            editor.project?.let { project ->
-                FileEditorManagerEx.getInstanceExIfCreated(project)?.let { fileEditorManager ->
-                    fileEditorManager.openFile(info.file, focusEditor = true)
-                    fileEditorManager.setSelectedEditor(info.file, info.editorTypeId)
-                    fileEditorManager.getSelectedEditorWithProvider(info.file)?.takeIf {
-                        it.provider.editorTypeId == info.editorTypeId
-                    }?.let {
-                        it.fileEditor.setState(info.state)
-                        editor.scrollingModel.scrollVertically(info.scrollOffset)
-                    }
+            editor.project?.manager?.let { manager ->
+                manager.openFile(info.file, focusEditor = true)
+                manager.setSelectedEditor(info.file, info.editorTypeId)
+                manager.getSelectedEditorWithProvider(info.file)?.takeIf {
+                    it.provider.editorTypeId == info.editorTypeId
+                }?.let {
+                    it.fileEditor.setState(info.state)
+                    editor.scrollingModel.scrollVertically(info.scrollOffset)
                 }
             }
         }
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        (editor as? EditorEx)?.let { ex ->
-            ex.virtualFile?.let { virtualFile ->
+        (editor as? EditorEx)?.let {
+            editor.virtualFile?.let { virtualFile ->
                 if (type == POP || EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)) {
                     places[virtualFile.hashCode()]?.pop()?.let { place ->
                         gotoPlaceInfo(editor, place)
                     }
                 } else {
-                    val previousSticky = ex.isStickySelection
-                    ex.isStickySelection = false
-                    placeInfo(ex, virtualFile)?.let { placeInfo ->
-                        if (placeInfo != peek(ex) || !previousSticky) {
+                    val previousSticky = editor.isStickySelection
+                    editor.isStickySelection = false
+                    placeInfo(editor, virtualFile)?.let { placeInfo ->
+                        if (placeInfo != peek(editor) || !previousSticky) {
                             places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
-                            ex.isStickySelection = true
+                            editor.isStickySelection = true
                         }
                     }
                 }
@@ -98,6 +93,9 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
         }
     }
 }
+
+val Project.manager: FileEditorManagerEx?
+    get() = FileEditorManagerEx.getInstanceExIfCreated(this)
 
 class PlaceInfo(
     val file: VirtualFile,

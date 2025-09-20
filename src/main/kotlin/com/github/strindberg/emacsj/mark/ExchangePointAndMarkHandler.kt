@@ -17,22 +17,22 @@ class ExchangePointAndMarkHandler : EditorActionHandler() {
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val primary = caret ?: editor.caretModel.primaryCaret
 
-        (editor as? EditorEx)?.let { ex ->
+        (editor as? EditorEx)?.let {
             if (primary.hasSelection()) {
                 val selectionStart = primary.selectionStart
                 val selectionEnd = primary.selectionEnd
 
                 MarkHandler.pushPlaceInfo(editor)
 
-                ex.startStickySelection()
+                editor.startStickySelection()
                 primary.moveToOffset(if (primary.offset == selectionEnd) selectionStart else selectionEnd)
             } else {
                 MarkHandler.peek(editor)?.caretPosition?.let { oldMark ->
-                    ex.startStickySelection()
+                    editor.startStickySelection()
                     primary.moveToOffset(oldMark)
                 }
             }
-            ex.scrollingModel.scrollToCaret(MAKE_VISIBLE)
+            editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
     }
 }
