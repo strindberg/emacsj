@@ -10,6 +10,11 @@ const val FILE = "file.txt"
 
 class UniversalArgumentTest : BasePlatformTestCase() {
 
+    override fun setUp() {
+        super.setUp()
+        UniversalArgumentDelegate.testing = true
+    }
+
     override fun tearDown() {
         UniversalArgumentHandler.delegate?.hide()
         super.tearDown()

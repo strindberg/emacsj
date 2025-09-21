@@ -40,7 +40,7 @@ internal const val ACTION_UNIVERSAL_ARGUMENT9 = "com.github.strindberg.emacsj.ac
 @Language("devkit-action-id")
 internal const val ACTION_UNIVERSAL_ARGUMENT0 = "com.github.strindberg.emacsj.actions.universal.universalargument0"
 
-internal val universalCommandNames = listOf(
+internal val universalCommandIds = listOf(
     ACTION_UNIVERSAL_ARGUMENT,
     ACTION_UNIVERSAL_ARGUMENT1,
     ACTION_UNIVERSAL_ARGUMENT2,
@@ -52,18 +52,25 @@ internal val universalCommandNames = listOf(
     ACTION_UNIVERSAL_ARGUMENT8,
     ACTION_UNIVERSAL_ARGUMENT9,
     ACTION_UNIVERSAL_ARGUMENT0,
-).map { EmacsJBundle.actionText(it) }
+)
 
-class UniversalArgumentHandler(val numeric: Int?) : EditorActionHandler() {
+internal val universalCommandNames = universalCommandIds.map { EmacsJBundle.actionText(it) }
+
+class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 
     companion object {
         internal var delegate: UniversalArgumentDelegate? = null
 
         internal var lastArgument = 1
+
+        internal var canceled = false
+
+        internal var repeating = false
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val current = delegate
+        canceled = false
         if (current != null) {
             if (numeric == null) {
                 current.multiply()

@@ -425,6 +425,11 @@
             <keyboard-shortcut first-keystroke="control alt 0" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control alt 0" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.universal.cancelrepeat"
+                class="com.github.strindberg.emacsj.actions.universal.CancelRepeatAction">
+            <keyboard-shortcut first-keystroke="control G" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control G" keymap="Emacs"/>
+        </action>
     </actions>
 
 </idea-plugin>

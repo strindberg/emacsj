@@ -211,12 +211,15 @@ command will be executed the specified number of times.
 A few commands &mdash; [Paste: Leave Caret at Point](#paste-kill-ring) and [Pop Mark](#mark-ring) &mdash; are invoked by using *Universal
 Argument* before invoking their standard counterparts (*Paste: Leave Caret After Pasted Region* and *Push Mark*, respectively).
 
+A repeating command can be interrupted by pressing `ctrl-u`.
+
 The commands are:
 
 - Universal Argument (`ctrl-u`). Start accepting an argument with default value 4. Repeated invocations multiply the argument by four.
   Typing digits after activation specifies the argument.
 - Universal Argument\[0,1,...,9] (`ctrl-alt-[0,1,...,9]`). Use the key value as the first digit in the specified argument. Further digits
   can be typed before the command to be repeated.
+- Cancel Repeating Action (`ctrl-g`). Stop the current action from repeating.
 
 ### Word Movement
 

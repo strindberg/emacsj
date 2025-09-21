@@ -9,11 +9,12 @@
 - Two new XRef commands (contributor: Kyle Waldner)
     - XRef Go Forward: Go forward to the point where a previous XRef Go Back was invoked. Bound to `Control Alt COMMA`.
     - XRef Push Mark: Push the current position onto the XRef stack. (this action has no default key binding)
+- New command "Cancel Repeating Action": stop the repeating action that is currently running (after Universal argument). Bound to `Control G`.
 - The four zap commands now remove (or remove up to) the number of found occurrences specified by *Universal Argument*.
 
 ### Fixed
 
-- Commands "Pop Mark" and "XRef Go Backward" set scrolling position to same as that of original position.
+- Commands "Pop Mark" and "XRef Go Backward" (try to) set the scrolling position to the same as that of the original position.
 
 ## [1.4.3] - 2025-08-31
 
