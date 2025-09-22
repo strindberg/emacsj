@@ -1,8 +1,8 @@
 package com.github.strindberg.emacsj.search
 
-import com.github.strindberg.emacsj.actions.repeat.RepeatAction
 import com.github.strindberg.emacsj.actions.search.ISearchAction
 import com.github.strindberg.emacsj.actions.search.ReplaceAction
+import com.github.strindberg.emacsj.actions.universal.RepeatAction
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.ActionPromoter
 import com.intellij.openapi.actionSystem.AnAction
