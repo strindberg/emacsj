@@ -27,7 +27,7 @@ import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
-class UniversalArgumentDelegate(val editor: Editor, val dataContext: DataContext, private var numeric: Int?) {
+class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
 
     // Prevent dead keys such as '^' and '~' from showing up in the editor when collecting arguments.
     private val document: Document = this.editor.document.apply { setReadOnly(true) }

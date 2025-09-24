@@ -79,7 +79,7 @@ class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler(
             }
             lastArgument = current.getTimes()
         } else {
-            val newDelegate = UniversalArgumentDelegate(editor, dataContext, numeric)
+            val newDelegate = UniversalArgumentDelegate(editor, numeric)
             delegate = newDelegate
             lastArgument = newDelegate.getTimes()
         }
