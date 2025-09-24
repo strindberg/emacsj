@@ -1,7 +1,6 @@
 package com.github.strindberg.emacsj
 
 import com.github.strindberg.emacsj.xref.XRefHandler
-import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.command.CommandListener
 
@@ -24,12 +23,7 @@ class EmacsJCommandListener : CommandListener {
     }
 
     override fun commandStarted(event: CommandEvent) {
-        if (event.commandName in listOf(
-                ActionsBundle.actionText("GotoDeclaration"),
-                ActionsBundle.actionText("GotoDeclarationOnly"),
-                ActionsBundle.actionText("GotoTypeDeclaration"),
-            )
-        ) {
+        if (event.commandName in XRefHandler.xRefCommandNames) {
             XRefHandler.pushPlace(event)
         }
     }

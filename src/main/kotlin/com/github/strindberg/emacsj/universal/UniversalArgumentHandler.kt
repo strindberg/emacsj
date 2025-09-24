@@ -40,7 +40,7 @@ internal const val ACTION_UNIVERSAL_ARGUMENT9 = "com.github.strindberg.emacsj.ac
 @Language("devkit-action-id")
 internal const val ACTION_UNIVERSAL_ARGUMENT0 = "com.github.strindberg.emacsj.actions.universal.universalargument0"
 
-internal val universalCommandIds = listOf(
+internal val universalCommandIds = setOf(
     ACTION_UNIVERSAL_ARGUMENT,
     ACTION_UNIVERSAL_ARGUMENT1,
     ACTION_UNIVERSAL_ARGUMENT2,
@@ -54,7 +54,7 @@ internal val universalCommandIds = listOf(
     ACTION_UNIVERSAL_ARGUMENT0,
 )
 
-internal val universalCommandNames = universalCommandIds.map { EmacsJBundle.actionText(it) }
+internal val universalCommandNames = universalCommandIds.map { EmacsJBundle.actionText(it) }.toSet()
 
 class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 

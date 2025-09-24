@@ -94,7 +94,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     }
 }
 
-val Project.manager: FileEditorManagerEx?
+internal val Project.manager: FileEditorManagerEx?
     get() = FileEditorManagerEx.getInstanceExIfCreated(this)
 
 class PlaceInfo(

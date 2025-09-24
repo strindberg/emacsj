@@ -60,7 +60,8 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
         @VisibleForTesting
         internal var lastStringSearches = listOf<String>()
 
-        private var lastRegexpSearches = listOf<String>()
+        @VisibleForTesting
+        internal var lastRegexpSearches = listOf<String>()
 
         private var savedPos = -1
 

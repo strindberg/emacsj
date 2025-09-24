@@ -12,11 +12,11 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
-import org.jetbrains.annotations.VisibleForTesting
+import org.jetbrains.annotations.TestOnly
 
 object CommonHighlighter {
 
-    @VisibleForTesting
+    @TestOnly
     internal var testing = false
 
     private var progressIndicators = mutableListOf<ProgressIndicator>()

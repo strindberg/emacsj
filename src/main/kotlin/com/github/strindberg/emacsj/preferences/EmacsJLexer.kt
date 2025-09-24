@@ -5,14 +5,14 @@ import com.intellij.lexer.LexerBase
 import com.intellij.lexer.LexerPosition
 import com.intellij.psi.tree.IElementType
 
-val PRIMARY_TOKEN_TYPE = IElementType("primary", Language.ANY)
-val SECONDARY_TOKEN_TYPE = IElementType("secondary", Language.ANY)
-val TEXT_TOKEN_TYPE = IElementType("text", Language.ANY)
+internal const val STATE_WORD = 0
+internal const val STATE_OTHER = 1
 
-const val STATE_WORD = 0
-const val STATE_OTHER = 1
+internal const val SEARCH_WORD = "result"
 
-const val SEARCH_WORD = "result"
+internal val PRIMARY_TOKEN_TYPE = IElementType("primary", Language.ANY)
+internal val SECONDARY_TOKEN_TYPE = IElementType("secondary", Language.ANY)
+internal val TEXT_TOKEN_TYPE = IElementType("text", Language.ANY)
 
 class EmacsJLexer : LexerBase() {
 

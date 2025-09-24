@@ -4,6 +4,7 @@ import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.mark.PlaceInfo
 import com.github.strindberg.emacsj.mark.UndoStack
 import com.github.strindberg.emacsj.mark.manager
+import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.editor.Caret
@@ -29,6 +30,12 @@ internal const val ACTION_XREF_FORWARD = "com.github.strindberg.emacsj.actions.x
 class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
     companion object {
+        internal val xRefCommandNames = setOf(
+            ActionsBundle.actionText("GotoDeclaration"),
+            ActionsBundle.actionText("GotoDeclarationOnly"),
+            ActionsBundle.actionText("GotoTypeDeclaration"),
+        )
+
         private val places = mutableMapOf<Int, UndoStack<PlaceInfo>>()
 
         internal fun pushPlace(event: CommandEvent) {

@@ -16,7 +16,7 @@ internal class CommonActionsPromoter : ActionPromoter {
         actions.toMutableList().apply {
             when {
                 ISearchHandler.delegate != null -> {
-                    sortByDescending { isISearchAction(it) }
+                    sortByDescending { it.isISearchAction() }
                 }
                 ReplaceHandler.delegate != null -> {
                     sortByDescending { it is ReplaceAction }
@@ -30,10 +30,10 @@ internal class CommonActionsPromoter : ActionPromoter {
             }
         }
 
-    private fun isISearchAction(action: AnAction?) =
-        action is ISearchAction ||
-            action is BackspaceAction ||
-            action is EnterAction ||
-            action is com.intellij.openapi.editor.actions.PasteAction ||
-            action is com.github.strindberg.emacsj.actions.paste.PasteAction
+    private fun AnAction.isISearchAction() =
+        this is ISearchAction ||
+            this is BackspaceAction ||
+            this is EnterAction ||
+            this is com.intellij.openapi.editor.actions.PasteAction ||
+            this is com.github.strindberg.emacsj.actions.paste.PasteAction
 }

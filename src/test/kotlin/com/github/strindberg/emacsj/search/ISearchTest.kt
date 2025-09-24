@@ -42,12 +42,24 @@ class ISearchTest : BasePlatformTestCase() {
         assertNull(ISearchHandler.delegate?.ui?.count)
     }
 
-    fun `test Empty search doesn't crash`() {
+    fun `test Empty text search doesn't crash`() {
         myFixture.configureByText(FILE, "<caret>foo")
         ISearchHandler.lastStringSearches = listOf()
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("<caret>foo")
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.checkResult("<caret>foo")
+    }
+
+    fun `test Empty regexp search doesn't crash`() {
+        myFixture.configureByText(FILE, "<caret>foo")
+        ISearchHandler.lastRegexpSearches = listOf()
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
         myFixture.checkResult("<caret>foo")
 
         myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)

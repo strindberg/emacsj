@@ -25,6 +25,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.annotations.VisibleForTesting
 
 class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
@@ -45,10 +46,10 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     }
 
     companion object {
-        @VisibleForTesting
+        @TestOnly
         internal var testing = false
 
-        private val singleActions = mutableListOf(
+        private val singleActions = mutableSetOf(
             ACTION_ISEARCH_BACKWARD,
             ACTION_ISEARCH_FORWARD,
             ACTION_ISEARCH_REGEXP_FORWARD,
