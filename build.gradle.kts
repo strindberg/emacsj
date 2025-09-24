@@ -1,8 +1,7 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
-
-fun properties(key: String) = providers.gradleProperty(key)
 
 plugins {
     alias(libs.plugins.changelog)
@@ -13,8 +12,8 @@ plugins {
     alias(libs.plugins.ktlint)
 }
 
-group = properties("pluginGroup").get()
-version = properties("pluginVersion").get()
+group = "com.github.strindberg.emacsj"
+version = providers.gradleProperty("pluginVersion").get()
 
 repositories {
     mavenCentral()
@@ -30,11 +29,9 @@ dependencies {
     detektPlugins(libs.detekt)
 
     intellijPlatform {
-        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
+        create(IntelliJPlatformType.IntellijIdeaCommunity, providers.gradleProperty("platformVersion"))
 
-        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
-
-        plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
+        bundledPlugins(listOf("com.intellij.java", "org.jetbrains.kotlin"))
 
         testFramework(TestFrameworkType.Platform)
     }
@@ -77,6 +74,7 @@ intellijPlatform {
 
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
+            untilBuild = providers.gradleProperty("pluginUntilBuild")
         }
     }
 
@@ -148,7 +146,7 @@ val runIde52 by intellijPlatformTesting.runIde.registering {
 
 changelog {
     groups.empty()
-    repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
+    repositoryUrl = "https://github.com/strindberg/emacsj"
 }
 
 kover {
