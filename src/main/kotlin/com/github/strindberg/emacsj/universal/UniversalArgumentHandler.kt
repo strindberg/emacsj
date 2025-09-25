@@ -63,14 +63,12 @@ class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler(
 
         internal var lastArgument = 1
 
-        internal var canceled = false
-
         internal var repeating = false
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val current = delegate
-        canceled = false
+        repeating = false
         if (current != null) {
             if (numeric == null) {
                 current.multiply()

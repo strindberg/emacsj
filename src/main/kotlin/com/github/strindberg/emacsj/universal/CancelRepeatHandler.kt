@@ -12,6 +12,6 @@ internal const val ACTION_CANCEL_REPEAT = "com.github.strindberg.emacsj.actions.
 class CancelRepeatHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        UniversalArgumentHandler.canceled = true
+        UniversalArgumentHandler.repeating = false
     }
 }

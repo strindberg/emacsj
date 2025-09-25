@@ -25,7 +25,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.annotations.VisibleForTesting
 
 class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
@@ -46,7 +45,8 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     }
 
     companion object {
-        @TestOnly
+
+        @VisibleForTesting
         internal var testing = false
 
         private val singleActions = mutableSetOf(
@@ -125,8 +125,12 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
             UniversalArgumentHandler.repeating = true
             repeat(times) {
                 invokeLater {
-                    if (!UniversalArgumentHandler.canceled) {
-                        action()
+                    if (UniversalArgumentHandler.repeating) {
+                        try {
+                            action()
+                        } catch (_: Exception) {
+                            UniversalArgumentHandler.repeating = false
+                        }
                     }
                 }
             }
@@ -147,9 +151,9 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     internal fun getTimes(): Int = numeric ?: counter
 
     internal fun hide() {
-        unregisterHandlers()
-
         document.setReadOnly(false)
+
+        unregisterHandlers()
 
         ui.cancelUI()
 

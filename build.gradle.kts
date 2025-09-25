@@ -29,7 +29,7 @@ dependencies {
     detektPlugins(libs.detekt)
 
     intellijPlatform {
-        create(IntelliJPlatformType.IntellijIdeaCommunity, providers.gradleProperty("platformVersion"))
+        create(IntelliJPlatformType.IntellijIdeaCommunity, providers.gradleProperty("platformVersion")) {}
 
         bundledPlugins(listOf("com.intellij.java", "org.jetbrains.kotlin"))
 
