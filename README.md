@@ -111,12 +111,13 @@ While searching, the following commands are available:
 - `alt-n`: browse forward in the list of previous searches (with the current type).
 - `alt-<`: move the caret to the first match of the current search without exiting Isearch.
 - `alt->`: move the caret to the last match of the current search without exiting Isearch.
-- `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search.
+- `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search. Repeated use behaves
+  as [Recenter Caret](#recenterreposition).
 
 Text from the clipboard can be pasted while searching: the contents of the clipboard will be added to the current search string.
 
 Note that the keybindings above are only active while using Isearch, i.e. they do not clash with other commands having the same key
-binding outside Isearch. The keybindings `ENTER`, `ESCAPE` or `ctrl-g`, and `BACKSPACE` are non-configurable.
+binding outside Isearch. The keybindings `ENTER`, `ESCAPE` or `ctrl-g`, `ctrl-l` and `BACKSPACE` are non-configurable.
 
 Isearch text uses smart case, such that the search will be performed without case sensitivity if the whole search string consists of lower
 case characters but switch to case-sensitive search if the search string contains one or more capital letters. If you need to search for a
@@ -183,9 +184,11 @@ While replacing, the following keys are active:
 - `e`: edit the replacement text. `ENTER` finishes editing and search/replace is resumed with the new replacement text.
 - `u`: undo the last replacement without exiting search/replace. Can be repeated to undo previous replacements.
 - `^`: visit the position of the last replacement without exiting search/replace. Can be repeated to visit previous replacements.
+- `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search. Repeated use behaves
+  as [Recenter Caret](#recenterreposition).
 
 Note that the keybindings above are only active while using Search/replace, i.e. they do not clash with other commands having the same key
-binding outside Search/replace. The keybindings `y`, `SPACE`, `,`, `n`, `!`, `e`, `u`, `^` and `.` are non-configurable.
+binding outside Search/replace. The keybindings `y`, `SPACE`, `,`, `n`, `!`, `e`, `u`, `^`, `.` and `ctrl-l` are non-configurable.
 
 Search/replace text uses smart case, such that the search will be performed without case sensitivity if the whole search string and the
 whole replacement string consist of lower case characters, but switch to case-sensitive search if the search string or replace string
