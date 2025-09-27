@@ -465,7 +465,7 @@ The commands are:
 
 - XRef Go Back (`alt-COMMA`). Pop one item from the stack of previous positions and return the caret to that position.
 - XRef Go Forward (`ctrl-alt-COMMA`). Go forward to the point where a previous XRef Go Back was invoked.
-- XRef. Push the current position onto the XRef (backward) stack.
+- XRef Push Mark. Push the current position onto the XRef (backward) stack.
 
 ### Kill commands and Append Next Kill
 
