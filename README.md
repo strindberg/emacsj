@@ -165,7 +165,7 @@ region.
 
 When using regexp search, back references to captured groups (parts of the search string delimited by parenthesis) in the matched string can
 be used in the replace-string either in java style (`%1, %2, ...`) or with backslash (`\1, \2, ...`). The whole match can be referenced
-by `$0` or `\&`. To replace with a literal string which could be interpreted as a back reference, use double backlash, such as `\\1`
+by `$0` or `\&`. To replace with a literal string which could be interpreted as a back reference, use double backslash, such as `\\1`
 or `\\&`.
 
 When specifying the search text or the replace-text, the following keys are active:
