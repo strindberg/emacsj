@@ -8,7 +8,7 @@
     <resource-bundle>messages.EmacsJBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <actionPromoter implementation="com.github.strindberg.emacsj.search.CommonActionsPromoter" order="last"/>
+        <actionPromoter implementation="com.github.strindberg.emacsj.EmacsJActionsPromoter" order="last"/>
         <additionalTextAttributes scheme="Default" file="colorSchemes/EmacsJDefault.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/EmacsJDarcula.xml"/>
         <bundledKeymap file="EmacsJ.xml"/>

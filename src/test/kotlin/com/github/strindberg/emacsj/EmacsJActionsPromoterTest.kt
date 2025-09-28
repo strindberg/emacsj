@@ -1,4 +1,4 @@
-package com.github.strindberg.emacsj.search
+package com.github.strindberg.emacsj
 
 import com.github.strindberg.emacsj.actions.mark.PushMarkAction
 import com.github.strindberg.emacsj.actions.search.ISearchRegexpForwardAction
@@ -6,13 +6,20 @@ import com.github.strindberg.emacsj.actions.search.ISearchTextForwardAction
 import com.github.strindberg.emacsj.actions.search.ReplaceNewLineAction
 import com.github.strindberg.emacsj.actions.universal.CancelRepeatAction
 import com.github.strindberg.emacsj.actions.zap.ZapToCharAction
+import com.github.strindberg.emacsj.search.Direction
+import com.github.strindberg.emacsj.search.FILE
+import com.github.strindberg.emacsj.search.ISearchDelegate
+import com.github.strindberg.emacsj.search.ISearchHandler
+import com.github.strindberg.emacsj.search.ReplaceDelegate
+import com.github.strindberg.emacsj.search.ReplaceHandler
+import com.github.strindberg.emacsj.search.SearchType
 import com.github.strindberg.emacsj.universal.UniversalArgumentDelegate
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.actions.EnterAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-class CommonActionsPromoterTest : BasePlatformTestCase() {
+class EmacsJActionsPromoterTest : BasePlatformTestCase() {
 
     override fun tearDown() {
         ISearchHandler.delegate?.hide()
@@ -31,7 +38,7 @@ class CommonActionsPromoterTest : BasePlatformTestCase() {
         val actions = setOf(isearch1, isearch2, PushMarkAction(), ZapToCharAction())
 
         allPermutations(actions).forEach { actionList ->
-            val sorted = CommonActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
+            val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
             assertEquals(actions.size, sorted.size)
             assertTrue(sorted[0] == isearch1 || sorted[0] == isearch2)
         }
@@ -45,7 +52,7 @@ class CommonActionsPromoterTest : BasePlatformTestCase() {
         val actions = setOf(replace, PushMarkAction(), ZapToCharAction())
 
         allPermutations(actions).forEach { actionList ->
-            val sorted = CommonActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
+            val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
             assertEquals(actions.size, sorted.size)
             assertEquals(replace, sorted[0])
         }
@@ -59,7 +66,7 @@ class CommonActionsPromoterTest : BasePlatformTestCase() {
         val actions = setOf(enter, PushMarkAction(), ZapToCharAction())
 
         allPermutations(actions).forEach { actionList ->
-            val sorted = CommonActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
+            val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
             assertEquals(actions.size, sorted.size)
             assertEquals(enter, sorted[0])
         }
@@ -73,7 +80,7 @@ class CommonActionsPromoterTest : BasePlatformTestCase() {
         val actions = setOf(cancel, PushMarkAction(), ZapToCharAction())
 
         allPermutations(actions).forEach { actionList ->
-            val sorted = CommonActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
+            val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
             assertEquals(actions.size, sorted.size)
             assertEquals(cancel, sorted[0])
         }
