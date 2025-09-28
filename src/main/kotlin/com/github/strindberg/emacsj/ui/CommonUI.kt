@@ -1,4 +1,4 @@
-package com.github.strindberg.emacsj.search
+package com.github.strindberg.emacsj.ui
 
 import java.awt.Color
 import java.awt.Dimension

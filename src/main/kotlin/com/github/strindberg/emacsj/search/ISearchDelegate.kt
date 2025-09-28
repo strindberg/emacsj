@@ -19,6 +19,7 @@ import com.github.strindberg.emacsj.search.SearchType.TEXT
 import com.github.strindberg.emacsj.search.StartType.FIRST_SEARCH
 import com.github.strindberg.emacsj.search.StartType.REPEATED_SEARCH
 import com.github.strindberg.emacsj.search.StartType.WRAPAROUND
+import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager

@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent.VK_ENTER
 import java.util.UUID
 import com.github.strindberg.emacsj.search.ReplaceHandler.Companion.addPrevious
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
+import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.github.strindberg.emacsj.word.substring
 import com.github.strindberg.emacsj.word.text

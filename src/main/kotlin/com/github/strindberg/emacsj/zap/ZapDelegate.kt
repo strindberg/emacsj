@@ -3,9 +3,9 @@ package com.github.strindberg.emacsj.zap
 import java.util.UUID
 import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.github.strindberg.emacsj.kill.KillUtil
-import com.github.strindberg.emacsj.search.CommonUI
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
+import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.github.strindberg.emacsj.universal.universalCommandNames
 import com.github.strindberg.emacsj.word.text
@@ -17,7 +17,6 @@ import com.intellij.codeInsight.hint.HintManager
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
@@ -25,8 +24,6 @@ import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
 class ZapDelegate(val editor: Editor, val type: ZapType) {
-    // Prevent dead keys such as '^' and '~' from showing up in the editor when collecting arguments.
-    private val document: Document = this.editor.document.apply { setReadOnly(true) }
 
     private val typedHandler: RestorableTypedActionHandler
 
@@ -43,6 +40,8 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     init {
+        editor.document.setReadOnly(true) // Prevent dead keys such as '^' and '~' from showing up in the editor while searching.
+
         TypedAction.getInstance().apply {
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
@@ -50,7 +49,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                         val delegate = ZapHandler.delegate
                         if (delegate != null) {
                             val undoGroupId = UUID.randomUUID().toString()
-                            document.setReadOnly(false)
+                            editor.document.setReadOnly(false)
                             editor.caretModel.allCarets.reversed().forEach { caret ->
                                 val times =
                                     if (EmacsJCommandListener.lastCommandNames.second in universalCommandNames) {
@@ -68,7 +67,6 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                                         caret.offset
                                     )
                                 }
-                                document.setReadOnly(false)
                                 if (start != null && end != null) {
                                     WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
                                         KillUtil.cut(editor, start, end, prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
@@ -106,7 +104,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     internal fun hide() {
-        document.setReadOnly(false)
+        editor.document.setReadOnly(false)
 
         unregisterHandlers()
 

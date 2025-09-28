@@ -10,9 +10,9 @@ import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_BACKWARD
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_FORWARD
 import com.github.strindberg.emacsj.search.ACTION_REPLACE_REGEXP
 import com.github.strindberg.emacsj.search.ACTION_REPLACE_TEXT
-import com.github.strindberg.emacsj.search.CommonUI
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
+import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_UP_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
@@ -20,7 +20,6 @@ import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_UP_TO
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.invokeLater
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
@@ -28,9 +27,6 @@ import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
 class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
-
-    // Prevent dead keys such as '^' and '~' from showing up in the editor when collecting arguments.
-    private val document: Document = this.editor.document.apply { setReadOnly(true) }
 
     private val typedHandler: RestorableTypedActionHandler
 
@@ -72,6 +68,8 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     }
 
     init {
+        editor.document.setReadOnly(true) // Prevent dead keys such as '^' and '~' from showing up in the editor while searching.
+
         TypedAction.getInstance().apply {
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
@@ -126,7 +124,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     internal fun getTimes(): Int = numeric ?: counter
 
     internal fun hide() {
-        document.setReadOnly(false)
+        editor.document.setReadOnly(false)
 
         unregisterHandlers()
 
@@ -136,8 +134,9 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     }
 
     private fun repeatAction(times: Int, action: () -> Unit) {
-        document.setReadOnly(false)
+        editor.document.setReadOnly(false)
         cancel()
+
         if (times == 1 || testing) {
             repeat(times) {
                 action()
