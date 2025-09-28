@@ -106,9 +106,9 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     internal fun hide() {
-        unregisterHandlers()
-
         document.setReadOnly(false)
+
+        unregisterHandlers()
 
         ui.cancelUI()
 

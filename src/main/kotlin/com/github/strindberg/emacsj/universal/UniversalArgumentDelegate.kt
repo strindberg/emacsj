@@ -113,31 +113,6 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
         ui.show()
     }
 
-    @Suppress("UnusedPrivateProperty")
-    private fun repeatAction(times: Int, action: () -> Unit) {
-        document.setReadOnly(false)
-        cancel()
-        if (times == 1 || testing) {
-            repeat(times) {
-                action()
-            }
-        } else {
-            UniversalArgumentHandler.repeating = true
-            repeat(times) {
-                invokeLater {
-                    if (UniversalArgumentHandler.repeating) {
-                        try {
-                            action()
-                        } catch (_: Exception) {
-                            UniversalArgumentHandler.repeating = false
-                        }
-                    }
-                }
-            }
-            invokeLater { UniversalArgumentHandler.repeating = false }
-        }
-    }
-
     internal fun multiply() {
         counter *= 4
         ui.text = getTimes().toString()
@@ -158,6 +133,40 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
         ui.cancelUI()
 
         UniversalArgumentHandler.delegate = null
+    }
+
+    private fun repeatAction(times: Int, action: () -> Unit) {
+        document.setReadOnly(false)
+        cancel()
+        if (times == 1 || testing) {
+            repeat(times) {
+                action()
+            }
+        } else {
+            val batchSize = 100
+            UniversalArgumentHandler.repeating = true
+            repeat(times / batchSize) {
+                doRepeat(batchSize, action)
+            }
+            doRepeat(times % batchSize, action)
+            invokeLater { UniversalArgumentHandler.repeating = false }
+        }
+    }
+
+    private fun doRepeat(times: Int, action: () -> Unit) {
+        if (times > 0) {
+            invokeLater {
+                repeat(times) {
+                    if (UniversalArgumentHandler.repeating) {
+                        try {
+                            action()
+                        } catch (_: Exception) {
+                            UniversalArgumentHandler.repeating = false
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun editorActions(): List<String> {

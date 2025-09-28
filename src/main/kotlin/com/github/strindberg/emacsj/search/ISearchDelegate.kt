@@ -119,6 +119,8 @@ internal class ISearchDelegate(private val editor: Editor, val type: SearchType,
 
     internal fun hide() {
         if (!inhibitCancel) {
+            editor.document.setReadOnly(false)
+
             unregisterHandlers()
 
             editor.markupModel.removeAllHighlighters()
@@ -126,8 +128,6 @@ internal class ISearchDelegate(private val editor: Editor, val type: SearchType,
             editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
 
             editor.caretModel.removeCaretListener(caretListener)
-
-            editor.document.setReadOnly(false)
 
             ISearchHandler.searchConcluded(text, type)
 
