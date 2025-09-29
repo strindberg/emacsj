@@ -227,9 +227,9 @@ class ZapTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
-        myFixture.type(") ")
+        myFixture.type(")")
 
-        myFixture.checkResult(") )<caret>")
+        myFixture.checkResult(") ) <caret>")
     }
 
     fun `test Zap backwards with numeric universal argument higher than existing occurrences removes no text`() {
@@ -238,7 +238,7 @@ class ZapTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
-        myFixture.type(") ")
+        myFixture.type(")")
 
         myFixture.checkResult(") ) ) ) )<caret>")
     }
