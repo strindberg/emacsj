@@ -66,7 +66,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
             ACTION_ZAP_BACKWARD_UP_TO,
         )
 
-        internal fun registerSingleAction(actionId: String) {
+        public fun registerSingleAction(actionId: String) {
             singleActions.add(actionId)
         }
     }
