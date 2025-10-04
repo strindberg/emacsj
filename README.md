@@ -294,7 +294,8 @@ The delete whitespace commands reduce the number of whitespace characters around
 
 The commands are:
 
-- Delete All Whitespace Around Point (`ctrl-BACKSPACE`). Delete whitespace before and after caret.
+- Delete All Whitespace Around Point (`ctrl-BACKSPACE`). Delete whitespace before and after caret. If used after *Universal Argument*, only
+  delete whitespace to the left of the cursor.
 - Leave One Space at Point (`alt-SPACE`). Reduce all whitespace around point to only one space.
 
 The *Delete Whitespace* commands work with multiple carets.
