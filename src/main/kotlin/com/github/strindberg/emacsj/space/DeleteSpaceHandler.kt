@@ -1,10 +1,7 @@
 package com.github.strindberg.emacsj.space
 
-import com.github.strindberg.emacsj.EmacsJBundle
-import com.github.strindberg.emacsj.EmacsJCommandListener
 import com.github.strindberg.emacsj.space.Type.DELETE
 import com.github.strindberg.emacsj.space.Type.ONE_SPACE
-import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.github.strindberg.emacsj.word.text
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
@@ -27,11 +24,7 @@ class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret
         val end = nextNonWhiteSpace(editor.text, caret.offset)
         when (type) {
             DELETE -> {
-                if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)) {
-                    editor.document.deleteString(start, caret.offset)
-                } else {
-                    editor.document.deleteString(start, end)
-                }
+                editor.document.deleteString(start, end)
             }
             ONE_SPACE -> {
                 editor.document.replaceString(start, end, " ")

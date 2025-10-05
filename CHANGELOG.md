@@ -4,10 +4,6 @@
 
 ## [Unreleased]
 
-### Added
-
-- "Delete All Whitespace at Point" now only deletes whitespace to the left of caret after "Univeral argument".
-
 ## [1.5.0] - 2025-09-30
 
 ### Added

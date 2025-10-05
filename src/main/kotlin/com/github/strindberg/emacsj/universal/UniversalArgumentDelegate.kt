@@ -12,7 +12,6 @@ import com.github.strindberg.emacsj.search.ACTION_REPLACE_REGEXP
 import com.github.strindberg.emacsj.search.ACTION_REPLACE_TEXT
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
-import com.github.strindberg.emacsj.space.ACTION_DELETE_SPACE
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_UP_TO
@@ -61,7 +60,6 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
             ACTION_ZAP_FORWARD_UP_TO,
             ACTION_ZAP_BACKWARD_TO,
             ACTION_ZAP_BACKWARD_UP_TO,
-            ACTION_DELETE_SPACE,
         )
 
         public fun registerSingleAction(actionId: String) {
