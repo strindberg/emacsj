@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- "Delete All Whitespace at Point" now deletes whitespace to the left of caret after "Univeral argument".
+- "Transpose Lines" exchanges the current line with a line above it. Which line can be modified with "Univeral argument".
+
 ## [1.5.0] - 2025-09-30
 
 ### Added
