@@ -18,7 +18,7 @@ class PrefixDeleteSpaceTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE2, "foo<caret> bar")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
-        myFixture.checkResult("foo<caret>bar")
+        myFixture.checkResult("foo<caret> bar")
     }
 
     fun `test Delete several spaces forward`() {
