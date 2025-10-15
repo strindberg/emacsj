@@ -9,6 +9,8 @@ import com.github.strindberg.emacsj.paste.Type.HISTORY
 import com.github.strindberg.emacsj.paste.Type.PREFIX
 import com.github.strindberg.emacsj.paste.Type.STANDARD
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
+import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
+import com.github.strindberg.emacsj.universal.universalCommandNames
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -57,7 +59,11 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
                 clipboardHistoryPos = 0
                 pasteType =
                     if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)) PREFIX else type
-                editor.pasteAndMove()
+                if (EmacsJCommandListener.lastCommandName in universalCommandNames - EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)) {
+                    editor.pasteAndMove(UniversalArgumentHandler.lastArgument)
+                } else {
+                    editor.pasteAndMove()
+                }
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
             HISTORY -> {
@@ -73,8 +79,8 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
         }
     }
 
-    private fun Editor.pasteAndMove() {
-        nextHistoryClipboard()?.let { contents ->
+    private fun Editor.pasteAndMove(steps: Int = 0) {
+        nextHistoryClipboard(steps)?.let { contents ->
             val ranges = pasteTransferable(contents)
             putUserData(LAST_PASTED_REGIONS, ranges)
             ranges.forEach { range ->
@@ -97,8 +103,11 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             }
             .distinctBy { it.getTransferData(DataFlavor.stringFlavor) as String }
 
-    private fun nextHistoryClipboard(): Transferable? =
-        clipboardHistory.takeUnless { it.isEmpty() }?.let { history -> history[clipboardHistoryPos++ % history.size] }
+    private fun nextHistoryClipboard(steps: Int): Transferable? =
+        clipboardHistory.takeUnless { it.isEmpty() }?.let { history ->
+            clipboardHistoryPos += steps
+            history[clipboardHistoryPos++ % history.size]
+        }
 
     private fun Editor.pasteTransferable(contents: Transferable): List<TextRange> =
         EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.toList() ?: emptyList()
