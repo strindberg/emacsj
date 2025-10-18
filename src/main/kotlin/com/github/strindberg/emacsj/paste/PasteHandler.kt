@@ -105,7 +105,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     private fun nextHistoryClipboard(steps: Int): Transferable? =
         clipboardHistory.takeUnless { it.isEmpty() }?.let { history ->
-            clipboardHistoryPos += steps
+            clipboardHistoryPos += maxOf(0, steps - 1)
             history[clipboardHistoryPos++ % history.size]
         }
 
