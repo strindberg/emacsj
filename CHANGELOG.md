@@ -6,8 +6,10 @@
 
 ### Added
 
-- "Delete All Whitespace at Point" now deletes whitespace to the left of caret after "Univeral argument".
-- "Transpose Lines" exchanges the current line with a line above it. Which line can be modified with "Univeral argument".
+- "Delete All Whitespace at Point" now deletes whitespace to the left of caret after "Universal argument".
+- "Transpose Lines" exchanges the current line with a line above it. Which line can be modified with "Universal argument".
+- The Paste commands now respect a numeric "Universal arguments", and paste the kill ring element chosen with the argument, counted from 
+  the end.
 
 ## [1.5.0] - 2025-09-30
 
