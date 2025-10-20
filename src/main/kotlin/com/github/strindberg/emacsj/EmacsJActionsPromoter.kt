@@ -24,11 +24,14 @@ internal class EmacsJActionsPromoter : ActionPromoter {
                 ReplaceHandler.delegate != null -> {
                     sortByDescending { it is ReplaceAction }
                 }
+                UniversalArgumentHandler.repeating -> {
+                    sortByDescending { it is RepeatAction }
+                }
                 UniversalArgumentHandler.delegate != null -> {
                     sortByDescending { it is EnterAction }
                 }
-                UniversalArgumentHandler.repeating -> {
-                    sortByDescending { it is RepeatAction }
+                else -> {
+                    sortBy { it is ISearchAction || it is ReplaceAction || it is RepeatAction }
                 }
             }
         }

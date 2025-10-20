@@ -1493,6 +1493,94 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo bar foo bar<caret> foo bar")
     }
 
+    fun `test Search can be toggled from undefined case to case sensitive`() {
+        myFixture.configureByText(FILE, "<caret>foo Foo foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+        myFixture.checkResult("foo<caret> Foo foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_CASE)
+        assertEquals(CaseType.SENSITIVE, ISearchHandler.delegate?.caseType)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo Foo foo<caret> bar")
+    }
+
+    fun `test Search can be toggled from case sensitive to case insensitive`() {
+        myFixture.configureByText(FILE, "<caret>foo Foo foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+        myFixture.checkResult("foo<caret> Foo foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_CASE)
+        assertEquals(CaseType.SENSITIVE, ISearchHandler.delegate?.caseType)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo Foo foo<caret> Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_CASE)
+        assertEquals(CaseType.INSENSITIVE, ISearchHandler.delegate?.caseType)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo Foo foo Foo<caret> bar")
+    }
+
+    fun `test Search can be toggled from undefined case to case insensitive`() {
+        myFixture.configureByText(FILE, "<caret>foo Foo foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("Foo")
+        myFixture.checkResult("foo Foo<caret> foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_CASE)
+        assertEquals(CaseType.INSENSITIVE, ISearchHandler.delegate?.caseType)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo Foo foo<caret> Foo bar")
+    }
+
+    fun `test Search can be toggled from case insensitive to case sensitive`() {
+        myFixture.configureByText(FILE, "<caret>foo Foo foo foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("Foo")
+        myFixture.checkResult("foo Foo<caret> foo foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_CASE)
+        assertEquals(CaseType.INSENSITIVE, ISearchHandler.delegate?.caseType)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo Foo foo<caret> foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_CASE)
+        assertEquals(CaseType.SENSITIVE, ISearchHandler.delegate?.caseType)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo Foo foo foo Foo<caret> bar")
+    }
+
+    fun `test Case sensitivity state is remembered in breadcrumbs`() {
+        myFixture.configureByText(FILE, "<caret>foo Foo foo foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("Foo")
+        myFixture.checkResult("foo Foo<caret> foo foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_CASE)
+        assertEquals(CaseType.INSENSITIVE, ISearchHandler.delegate?.caseType)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo Foo foo<caret> foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_CASE)
+        assertEquals(CaseType.SENSITIVE, ISearchHandler.delegate?.caseType)
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo Foo foo foo Foo<caret> bar")
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        assertEquals(CaseType.INSENSITIVE, ISearchHandler.delegate?.caseType)
+        myFixture.checkResult("foo Foo<caret> foo foo Foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo Foo foo<caret> foo Foo bar")
+    }
+
     fun `test First match can be reached when searching forward`() {
         myFixture.configureByText(
             FILE,

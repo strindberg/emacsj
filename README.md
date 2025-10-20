@@ -67,9 +67,9 @@ Incremental search. Each letter typed is added to the search, and the nearest ma
 The place of the current match among all matches is displayed together with the total number of matches. Keep adding letters to narrow
 the search.
 
-While searching, pressing the search keybinding again jumps to the next match, if available. Once the matches are exhausted at the end of
-the file, the search bar indicates that no more matches can be found. Pressing the search key again at this stage restarts the search at the
-beginning of the file (or the end if reverse search is active). The direction of the search can be changed at any time with the
+While searching, pressing the search key again jumps to the next match, if available. Once the matches are exhausted at the end of
+the file, the search bar indicates that no more matches can be found. Pressing the search key again at this stage restarts the search at
+the beginning of the file (or the end if reverse search is active). The direction of the search can be changed at any time with the
 corresponding key.
 
 The way Isearch interprets white space in the search string can be configured (see [below](#isearch-configuration---lax-mode)) between
@@ -107,10 +107,11 @@ While searching, the following commands are available:
 - `ctrl-alt-e`: add the rest of the current editor line to the search string.
 - `ctrl-alt-y`: add the character at point to the search string.
 - `ctrl-shift-ENTER`: add a new line character to the search string.
-- `alt-p`: browse backward in the list of previous searches (with the current type).
-- `alt-n`: browse forward in the list of previous searches (with the current type).
+- `alt-c`: toggle between case-sensitive and case-insensitive search.
 - `alt-<`: move the caret to the first match of the current search without exiting Isearch.
 - `alt->`: move the caret to the last match of the current search without exiting Isearch.
+- `alt-p`: browse backward in the list of previous searches (with the current type).
+- `alt-n`: browse forward in the list of previous searches (with the current type).
 - `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search. Repeated use behaves
   as [Recenter Caret](#recenterreposition).
 
@@ -119,9 +120,9 @@ Text from the clipboard can be pasted while searching: the contents of the clipb
 Note that the keybindings above are only active while using Isearch, i.e. they do not clash with other commands having the same key
 binding outside Isearch. The keybindings `ENTER`, `ESCAPE` or `ctrl-g`, `ctrl-l` and `BACKSPACE` are non-configurable.
 
-Isearch text uses smart case, such that the search will be performed without case sensitivity if the whole search string consists of lower
-case characters but switch to case-sensitive search if the search string contains one or more capital letters. If you need to search for a
-lower case string and not match upper case letters, use regexp search which is always case-sensitive.
+Isearch text uses smart case: the search will be performed without case sensitivity if the whole search string consists of lower
+case characters but switch to case-sensitive search if the search string contains one or more capital letters. This can be changed
+by toggling between case-sensitive and case-insensitive search with `alt-c` (see above). Regexp search is always case-sensitive.
 
 *Isearch* works with multiple carets.
 
