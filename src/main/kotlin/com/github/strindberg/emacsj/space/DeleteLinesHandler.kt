@@ -22,7 +22,7 @@ class DeleteLinesHandler : EditorWriteActionHandler.ForEachCaret() {
         if (!DocumentUtil.isLineEmpty(document, lineNum)) {
             if (lineNum + 1 < document.lineCount) {
                 val (start, end) = getEmptySuccessorLines(document, lineNum)
-                end?.let { document.deleteString(start, minOf(it, editor.text.length)) }
+                end?.let { document.deleteString(start, minOf(end, editor.text.length)) }
             }
         } else {
             val nextBlank = lineNum + 1 < document.lineCount && DocumentUtil.isLineEmpty(document, lineNum + 1)
@@ -35,7 +35,7 @@ class DeleteLinesHandler : EditorWriteActionHandler.ForEachCaret() {
                 if (lineNum + 1 < document.lineCount) {
                     val (start, end) = getEmptySuccessorLines(document, lineNum)
                     end?.let {
-                        document.deleteString(start, minOf(it, editor.text.length))
+                        document.deleteString(start, minOf(end, editor.text.length))
                         if (caret.offset == editor.text.lastIndex) {
                             document.deleteString(caret.offset, caret.offset + 1)
                         }
@@ -43,7 +43,7 @@ class DeleteLinesHandler : EditorWriteActionHandler.ForEachCaret() {
                 }
                 if (lineNum > 0) {
                     val (start, end) = getEmptyPrecedingLines(document, lineNum)
-                    start?.let { document.deleteString(maxOf(0, it), end) }
+                    start?.let { document.deleteString(maxOf(0, start), end) }
                 }
             }
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)

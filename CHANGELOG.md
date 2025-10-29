@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- "Delete All Whitespace at Point" now deletes whitespace to the left of caret after *Universal argument*.
+
 ## [1.5.0] - 2025-09-30
 
 ### Added
@@ -162,7 +166,7 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 
 ### Fixed
 
-- Recenter works better att editor ends.
+- Recenter works better at editor ends.
 
 ## [1.1.0] - 2023-12-15
 
