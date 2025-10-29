@@ -19,7 +19,7 @@ object CommonHighlighter {
     @VisibleForTesting
     internal var testing = false
 
-    private var progressIndicators = mutableListOf<ProgressIndicator>()
+    private val progressIndicators = mutableListOf<ProgressIndicator>()
 
     internal fun cancel(editor: Editor) {
         val iterator = progressIndicators.iterator()

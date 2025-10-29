@@ -29,7 +29,13 @@ internal data class Match(val start: Int, val end: Int)
 
 internal data class CaretBreadcrumb(val match: Match, val direction: Direction)
 
-internal data class EditorBreadcrumb(val title: String, val text: String, val state: ISearchState, val count: Pair<Int, Int>?)
+internal data class EditorBreadcrumb(
+    val title: String,
+    val text: String,
+    val state: ISearchState,
+    val caseType: CaseType,
+    val count: Pair<Int, Int>?,
+)
 
 internal enum class ISearchState { SEARCH, FAILED, EDIT }
 
@@ -47,3 +53,5 @@ enum class Direction {
                 BACKWARD -> FORWARD
             }
 }
+
+internal enum class CaseType { UNSPECIFIED, SENSITIVE, INSENSITIVE }
