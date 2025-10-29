@@ -110,5 +110,5 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
         }
 
     private fun Editor.pasteTransferable(contents: Transferable): List<TextRange> =
-        EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.toList() ?: emptyList()
+        EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.toList().orEmpty()
 }

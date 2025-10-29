@@ -314,7 +314,7 @@ internal class ISearchDelegate(private val editor: Editor, val type: SearchType,
                                 EDIT -> text += ClipboardUtil.getTextInClipboard()
                                 SEARCH, FAILED -> searchAllCarets(
                                     searchDirection = direction,
-                                    newText = ClipboardUtil.getTextInClipboard() ?: ""
+                                    newText = ClipboardUtil.getTextInClipboard().orEmpty()
                                 )
                             }
                         }.also { add(it) }

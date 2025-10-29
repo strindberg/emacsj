@@ -81,7 +81,7 @@ internal class CommonUI(
     internal var count: Pair<Int, Int>? = null
         set(newCount) {
             field = newCount
-            countLabel.text = newCount?.let { "(${newCount.first}/${newCount.second})" } ?: ""
+            countLabel.text = newCount?.let { "(${newCount.first}/${newCount.second})" }.orEmpty()
         }
 
     internal var textColor: Color

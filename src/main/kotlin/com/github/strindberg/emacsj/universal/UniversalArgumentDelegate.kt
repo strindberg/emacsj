@@ -186,13 +186,9 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     }
 
     private fun unregisterHandlers() {
-        TypedAction.getInstance().apply {
-            setupRawHandler(typedHandler.originalHandler)
-        }
-        EditorActionManager.getInstance().apply {
-            actionHandlers.forEach {
-                setActionHandler(it.actionId, it.originalHandler)
-            }
+        TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
+        actionHandlers.forEach {
+            EditorActionManager.getInstance().setActionHandler(it.actionId, it.originalHandler)
         }
     }
 }
