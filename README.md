@@ -364,6 +364,10 @@ at Point*, the pasted text is replaced by the next item in the list of previousl
 *Paste: Leave Caret at Point* is triggered when using *Paste: Leave Caret After Pasted Region* after [Universal
 Argument](#universal-argument). It can also be invoked explicitly with a dedicated key binding, but by default it is not bound to any key.
 
+The paste commands respect numeric *Universal argument*, and will paste the kill ring element chosen with the argument, counted from
+the end. In other words, pressing `ctrl-alt-2`and then `ctrl-y` will paste the penultimate item in the kill ring. Paste after non-numeric
+*Universal argument* (i.e. `ctrl-u`) invokes *Paste: Leave Caret at Point* as described above.
+
 All paste commands push the opposite end of the pasted region as a mark to the [mark ring](#mark-ring) (without starting a selection). In
 other words, when using *Paste: Leave Caret After Pasted Region*, a mark is pushed at the beginning of the pasted region, and vice versa
 for *Paste: Leave Caret at Point*.

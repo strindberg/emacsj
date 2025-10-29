@@ -1,9 +1,11 @@
 package com.github.strindberg.emacsj.paste
 
 import java.awt.datatransfer.StringSelection
+import com.github.strindberg.emacsj.kill.ACTION_CUT
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT2
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.ide.ClientCopyPasteManager
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
@@ -265,5 +267,23 @@ class PasteTest : BasePlatformTestCase() {
             |foo<caret>barbarBAZ
             """.trimMargin()
         )
+    }
+
+    fun `test Paste after numeric universal argument works`() {
+        myFixture.configureByText(FILE, "foo<selection>one</selection><caret>")
+        myFixture.performEditorAction(ACTION_CUT)
+        myFixture.checkResult("foo<caret>")
+
+        myFixture.configureByText(FILE, "foo<selection>two</selection><caret>")
+        myFixture.performEditorAction(ACTION_CUT)
+        myFixture.checkResult("foo<caret>")
+
+        myFixture.configureByText(FILE, "foo<selection>three</selection><caret>")
+        myFixture.performEditorAction(ACTION_CUT)
+        myFixture.checkResult("foo<caret>")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
+        myFixture.performEditorAction(ACTION_PASTE)
+        myFixture.checkResult("footwo<caret>")
     }
 }

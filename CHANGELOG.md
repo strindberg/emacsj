@@ -8,6 +8,8 @@
 
 - "Delete All Whitespace at Point" now deletes whitespace to the left of caret after *Universal argument*.
 - "Transpose Lines" exchanges the current line with a line above it. Which line can be modified with *Universal argument*.
+- The Paste commands now respect numeric *Universal argument*, and will paste the kill ring element chosen with the argument, counted from
+  the end. Paste after non-numeric *Universal argument* invokes *Paste: Leave Caret at Point* as before.
 - Case-sensitive search can now be toggled on and off during Isearch.
 
 ## [1.5.0] - 2025-09-30
