@@ -508,6 +508,17 @@ The commands are:
 
 The *Kill* commands work with multiple carets.
 
+### Transpose Lines
+
+*Transpose Lines* interchanges the line at point with the preceding line. If a numeric argument is set by *Universal Argument*, the
+command will interchange the current line with the Nth preceding line, with N being the universal argument. If the Universal argument
+is 0, the current line is interchanged with the line where the mark is currently set. 
+
+The commands are:
+
+- Transpose Lines (`ctrl-x ctrl-t`). Interchange the current line with the preceding line. Universal argument modified the behavior as
+described above.
+
 ### Buffer Beginning/End Movement
 
 *Beginning of Buffer* and *End of Buffer* work as the IntelliJ commands *Move Caret to Text Start* and *Move Caret to Text End*,

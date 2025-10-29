@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.universal
 
+import com.github.strindberg.emacsj.line.ACTION_TRANSPOSE_LINES
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
@@ -62,6 +63,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
             ACTION_ZAP_BACKWARD_TO,
             ACTION_ZAP_BACKWARD_UP_TO,
             ACTION_DELETE_SPACE,
+            ACTION_TRANSPOSE_LINES,
         )
 
         public fun registerSingleAction(actionId: String) {
@@ -184,13 +186,9 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     }
 
     private fun unregisterHandlers() {
-        TypedAction.getInstance().apply {
-            setupRawHandler(typedHandler.originalHandler)
-        }
-        EditorActionManager.getInstance().apply {
-            actionHandlers.forEach {
-                setActionHandler(it.actionId, it.originalHandler)
-            }
+        TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
+        actionHandlers.forEach {
+            EditorActionManager.getInstance().setActionHandler(it.actionId, it.originalHandler)
         }
     }
 }

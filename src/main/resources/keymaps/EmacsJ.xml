@@ -226,6 +226,9 @@
     <action id="com.github.strindberg.emacsj.actions.universal.cancelrepeat">
         <keyboard-shortcut first-keystroke="control G"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.line.transposelines">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="control T"/>
+    </action>
 
 
     <!--Conflicting shortcuts from Emacs.xml removed-->
