@@ -336,9 +336,8 @@ The *Duplicate and Comment* commands work with multiple carets.
 
 ### Rectangles
 
-A rectangle is defined as the rectangular region limited by the upper-left corner and the lower right corner of the active selection. To use
-these commands, first select a region and then use the proper command. No characters outside the rectangle will be affected (although
-they might move left or right).
+A rectangle is defined as the rectangular region limited by the caret's point and its opposite corner in the active selection. To use these
+commands, first select a region and then use the proper command. No characters outside the rectangle will be affected.
 
 Please note that unlike Emacs, IntelliJ cannot display the selected rectangle as a rectangle, but the commands work as described.
 
@@ -517,12 +516,12 @@ The *Kill* commands work with multiple carets.
 
 *Transpose Lines* interchanges the line at point with the preceding line. If a numeric argument is set by *Universal Argument*, the
 command will interchange the current line with the Nth preceding line, with N being the universal argument. If the Universal argument
-is 0, the current line is interchanged with the line where the mark is currently set. 
+is 0, the current line is interchanged with the line where the mark is currently set.
 
 The commands are:
 
 - Transpose Lines (`ctrl-x ctrl-t`). Interchange the current line with the preceding line. Universal argument modified the behavior as
-described above.
+  described above.
 
 ### Buffer Beginning/End Movement
 
