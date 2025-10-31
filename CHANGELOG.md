@@ -4,13 +4,15 @@
 
 ## [Unreleased]
 
+## [1.5.1] - 2025-10-31
+
 ### Added
 
-- "Delete All Whitespace at Point" now deletes whitespace to the left of caret after *Universal argument*.
-- "Transpose Lines" exchanges the current line with a line above it. Which line can be modified with *Universal argument*.
+- New command *Transpose Lines* exchanges the current line with a line above it. Which line can be modified with *Universal argument*.
+- Case-sensitive search can now be toggled on and off during Isearch with `alt-c`.
+- *Delete All Whitespace at Point* now deletes whitespace to the left of caret after *Universal argument*.
 - The Paste commands now respect numeric *Universal argument*, and will paste the kill ring element chosen with the argument, counted from
   the end. Paste after non-numeric *Universal argument* invokes *Paste: Leave Caret at Point* as before.
-- Case-sensitive search can now be toggled on and off during Isearch.
 
 ## [1.5.0] - 2025-09-30
 
@@ -212,7 +214,8 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/strindberg/emacsj/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/strindberg/emacsj/compare/v1.4.3...v1.5.0
 [1.4.3]: https://github.com/strindberg/emacsj/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/strindberg/emacsj/compare/v1.4.1...v1.4.2
