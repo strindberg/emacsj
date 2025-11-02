@@ -230,7 +230,6 @@
         <keyboard-shortcut first-keystroke="control X" second-keystroke="control T"/>
     </action>
 
-
     <!--Conflicting shortcuts from Emacs.xml removed-->
     <action id="EditorCutLineEnd"/>
     <action id="EditorDeleteToWordStart">
