@@ -26,11 +26,6 @@ internal const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacs
 class ISearchHandler(private val direction: Direction, private val type: SearchType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        // Access to ApplicationManager.getApplication() is prohibited during class loading, so we delay until first use of Isearch action.
-        if (!initialized) {
-            lax = EmacsJSettings.getInstance().state.useLaxISearch
-            initialized = true
-        }
         val current = delegate
         if (current != null) {
             if (current.isActive()) {
@@ -65,9 +60,16 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
 
         private var savedPos = -1
 
-        internal var lax: Boolean = false
-
         private var initialized = false
+
+        internal var lax: Boolean = false
+            get() {
+                if (!initialized) {
+                    field = EmacsJSettings.getInstance().state.useLaxISearch // We can't access this value in constructor
+                    initialized = true
+                }
+                return field
+            }
 
         internal fun toggleLax() {
             lax = !lax
