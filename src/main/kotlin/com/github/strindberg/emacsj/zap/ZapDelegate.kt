@@ -1,13 +1,12 @@
 package com.github.strindberg.emacsj.zap
 
 import java.util.UUID
-import com.github.strindberg.emacsj.EmacsJCommandListener
+import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
-import com.github.strindberg.emacsj.universal.universalCommandNames
 import com.github.strindberg.emacsj.word.text
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
@@ -52,7 +51,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                             editor.document.setReadOnly(false)
                             editor.caretModel.allCarets.reversed().forEach { caret ->
                                 val times =
-                                    if (EmacsJCommandListener.lastCommandNames.second in universalCommandNames) {
+                                    if (EmacsJService.instance.isPreviousUniversal()) {
                                         UniversalArgumentHandler.lastArgument
                                     } else {
                                         1

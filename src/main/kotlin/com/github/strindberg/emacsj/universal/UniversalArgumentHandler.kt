@@ -54,7 +54,11 @@ internal val universalCommandIds = setOf(
     ACTION_UNIVERSAL_ARGUMENT0,
 )
 
+internal val universalCommandName = EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)
+
 internal val universalCommandNames = universalCommandIds.map { EmacsJBundle.actionText(it) }.toSet()
+
+internal val numericUniversalCommandNames = universalCommandNames - universalCommandName
 
 class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 

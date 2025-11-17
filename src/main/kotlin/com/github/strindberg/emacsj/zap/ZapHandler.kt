@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.zap
 
+import com.github.strindberg.emacsj.EmacsJBundle
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -19,6 +20,13 @@ internal const val ACTION_ZAP_BACKWARD_TO = "com.github.strindberg.emacsj.action
 
 @Language("devkit-action-id")
 internal const val ACTION_ZAP_BACKWARD_UP_TO = "com.github.strindberg.emacsj.actions.zap.zapbackupto"
+
+internal val zapCommandNames = listOf(
+    EmacsJBundle.actionText(ACTION_ZAP_FORWARD_TO),
+    EmacsJBundle.actionText(ACTION_ZAP_FORWARD_UP_TO),
+    EmacsJBundle.actionText(ACTION_ZAP_BACKWARD_TO),
+    EmacsJBundle.actionText(ACTION_ZAP_BACKWARD_UP_TO),
+)
 
 class ZapHandler(private val type: ZapType) : EditorActionHandler() {
 
