@@ -3,14 +3,12 @@ package com.github.strindberg.emacsj.paste
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import com.github.strindberg.emacsj.EmacsJBundle
-import com.github.strindberg.emacsj.EmacsJCommandListener
+import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.paste.Type.HISTORY
 import com.github.strindberg.emacsj.paste.Type.PREFIX
 import com.github.strindberg.emacsj.paste.Type.STANDARD
-import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
-import com.github.strindberg.emacsj.universal.universalCommandNames
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -57,18 +55,19 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             STANDARD, PREFIX -> {
                 clipboardHistory = filteredContents().take(64)
                 clipboardHistoryPos = 0
-                pasteType =
-                    if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)) PREFIX else type
-                if (EmacsJCommandListener.lastCommandName in universalCommandNames - EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)) {
+                pasteType = if (EmacsJService.instance.isLastStrictUniversal()) PREFIX else type
+
+                if (EmacsJService.instance.isLastNumericUniversal()) {
                     editor.pasteAndMove(UniversalArgumentHandler.lastArgument)
                 } else {
                     editor.pasteAndMove()
                 }
+
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
             HISTORY -> {
                 editor.getUserData(LAST_PASTED_REGIONS)?.let { regions ->
-                    if (EmacsJCommandListener.lastCommandName in pasteCommands) {
+                    if (EmacsJService.instance.lastCommandName() in pasteCommands) {
                         regions.sortedByDescending { it.startOffset }.forEach { region ->
                             editor.document.deleteString(region.startOffset, region.endOffset)
                         }

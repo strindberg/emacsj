@@ -5,21 +5,25 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
+import com.github.strindberg.emacsj.EmacsJServiceImpl
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.registerServiceInstance
 
 const val FILE = "file.txt"
 
 class ISearchTest : BasePlatformTestCase() {
 
     override fun setUp() {
-        CommonHighlighter.testing = true
         super.setUp()
+        CommonHighlighter.testing = true
+        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
     }
 
     override fun tearDown() {

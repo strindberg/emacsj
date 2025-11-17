@@ -1,8 +1,16 @@
 package com.github.strindberg.emacsj.word
 
+import com.github.strindberg.emacsj.EmacsJServiceImpl
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.registerServiceInstance
 
 class WordChangeTest : BasePlatformTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
+    }
 
     fun `test Capitalize word 00`() {
         myFixture.configureByText(FILE, "<caret>foo bar")

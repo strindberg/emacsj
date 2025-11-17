@@ -1,10 +1,18 @@
 package com.github.strindberg.emacsj.word
 
+import com.github.strindberg.emacsj.EmacsJServiceImpl
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.registerServiceInstance
 
 const val FILE = "file.txt"
 
 class TransposeWordTest : BasePlatformTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
+    }
 
     fun `test Transpose 00`() {
         myFixture.configureByText(FILE, "<caret>foo bar")

@@ -1,10 +1,18 @@
 package com.github.strindberg.emacsj.movement
 
+import com.github.strindberg.emacsj.EmacsJServiceImpl
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.word.FILE
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.registerServiceInstance
 
 class TextMovementTest : BasePlatformTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
+    }
 
     fun `test Text start sets mark`() {
         myFixture.configureByText(FILE, "foo<caret>bar")

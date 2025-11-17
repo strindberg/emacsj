@@ -2,6 +2,7 @@ package com.github.strindberg.emacsj.kill
 
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
+import com.github.strindberg.emacsj.EmacsJServiceImpl
 import com.github.strindberg.emacsj.movement.ACTION_TEXT_END
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.word.ACTION_DELETE_NEXT_WORD
@@ -9,10 +10,17 @@ import com.github.strindberg.emacsj.word.ACTION_DELETE_PREVIOUS_WORD
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
 import com.github.strindberg.emacsj.zap.ZapHandler
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.registerServiceInstance
 
 class AppendKillTest : BasePlatformTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
+    }
 
     fun `test Basic Copy works`() {
         myFixture.configureByText(
