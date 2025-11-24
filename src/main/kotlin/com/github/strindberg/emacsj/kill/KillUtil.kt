@@ -70,8 +70,8 @@ object KillUtil {
                     EmacsJBundle.actionText(ACTION_ZAP_FORWARD_UP_TO),
                     EmacsJBundle.actionText(ACTION_ZAP_BACKWARD_TO),
                     EmacsJBundle.actionText(ACTION_ZAP_BACKWARD_UP_TO),
-                )
                 ) &&
-            lastCommandNames.second == EmacsJBundle.actionText(ACTION_APPEND_NEXT_KILL)
+                    lastCommandNames.second == EmacsJBundle.actionText(ACTION_APPEND_NEXT_KILL)
+                )
     }
 }

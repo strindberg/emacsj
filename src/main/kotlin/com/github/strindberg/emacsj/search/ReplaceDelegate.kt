@@ -145,24 +145,20 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                     )
                 }
             }
-
             ReplaceState.GET_REPLACE_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED) {
                     replaceArg = ui.text
                     startSearch()
                 }
             }
-
             ReplaceState.EDIT_REPLACE_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED) {
                     replaceArg = ui.text
                     startEditedSearch()
                 }
             }
-
             ReplaceState.SEARCHING -> {
             }
-
             ReplaceState.SEARCH_FOUND -> {
                 if (e.id == KeyEvent.KEY_TYPED) {
                     when (e.keyChar.lowercaseChar()) {
@@ -237,7 +233,6 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                     }
                 }
             }
-
             ReplaceState.REPLACE_DONE, ReplaceState.REPLACE_FAILED -> {
                 if (e.id == KeyEvent.KEY_PRESSED) {
                     ui.cancelUI()
