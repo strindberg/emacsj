@@ -6,7 +6,6 @@ import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
 import com.github.strindberg.emacsj.ui.CommonUI
-import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.github.strindberg.emacsj.word.text
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
@@ -50,12 +49,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                             val undoGroupId = UUID.randomUUID().toString()
                             editor.document.setReadOnly(false)
                             editor.caretModel.allCarets.reversed().forEach { caret ->
-                                val times =
-                                    if (EmacsJService.instance.isPreviousUniversal()) {
-                                        UniversalArgumentHandler.lastArgument
-                                    } else {
-                                        1
-                                    }
+                                val times = EmacsJService.instance.universalArgumentRelaxed()
                                 val (start, end) = when (type) {
                                     FORWARD_TO, FORWARD_UP_TO -> Pair(
                                         caret.offset,

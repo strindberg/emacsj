@@ -8,7 +8,7 @@ class EmacsJCommandListener : CommandListener {
 
     override fun commandFinished(event: CommandEvent) {
         // Empty, "Undefined" or "Dummy" commands are present when running tests
-        if (!event.commandName.isNullOrBlank() && event.commandName != "Undefined" && event.commandName != "Dummy") {
+        if (!event.commandName.isNullOrBlank() && event.commandName !in listOf("Undefined", "Dummy")) {
             EmacsJService.instance.addCommand(event.commandName)
         }
     }

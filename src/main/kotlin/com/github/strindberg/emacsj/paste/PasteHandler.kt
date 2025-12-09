@@ -8,7 +8,6 @@ import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.paste.Type.HISTORY
 import com.github.strindberg.emacsj.paste.Type.PREFIX
 import com.github.strindberg.emacsj.paste.Type.STANDARD
-import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -55,12 +54,13 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             STANDARD, PREFIX -> {
                 clipboardHistory = filteredContents().take(64)
                 clipboardHistoryPos = 0
-                pasteType = if (EmacsJService.instance.isLastStrictUniversal()) PREFIX else type
 
-                if (EmacsJService.instance.isLastNumericUniversal()) {
-                    editor.pasteAndMove(UniversalArgumentHandler.lastArgument)
+                if (EmacsJService.instance.isLastStrictUniversal()) {
+                    pasteType = PREFIX
+                    editor.pasteAndMove(0)
                 } else {
-                    editor.pasteAndMove()
+                    pasteType = type
+                    editor.pasteAndMove(EmacsJService.instance.universalArgument() - 1)
                 }
 
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
@@ -104,7 +104,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     private fun nextHistoryClipboard(steps: Int): Transferable? =
         clipboardHistory.takeUnless { it.isEmpty() }?.let { history ->
-            clipboardHistoryPos += maxOf(0, steps - 1)
+            clipboardHistoryPos += steps
             history[clipboardHistoryPos++ % history.size]
         }
 
