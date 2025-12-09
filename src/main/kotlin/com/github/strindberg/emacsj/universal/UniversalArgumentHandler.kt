@@ -1,6 +1,7 @@
 package com.github.strindberg.emacsj.universal
 
 import com.github.strindberg.emacsj.EmacsJBundle
+import com.github.strindberg.emacsj.EmacsJService
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -58,14 +59,10 @@ internal val universalCommandName = EmacsJBundle.actionText(ACTION_UNIVERSAL_ARG
 
 internal val universalCommandNames = universalCommandIds.map { EmacsJBundle.actionText(it) }.toSet()
 
-internal val numericUniversalCommandNames = universalCommandNames - universalCommandName
-
 class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 
     companion object {
         internal var delegate: UniversalArgumentDelegate? = null
-
-        internal var lastArgument = 1
 
         internal var repeating = false
     }
@@ -80,11 +77,11 @@ class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler(
             } else {
                 current.addDigit(numeric)
             }
-            lastArgument = current.getTimes()
+            EmacsJService.instance.registerUniversalArgument(current.getTimes())
         } else {
             val newDelegate = UniversalArgumentDelegate(editor, numeric)
             delegate = newDelegate
-            lastArgument = newDelegate.getTimes()
+            EmacsJService.instance.registerUniversalArgument(newDelegate.getTimes())
         }
     }
 }

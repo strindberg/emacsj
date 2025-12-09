@@ -1,21 +1,13 @@
 package com.github.strindberg.emacsj.light
 
-import com.github.strindberg.emacsj.EmacsJServiceImpl
 import com.github.strindberg.emacsj.word.ACTION_REVERSE_TRANSPOSE_WORDS
 import com.github.strindberg.emacsj.word.ACTION_TRANSPOSE_WORDS
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.registerServiceInstance
 
 private const val FILE = "file.txt"
 
 class TransposeWordTest : LightPlatformCodeInsightTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
-    }
 
     fun `test Transpose 00`() {
         configureFromFileText(FILE, "<caret>foo bar")

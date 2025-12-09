@@ -9,17 +9,19 @@ interface EmacsJService {
             get(): EmacsJService = ApplicationManager.getApplication().getService(EmacsJServiceImpl::class.java)
     }
 
+    fun registerUniversalArgument(lastArgument: Int)
+
+    fun universalArgument(): Int
+
+    fun universalArgumentRelaxed(): Int
+
     fun addCommand(commandName: String)
 
-    fun lastCommandName(): String?
-
     fun lastCommandNames(): CommandNames
+
+    fun lastCommandName(): String?
 
     fun isLastStrictUniversal(): Boolean
 
     fun isLastUniversal(): Boolean
-
-    fun isLastNumericUniversal(): Boolean
-
-    fun isPreviousUniversal(): Boolean
 }
