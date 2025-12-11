@@ -9,6 +9,8 @@ class EmacsJServiceImpl : EmacsJService {
 
     private var lastArgument = 1
 
+    private var repeating = false
+
     override fun addCommand(commandName: String) {
         synchronized(this) {
             lastCommandNames = CommandNames(commandName, lastCommandNames.last)
@@ -31,6 +33,12 @@ class EmacsJServiceImpl : EmacsJService {
     override fun isLastStrictUniversal() = lastCommandNames.last == universalCommandName
 
     override fun isLastUniversal() = lastCommandNames.last in universalCommandNames
+
+    override fun setRepeating(repeating: Boolean) {
+        this.repeating = repeating
+    }
+
+    override fun isRepeating() = repeating
 }
 
 data class CommandNames(val last: String?, val previous: String?)

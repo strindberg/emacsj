@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.universal
 
+import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.line.ACTION_TRANSPOSE_LINES
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
@@ -147,12 +148,12 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
             }
         } else {
             val batchSize = 100
-            UniversalArgumentHandler.repeating = true
+            EmacsJService.instance.setRepeating(true)
             repeat(times / batchSize) {
                 doRepeat(batchSize, action)
             }
             doRepeat(times % batchSize, action)
-            invokeLater { UniversalArgumentHandler.repeating = false }
+            invokeLater { EmacsJService.instance.setRepeating(false) }
         }
     }
 
@@ -160,11 +161,11 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
         if (times > 0) {
             invokeLater {
                 repeat(times) {
-                    if (UniversalArgumentHandler.repeating) {
+                    if (EmacsJService.instance.isRepeating()) {
                         try {
                             action()
                         } catch (_: Exception) {
-                            UniversalArgumentHandler.repeating = false
+                            EmacsJService.instance.setRepeating(false)
                         }
                     }
                 }
