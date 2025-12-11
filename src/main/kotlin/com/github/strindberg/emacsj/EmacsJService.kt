@@ -24,4 +24,8 @@ interface EmacsJService {
     fun isLastStrictUniversal(): Boolean
 
     fun isLastUniversal(): Boolean
+
+    fun setRepeating(repeating: Boolean)
+
+    fun isRepeating(): Boolean
 }

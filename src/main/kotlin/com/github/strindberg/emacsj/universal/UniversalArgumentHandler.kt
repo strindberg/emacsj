@@ -63,12 +63,10 @@ class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler(
 
     companion object {
         internal var delegate: UniversalArgumentDelegate? = null
-
-        internal var repeating = false
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        repeating = false
+        EmacsJService.instance.setRepeating(false)
 
         val current = delegate
         if (current != null) {
