@@ -54,6 +54,8 @@
         <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="COMMA"/>
     </action>
     <action id="EditorDeleteToWordStart">
+        <keyboard-shortcut first-keystroke="control BACK_SPACE"/>
+        <keyboard-shortcut first-keystroke="meta BACK_SPACE"/>
         <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="BACK_SPACE"/>
     </action>
     <action id="SaveAll">
@@ -65,6 +67,9 @@
     </action>
     <action id="EditorKillToWordStart">
         <keyboard-shortcut first-keystroke="meta DELETE"/>
+    </action>
+    <action id="EditorKillToWordEnd">
+        <keyboard-shortcut first-keystroke="meta D"/>
     </action>
     <action id="EditorKillRegion">
         <keyboard-shortcut first-keystroke="control W"/>
