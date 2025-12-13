@@ -12,7 +12,10 @@ import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
 import com.intellij.find.FindResult
+import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionUiKind
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.diagnostic.thisLogger
@@ -164,7 +167,17 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                     when (e.keyChar.lowercaseChar()) {
                         '\u000c' -> { // Ctrl-L
                             val recenterAction = ActionManager.getInstance().getAction(ACTION_RECENTER)
-                            ActionUtil.invokeAction(recenterAction, editor.component, "Recenter", null, null)
+                            ActionUtil.invokeAction(
+                                recenterAction,
+                                AnActionEvent.createEvent(
+                                    DataManager.getInstance().getDataContext(editor.component),
+                                    null,
+                                    "Recenter",
+                                    ActionUiKind.NONE,
+                                    e
+                                ),
+                                null
+                            )
                         }
                         'y', ' ' -> {
                             try {
