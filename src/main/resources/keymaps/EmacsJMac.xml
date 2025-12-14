@@ -47,7 +47,7 @@
         <keyboard-shortcut first-keystroke="meta DELETE"/>
     </action>
     <action id="$Undo">
-        <keyboard-shortcut first-keystroke="shift control MINUS"/>
+        <keyboard-shortcut first-keystroke="control shift MINUS"/>
         <keyboard-shortcut first-keystroke="control SLASH"/>
     </action>
     <action id="EditorPageUp">
@@ -61,7 +61,7 @@
     </action>
     <action id="GotoPreviousError">
         <keyboard-shortcut first-keystroke="shift F2"/>
-        <keyboard-shortcut first-keystroke="shift control X" second-keystroke="BACK_QUOTE"/>
+        <keyboard-shortcut first-keystroke="control shift X" second-keystroke="BACK_QUOTE"/>
     </action>
     <action id="GotoClass">
         <keyboard-shortcut first-keystroke="shift meta G"/>
@@ -74,7 +74,7 @@
         <keyboard-shortcut first-keystroke="control X" second-keystroke="control F"/>
     </action>
     <action id="$Redo">
-        <keyboard-shortcut first-keystroke="shift control Z"/>
+        <keyboard-shortcut first-keystroke="control shift Z"/>
         <keyboard-shortcut first-keystroke="shift meta MINUS"/>
     </action>
     <action id="ParameterInfo">
@@ -84,7 +84,7 @@
         <keyboard-shortcut first-keystroke="F3"/>
     </action>
     <action id="SmartTypeCompletion">
-        <keyboard-shortcut first-keystroke="shift control SPACE"/>
+        <keyboard-shortcut first-keystroke="control shift SPACE"/>
         <keyboard-shortcut first-keystroke="control meta SLASH"/>
     </action>
     <action id="GotoDeclaration">
@@ -182,10 +182,10 @@
         <keyboard-shortcut first-keystroke="control V"/>
     </action>
     <action id="VcsShowNextChangeMarker">
-        <keyboard-shortcut first-keystroke="shift control meta DOWN"/>
+        <keyboard-shortcut first-keystroke="control shift meta DOWN"/>
     </action>
     <action id="VcsShowPrevChangeMarker">
-        <keyboard-shortcut first-keystroke="shift control meta UP"/>
+        <keyboard-shortcut first-keystroke="control shift meta UP"/>
     </action>
     <action id="EditorForwardParagraph">
         <keyboard-shortcut first-keystroke="control DOWN"/>
@@ -468,6 +468,16 @@
     <action id="QuickImplementations"/> <!-- meta Y -->
     <action id="Refactorings.QuickListPopupAction"/> <!-- control T -->
     <action id="EditorCutLineEnd"/> <!-- control K -->
+
+    <action id="EditorScrollToCenter"/> <!-- control M -->
+    <action id="GotoSuperMethod"/> <!-- control U -->
+
+    <action id="CommentByLineComment">
+        <keyboard-shortcut first-keystroke="control DIVIDE"/>
+    </action>
+    <action id="$Paste">
+        <keyboard-shortcut first-keystroke="shift INSERT"/>
+    </action>
 
 
     <!--Disabled shortcuts-->
