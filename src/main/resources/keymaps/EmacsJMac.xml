@@ -1,4 +1,4 @@
-<keymap name="EmacsJ for Mac OS" parent="Mac OS X 10.5+" version="1" disable-mnemonics="false">
+<keymap name="EmacsJ for Mac" parent="Mac OS X 10.5+" version="1" disable-mnemonics="false">
     <!-- From Emacs.xml -->
     <action id="EditorEscape">
         <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="ESCAPE"/>
@@ -450,8 +450,7 @@
         <keyboard-shortcut first-keystroke="control X" second-keystroke="control T"/>
     </action>
 
-
-    <!-- Found in $default, remove from Mac keymap-->
+    <!-- Conflicting shortcuts -->
     <action id="Debug">
         <keyboard-shortcut first-keystroke="shift F9"/>
     </action>
@@ -461,26 +460,20 @@
     <action id="RunClass">
         <keyboard-shortcut first-keystroke="control shift F10"/>
     </action>
-
     <action id="ShowProjectStructureSettings"/> <!-- meta semicolon -->
     <action id="Refresh"/> <!-- meta R -->
     <action id="Rerun"/> <!-- meta R -->
     <action id="QuickImplementations"/> <!-- meta Y -->
     <action id="Refactorings.QuickListPopupAction"/> <!-- control T -->
     <action id="EditorCutLineEnd"/> <!-- control K -->
-
     <action id="EditorScrollToCenter"/> <!-- control M -->
     <action id="GotoSuperMethod"/> <!-- control U -->
-
     <action id="CommentByLineComment">
         <keyboard-shortcut first-keystroke="control DIVIDE"/>
     </action>
     <action id="$Paste">
         <keyboard-shortcut first-keystroke="shift INSERT"/>
     </action>
-
-
-    <!--Disabled shortcuts-->
     <action id="CollapseAllRegions"/>
     <action id="ReformatCode"/>
     <action id="OverrideMethods"/>
@@ -510,5 +503,12 @@
     <action id="EditorDecreaseFontSizeGlobal"/>
     <action id="EditorIncreaseFontSizeGlobal"/>
     <action id="ZoomOutIdeAction"/>
+
+    <!-- Conflicting shortcuts from Terminal plugin -->
+    <action id="Terminal.DeletePreviousWord"/>
+    <action id="Terminal.SearchInCommandHistory"/>
+
+    <!-- Conflicting shortcuts from VCS implementation -->
+    <action id="CheckinProject"/>
 
 </keymap>
