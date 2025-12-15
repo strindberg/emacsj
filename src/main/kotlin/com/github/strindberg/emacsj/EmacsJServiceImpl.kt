@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj
 
+import com.github.strindberg.emacsj.universal.singleActions
 import com.github.strindberg.emacsj.universal.universalCommandName
 import com.github.strindberg.emacsj.universal.universalCommandNames
 import com.intellij.openapi.components.Service
@@ -12,6 +13,8 @@ class EmacsJServiceImpl : EmacsJService {
     private var lastArgument = 1
 
     private var repeating = false
+
+    private val registeredSingleActions = mutableSetOf(*singleActions.toTypedArray())
 
     override fun addCommand(commandName: String) {
         synchronized(this) {
@@ -41,6 +44,10 @@ class EmacsJServiceImpl : EmacsJService {
     }
 
     override fun isRepeating() = repeating
+
+    override fun registerSingleAction(actionId: String) {
+        registeredSingleActions.add(actionId)
+    }
 }
 
 data class CommandNames(val last: String?, val previous: String?)

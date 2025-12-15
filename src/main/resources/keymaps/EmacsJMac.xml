@@ -1,4 +1,4 @@
-<keymap name="EmacsJ for Mac" parent="Mac OS X 10.5+" version="1" disable-mnemonics="false">
+<keymap name="EmacsJ (macOS)" parent="Mac OS X 10.5+" version="1" disable-mnemonics="false">
     <!-- From Emacs.xml -->
     <action id="EditorEscape">
         <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="ESCAPE"/>

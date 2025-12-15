@@ -28,4 +28,7 @@ interface EmacsJService {
     fun setRepeating(repeating: Boolean)
 
     fun isRepeating(): Boolean
+
+    fun registerSingleAction(actionId: String)
+
 }

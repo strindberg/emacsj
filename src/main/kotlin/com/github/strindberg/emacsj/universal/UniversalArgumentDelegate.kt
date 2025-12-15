@@ -29,6 +29,25 @@ import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
+internal val singleActions = setOf(
+    ACTION_ISEARCH_BACKWARD,
+    ACTION_ISEARCH_FORWARD,
+    ACTION_ISEARCH_REGEXP_FORWARD,
+    ACTION_ISEARCH_REGEXP_BACKWARD,
+    ACTION_REPLACE_TEXT,
+    ACTION_REPLACE_REGEXP,
+    ACTION_PASTE,
+    ACTION_PREFIX_PASTE,
+    ACTION_PUSH_MARK,
+    ACTION_POP_MARK,
+    ACTION_ZAP_FORWARD_TO,
+    ACTION_ZAP_FORWARD_UP_TO,
+    ACTION_ZAP_BACKWARD_TO,
+    ACTION_ZAP_BACKWARD_UP_TO,
+    ACTION_DELETE_SPACE,
+    ACTION_TRANSPOSE_LINES,
+)
+
 class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
 
     private val typedHandler: RestorableTypedActionHandler
@@ -47,29 +66,6 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
 
         @VisibleForTesting
         internal var testing = false
-
-        private val singleActions = mutableSetOf(
-            ACTION_ISEARCH_BACKWARD,
-            ACTION_ISEARCH_FORWARD,
-            ACTION_ISEARCH_REGEXP_FORWARD,
-            ACTION_ISEARCH_REGEXP_BACKWARD,
-            ACTION_REPLACE_TEXT,
-            ACTION_REPLACE_REGEXP,
-            ACTION_PASTE,
-            ACTION_PREFIX_PASTE,
-            ACTION_PUSH_MARK,
-            ACTION_POP_MARK,
-            ACTION_ZAP_FORWARD_TO,
-            ACTION_ZAP_FORWARD_UP_TO,
-            ACTION_ZAP_BACKWARD_TO,
-            ACTION_ZAP_BACKWARD_UP_TO,
-            ACTION_DELETE_SPACE,
-            ACTION_TRANSPOSE_LINES,
-        )
-
-        public fun registerSingleAction(actionId: String) {
-            singleActions.add(actionId)
-        }
     }
 
     init {
