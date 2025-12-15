@@ -2,7 +2,9 @@ package com.github.strindberg.emacsj
 
 import com.github.strindberg.emacsj.universal.universalCommandName
 import com.github.strindberg.emacsj.universal.universalCommandNames
+import com.intellij.openapi.components.Service
 
+@Service
 class EmacsJServiceImpl : EmacsJService {
 
     private var lastCommandNames: CommandNames = CommandNames(null, null)

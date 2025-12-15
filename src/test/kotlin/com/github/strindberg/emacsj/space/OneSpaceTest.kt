@@ -1,16 +1,8 @@
 package com.github.strindberg.emacsj.space
 
-import com.github.strindberg.emacsj.EmacsJServiceImpl
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.registerServiceInstance
 
 class OneSpaceTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
-    }
 
     fun `test Nothing to delete`() {
         myFixture.configureByText(FILE, "foo<caret>bar")

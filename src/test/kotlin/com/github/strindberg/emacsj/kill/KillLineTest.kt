@@ -1,20 +1,12 @@
 package com.github.strindberg.emacsj.kill
 
 import java.awt.datatransfer.DataFlavor
-import com.github.strindberg.emacsj.EmacsJServiceImpl
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.registerServiceInstance
 
 const val FILE = "file.txt"
 
 class KillLineTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
-    }
 
     fun `test Line is killed to line end`() {
         myFixture.configureByText(

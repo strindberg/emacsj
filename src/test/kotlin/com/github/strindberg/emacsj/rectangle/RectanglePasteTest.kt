@@ -1,18 +1,10 @@
 package com.github.strindberg.emacsj.rectangle
 
 import java.awt.datatransfer.StringSelection
-import com.github.strindberg.emacsj.EmacsJServiceImpl
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.registerServiceInstance
 
 class RectanglePasteTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
-    }
 
     fun `test Paste works 01`() {
         myFixture.configureByText(FILE, "foo<caret>")

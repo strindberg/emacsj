@@ -1,19 +1,11 @@
 package com.github.strindberg.emacsj.duplicate
 
-import com.github.strindberg.emacsj.EmacsJServiceImpl
 import com.intellij.ide.highlighter.XmlFileType
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.registerServiceInstance
 
 const val FILE = "file.java"
 
 class DuplicateTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
-    }
 
     fun `test Line is duplicated`() {
         myFixture.configureByText(

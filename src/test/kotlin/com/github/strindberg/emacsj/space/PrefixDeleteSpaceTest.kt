@@ -1,19 +1,11 @@
 package com.github.strindberg.emacsj.space
 
-import com.github.strindberg.emacsj.EmacsJServiceImpl
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.registerServiceInstance
 
 private const val FILE2 = "file2.txt"
 
 class PrefixDeleteSpaceTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
-    }
 
     fun `test Nothing to delete`() {
         myFixture.configureByText(FILE2, "foo<caret>bar")

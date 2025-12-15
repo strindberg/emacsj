@@ -12,6 +12,7 @@
         <additionalTextAttributes scheme="Default" file="colorSchemes/EmacsJDefault.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/EmacsJDarcula.xml"/>
         <bundledKeymap file="EmacsJ.xml"/>
+        <bundledKeymap file="EmacsJMac.xml"/>
         <colorSettingsPage implementation="com.github.strindberg.emacsj.preferences.EmacsJColorSettingsPage"/>
         <applicationConfigurable
             parentId="editor"

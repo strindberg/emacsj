@@ -1,7 +1,6 @@
 package com.github.strindberg.emacsj.paste
 
 import java.awt.datatransfer.StringSelection
-import com.github.strindberg.emacsj.EmacsJServiceImpl
 import com.github.strindberg.emacsj.kill.ACTION_CUT
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
@@ -10,19 +9,12 @@ import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT2
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.ide.ClientCopyPasteManager
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.registerServiceInstance
 
 const val FILE = "file.txt"
 
 class PasteTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
-    }
 
     fun `test Paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")

@@ -16,17 +16,10 @@ import com.github.strindberg.emacsj.search.SearchType
 import com.github.strindberg.emacsj.universal.UniversalArgumentDelegate
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.actions.EnterAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.registerServiceInstance
 
 class EmacsJActionsPromoterTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().registerServiceInstance(EmacsJServiceImpl::class.java, EmacsJServiceImpl())
-    }
 
     override fun tearDown() {
         ISearchHandler.delegate?.hide()
