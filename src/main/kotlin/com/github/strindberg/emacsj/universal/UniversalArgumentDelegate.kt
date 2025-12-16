@@ -100,7 +100,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
                                 originalHandler,
                                 { UniversalArgumentHandler.delegate }
                             ) { caret, dataContext ->
-                                val times = if (actionId in singleActions) 1 else getTimes()
+                                val times = if (actionId in EmacsJService.instance.getSingleActions()) 1 else getTimes()
                                 repeatAction(times) { originalHandler.execute(editor, caret, dataContext) }
                             }.also { add(it) }
                         )

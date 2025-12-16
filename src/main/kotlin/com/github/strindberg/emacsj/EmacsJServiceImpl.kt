@@ -48,6 +48,8 @@ class EmacsJServiceImpl : EmacsJService {
     override fun registerSingleAction(actionId: String) {
         registeredSingleActions.add(actionId)
     }
+
+    override fun getSingleActions() = registeredSingleActions.toSet()
 }
 
 data class CommandNames(val last: String?, val previous: String?)

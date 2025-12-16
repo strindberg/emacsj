@@ -31,4 +31,5 @@ interface EmacsJService {
 
     fun registerSingleAction(actionId: String)
 
+    fun getSingleActions(): Set<String>
 }
