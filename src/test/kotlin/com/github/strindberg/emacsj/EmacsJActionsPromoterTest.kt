@@ -25,7 +25,7 @@ class EmacsJActionsPromoterTest : BasePlatformTestCase() {
         ISearchHandler.delegate?.hide()
         ReplaceHandler.delegate?.hide()
         UniversalArgumentHandler.delegate?.hide()
-        UniversalArgumentHandler.repeating = false
+        EmacsJService.instance.setRepeating(false)
         super.tearDown()
     }
 
@@ -74,7 +74,7 @@ class EmacsJActionsPromoterTest : BasePlatformTestCase() {
 
     fun `test Promoter sorts Repeat actions first when repeating`() {
         myFixture.configureByText(FILE, "")
-        UniversalArgumentHandler.repeating = true
+        EmacsJService.instance.setRepeating(true)
 
         val cancel = CancelRepeatAction()
         val actions = setOf(cancel, PushMarkAction(), ZapToCharAction())

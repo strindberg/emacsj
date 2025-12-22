@@ -24,7 +24,7 @@ internal class EmacsJActionsPromoter : ActionPromoter {
                 ReplaceHandler.delegate != null -> {
                     sortByDescending { it is ReplaceAction }
                 }
-                UniversalArgumentHandler.repeating -> {
+                EmacsJService.instance.isRepeating() -> {
                     sortByDescending { it is RepeatAction }
                 }
                 UniversalArgumentHandler.delegate != null -> {

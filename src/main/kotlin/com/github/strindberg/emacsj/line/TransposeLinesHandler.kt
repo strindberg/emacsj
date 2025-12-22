@@ -1,9 +1,7 @@
 package com.github.strindberg.emacsj.line
 
-import com.github.strindberg.emacsj.EmacsJCommandListener
+import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.mark.MarkHandler
-import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
-import com.github.strindberg.emacsj.universal.universalCommandNames
 import com.github.strindberg.emacsj.word.substring
 import com.github.strindberg.emacsj.word.text
 import com.intellij.openapi.actionSystem.DataContext
@@ -22,15 +20,13 @@ class TransposeLinesHandler : EditorWriteActionHandler() {
         val document = editor.document
         val currentLineNumber = document.getLineNumber(caret.offset)
 
-        val replaceLineNumber = if (EmacsJCommandListener.lastCommandName in universalCommandNames) {
-            if (UniversalArgumentHandler.lastArgument == 0) {
+        val lastArgument = EmacsJService.instance.universalArgument()
+        val replaceLineNumber =
+            if (lastArgument == 0) {
                 MarkHandler.peek(editor)?.caretPosition?.let { position -> document.getLineNumber(position) } ?: (currentLineNumber - 1)
             } else {
-                currentLineNumber - UniversalArgumentHandler.lastArgument
+                currentLineNumber - lastArgument
             }
-        } else {
-            currentLineNumber - 1
-        }
 
         if (replaceLineNumber >= 0) {
             val replaceLineStart = document.getLineStartOffset(replaceLineNumber)

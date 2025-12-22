@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.universal
 
+import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.line.ACTION_TRANSPOSE_LINES
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
@@ -28,6 +29,25 @@ import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
+internal val singleActions = setOf(
+    ACTION_ISEARCH_BACKWARD,
+    ACTION_ISEARCH_FORWARD,
+    ACTION_ISEARCH_REGEXP_FORWARD,
+    ACTION_ISEARCH_REGEXP_BACKWARD,
+    ACTION_REPLACE_TEXT,
+    ACTION_REPLACE_REGEXP,
+    ACTION_PASTE,
+    ACTION_PREFIX_PASTE,
+    ACTION_PUSH_MARK,
+    ACTION_POP_MARK,
+    ACTION_ZAP_FORWARD_TO,
+    ACTION_ZAP_FORWARD_UP_TO,
+    ACTION_ZAP_BACKWARD_TO,
+    ACTION_ZAP_BACKWARD_UP_TO,
+    ACTION_DELETE_SPACE,
+    ACTION_TRANSPOSE_LINES,
+)
+
 class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
 
     private val typedHandler: RestorableTypedActionHandler
@@ -46,29 +66,6 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
 
         @VisibleForTesting
         internal var testing = false
-
-        private val singleActions = mutableSetOf(
-            ACTION_ISEARCH_BACKWARD,
-            ACTION_ISEARCH_FORWARD,
-            ACTION_ISEARCH_REGEXP_FORWARD,
-            ACTION_ISEARCH_REGEXP_BACKWARD,
-            ACTION_REPLACE_TEXT,
-            ACTION_REPLACE_REGEXP,
-            ACTION_PASTE,
-            ACTION_PREFIX_PASTE,
-            ACTION_PUSH_MARK,
-            ACTION_POP_MARK,
-            ACTION_ZAP_FORWARD_TO,
-            ACTION_ZAP_FORWARD_UP_TO,
-            ACTION_ZAP_BACKWARD_TO,
-            ACTION_ZAP_BACKWARD_UP_TO,
-            ACTION_DELETE_SPACE,
-            ACTION_TRANSPOSE_LINES,
-        )
-
-        public fun registerSingleAction(actionId: String) {
-            singleActions.add(actionId)
-        }
     }
 
     init {
@@ -103,7 +100,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
                                 originalHandler,
                                 { UniversalArgumentHandler.delegate }
                             ) { caret, dataContext ->
-                                val times = if (actionId in singleActions) 1 else getTimes()
+                                val times = if (actionId in EmacsJService.instance.getSingleActions()) 1 else getTimes()
                                 repeatAction(times) { originalHandler.execute(editor, caret, dataContext) }
                             }.also { add(it) }
                         )
@@ -147,12 +144,12 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
             }
         } else {
             val batchSize = 100
-            UniversalArgumentHandler.repeating = true
+            EmacsJService.instance.setRepeating(true)
             repeat(times / batchSize) {
                 doRepeat(batchSize, action)
             }
             doRepeat(times % batchSize, action)
-            invokeLater { UniversalArgumentHandler.repeating = false }
+            invokeLater { EmacsJService.instance.setRepeating(false) }
         }
     }
 
@@ -160,11 +157,11 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
         if (times > 0) {
             invokeLater {
                 repeat(times) {
-                    if (UniversalArgumentHandler.repeating) {
+                    if (EmacsJService.instance.isRepeating()) {
                         try {
                             action()
                         } catch (_: Exception) {
-                            UniversalArgumentHandler.repeating = false
+                            EmacsJService.instance.setRepeating(false)
                         }
                     }
                 }

@@ -10,8 +10,8 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 class ReplaceTest : BasePlatformTestCase() {
 
     override fun setUp() {
-        CommonHighlighter.testing = true
         super.setUp()
+        CommonHighlighter.testing = true
     }
 
     override fun tearDown() {

@@ -1,7 +1,7 @@
 package com.github.strindberg.emacsj.view
 
 import com.github.strindberg.emacsj.EmacsJBundle
-import com.github.strindberg.emacsj.EmacsJCommandListener
+import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.view.Position.BOTTOM
 import com.github.strindberg.emacsj.view.Position.MIDDLE
 import com.github.strindberg.emacsj.view.Position.TOP
@@ -14,6 +14,8 @@ import org.intellij.lang.annotations.Language
 
 @Language("devkit-action-id")
 internal const val ACTION_REPOSITION = "com.github.strindberg.emacsj.actions.view.reposition"
+
+private val repositionCommandName = EmacsJBundle.actionText(ACTION_REPOSITION)
 
 class RepositionHandler : EditorActionHandler() {
 
@@ -30,15 +32,19 @@ class RepositionHandler : EditorActionHandler() {
         val middlePos = VisualPosition((viewOffset + viewHeight / 2) / editor.lineHeight, 0)
         val bottomPos = VisualPosition((viewOffset + viewHeight) / editor.lineHeight - 1, 0)
 
-        if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_REPOSITION) && lastPosition == MIDDLE) {
-            lastPosition = TOP
-            primary.moveToVisualPosition(topPos)
-        } else if (EmacsJCommandListener.lastCommandName == EmacsJBundle.actionText(ACTION_REPOSITION) && lastPosition == TOP) {
-            lastPosition = BOTTOM
-            primary.moveToVisualPosition(bottomPos)
-        } else {
-            lastPosition = MIDDLE
-            primary.moveToVisualPosition(middlePos)
+        when (EmacsJService.instance.lastCommandName()) {
+            repositionCommandName if lastPosition == MIDDLE -> {
+                lastPosition = TOP
+                primary.moveToVisualPosition(topPos)
+            }
+            repositionCommandName if lastPosition == TOP -> {
+                lastPosition = BOTTOM
+                primary.moveToVisualPosition(bottomPos)
+            }
+            else -> {
+                lastPosition = MIDDLE
+                primary.moveToVisualPosition(middlePos)
+            }
         }
     }
 }
