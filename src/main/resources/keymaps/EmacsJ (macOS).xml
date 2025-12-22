@@ -269,6 +269,9 @@
     <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch">
         <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchtogglecase">
+        <keyboard-shortcut first-keystroke="meta C"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.replacetext">
         <keyboard-shortcut first-keystroke="meta S"/>
     </action>
@@ -399,7 +402,7 @@
         <keyboard-shortcut first-keystroke="control shift meta Z"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.xref.xrefback">
-        <keyboard-shortcut first-keystroke="meta COMMA"/>
+        <keyboard-shortcut first-keystroke="alt COMMA"/> <!-- Don't want to override universal Preferences key binding "meta COMMA" -->
     </action>
     <action id="com.github.strindberg.emacsj.actions.xref.xrefforward">
         <keyboard-shortcut first-keystroke="control meta COMMA"/>

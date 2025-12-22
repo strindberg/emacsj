@@ -48,6 +48,9 @@
     <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch">
         <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchtogglecase">
+        <keyboard-shortcut first-keystroke="alt C"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.replacetext">
         <keyboard-shortcut first-keystroke="alt S"/>
     </action>
