@@ -48,6 +48,9 @@
     <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch">
         <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchtogglecase">
+        <keyboard-shortcut first-keystroke="alt C"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.replacetext">
         <keyboard-shortcut first-keystroke="alt S"/>
     </action>
@@ -230,8 +233,7 @@
         <keyboard-shortcut first-keystroke="control X" second-keystroke="control T"/>
     </action>
 
-
-    <!--Conflicting shortcuts from Emacs.xml removed-->
+    <!-- Conflicting shortcuts from Emacs.xml -->
     <action id="EditorCutLineEnd"/>
     <action id="EditorDeleteToWordStart">
         <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="BACK_SPACE"/>
@@ -278,14 +280,14 @@
     <action id="EditorKillRingSave"/>
     <action id="EditorSelectWord"/>
 
-    <!--Conflicting shortcuts from $default.xml removed-->
+    <!-- Conflicting shortcuts from $default.xml -->
     <action id="ReplaceInPath"/>
     <action id="GotoSuperMethod"/>
 
-    <!--Conflicting shortcuts from Terminal plugin removed-->
+    <!-- Conflicting shortcuts from Terminal plugin -->
     <action id="Terminal.DeletePreviousWord"/>
     <action id="Terminal.SearchInCommandHistory"/>
 
-    <!--Conflicting shortcuts from VCS implementation removed-->
+    <!-- Conflicting shortcuts from VCS implementation -->
     <action id="CheckinProject"/>
 </keymap>
