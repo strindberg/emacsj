@@ -8,7 +8,7 @@ import com.intellij.openapi.components.Service
 @Service
 class EmacsJServiceImpl : EmacsJService {
 
-    private var lastCommandNames: CommandNames = CommandNames(null, null)
+    private var lastCommandNames = CommandNames(null, null)
 
     private var lastArgument = 1
 
@@ -26,9 +26,9 @@ class EmacsJServiceImpl : EmacsJService {
         this.lastArgument = lastArgument
     }
 
-    override fun universalArgument(): Int = if (isLastUniversal()) lastArgument else 1
+    override fun universalArgument() = if (isLastUniversal()) lastArgument else 1
 
-    override fun universalArgumentRelaxed(): Int =
+    override fun universalArgumentRelaxed() =
         if (isLastUniversal() || lastCommandNames.previous in universalCommandNames) lastArgument else 1
 
     override fun lastCommandNames() = lastCommandNames
