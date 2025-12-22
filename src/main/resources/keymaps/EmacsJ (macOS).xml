@@ -1,4 +1,5 @@
 <keymap name="EmacsJ (macOS)" parent="Mac OS X 10.5+" version="1" disable-mnemonics="false">
+
     <!-- From Emacs.xml -->
     <action id="EditorEscape">
         <keyboard-shortcut first-keystroke="ESCAPE" second-keystroke="ESCAPE"/>
@@ -460,14 +461,14 @@
     <action id="RunClass">
         <keyboard-shortcut first-keystroke="control shift F10"/>
     </action>
-    <action id="ShowProjectStructureSettings"/> <!-- meta semicolon -->
-    <action id="Refresh"/> <!-- meta R -->
-    <action id="Rerun"/> <!-- meta R -->
-    <action id="QuickImplementations"/> <!-- meta Y -->
-    <action id="Refactorings.QuickListPopupAction"/> <!-- control T -->
-    <action id="EditorCutLineEnd"/> <!-- control K -->
-    <action id="EditorScrollToCenter"/> <!-- control M -->
-    <action id="GotoSuperMethod"/> <!-- control U -->
+    <action id="ShowProjectStructureSettings"/>
+    <action id="Refresh"/>
+    <action id="Rerun"/>
+    <action id="QuickImplementations"/>
+    <action id="Refactorings.QuickListPopupAction"/>
+    <action id="EditorCutLineEnd"/>
+    <action id="EditorScrollToCenter"/>
+    <action id="GotoSuperMethod"/>
     <action id="CommentByLineComment">
         <keyboard-shortcut first-keystroke="control DIVIDE"/>
     </action>
