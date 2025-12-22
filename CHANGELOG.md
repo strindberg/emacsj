@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+Note: previous versions of this plugin modified the base IntelliJ keymap, adding the plugin's bindings to all keymaps. This was incorrect
+and has been removed in this release. If this causes unforeseen consequences, please file an issue in the GitHub project. The plugin
+still adds its commands to the Emacs keymap, which is also questionable, but I have kept it so for this release as I don't know if removing
+it would inconvenience users relying on this behavior. File an issue if you think this is a problem.
+
+### Added
+
+- New keymap "EmacsJ (macOS)" with Command key used instead of Option key for most key bindings.
+
+### Fixed
+
+- Add missing keybinding for Isearch: Toggle Case Sensitive Searching in EmacsJ keymap (`alt-c`).
+
 ## [1.5.1] - 2025-10-31
 
 ### Added
