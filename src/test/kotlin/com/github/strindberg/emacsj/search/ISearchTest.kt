@@ -18,8 +18,8 @@ const val FILE = "file.txt"
 class ISearchTest : BasePlatformTestCase() {
 
     override fun setUp() {
-        CommonHighlighter.testing = true
         super.setUp()
+        CommonHighlighter.testing = true
     }
 
     override fun tearDown() {
