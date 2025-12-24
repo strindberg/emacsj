@@ -1,20 +1,22 @@
 # EmacsJ
 
 <!-- Plugin description -->
-A collection of useful, Emacs-inspired commands for text editing and search.
+A collection of useful Emacs commands for text editing and search.
 
 Documentation: EmacsJ on [GitHub](https://github.com/strindberg/emacsj)
 
-This plugin is a collection of commands adding Emacs-inspired functionality to IntelliJ-based IDEs. It is mainly intended as an
-extension to IntelliJ's Emacs keymap, which lacks some functionality that an Emacs user will miss. Moreover, many commands work slightly
-differently in IntelliJ and Emacs. EmacsJ's aim is to offer features that bridge that gap so that switching between Emacs and IntelliJ
-becomes easy. Many of these commands could also be of interest to non-Emacs users.
+This plugin offers a collection of commands for those of us who love Emacs and miss its functionality when working in IntelliJ-based IDEs.
+It is
+mainly intended as an extension to IntelliJ's Emacs keymap, which lacks some functionality that an Emacs user will miss. EmacsJ's aim is to
+offer features that make it easy to work in both Emacs and IntelliJ without having to retrain you muscle memory.
 
-There are two main ways of using EmacsJ: the plugin installs a number of commands from which you can either pick-and-choose or
-activate all at once by choosing the *EmacsJ* keymap. If you want the former, study the available commands under Settings → Keymap →
-Plugins → EmacsJ and activate the ones you find interesting. Alternatively, you can choose the keymap *EmacsJ* under Settings →
-Keymap. This keymap is an extension of the standard *Emacs* keymap, and this way all the EmacsJ commands are activated. You can then
-deactivate the ones you don't want to use.
+The easiest way to use the plugin after installation is to choose the *EmacsJ* or *EmacsJ (macOS)* keymap under <kbd>Settings</kbd> →
+<kbd>Keymap</kbd>. This activates all the functionality of the plugin. You find all the bindings of the plugin under <kbd>
+Settings</kbd> → <kbd>Keymap</kbd> → <kbd>Plugins</kbd> → <kbd>EmacsJ</kbd>, with short summaries of what the commands do. For more
+extensive documentation, visit the plugin's GitHub page.
+
+The keymap *EmacsJ (macOS)* uses the same bindings as the *EmacsJ* keymap, but with *command* instead of *option* in almost all bindings,
+making it easier to use on a Mac keyboard.
 
 The main features are:
 
@@ -51,10 +53,10 @@ Documentation: EmacsJ on [GitHub](https://github.com/strindberg/emacsj)
 
 1. Install the plugin from the JetBrains Marketplace or through GitHub.
 2. Either:
-    1. Open Preferences → Keymap and choose the commands you wish to use under Plugins → EmacsJ. The plugin suggests key bindings, but
-       they can, of course, be changed.
-    2. Alternatively, choose the keymap *EmacsJ* in Preferences → Keymap. This activates all the plugin commands, and can then be
+    1. choose the keymap *EmacsJ* or *EmacsJ (macOS)* in Preferences → Keymap. This activates all the plugin commands and can then be
        deactivated or changed as needed.
+    2. Alternatively, open Preferences → Keymap and choose the commands you wish to use under Plugins → EmacsJ. The plugin suggests key
+       bindings, but they can, of course, be changed.
 3. If a command doesn't seem to do anything, double-check that no other command is using the same key binding.
 
 ## Features
@@ -200,8 +202,10 @@ Colors used by Search/replace can be configured as described under Isearch [abov
 
 ### Universal Argument
 
-*Universal Argument* can be used to repeat any following command. The argument can be specified as described below, and any following
+*Universal Argument* can be used to repeat any subsequent command. The argument can be specified as described below, and the following
 command will be executed the specified number of times.
+
+Please note that *Universal argument* cannot be used to repeat recorded macros because of a limitation in the IntelliJ platform.
 
 *Universal Argument* can be invoked in one of three ways:
 
@@ -215,7 +219,7 @@ command will be executed the specified number of times.
 A few commands &mdash; [Paste: Leave Caret at Point](#paste-kill-ring) and [Pop Mark](#mark-ring) &mdash; are invoked by using *Universal
 Argument* before invoking their standard counterparts (*Paste: Leave Caret After Pasted Region* and *Push Mark*, respectively).
 
-A repeating command can be interrupted by pressing `ctrl-u`.
+A repeating command can be interrupted by pressing `ctrl-g`.
 
 The commands are:
 
@@ -227,7 +231,7 @@ The commands are:
 
 ### Word Movement
 
-EmacsJ's word movement commands are similar to the default IntelliJ word movements, but with a slight difference in how word boundaries
+EmacsJ's word movement commands are similar to the default IntelliJ word movements but with a slight difference in how word boundaries
 and non-word characters are handled. In standard IntelliJ, *Kill to Word End* will delete characters up to the next non-word character,
 whereas the corresponding command *Delete Next Word* in EmacsJ will delete past non-word characters and to the end of the following
 proper word. The same goes for word movements such as *Next Word* and *Previous Word*.
@@ -471,6 +475,9 @@ The commands are:
 - XRef Go Back (`alt-COMMA`). Pop one item from the stack of previous positions and return the caret to that position.
 - XRef Go Forward (`ctrl-alt-COMMA`). Go forward to the point where a previous XRef Go Back was invoked.
 - XRef Push Mark. Push the current position onto the XRef (backward) stack.
+
+Note that the key binding `alt-COMMA` above is `option-COMMA` in the *EmacsJ (macOS)* keymap. This is chosen to not override the standard
+macOS binding `command-COMMA` for Preferences.
 
 ### Kill commands and Append Next Kill
 
