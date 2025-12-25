@@ -180,7 +180,7 @@ When specifying the search text or the replace-text, the following keys are acti
 While replacing, the following keys are active:
 
 - `.`: perform the replacement on this match and then stop.
-- `y` `SPACE`: perform the replacement and move to the next match.
+- `y` or `SPACE`: perform the replacement and move to the next match.
 - `,`: perform the replacement but do not move to the next match. The next (valid) key press moves to the next match.
 - `n`: do not perform the replacement and move to the next match.
 - `!`: perform the replacement on this and all the following matches.
