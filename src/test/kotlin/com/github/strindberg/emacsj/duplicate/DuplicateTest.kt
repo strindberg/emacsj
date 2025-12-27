@@ -3,7 +3,7 @@ package com.github.strindberg.emacsj.duplicate
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.java"
+private const val FILE = "file.java"
 
 class DuplicateTest : BasePlatformTestCase() {
 

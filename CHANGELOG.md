@@ -10,6 +10,7 @@ and has been removed in this release. If this causes unforeseen consequences, pl
 ### Added
 
 - New keymap "EmacsJ (macOS)" with Command key used instead of Option key for most key bindings.
+- New command "Copy From Above Command". Bound to `Control-c a`.
 
 ### Fixed
 

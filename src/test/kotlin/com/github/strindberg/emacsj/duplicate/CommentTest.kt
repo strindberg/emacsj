@@ -2,6 +2,8 @@ package com.github.strindberg.emacsj.duplicate
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "file.java"
+
 class CommentTest : BasePlatformTestCase() {
 
     fun `test Java line is commented`() {

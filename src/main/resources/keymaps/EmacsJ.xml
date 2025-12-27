@@ -120,6 +120,9 @@
     <action id="com.github.strindberg.emacsj.actions.duplicate.commentdwim">
         <keyboard-shortcut first-keystroke="alt SEMICOLON"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.duplicate.copyfromabovecommand">
+        <keyboard-shortcut first-keystroke="control C" second-keystroke="A"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.rectangle.copyrectangle">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="alt W"/>
     </action>

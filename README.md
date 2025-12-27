@@ -6,9 +6,8 @@ A collection of useful Emacs commands for text editing and search.
 Documentation: EmacsJ on [GitHub](https://github.com/strindberg/emacsj)
 
 This plugin offers a collection of commands for those of us who love Emacs and miss its functionality when working in IntelliJ-based IDEs.
-It is
-mainly intended as an extension to IntelliJ's Emacs keymap, which lacks some functionality that an Emacs user will miss. EmacsJ's aim is to
-offer features that make it easy to work in both Emacs and IntelliJ without having to retrain you muscle memory.
+It is mainly intended as an extension to IntelliJ's Emacs keymap, which lacks some functionality that an Emacs user will miss. EmacsJ's aim
+is to offer features that make it easy to work in both Emacs and IntelliJ without having to retrain you muscle memory.
 
 The easiest way to use the plugin after installation is to choose the *EmacsJ* or *EmacsJ (macOS)* keymap under <kbd>Settings</kbd> →
 <kbd>Keymap</kbd>. This activates all the functionality of the plugin. You find all the bindings of the plugin under <kbd>
@@ -320,11 +319,15 @@ The *Delete Blank Lines* command works with multiple carets.
 
 ### Duplicate and Comment
 
-These commands duplicate the current line or the selected region. *Duplicate Line/Region and Comment* also comments the original region or
-line.
+*Duplicate Line/Region* and *Duplicate Line/Region and Comment* duplicate the current line or the selected region. *Duplicate Line/Region
+and Comment* also comments the original region or line.
 
 The difference between IntelliJ's standard duplicate command and the EmacsJ command *Duplicate Region* is that the latter leaves the caret
 at its original position and doesn't move it to the end of the new copy.
+
+The command *Copy From Above Command* duplicates the first non-blank line above the current line, from the column of the caret. Without an
+argument in copies the rest of the line from the starting column. After *Universal argument*, it copies the number of characters specified.
+The command does nothing if a selected region is active.
 
 *Comment DWIM (Do What I Mean)* will comment the current line if no selection is active. If the selection is active, it will comment the
 selected region, using line comments if the region's start is at a line start and the end is at either a line's start or end. Otherwise,
@@ -334,6 +337,7 @@ The commands are:
 
 - Duplicate Line/Region (`ctrl-c y`).
 - Duplicate Line/Region and Comment (`ctrl-c c`).
+- Copy From Above Command (`ctrl-c a`).
 - Comment DWIM (Do What I Mean) (`alt-SEMICOLON`).
 
 The *Duplicate and Comment* commands work with multiple carets.

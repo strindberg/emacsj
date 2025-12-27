@@ -1,6 +1,7 @@
 package com.github.strindberg.emacsj.universal
 
 import com.github.strindberg.emacsj.EmacsJService
+import com.github.strindberg.emacsj.duplicate.ACTION_COPY_ABOVE_COMMAND
 import com.github.strindberg.emacsj.line.ACTION_TRANSPOSE_LINES
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
@@ -46,6 +47,7 @@ internal val singleActions = setOf(
     ACTION_ZAP_BACKWARD_UP_TO,
     ACTION_DELETE_SPACE,
     ACTION_TRANSPOSE_LINES,
+    ACTION_COPY_ABOVE_COMMAND,
 )
 
 class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {

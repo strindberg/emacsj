@@ -197,6 +197,10 @@
                 class="com.github.strindberg.emacsj.actions.duplicate.CommentDwimAction">
             <keyboard-shortcut first-keystroke="alt SEMICOLON" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.duplicate.copyfromabovecommand"
+                class="com.github.strindberg.emacsj.actions.duplicate.CopyFromAboveCommandAction">
+            <keyboard-shortcut first-keystroke="control C" second-keystroke="A" keymap="Emacs"/>
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.rectangle.copyrectangle"
                 class="com.github.strindberg.emacsj.actions.rectangle.CopyRectangleAction">
