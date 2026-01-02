@@ -2125,6 +2125,36 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
     }
 
+    fun `test Forward selection search works`() {
+        myFixture.configureByText(FILE, "<selection>foo<caret></selection> bar foo")
+        ISearchHandler.selectionISearch = true
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo<caret> bar foo")
+        assertEquals("foo", ISearchHandler.delegate?.text)
+        assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo bar foo<caret>")
+        assertEquals("foo", ISearchHandler.delegate?.text)
+        assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Backward selection search works`() {
+        myFixture.configureByText(FILE, "foo bar <selection><caret>foo</selection>")
+        ISearchHandler.selectionISearch = true
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.checkResult("foo bar <caret>foo")
+        assertEquals("foo", ISearchHandler.delegate?.text)
+        assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.checkResult("<caret>foo bar foo")
+        assertEquals("foo", ISearchHandler.delegate?.text)
+        assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
+    }
+
     private fun pressEnter() {
         myFixture.performEditorAction(ACTION_EDITOR_ENTER)
         ISearchHandler.delegate?.hide()

@@ -18,15 +18,21 @@ class EmacsJSettingsComponent {
 
     private val useLaxISearch: JCheckBox = JCheckBox()
 
+    private val useSelectionISearch: JCheckBox = JCheckBox()
+
     private val description1 =
         JBLabel("If enabled, whitespace is replaced with this regexp in Isearch. Default is '.*?'. Emacs default is '[ 	]+'.")
 
     private val description2 =
         JBLabel("Lax Isearch can be toggled with key binding 'Toggle Lax-Whitespace Searching'")
 
+    private val description3 =
+        JBLabel("If enabled, iSearch uses the selected region if selection is active when iSearch is started")
+
     init {
         description1.font = description1.font.deriveFont(Font.ITALIC)
         description2.font = description2.font.deriveFont(Font.ITALIC)
+        description3.font = description3.font.deriveFont(Font.ITALIC)
         iSearchLabel.font = iSearchLabel.font.deriveFont(Font.BOLD)
         mainPanel = FormBuilder.createFormBuilder()
             .addComponent(iSearchLabel)
@@ -34,6 +40,9 @@ class EmacsJSettingsComponent {
             .addLabeledComponent(JBLabel("Use lax Isearch:"), useLaxISearch, 1, false)
             .addComponent(description1)
             .addComponent(description2)
+            .addSeparator()
+            .addLabeledComponent(JBLabel("Use selection Isearch:"), useSelectionISearch, 1, false)
+            .addComponent(description3)
             .addSeparator()
             .addComponentFillVertically(JPanel(), 0)
             .panel
@@ -53,5 +62,11 @@ class EmacsJSettingsComponent {
 
     fun setUseLaxISearch(newValue: Boolean) {
         useLaxISearch.isSelected = newValue
+    }
+
+    fun getUseSelectionISearch() = useSelectionISearch.isSelected
+
+    fun setUseSelectionISearch(newValue: Boolean) {
+        useSelectionISearch.isSelected = newValue
     }
 }

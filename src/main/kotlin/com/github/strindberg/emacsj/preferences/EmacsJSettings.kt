@@ -24,4 +24,4 @@ internal class EmacsJSettings : PersistentStateComponent<EmacsJState> {
     }
 }
 
-class EmacsJState(var searchWhitespaceRegexp: String = ".*?", var useLaxISearch: Boolean = false)
+class EmacsJState(var searchWhitespaceRegexp: String = ".*?", var useLaxISearch: Boolean = false, var useSelectionISearch: Boolean = false)
