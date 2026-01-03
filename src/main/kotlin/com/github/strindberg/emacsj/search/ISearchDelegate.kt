@@ -115,7 +115,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         } else {
             editor.caretModel.runForEachCaret {
                 it.search = CaretSearch(it.offset)
-                it.breadcrumbs = mutableListOf()
             }
         }
 
@@ -427,7 +426,6 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         val origin = if (direction == FORWARD) editor.selectionModel.selectionStart else editor.selectionModel.selectionEnd
 
         editor.caretModel.primaryCaret.search = CaretSearch(origin)
-        editor.caretModel.primaryCaret.breadcrumbs = mutableListOf()
 
         editor.selectionModel.removeSelection()
         if (editor is EditorEx) {
