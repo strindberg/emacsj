@@ -218,6 +218,10 @@
                 class="com.github.strindberg.emacsj.actions.rectangle.ClearRectangleAction">
             <keyboard-shortcut first-keystroke="control X" second-keystroke="alt C" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.rectangle.keeprectangle"
+                class="com.github.strindberg.emacsj.actions.rectangle.KeepRectangleAction">
+            <keyboard-shortcut first-keystroke="control X" second-keystroke="alt shift K" keymap="Emacs"/>
+        </action>
         <action id="com.github.strindberg.emacsj.actions.rectangle.rectanglepaste"
                 class="com.github.strindberg.emacsj.actions.rectangle.RectanglePasteAction">
             <keyboard-shortcut first-keystroke="control X" second-keystroke="alt Y" keymap="Emacs"/>

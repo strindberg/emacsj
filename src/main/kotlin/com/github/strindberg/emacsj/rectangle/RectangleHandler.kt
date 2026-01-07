@@ -10,7 +10,7 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.ide.CopyPasteManager
 import org.intellij.lang.annotations.Language
 
-enum class Type { COPY, CUT, OPEN, CLEAR }
+enum class Type { COPY, CUT, OPEN, CLEAR, KEEP }
 
 @Language("devkit-action-id")
 internal const val ACTION_COPY_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.copyrectangle"
@@ -23,6 +23,9 @@ internal const val ACTION_OPEN_RECTANGLE = "com.github.strindberg.emacsj.actions
 
 @Language("devkit-action-id")
 internal const val ACTION_CLEAR_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.clearrectangle"
+
+@Language("devkit-action-id")
+internal const val ACTION_KEEP_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.keeprectangle"
 
 class RectangleHandler(val type: Type) : EditorWriteActionHandler() {
 
@@ -39,6 +42,7 @@ class RectangleHandler(val type: Type) : EditorWriteActionHandler() {
                 val maxColumn = maxOf(startPosition.column, endPosition.column)
 
                 val buffer = mutableListOf<String>()
+                var lastTo: Int = -1
                 for (line in startPosition.line..endPosition.line) {
                     val from = minOf(editor.document.getLineStartOffset(line) + minColumn, editor.document.getLineEndOffset(line))
                     val to = minOf(editor.document.getLineStartOffset(line) + maxColumn, editor.document.getLineEndOffset(line))
@@ -50,12 +54,20 @@ class RectangleHandler(val type: Type) : EditorWriteActionHandler() {
                         }
                         Type.OPEN -> editor.document.insertString(from, " ".repeat(to - from))
                         Type.CLEAR -> editor.document.replaceString(from, to, " ".repeat(to - from))
+                        Type.KEEP -> {
+                            val originalEnd = editor.document.getLineEndOffset(line)
+                            val deleted = (from - editor.document.getLineStartOffset(line)) + (editor.document.getLineEndOffset(line) - to)
+                            editor.document.deleteString(to, editor.document.getLineEndOffset(line))
+                            editor.document.deleteString(editor.document.getLineStartOffset(line), from)
+                            lastTo = originalEnd - deleted
+                        }
                     }
                 }
 
                 when (type) {
                     Type.COPY, Type.CUT -> CopyPasteManager.getInstance().setContents(StringSelection(buffer.joinToString("\n")))
                     Type.OPEN, Type.CLEAR -> caret.moveToOffset(editor.visualPositionToOffset(startPosition))
+                    Type.KEEP -> if (lastTo != -1) caret.moveToOffset(lastTo)
                 }
 
                 caret.removeSelection()
