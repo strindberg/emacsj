@@ -7,7 +7,7 @@ Documentation: EmacsJ on [GitHub](https://github.com/strindberg/emacsj)
 
 This plugin offers a collection of commands for those of us who love Emacs and miss its functionality when working in IntelliJ-based IDEs.
 It is mainly intended as an extension to IntelliJ's Emacs keymap, which lacks some functionality that an Emacs user will miss. EmacsJ's aim
-is to offer features that make it easy to work in both Emacs and IntelliJ without having to retrain you muscle memory.
+is to offer features that make it easy to work in both Emacs and IntelliJ without having to retrain your muscle memory.
 
 The easiest way to use the plugin after installation is to choose the *EmacsJ* or *EmacsJ (macOS)* keymap under <kbd>Settings</kbd> →
 <kbd>Keymap</kbd>. This activates all the functionality of the plugin. You find all the bindings of the plugin under <kbd>
@@ -74,7 +74,7 @@ the beginning of the file (or the end if reverse search is active). The directio
 corresponding key.
 
 The way Isearch interprets white space in the search string can be configured (see [below](#isearch-configuration---lax-mode)) between
-literal and lax interpretation, and also changed during search.
+literal and lax interpretation and also changed during search.
 
 There are four ways to start a search:
 
@@ -192,7 +192,7 @@ While replacing, the following keys are active:
 Note that the keybindings above are only active while using Search/replace, i.e. they do not clash with other commands having the same key
 binding outside Search/replace. The keybindings `y`, `SPACE`, `,`, `n`, `!`, `e`, `u`, `^`, `.` and `ctrl-l` are non-configurable.
 
-Search/replace text uses smart case, such that the search will be performed without case sensitivity if the whole search string and the
+Search/replace text uses smart case such that the search will be performed without case sensitivity if the whole search string and the
 whole replacement string consist of lower case characters, but switch to case-sensitive search if the search string or replace string
 contains one or more capital letters. If you need to search and replace two lower case strings and not match upper case letters, use regexp
 search/ replace, which is always case-sensitive.
@@ -204,7 +204,7 @@ Colors used by Search/replace can be configured as described under Isearch [abov
 *Universal Argument* can be used to repeat any subsequent command. The argument can be specified as described below, and the following
 command will be executed the specified number of times.
 
-Please note that *Universal argument* cannot be used to repeat recorded macros because of a limitation in the IntelliJ platform.
+Note that *Universal argument* cannot be used to repeat recorded macros because of a limitation in the IntelliJ platform.
 
 *Universal Argument* can be invoked in one of three ways:
 
@@ -308,8 +308,8 @@ The *Delete Whitespace* commands work with multiple carets.
 
 The command *Delete Blank Lines* deletes lines that are either empty or only containing whitespace. If the caret is currently
 on a non-blank line, all subsequent blank lines are deleted. If the current line is blank and the surrounding lines are non-blank, the
-current line is deleted. If the current line is blank and form part of a consecutive number of blank lines, the blank lines are reduced to a
-single blank line.
+current line is deleted. If the current line is blank and forms part of a consecutive number of blank lines, the blank lines are reduced to
+a single blank line.
 
 The commands are:
 
@@ -347,7 +347,7 @@ The *Duplicate and Comment* commands work with multiple carets.
 A rectangle is defined as the rectangular region limited by the caret's point and its opposite corner in the active selection. To use these
 commands, first select a region and then use the proper command. No characters outside the rectangle will be affected.
 
-Please note that unlike Emacs, IntelliJ cannot display the selected rectangle as a rectangle, but the commands work as described.
+Note that unlike Emacs, IntelliJ cannot display the selected rectangle as a rectangle, but the commands work as described.
 
 The *Rectangle: Paste* command does not require an active selection but will paste multiple lines starting at the same column as the
 current caret on each line.
@@ -471,7 +471,7 @@ thus easily go back to previous positions.
 After *XRef Go Back*, the command *XRef Go Forward* can be invoked to return to the point where *XRef Go Back* was invoked.
 This is supported by a forward/redo stack that can be traversed in multiple levels.
 
-The command *XRef Push Mark* pushes the current position onto the XRef (backward/undo) stack, and clears the foward/redo stack. This command
+The command *XRef Push Mark* pushes the current position onto the XRef (backward/undo) stack and clears the foward/redo stack. This command
 does not have a default key binding.
 
 The commands are:
@@ -480,8 +480,9 @@ The commands are:
 - XRef Go Forward (`ctrl-alt-COMMA`). Go forward to the point where a previous XRef Go Back was invoked.
 - XRef Push Mark. Push the current position onto the XRef (backward) stack.
 
-Note that the key binding `alt-COMMA` above is `option-COMMA` in the *EmacsJ (macOS)* keymap. This is chosen to not override the standard
-macOS binding `command-COMMA` for Preferences.
+Note that unlike all other key bindings in the *EmacsJ (macOS)* keymap where the *command* key is used instead of *option*, the binding
+for XRef Go Back does not use `command-COMMA` but `option-COMMA`. This is chosen to not override the standard macOS binding `command-COMMA`
+for Preferences.
 
 ### Kill commands and Append Next Kill
 
@@ -513,7 +514,7 @@ The commands are:
 
 - Kill Line (`ctrl-k`). Kill and copy the rest of the current line, including the final newline character if the caret is on the first
   position of the line or there is only whitespace between caret and line end.
-- Kill Whole Line (`ctrl-alt-k`). Kill and copy the whole the current line, including the final newline character.
+- Kill Whole Line (`ctrl-alt-k`). Kill and copy the whole current line, including the final newline character.
 - Kill Ring Copy (`alt-w`). Kill and copy the active selection. If no selection is active, the whole line including the newline
   character is used as selection.
 - Kill Ring Cut (`ctrl-w`). Kill and cut the active selection. If no selection is active, the whole line including the newline character
@@ -531,7 +532,7 @@ is 0, the current line is interchanged with the line where the mark is currently
 
 The commands are:
 
-- Transpose Lines (`ctrl-x ctrl-t`). Interchange the current line with the preceding line. Universal argument modified the behavior as
+- Transpose Lines (`ctrl-x ctrl-t`). Interchange the current line with the preceding line. Universal argument modifies the behavior as
   described above.
 
 ### Buffer Beginning/End Movement
