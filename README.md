@@ -73,8 +73,8 @@ the file, the search bar indicates that no more matches can be found. Pressing t
 the beginning of the file (or the end if reverse search is active). The direction of the search can be changed at any time with the
 corresponding key.
 
-The way Isearch interprets white space in the search string can be configured (see [below](#isearch-configuration---lax-mode)) between
-literal and lax interpretation and also changed during search.
+The way Isearch interprets white space in the search string can be configured (see
+[below](#isearch-configuration--lax-mode-and-selection-search)) between literal and lax interpretation and also changed during search.
 
 There are four ways to start a search:
 
@@ -102,7 +102,7 @@ While searching, the following commands are available:
   the last character from the search string.
 - `ctrl-c SPACE`: toggle between lax and strict handling of whitespace in search string (only text search). The mode stays unchanged between
   searches so that a new search starts with the mode from the last search. The default mode can
-  be [changed](#isearch-configuration---lax-mode) under Settings.
+  be [changed](#isearch-configuration--lax-mode-and-selection-search) under Settings.
 - `alt-e`: enable editing of the search string. Searching (with the new search string) is resumed when pressing `ENTER`.
 - `ctrl-w`: add the word at point in the editor to the search string.
 - `ctrl-alt-e`: add the rest of the current editor line to the search string.
@@ -127,7 +127,7 @@ by toggling between case-sensitive and case-insensitive search with `alt-c` (see
 
 *Isearch* works with multiple carets.
 
-#### Isearch configuration - lax mode
+#### Isearch configuration – lax mode and selection search
 
 When lax mode is enabled in Settings, Isearch will replace every space in the search string with the supplied regular expression. This
 makes it possible to search for string parts that are not adjacent. The default regular expression is '.*?' which means that a space will be
@@ -136,6 +136,10 @@ above. Lax search only works with text search, not regexp search.
 
 The default mode (lax or strict) can be changed, as well as the regular expression used to replace space in Isearch, under Settings →
 Editor → EmacsJ.
+
+When selection search is enabled in Settings, Isearch will use the selected text as search argument if a selection is active when Isearch
+is started. The drawback to this is that if enabled, Isearch cannot be used to expand an existing selection. Choose which alternative you
+find the most convenient.
 
 ![Isearch settings](images/settings.png "Isearch Settings")
 

@@ -26,14 +26,15 @@ class EmacsJSettingsComponent {
     private val description2 =
         JBLabel("Lax Isearch can be toggled with key binding 'Toggle Lax-Whitespace Searching'")
 
-    private val description3 =
-        JBLabel("If enabled, iSearch uses the selected region if selection is active when iSearch is started")
+    private val selectionSearchDescription =
+        JBLabel("If enabled, Isearch uses the selected region as search argument if a selection is active when Isearch is invoked")
 
     init {
         description1.font = description1.font.deriveFont(Font.ITALIC)
         description2.font = description2.font.deriveFont(Font.ITALIC)
-        description3.font = description3.font.deriveFont(Font.ITALIC)
+        selectionSearchDescription.font = selectionSearchDescription.font.deriveFont(Font.ITALIC)
         iSearchLabel.font = iSearchLabel.font.deriveFont(Font.BOLD)
+
         mainPanel = FormBuilder.createFormBuilder()
             .addComponent(iSearchLabel)
             .addLabeledComponent(JBLabel("Isearch whitespace regexp:"), searchWhitespaceRegexp, 1, false)
@@ -42,7 +43,7 @@ class EmacsJSettingsComponent {
             .addComponent(description2)
             .addSeparator()
             .addLabeledComponent(JBLabel("Use selection Isearch:"), useSelectionISearch, 1, false)
-            .addComponent(description3)
+            .addComponent(selectionSearchDescription)
             .addSeparator()
             .addComponentFillVertically(JPanel(), 0)
             .panel
