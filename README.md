@@ -74,7 +74,8 @@ the beginning of the file (or the end if reverse search is active). The directio
 corresponding key.
 
 The way Isearch interprets white space in the search string can be configured (see
-[below](#isearch-configuration--lax-mode-and-selection-search)) between literal and lax interpretation and also changed during search.
+[below](#isearch-configuration--lax-mode-and-selection-search)) between literal and lax interpretation and also changed during search. 
+Whether an active selection should be used as the search argument when starting a search can also be configured.
 
 There are four ways to start a search:
 
