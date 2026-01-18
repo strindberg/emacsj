@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- New command *Keep rectangle*: delete everything to the left and right of the selected rectangle. Bound to `ctrl-x alt-shift-k`. 
+- New configuration option to search for the selected text if selection is active when Isearch is invoked. Not enabled by default. 
+
 ## [1.5.2] - 2025-12-30
 
 Note: previous versions of this plugin modified the base IntelliJ keymap, adding the plugin's bindings to all keymaps. This was incorrect
@@ -11,8 +16,8 @@ and has been removed in this release. If this causes unforeseen consequences, pl
 
 ### Added
 
-- New keymap "EmacsJ (macOS)" with Command key used instead of Option key for most key bindings.
-- New command "Copy From Above Command". Bound to `Control-c a`.
+- New keymap *EmacsJ (macOS)* with Command key used instead of Option key for most key bindings.
+- New command *Copy From Above Command*. Bound to `Control-c a`.
 
 ### Fixed
 

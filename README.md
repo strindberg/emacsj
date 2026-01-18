@@ -75,7 +75,9 @@ corresponding key.
 
 The way Isearch interprets white space in the search string can be configured (see
 [below](#isearch-configuration--lax-mode-and-selection-search)) between literal and lax interpretation and also changed during search. 
-Whether an active selection should be used as the search argument when starting a search can also be configured.
+
+Whether an active selection should be used as the search argument when starting a search can also be configured on the same configuration
+page as above.
 
 There are four ways to start a search:
 
@@ -139,8 +141,8 @@ The default mode (lax or strict) can be changed, as well as the regular expressi
 Editor → EmacsJ.
 
 When selection search is enabled in Settings, Isearch will use the selected text as search argument if a selection is active when Isearch
-is started. The drawback to this is that if enabled, Isearch cannot be used to expand an existing selection. Choose which alternative you
-find the most convenient.
+is invoked. The drawback to this is that if enabled, Isearch cannot be used to expand an existing selection. Choose which alternative you
+find the most convenient. The default is not to use selection.
 
 ![Isearch settings](images/settings.png "Isearch Settings")
 
@@ -352,7 +354,7 @@ The *Duplicate and Comment* commands work with multiple carets.
 A rectangle is defined as the rectangular region limited by the caret's point and its opposite corner in the active selection. To use these
 commands, first select a region and then use the proper command. No characters outside the rectangle will be affected.
 
-Note that unlike Emacs, IntelliJ cannot display the selected rectangle as a rectangle, but the commands work as described.
+Note that unlike Emacs, IntelliJ cannot visibly display the selected rectangle *as a rectangle*, but the commands work as described.
 
 The *Rectangle: Paste* command does not require an active selection but will paste multiple lines starting at the same column as the
 current caret on each line.
@@ -364,6 +366,8 @@ The commands are:
   the rectangle is adjusted leftward.
 - Rectangle: Open (`ctrl-x alt-o`). Create a blank rectangle by shifting all text to the right of the rectangle.
 - Rectangle: Clear (`ctrl-x alt-c`). Create a blank rectangle by replacing all text within the rectangle with space.
+- Rectangle: Keep (`ctrl-x alt-shift-k`). Delete everything to the left and right of the rectangle, only leaving its contents. The deleted
+  text is not placed in the kill ring.
 - Rectangle: Paste (`ctrl-x alt-p`). Paste the contents of the clipboard, starting at the same column on each line. Text to the right of the
   insertion point is shifted rightward.
 
