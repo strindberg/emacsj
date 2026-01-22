@@ -20,13 +20,13 @@ making it easier to use on a Mac keyboard.
 The main features are:
 
 - Incremental search modeled on Emacs' Isearch, with text and regexp search.
-- Query-replace with text or regexps, with a very light-weight interface.
+- Query-replace with text or regexps.
 - Word commands: transpose, upper-case, lower-case, capitalize, move, delete.
 - Easy access to clipboard history à la Emacs (kill ring).
 - A mark history with the ability to pop mark (mark ring), and exchange point and mark.
 - Universal argument: repeat commands a specified number of times.
 - Append-next-kill: append copied/cut text to previous kill.
-- Rectangle commands: copy, open, clear, paste.
+- Rectangle commands: copy, open, clear, keep, paste.
 - Zap to character.
 - Go back and forward in XRef history.
 - Whitespace commands: delete space around point, delete empty lines.
@@ -112,8 +112,8 @@ While searching, the following commands are available:
 - `ctrl-alt-y`: add the character at point to the search string.
 - `ctrl-shift-ENTER`: add a new line character to the search string.
 - `alt-c`: toggle between case-sensitive and case-insensitive search.
-- `alt-<`: move the caret to the first match of the current search without exiting Isearch.
-- `alt->`: move the caret to the last match of the current search without exiting Isearch.
+- `alt-LESS`: move the caret to the first match of the current search without exiting Isearch.
+- `alt-GREATER`: move the caret to the last match of the current search without exiting Isearch.
 - `alt-p`: browse backward in the list of previous searches (with the current type).
 - `alt-n`: browse forward in the list of previous searches (with the current type).
 - `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search. Repeated use behaves
