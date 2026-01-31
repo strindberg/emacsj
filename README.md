@@ -20,13 +20,13 @@ making it easier to use on a Mac keyboard.
 The main features are:
 
 - Incremental search modeled on Emacs' Isearch, with text and regexp search.
-- Query-replace with text or regexps, with a very light-weight interface.
+- Query-replace with text or regexps.
 - Word commands: transpose, upper-case, lower-case, capitalize, move, delete.
 - Easy access to clipboard history à la Emacs (kill ring).
 - A mark history with the ability to pop mark (mark ring), and exchange point and mark.
 - Universal argument: repeat commands a specified number of times.
 - Append-next-kill: append copied/cut text to previous kill.
-- Rectangle commands: copy, open, clear, paste.
+- Rectangle commands: copy, open, clear, keep, paste.
 - Zap to character.
 - Go back and forward in XRef history.
 - Whitespace commands: delete space around point, delete empty lines.
@@ -73,8 +73,11 @@ the file, the search bar indicates that no more matches can be found. Pressing t
 the beginning of the file (or the end if reverse search is active). The direction of the search can be changed at any time with the
 corresponding key.
 
-The way Isearch interprets white space in the search string can be configured (see [below](#isearch-configuration---lax-mode)) between
-literal and lax interpretation and also changed during search.
+The way Isearch interprets white space in the search string can be configured (see
+[below](#isearch-configuration--lax-mode-and-selection-search)) between literal and lax interpretation and also changed during search.
+
+Whether an active selection should be used as the search argument when starting a search can also be configured on the same configuration
+page as above.
 
 There are four ways to start a search:
 
@@ -102,15 +105,15 @@ While searching, the following commands are available:
   the last character from the search string.
 - `ctrl-c SPACE`: toggle between lax and strict handling of whitespace in search string (only text search). The mode stays unchanged between
   searches so that a new search starts with the mode from the last search. The default mode can
-  be [changed](#isearch-configuration---lax-mode) under Settings.
+  be [changed](#isearch-configuration--lax-mode-and-selection-search) under Settings.
 - `alt-e`: enable editing of the search string. Searching (with the new search string) is resumed when pressing `ENTER`.
 - `ctrl-w`: add the word at point in the editor to the search string.
 - `ctrl-alt-e`: add the rest of the current editor line to the search string.
 - `ctrl-alt-y`: add the character at point to the search string.
 - `ctrl-shift-ENTER`: add a new line character to the search string.
 - `alt-c`: toggle between case-sensitive and case-insensitive search.
-- `alt-<`: move the caret to the first match of the current search without exiting Isearch.
-- `alt->`: move the caret to the last match of the current search without exiting Isearch.
+- `alt-LESS`: move the caret to the first match of the current search without exiting Isearch.
+- `alt-GREATER`: move the caret to the last match of the current search without exiting Isearch.
 - `alt-p`: browse backward in the list of previous searches (with the current type).
 - `alt-n`: browse forward in the list of previous searches (with the current type).
 - `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search. Repeated use behaves
@@ -127,7 +130,7 @@ by toggling between case-sensitive and case-insensitive search with `alt-c` (see
 
 *Isearch* works with multiple carets.
 
-#### Isearch configuration - lax mode
+#### Isearch configuration – lax mode and selection search
 
 When lax mode is enabled in Settings, Isearch will replace every space in the search string with the supplied regular expression. This
 makes it possible to search for string parts that are not adjacent. The default regular expression is '.*?' which means that a space will be
@@ -136,6 +139,10 @@ above. Lax search only works with text search, not regexp search.
 
 The default mode (lax or strict) can be changed, as well as the regular expression used to replace space in Isearch, under Settings →
 Editor → EmacsJ.
+
+When selection search is enabled in Settings, Isearch will use the selected text as search argument if a selection is active when Isearch
+is invoked. The drawback to this is that if enabled, Isearch cannot be used to expand an existing selection. Choose which alternative you
+find the most convenient. The default is not to use selection.
 
 ![Isearch settings](images/settings.png "Isearch Settings")
 
@@ -347,7 +354,7 @@ The *Duplicate and Comment* commands work with multiple carets.
 A rectangle is defined as the rectangular region limited by the caret's point and its opposite corner in the active selection. To use these
 commands, first select a region and then use the proper command. No characters outside the rectangle will be affected.
 
-Note that unlike Emacs, IntelliJ cannot display the selected rectangle as a rectangle, but the commands work as described.
+Note that unlike Emacs, IntelliJ cannot visibly display the selected rectangle *as a rectangle*, but the commands work as described.
 
 The *Rectangle: Paste* command does not require an active selection but will paste multiple lines starting at the same column as the
 current caret on each line.
@@ -359,6 +366,8 @@ The commands are:
   the rectangle is adjusted leftward.
 - Rectangle: Open (`ctrl-x alt-o`). Create a blank rectangle by shifting all text to the right of the rectangle.
 - Rectangle: Clear (`ctrl-x alt-c`). Create a blank rectangle by replacing all text within the rectangle with space.
+- Rectangle: Keep (`ctrl-x alt-shift-k`). Delete everything to the left and right of the rectangle, only leaving its contents. The deleted
+  text is not placed in the kill ring.
 - Rectangle: Paste (`ctrl-x alt-p`). Paste the contents of the clipboard, starting at the same column on each line. Text to the right of the
   insertion point is shifted rightward.
 

@@ -57,7 +57,7 @@ private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
 
 private enum class StartType { WRAPAROUND, FIRST_SEARCH, REPEATED_SEARCH }
 
-internal class ISearchDelegate(private val editor: Editor, val type: SearchType, var direction: Direction) {
+internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -98,22 +98,25 @@ internal class ISearchDelegate(private val editor: Editor, val type: SearchType,
         identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
 
-        if (editor.selectionModel.hasSelection()) {
-            editor.caretModel.removeSecondaryCarets()
-        }
-
         editor.caretModel.addCaretListener(caretListener)
-
-        editor.caretModel.runForEachCaret {
-            it.search = CaretSearch(it.offset)
-            it.breadcrumbs = mutableListOf()
-        }
 
         initTitleText()
 
         setupTypedActionHandler()
 
         setupActionHandlers()
+
+        if (editor.selectionModel.hasSelection()) {
+            editor.caretModel.removeSecondaryCarets()
+        }
+
+        if (editor.selectionModel.hasSelection() && ISearchHandler.selectionISearch) {
+            searchSelected()
+        } else {
+            editor.caretModel.runForEachCaret {
+                it.search = CaretSearch(it.offset)
+            }
+        }
 
         ui.show()
     }
@@ -416,6 +419,20 @@ internal class ISearchDelegate(private val editor: Editor, val type: SearchType,
 
         val (isRegexp, searchString) = getSearchModelArguments()
         CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
+    }
+
+    private fun searchSelected() {
+        val selectedText = editor.selectionModel.selectedText ?: ""
+        val origin = if (direction == FORWARD) editor.selectionModel.selectionStart else editor.selectionModel.selectionEnd
+
+        editor.caretModel.primaryCaret.search = CaretSearch(origin)
+
+        editor.selectionModel.removeSelection()
+        if (editor is EditorEx) {
+            editor.isStickySelection = false
+        }
+
+        searchAllCarets(direction, selectedText)
     }
 
     private fun findFirstLast(findDirection: Direction, switchDirection: Boolean) {

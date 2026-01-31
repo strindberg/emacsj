@@ -60,20 +60,39 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
 
         private var savedPos = -1
 
-        private var initialized = false
+        private var laxInitialized = false
+
+        private var selectionSearchInitialized = false
 
         internal var lax: Boolean = false
             get() {
-                if (!initialized) {
+                if (!laxInitialized) {
                     field = EmacsJSettings.getInstance().state.useLaxISearch // We can't access this value in constructor
-                    initialized = true
+                    laxInitialized = true
                 }
                 return field
+            }
+            set(value) {
+                field = value
+                laxInitialized = true
             }
 
         internal fun toggleLax() {
             lax = !lax
         }
+
+        internal var selectionISearch: Boolean = false
+            get() {
+                if (!selectionSearchInitialized) {
+                    field = EmacsJSettings.getInstance().state.useSelectionISearch // We can't access this value in constructor
+                    selectionSearchInitialized = true
+                }
+                return field
+            }
+            set(value) {
+                field = value
+                selectionSearchInitialized = true
+            }
 
         internal fun searchConcluded(text: String, type: SearchType) {
             savedPos = -1

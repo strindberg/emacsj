@@ -7,13 +7,17 @@ private val CARET_SEARCH_DATA_KEY = Key.create<CaretSearch>("ISearchHandler.CARE
 private val CARET_BREADCRUMBS_KEY = Key.create<MutableList<CaretBreadcrumb>>("ISearchHandler.CARET_BREADCRUMBS_KEY")
 
 internal var Caret.search: CaretSearch
-    get() = getUserData(CARET_SEARCH_DATA_KEY) ?: CaretSearch(offset)
+    get() = getUserData(CARET_SEARCH_DATA_KEY) ?: CaretSearch(offset).apply {
+        putUserData(CARET_SEARCH_DATA_KEY, this)
+    }
     set(searchData) {
         putUserData(CARET_SEARCH_DATA_KEY, searchData)
     }
 
 internal var Caret.breadcrumbs: MutableList<CaretBreadcrumb>
-    get() = getUserData(CARET_BREADCRUMBS_KEY) ?: mutableListOf()
+    get() = getUserData(CARET_BREADCRUMBS_KEY) ?: mutableListOf<CaretBreadcrumb>().apply {
+        putUserData(CARET_BREADCRUMBS_KEY, this)
+    }
     set(breadcrumbs) {
         putUserData(CARET_BREADCRUMBS_KEY, breadcrumbs)
     }
