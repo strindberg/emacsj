@@ -356,6 +356,9 @@
     <action id="com.github.strindberg.emacsj.actions.rectangle.clearrectangle">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="meta C"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.rectangle.keeprectangle">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="meta shift K"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.rectangle.rectanglepaste">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="meta Y"/>
     </action>

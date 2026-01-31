@@ -135,6 +135,9 @@
     <action id="com.github.strindberg.emacsj.actions.rectangle.clearrectangle">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="alt C"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.rectangle.keeprectangle">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="alt shift K"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.rectangle.rectanglepaste">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="alt Y"/>
     </action>

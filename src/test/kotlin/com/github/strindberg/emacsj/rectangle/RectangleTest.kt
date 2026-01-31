@@ -695,4 +695,83 @@ class RectangleTest : BasePlatformTestCase() {
             """.trimMargin()
         )
     }
+
+    fun `test Keep works 01`() {
+        myFixture.configureByText(FILE, "bar<selection>foo</selection><caret>baz")
+
+        myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
+
+        myFixture.checkResult("foo<caret>")
+    }
+
+    fun `test Keep works 02`() {
+        myFixture.configureByText(FILE, "bar<caret><selection>foo</selection>baz")
+
+        myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
+
+        myFixture.checkResult("foo<caret>")
+    }
+
+    fun `test Keep works 03`() {
+        myFixture.configureByText(
+            FILE,
+            """foo
+               |FOO<selection>bar
+               |BARbaz</selection><caret>BAZ
+               |omf
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
+
+        myFixture.checkResult(
+            """foo
+               |bar
+               |baz<caret>
+               |omf
+            """.trimMargin()
+        )
+    }
+
+    fun `test Keep works 04`() {
+        myFixture.configureByText(
+            FILE,
+            """foo
+               |FOO<selection>bar
+               |BARba
+               |BARbaz</selection><caret>BAZ
+               |omf
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
+
+        myFixture.checkResult(
+            """foo
+               |bar
+               |ba
+               |baz<caret>
+               |omf
+            """.trimMargin()
+        )
+    }
+
+    fun `test Keep works 05`() {
+        myFixture.configureByText(
+            FILE,
+            """<selection>foo
+               |bar
+               |baz</selection><caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
+
+        myFixture.checkResult(
+            """foo
+               |bar
+               |baz<caret>
+            """.trimMargin()
+        )
+    }
 }
