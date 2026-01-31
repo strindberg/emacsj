@@ -39,7 +39,7 @@ dependencies {
 
 kotlin {
     jvmToolchain(21)
-    compilerOptions.freeCompilerArgs.addAll("-Xjsr305=strict")
+    compilerOptions.freeCompilerArgs.addAll("-Xjsr305=strict", "-Xreturn-value-checker=full")
 }
 
 intellijPlatform {
