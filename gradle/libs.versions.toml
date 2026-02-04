@@ -5,7 +5,7 @@ intellij-platform = "2.11.0"
 junit = "4.13.2"
 kotlin = "2.3.0"
 kotlinter = "5.4.0"
-kover = "0.9.5"
+kover = "0.9.6"
 
 [libraries]
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
