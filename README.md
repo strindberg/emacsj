@@ -480,7 +480,7 @@ thus easily go back to previous positions.
 After *XRef Go Back*, the command *XRef Go Forward* can be invoked to return to the point where *XRef Go Back* was invoked.
 This is supported by a forward/redo stack that can be traversed in multiple levels.
 
-The command *XRef Push Mark* pushes the current position onto the XRef (backward/undo) stack and clears the foward/redo stack. This command
+The command *XRef Push Mark* pushes the current position onto the XRef (backward/undo) stack and clears the forward/redo stack. This command
 does not have a default key binding.
 
 The commands are:
