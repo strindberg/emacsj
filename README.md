@@ -227,7 +227,7 @@ Argument* before invoking their standard counterparts (*Paste: Leave Caret After
 
 A repeating command can be interrupted by pressing `ctrl-g`.
 
-The commands are:
+Commands:
 
 - Universal Argument (`ctrl-u`). Start accepting an argument with default value 4. Repeated invocations multiply the argument by four.
   Typing digits after activation specifies the argument.
@@ -246,7 +246,7 @@ These commands honor the IDE's setting "Use camel case".
 
 The commands *Delete Next Word* and *Delete Previous Word* respect the *Append Next Kill* command.
 
-The commands are:
+Commands:
 
 - Move Caret to Next Word (`alt-f`). Move the caret to the end of the current word (where the current word is defined as everything up
   to the next end of word characters).
@@ -268,7 +268,7 @@ the caret.
 The Capitalize Word commands will skip over non-word characters until it finds a word to capitalize. If Capitalize Word is used with an
 active selection, each word in the region is capitalized.
 
-The commands are:
+Commands:
 
 - Upper Case Word at Point or Region (`alt-u`).
 - Upper Case Previous Word (`shift-alt-u`).
@@ -292,7 +292,7 @@ of this is that both commands can be used repeatedly to move the current word fo
 
 If the selection is active, the selected region is transposed with the following or previous word, respectively.
 
-The commands are:
+Commands:
 
 - Transpose Current and Next Word (`alt-t`). Change the order of the word at point (or region) and the following word.
 - Transpose Previous and Current Word (`shift-alt-t`). Change the order of the word at point (or region) and the previous word.
@@ -303,7 +303,7 @@ The *Transpose Word* commands work with multiple carets.
 
 The delete whitespace commands reduce the number of whitespace characters around point.
 
-The commands are:
+Commands:
 
 - Delete All Whitespace Around Point (`ctrl-BACKSPACE`). Delete whitespace before and after caret. If used after *Universal Argument*, only
   delete whitespace to the left of the cursor.
@@ -318,7 +318,7 @@ on a non-blank line, all subsequent blank lines are deleted. If the current line
 current line is deleted. If the current line is blank and forms part of a consecutive number of blank lines, the blank lines are reduced to
 a single blank line.
 
-The commands are:
+Commands:
 
 - Delete Blank Lines(`ctrl-x ctrl-o`).
 
@@ -340,7 +340,7 @@ The command does nothing if a selected region is active.
 selected region, using line comments if the region's start is at a line start and the end is at either a line's start or end. Otherwise,
 block comment will be used. If the line or region is already commented, the command instead uncomments the line or region.
 
-The commands are:
+Commands:
 
 - Duplicate Line/Region (`ctrl-c y`).
 - Duplicate Line/Region and Comment (`ctrl-c c`).
@@ -359,7 +359,7 @@ Note that unlike Emacs, IntelliJ cannot visibly display the selected rectangle *
 The *Rectangle: Paste* command does not require an active selection but will paste multiple lines starting at the same column as the
 current caret on each line.
 
-The commands are:
+Commands:
 
 - Rectangle: Copy (`ctrl-x alt-c`). Copy the contents of the rectangle to the clipboard.
 - Rectangle: Cut (`ctrl-x alt-k`). Copy the contents of the rectangle to the clipboard and delete it from the editor. Text to the right of
@@ -390,7 +390,7 @@ for *Paste: Leave Caret at Point*.
 
 The items offered when using *Paste: Previous Item in Clipboard History* are filtered for duplicates and blank entries.
 
-The commands are:
+Commands:
 
 - Paste: Leave Caret After Pasted Region (`ctrl-y`). This command works as standard IntelliJ *Paste*, but it sets up the paste history so
   that further invocations of *Paste: Previous Item in Clipboard History* can suggest previously killed/copied texts.
@@ -420,7 +420,7 @@ The commands [Isearch](#isearch) and [Search/replace](#searchreplace-query-repla
 can return to the position where the latest search started. The command [Exchange Point and Mark](#exchange-point-and-mark) also uses the
 mark history, as described below.
 
-The commands are:
+Commands:
 
 - Set/Push Mark for Selection (`ctrl-SPACE`). Set the mark (and activate sticky selection). The mark is saved to the mark history. To only
   save the mark to history without starting selection, hit the key binding twice (`ctrl-SPACE ctrl-SPACE`).
@@ -433,7 +433,7 @@ region can then be expanded in another direction. The location of the caret befo
 
 If the selection is not active when the command is used, sticky selection is activated between the current point and the last saved mark.
 
-The commands are:
+Commands:
 
 - Exchange Point and Mark (`ctrl-x ctrl-x`). Switch positions of selection start and current point. Reactivate selection from the previous
   mark if no selection is active.
@@ -444,7 +444,7 @@ The commands are:
 visible part of the editor. *Recenter* scrolls the editor contents to move the caret, whereas *Reposition* only moves the caret without
 scrolling the editor.
 
-The commands are:
+Commands:
 
 - Recenter Caret (`ctrl-l`). Cycle the position of the caret between the middle, top and bottom by scrolling the editor contents.
 - Reposition Caret (`alt-r`). Cycle the position of the caret between the middle, top and bottom without scrolling the editor contents.
@@ -462,7 +462,7 @@ character, with N as the universal argument. If the number of found occurrences 
 
 All these commands respect the *Append Next Kill* command (see [below](#kill-commands-and-append-next-kill)).
 
-The commands are:
+Commands:
 
 - Zap To Character (`alt-z`). Kill everything up to and including the given character.
 - Zap Up To Character (`shift-alt-z`). Kill everything up to but not including the given character.
@@ -483,7 +483,7 @@ This is supported by a forward/redo stack that can be traversed in multiple leve
 The command *XRef Push Mark* pushes the current position onto the XRef (backward/undo) stack and clears the forward/redo stack. This command
 does not have a default key binding.
 
-The commands are:
+Commands:
 
 - XRef Go Back (`alt-COMMA`). Pop one item from the stack of previous positions and return the caret to that position.
 - XRef Go Forward (`ctrl-alt-COMMA`). Go forward to the point where a previous XRef Go Back was invoked.
@@ -495,31 +495,31 @@ for Preferences.
 
 ### Kill commands and Append Next Kill
 
-Kill commands in Emacs (and EmacsJ) refer to cutting or copying text and adding the text to the clipboard. Killed text is added as a new
-element in the kill ring, unless the killed text is adjacent to the previously killed text. These kill ring items can be cycled through with
-the paste history command, documented [above](#paste-kill-ring).
+Kill commands refer to cutting or copying text and adding the text to the clipboard. Killed text is added as a new item in the kill ring,
+unless the killed text is adjacent to the previously killed text, in which case the text is appended or prepended to the previous kill ring
+item. These kill ring items can be cycled through with the paste history command, documented [above](#paste-kill-ring).
 
 *Kill Line* works like the standard IntelliJ command *Cut up to Line End*: it kills (and copies) the rest of the current line. If
 there is only whitespace between caret and end of the line, the newline character is also killed. This EmacsJ command expands the standard
-command such that the newline character is also killed if the caret is positioned on the very first position of the line.
+IntelliJ command such that the newline character is also killed if the caret is positioned on the very first position of the line.
 
-*Kill Whole Line* kills (and copies) the whole current line, including the newline character. It places the caret at the start of the
-following line.
+*Kill Whole Line* kills (and copies) the whole current line (before and after the caret), including the newline character. It places the
+caret at the start of the following line.
 
-*Kill Ring Copy* and *Kill Ring Cut* kill the current selection with copy or cut. If the selection is not active, the commands affect the
+*Kill Ring Copy* and *Kill Ring Cut* kill the current selection with copy or cut. If no selection is active, the commands affect the
 whole current line, including the newline character.
 
-The command *Append Next Kill* will set up a waiting state so that if the next command is a cut or copy, the killed text is joined (appended
+The command *Append Next Kill* will set up a waiting state. If the next command is a cut or copy, the killed text is joined (appended
 or prepended) with the previous kill ring item. All the commands documented in this section respect the *Append Next Kill* command.
 Furthermore, the delete word commands &mdash; *Delete Previous Word* and *Delete Next Word* &mdash; (See [Word Movement](#word-movement)),
 as well as the zap commands &mdash; *Zap To Character*, *Zap Up To Character*, *Zap Back To Character* and *Zap Back Up To Character*
 &mdash; (See [Zap to Character](#zap-to-character)), also respect *Append Next Kill*.
 
 If the kill is "backwards" after *Append Next Kill* or if the caret is in front of the killed region, the region is prepended to the
-existing kill ring item. This means that *Kill Ring Copy* and *Kill Ring Cut* both prepend if the caret is before the selection. *Delete
+previous kill ring item. This means that *Kill Ring Copy* and *Kill Ring Cut* both prepend if the caret is before the selection. *Delete
 Previous Word*, *Zap Back To Character* and *Zap Back Up To Character* also prepend after *Append Next Kill*.
 
-The commands are:
+Commands:
 
 - Kill Line (`ctrl-k`). Kill and copy the rest of the current line, including the final newline character if the caret is on the first
   position of the line or there is only whitespace between caret and line end.
@@ -539,7 +539,7 @@ The *Kill* commands work with multiple carets.
 command will interchange the current line with the Nth preceding line, with N being the universal argument. If the Universal argument
 is 0, the current line is interchanged with the line where the mark is currently set.
 
-The commands are:
+Commands:
 
 - Transpose Lines (`ctrl-x ctrl-t`). Interchange the current line with the preceding line. Universal argument modifies the behavior as
   described above.
@@ -549,7 +549,7 @@ The commands are:
 *Beginning of Buffer* and *End of Buffer* work as the IntelliJ commands *Move Caret to Text Start* and *Move Caret to Text End*,
 respectively. They also set a mark at the point where the command is invoked, unless a selection is active.
 
-The commands are:
+Commands:
 
 - Beginning of Buffer (`alt-LESS`). Move the caret to the beginning of the current editor text. Set the mark where the command is invoked.
 - End of Buffer (`alt-GREATER`). Move the caret to the end of the current editor text. Set the mark where the command is invoked.

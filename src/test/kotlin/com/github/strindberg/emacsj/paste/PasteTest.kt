@@ -2,6 +2,7 @@ package com.github.strindberg.emacsj.paste
 
 import java.awt.datatransfer.StringSelection
 import com.github.strindberg.emacsj.kill.ACTION_CUT
+import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
@@ -15,6 +16,11 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 const val FILE = "file.txt"
 
 class PasteTest : BasePlatformTestCase() {
+
+    override fun setUp() {
+        super.setUp()
+        KillUtil.testing = true
+    }
 
     fun `test Paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
