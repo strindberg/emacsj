@@ -14,11 +14,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class AppendKillTest : BasePlatformTestCase() {
 
-    override fun setUp() {
-        super.setUp()
-        KillUtil.testing = true
-    }
-
     fun `test Basic Copy works`() {
         myFixture.configureByText(
             FILE,
