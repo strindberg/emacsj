@@ -44,5 +44,5 @@ class CopyRegionHandler : EditorActionHandler() {
     }
 
     // Avoid inadvertently running the command multiple times because of key repeat.
-    private fun debounced(): Boolean = testing || lastInvocation.isBefore(now().minus(80.milliseconds.toJavaDuration()))
+    private fun debounced(): Boolean = testing || lastInvocation.isBefore(now().minus(100.milliseconds.toJavaDuration()))
 }
