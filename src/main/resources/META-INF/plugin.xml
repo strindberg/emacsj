@@ -319,6 +319,10 @@
             <keyboard-shortcut first-keystroke="alt GREATER" keymap="Emacs"/>
             <keyboard-shortcut first-keystroke="shift alt LESS" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.movement.toindentation"
+                class="com.github.strindberg.emacsj.actions.movement.ToIndentationAction">
+            <keyboard-shortcut first-keystroke="alt M" keymap="Emacs"/>
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.universal.universalargument"
                 class="com.github.strindberg.emacsj.actions.universal.UniversalArgumentAction">

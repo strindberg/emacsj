@@ -64,5 +64,5 @@ class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret
         return next(offset)
     }
 
-    private fun Char.isTrueWhitespace() = isWhitespace() && this != '\n'
+    private fun Char.isTrueWhitespace() = isWhitespace() && this != '\n' && this != '\r'
 }

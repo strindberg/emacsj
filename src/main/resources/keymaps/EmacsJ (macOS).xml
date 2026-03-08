@@ -420,6 +420,9 @@
         <keyboard-shortcut first-keystroke="meta GREATER"/>
         <keyboard-shortcut first-keystroke="shift meta LESS"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.movement.toindentation">
+        <keyboard-shortcut first-keystroke="meta M"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument">
         <keyboard-shortcut first-keystroke="control U"/>
     </action>

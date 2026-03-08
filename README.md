@@ -553,3 +553,18 @@ Commands:
 
 - Beginning of Buffer (`alt-LESS`). Move the caret to the beginning of the current editor text. Set the mark where the command is invoked.
 - End of Buffer (`alt-GREATER`). Move the caret to the end of the current editor text. Set the mark where the command is invoked.
+
+### Move Caret to Indentation
+
+*Back to Indentation* moves each caret to the first non-whitespace character on its line. IntelliJ's standard keymap has the command *Move
+Caret to Line Start* which can also be configured (under Editor -> General -> Smart Keys -> "Home moves caret to first non-whitespace
+character") to move the caret to the first non-whitspace character. If you prefer to have different keys for moving to line start and
+moving to start of indentation, you can turn off the IntelliJ setting, and use `ctrl-a` for *Move Caret to Line Start* and `alt-m` for
+*Back to Indentation*, as Eamcs does.
+
+*Back to Indentation* works with multiple carets.
+
+Commands:
+
+- Back to Indentation (`alt-m`). Move each caret to the first non-whitespace character on its line.
+
