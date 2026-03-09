@@ -31,7 +31,7 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
             if (current.isActive()) {
                 if (current.text.isEmpty()) {
                     if (current.direction == direction) {
-                        current.searchAllCarets(searchDirection = direction, newText = getPrevious(current.type))
+                        current.searchAllCarets(searchDirection = direction, newText = getPrevious(current.searchType))
                     } else {
                         current.direction = direction
                         current.initTitleText()

@@ -99,6 +99,10 @@
                 class="com.github.strindberg.emacsj.actions.search.ISearchToggleCaseAction">
             <keyboard-shortcut first-keystroke="alt C" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchtoggleregexp"
+                class="com.github.strindberg.emacsj.actions.search.ISearchToggleRegexpAction">
+            <keyboard-shortcut first-keystroke="alt R" keymap="Emacs"/>
+        </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchdeletechar"
                 class="com.github.strindberg.emacsj.actions.search.ISearchDeleteCharAction">
             <keyboard-shortcut first-keystroke="control BACK_SPACE" keymap="Emacs"/>

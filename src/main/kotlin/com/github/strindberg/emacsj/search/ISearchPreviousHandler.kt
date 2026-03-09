@@ -16,7 +16,9 @@ class ISearchPreviousHandler(private val forward: Boolean) : EditorActionHandler
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.let { delegate ->
-            delegate.editPrevious(if (forward) ISearchHandler.getNext(delegate.type) else ISearchHandler.getPrevious(delegate.type))
+            delegate.editPrevious(
+                if (forward) ISearchHandler.getNext(delegate.searchType) else ISearchHandler.getPrevious(delegate.searchType)
+            )
         }
     }
 }

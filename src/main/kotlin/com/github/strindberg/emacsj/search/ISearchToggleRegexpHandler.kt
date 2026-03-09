@@ -7,11 +7,11 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import org.intellij.lang.annotations.Language
 
 @Language("devkit-action-id")
-internal const val ACTION_ISEARCH_DELETE_CHAR = "com.github.strindberg.emacsj.actions.search.isearchdeletechar"
+internal const val ACTION_ISEARCH_TOGGLE_REGEXP = "com.github.strindberg.emacsj.actions.search.isearchtoggleregexp"
 
-class ISearchDeleteCharHandler : EditorActionHandler() {
+class ISearchToggleRegexpHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        ISearchHandler.delegate?.takeIf { it.isActive() }?.deleteChar()
+        ISearchHandler.delegate?.toggleRegexpSearch()
     }
 }

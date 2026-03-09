@@ -57,7 +57,7 @@ private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
 
 private enum class StartType { WRAPAROUND, FIRST_SEARCH, REPEATED_SEARCH }
 
-internal class ISearchDelegate(val editor: Editor, val type: SearchType, var direction: Direction) {
+internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, var direction: Direction) {
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -139,7 +139,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
 
             editor.caretModel.removeCaretListener(caretListener)
 
-            ISearchHandler.searchConcluded(text, type)
+            ISearchHandler.searchConcluded(text, searchType)
 
             ui.cancelUI()
 
@@ -201,6 +201,14 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             INSENSITIVE -> SENSITIVE
         }
         renewState(if (caseType == SENSITIVE) "[case sensitive]" else "[case insensitive]")
+    }
+
+    internal fun toggleRegexpSearch() {
+        searchType = when (searchType) {
+            REGEXP -> TEXT
+            TEXT -> REGEXP
+        }
+        renewState(null)
     }
 
     internal fun searchAllCarets(
@@ -384,8 +392,8 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
                 CommonHighlighter.findAllAndHighlight(
                     editor = editor,
                     searchArg = ui.text,
-                    useRegexp = type == REGEXP,
-                    useCase = type == REGEXP || caseSensitive(ui.text),
+                    useRegexp = searchType == REGEXP,
+                    useCase = searchType == REGEXP || caseSensitive(ui.text),
                     range = null
                 )
             }
@@ -417,11 +425,11 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         ui.textColor = if (found) JBColor.foreground() else JBColor.RED
     }
 
-    private fun renewState(message: String) {
+    private fun renewState(message: String?) {
         state = SEARCH
         updateUI(title = titleText(), text = text, found = true)
 
-        ui.flashText(message)
+        message?.let { ui.flashText(it) }
 
         removeAllHighlighters()
 
@@ -461,7 +469,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         listOfNotNull(
             if (!found) "Failing" else null,
             if (wrapped) "Wrapped" else null,
-            if (type == REGEXP) "Regexp Search" else "Search",
+            if (searchType == REGEXP) "Regexp Search" else "Search",
             if (direction == BACKWARD) "Backward" else null
         ).joinToString(" ") + ": "
 
@@ -568,7 +576,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         }
 
     private fun matchEnd(start: Int): Int =
-        start + if (type == TEXT) text.length else Regex(text).matchAt(editor.text, start)?.value?.length ?: 0
+        start + if (searchType == TEXT) text.length else Regex(text).matchAt(editor.text, start)?.value?.length ?: 0
 
     private fun findAllAndHighlight(offset: Int?, highlight: Boolean) {
         val (isRegexp, searchString) = getSearchModelArguments()
@@ -599,14 +607,14 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
     }
 
     private fun getSearchModelArguments(): Pair<Boolean, String> =
-        if (type == TEXT && ISearchHandler.lax) {
+        if (searchType == TEXT && ISearchHandler.lax) {
             Pair(
                 true,
                 text.split(Regex(" +")).filter { it.isNotBlank() }
                     .joinToString(EmacsJSettings.getInstance().state.searchWhitespaceRegexp) { Pattern.quote(it) }
             )
         } else {
-            Pair(type == REGEXP, text)
+            Pair(searchType == REGEXP, text)
         }
 
     private fun caseSensitive() =
@@ -616,7 +624,7 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
             UNSPECIFIED -> defaultSensitive()
         }
 
-    private fun defaultSensitive() = type == REGEXP || caseSensitive(text)
+    private fun defaultSensitive() = searchType == REGEXP || caseSensitive(text)
 
     private fun moveAndUpdate(caret: Caret, match: Match, direction: Direction, found: Boolean) {
         if (caret.isValid) { // Caret might have been disposed after multi-caret search
