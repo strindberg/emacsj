@@ -2185,6 +2185,34 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
     }
 
+    fun `test Delete char in forward search works`() {
+        myFixture.configureByText(FILE, "<caret>foo bar fo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+
+        myFixture.checkResult("foo<caret> bar fo")
+        assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_DELETE_CHAR)
+        myFixture.checkResult("fo<caret>o bar fo")
+        assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Delete char in backward search works`() {
+        myFixture.configureByText(FILE, "fo bar foo<caret>")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("foo")
+
+        myFixture.checkResult("fo bar <caret>foo")
+        assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_DELETE_CHAR)
+        myFixture.checkResult("fo bar <caret>foo")
+        assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
+    }
+
     private fun pressEnter() {
         myFixture.performEditorAction(ACTION_EDITOR_ENTER)
         ISearchHandler.delegate?.hide()

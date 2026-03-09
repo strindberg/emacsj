@@ -272,6 +272,9 @@
     <action id="com.github.strindberg.emacsj.actions.search.isearchtogglecase">
         <keyboard-shortcut first-keystroke="meta C"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchdeletechar">
+        <keyboard-shortcut first-keystroke="control BACK_SPACE"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.replacetext">
         <keyboard-shortcut first-keystroke="meta S"/>
     </action>

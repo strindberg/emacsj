@@ -183,6 +183,13 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         inhibitCancel = false
     }
 
+    internal fun deleteChar() {
+        if (text.isNotEmpty()) {
+            text = text.take(text.length - 1)
+            searchAllCarets(direction, "", forceFirstSearch = true)
+        }
+    }
+
     internal fun renewLaxState() {
         renewState(if (ISearchHandler.lax) "[match spaces loosely]" else "[match spaces literally]")
     }
@@ -201,13 +208,14 @@ internal class ISearchDelegate(val editor: Editor, val type: SearchType, var dir
         newText: String,
         keepStart: Boolean = true,
         forceWraparound: Boolean = false,
+        forceFirstSearch: Boolean = false,
         saveBreadcrumb: Boolean = true,
     ) {
         if (saveBreadcrumb) {
             pushBreadcrumb()
         }
 
-        val isNewText = newText.isNotEmpty()
+        val isNewText = newText.isNotEmpty() || forceFirstSearch
         val startType = startType(isNewText || searchDirection != direction, forceWraparound)
 
         direction = searchDirection
