@@ -12,6 +12,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.actions.BackspaceAction
 import com.intellij.openapi.editor.actions.EnterAction
 import com.intellij.openapi.editor.actions.PasteAction
+import com.github.strindberg.emacsj.actions.paste.PasteAction as EmacsJPasteAction
 
 internal class EmacsJActionsPromoter : ActionPromoter {
 
@@ -41,5 +42,5 @@ internal class EmacsJActionsPromoter : ActionPromoter {
             this is BackspaceAction ||
             this is EnterAction ||
             this is PasteAction ||
-            this is com.github.strindberg.emacsj.actions.paste.PasteAction
+            this is EmacsJPasteAction
 }

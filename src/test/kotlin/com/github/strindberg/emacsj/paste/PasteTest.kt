@@ -168,8 +168,9 @@ class PasteTest : BasePlatformTestCase() {
     fun `test Paste with multiple carets works as expected`() {
         myFixture.configureByText(
             FILE,
-            """foo<caret>BAR
-            |foo<caret>BAZ
+            """
+                |foo<caret>BAR
+                |foo<caret>BAZ
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -177,15 +178,17 @@ class PasteTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_PASTE)
         myFixture.checkResult(
-            """fooxxx<caret>BAR
-            |fooxxx<caret>BAZ
+            """
+                |fooxxx<caret>BAR
+                |fooxxx<caret>BAZ
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult(
-            """foo<caret>xxxBAR
-            |foo<caret>xxxBAZ
+            """
+                |foo<caret>xxxBAR
+                |foo<caret>xxxBAZ
             """.trimMargin()
         )
     }
@@ -193,8 +196,9 @@ class PasteTest : BasePlatformTestCase() {
     fun `test Prefix paste with multiple carets works as expected`() {
         myFixture.configureByText(
             FILE,
-            """foo<caret>BAR
-            |foo<caret>BAZ
+            """
+                |foo<caret>BAR
+                |foo<caret>BAZ
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -202,15 +206,17 @@ class PasteTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_PREFIX_PASTE)
         myFixture.checkResult(
-            """foo<caret>xxxBAR
-            |foo<caret>xxxBAZ
+            """
+                |foo<caret>xxxBAR
+                |foo<caret>xxxBAZ
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult(
-            """foo<caret>xxxBAR
-            |foo<caret>xxxBAZ
+            """
+                |foo<caret>xxxBAR
+                |foo<caret>xxxBAZ
             """.trimMargin()
         )
     }
@@ -218,8 +224,9 @@ class PasteTest : BasePlatformTestCase() {
     fun `test Paste history with multiple carets works as expected`() {
         myFixture.configureByText(
             FILE,
-            """foo<caret>BAR
-            |foo<caret>BAZ
+            """
+                |foo<caret>BAR
+                |foo<caret>BAZ
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -229,15 +236,17 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_PASTE)
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
         myFixture.checkResult(
-            """foobarbar<caret>BAR
-            |foobarbar<caret>BAZ
+            """
+                |foobarbar<caret>BAR
+                |foobarbar<caret>BAZ
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult(
-            """foo<caret>barbarBAR
-            |foo<caret>barbarBAZ
+            """
+                |foo<caret>barbarBAR
+                |foo<caret>barbarBAZ
             """.trimMargin()
         )
     }
@@ -245,8 +254,9 @@ class PasteTest : BasePlatformTestCase() {
     fun `test Paste history after prefix paste with multiple carets works as expected`() {
         myFixture.configureByText(
             FILE,
-            """foo<caret>BAR
-            |foo<caret>BAZ
+            """
+                |foo<caret>BAR
+                |foo<caret>BAZ
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -256,15 +266,17 @@ class PasteTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_PREFIX_PASTE)
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)
         myFixture.checkResult(
-            """foo<caret>barbarBAR
-            |foo<caret>barbarBAZ
+            """
+                |foo<caret>barbarBAR
+                |foo<caret>barbarBAZ
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult(
-            """foo<caret>barbarBAR
-            |foo<caret>barbarBAZ
+            """
+                |foo<caret>barbarBAR
+                |foo<caret>barbarBAZ
             """.trimMargin()
         )
     }

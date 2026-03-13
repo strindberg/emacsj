@@ -12,14 +12,14 @@ class XRefTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            class MyClass {
-                fun main() {
-                    he<caret>llo()
+                class MyClass {
+                    fun main() {
+                        he<caret>llo()
+                    }
+                    fun hello() {
+                        println("Hello world!")
+                    }
                 }
-                fun hello() {
-                    println("Hello world!")
-                }
-            }
             """.trimIndent()
         )
 
@@ -28,14 +28,14 @@ class XRefTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            class MyClass {
-                fun main() {
-                    hello()
+                class MyClass {
+                    fun main() {
+                        hello()
+                    }
+                    fun hell<caret>o() {
+                        println("Hello world!")
+                    }
                 }
-                fun hell<caret>o() {
-                    println("Hello world!")
-                }
-            }
             """.trimIndent()
         )
 
@@ -43,14 +43,14 @@ class XRefTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            class MyClass {
-                fun main() {
-                    he<caret>llo()
+                class MyClass {
+                    fun main() {
+                        he<caret>llo()
+                    }
+                    fun hello() {
+                        println("Hello world!")
+                    }
                 }
-                fun hello() {
-                    println("Hello world!")
-                }
-            }
             """.trimIndent()
         )
 
@@ -59,14 +59,14 @@ class XRefTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            class MyClass {
-                fun main() {
-                    hello()
+                class MyClass {
+                    fun main() {
+                        hello()
+                    }
+                    fun hell<caret>o() {
+                        println("Hello world!")
+                    }
                 }
-                fun hell<caret>o() {
-                    println("Hello world!")
-                }
-            }
             """.trimIndent()
         )
     }
@@ -75,14 +75,14 @@ class XRefTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            class MyClass {
-                fun main() {
-                    he<caret>llo()
+                class MyClass {
+                    fun main() {
+                        he<caret>llo()
+                    }
+                    fun hello() {
+                        println("Hello world!")
+                    }
                 }
-                fun hello() {
-                    println("Hello world!")
-                }
-            }
             """.trimIndent()
         )
 
@@ -108,16 +108,16 @@ class XRefTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-        class AClass {}
-        class BClass {}
-        class CClass {}
-        class Main {
-            fun f() {
-                val a = A<caret>Class()
-                val b = BClass()
-                val c = CClass()
-            }
-        }
+                class AClass {}
+                class BClass {}
+                class CClass {}
+                class Main {
+                    fun f() {
+                        val a = A<caret>Class()
+                        val b = BClass()
+                        val c = CClass()
+                    }
+                }
             """.trimIndent()
         )
 
@@ -160,11 +160,11 @@ class XRefTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            class MyClass {
-                fun hello() {
-                    println("He<caret>llo world!")
+                class MyClass {
+                    fun hello() {
+                        println("He<caret>llo world!")
+                    }
                 }
-            }
             """.trimIndent()
         )
 

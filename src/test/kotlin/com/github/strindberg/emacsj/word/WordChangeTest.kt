@@ -323,14 +323,16 @@ class WordChangeTest : BasePlatformTestCase() {
     fun `test Delete next word works with multiple carets`() {
         myFixture.configureByText(
             FILE,
-            """<caret>fooBar
+            """
+                |<caret>fooBar
                 |<caret>pooBear
             """.trimMargin()
         )
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_DELETE_NEXT_WORD)
         myFixture.checkResult(
-            """<caret>Bar
+            """
+                |<caret>Bar
                 |<caret>Bear
             """.trimMargin()
         )
@@ -388,14 +390,16 @@ class WordChangeTest : BasePlatformTestCase() {
     fun `test Delete previous word works with multiple carets`() {
         myFixture.configureByText(
             FILE,
-            """fooBar<caret>
+            """
+                |fooBar<caret>
                 |pooBear<caret>
             """.trimMargin()
         )
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_DELETE_PREVIOUS_WORD)
         myFixture.checkResult(
-            """foo<caret>
+            """
+                |foo<caret>
                 |poo<caret>
             """.trimMargin()
         )

@@ -40,7 +40,7 @@ class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret
         }
     }
 
-    private fun previousNonWhiteSpace(text: CharSequence, offset: Int): Int {
+    private fun previousNonWhiteSpace(text: CharSequence, startOffset: Int): Int {
         tailrec fun previous(offset: Int): Int =
             if (offset <= 0) {
                 0
@@ -49,10 +49,10 @@ class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret
             } else {
                 offset + 1
             }
-        return previous(offset - 1)
+        return previous(startOffset - 1)
     }
 
-    private fun nextNonWhiteSpace(text: CharSequence, offset: Int): Int {
+    private fun nextNonWhiteSpace(text: CharSequence, startOffset: Int): Int {
         tailrec fun next(offset: Int): Int =
             if (offset >= text.length) {
                 text.length
@@ -61,7 +61,7 @@ class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret
             } else {
                 offset
             }
-        return next(offset)
+        return next(startOffset)
     }
 
     private fun Char.isTrueWhitespace() = isWhitespace() && this != '\n' && this != '\r'

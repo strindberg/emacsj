@@ -37,9 +37,9 @@ internal class EmacsJColorSettingsPage : ColorSettingsPage {
 
     override fun getDemoText(): String =
         """
-        |Below, the first search match is the primary match, the following are secondary:
-        |While searching, the primary result is the one where the caret is positioned.
-        |Other results are indicated as a secondary result.
+            |Below, the first search match is the primary match, the following are secondary:
+            |While searching, the primary result is the one where the caret is positioned.
+            |Other results are indicated as a secondary result.
         """.trimMargin()
 
     override fun getIcon(): Icon? = null

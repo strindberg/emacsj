@@ -16,16 +16,18 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
     fun `test Whole line is duplicated from position 0`() {
         myFixture.configureByText(
             FILE,
-            """el pueblo unido
-              |<caret>
+            """
+                |el pueblo unido
+                |<caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
 
         myFixture.checkResult(
-            """el pueblo unido
-              |el pueblo unido<caret>
+            """
+                |el pueblo unido
+                |el pueblo unido<caret>
             """.trimMargin()
         )
     }
@@ -33,20 +35,22 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
     fun `test First non-blank line is copied`() {
         myFixture.configureByText(
             FILE,
-            """el pueblo unido
-              |
-              |
-              |<caret>
+            """
+                |el pueblo unido
+                |
+                |
+                |<caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
 
         myFixture.checkResult(
-            """el pueblo unido
-              |
-              |
-              |el pueblo unido<caret>
+            """
+                |el pueblo unido
+                |
+                |
+                |el pueblo unido<caret>
             """.trimMargin()
         )
     }
@@ -54,14 +58,16 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
     fun `test Nothing is duplicated if on first line`() {
         myFixture.configureByText(
             FILE,
-            """<caret>el pueblo unido
+            """
+                |<caret>el pueblo unido
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
 
         myFixture.checkResult(
-            """<caret>el pueblo unido
+            """
+                |<caret>el pueblo unido
             """.trimMargin()
         )
     }
@@ -69,18 +75,20 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
     fun `test Nothing is duplicated if only blank lines above`() {
         myFixture.configureByText(
             FILE,
-            """|
-               |
-               |<caret>el pueblo unido
+            """
+                |
+                |
+                |<caret>el pueblo unido
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
 
         myFixture.checkResult(
-            """|
-               |
-               |<caret>el pueblo unido
+            """
+                |
+                |
+                |<caret>el pueblo unido
             """.trimMargin()
         )
     }
@@ -88,16 +96,18 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
     fun `test With active selection no copy above command action is executed`() {
         myFixture.configureByText(
             FILE,
-            """el pueblo unido
-              |<selection> <caret></selection>
+            """
+                |el pueblo unido
+                |<selection> <caret></selection>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
 
         myFixture.checkResult(
-            """el pueblo unido
-              |<selection> <caret></selection>
+            """
+                |el pueblo unido
+                |<selection> <caret></selection>
             """.trimMargin()
         )
     }
@@ -105,16 +115,18 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
     fun `test Line is duplicated from caret position`() {
         myFixture.configureByText(
             FILE,
-            """el pueblo unido
-              |jamas<caret>
+            """
+                |el pueblo unido
+                |jamas<caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
 
         myFixture.checkResult(
-            """el pueblo unido
-              |jamaseblo unido<caret>
+            """
+                |el pueblo unido
+                |jamaseblo unido<caret>
             """.trimMargin()
         )
     }
@@ -122,8 +134,9 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
     fun `test Universal argument limits number of characters`() {
         myFixture.configureByText(
             FILE,
-            """el pueblo unido
-              |<caret>
+            """
+                |el pueblo unido
+                |<caret>
             """.trimMargin()
         )
 
@@ -131,8 +144,9 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
 
         myFixture.checkResult(
-            """el pueblo unido
-              |el p<caret>
+            """
+                |el pueblo unido
+                |el p<caret>
             """.trimMargin()
         )
     }
@@ -140,16 +154,18 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
     fun `test Short previous line is handled`() {
         myFixture.configureByText(
             FILE,
-            """el pueblo unido
-              |           jamas<caret>
+            """
+                |el pueblo unido
+                |           jamas<caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
 
         myFixture.checkResult(
-            """el pueblo unido
-              |           jamas<caret>
+            """
+                |el pueblo unido
+                |           jamas<caret>
             """.trimMargin()
         )
     }
@@ -157,8 +173,9 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
     fun `test Universal argument does not extend beyond line end`() {
         myFixture.configureByText(
             FILE,
-            """el pueblo unido
-              |          <caret>
+            """
+                |el pueblo unido
+                |          <caret>
             """.trimMargin()
         )
 
@@ -167,8 +184,9 @@ class CopyFromAboveCommandTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
 
         myFixture.checkResult(
-            """el pueblo unido
-              |          unido
+            """
+                |el pueblo unido
+                |          unido
             """.trimMargin()
         )
     }

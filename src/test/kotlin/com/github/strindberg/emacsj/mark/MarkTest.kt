@@ -70,8 +70,9 @@ class MarkTest : BasePlatformTestCase() {
     fun `test Exchange mark and point reactivates selection`() {
         myFixture.configureByText(
             FILE,
-            """<caret>foo bar baz
-              |FOO BAR BAZ
+            """
+                |<caret>foo bar baz
+                |FOO BAR BAZ
             """.trimMargin()
         )
 
@@ -80,22 +81,25 @@ class MarkTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_END)
         myFixture.checkResult(
-            """foo bar baz<caret>
-              |FOO BAR BAZ
+            """
+                |foo bar baz<caret>
+                |FOO BAR BAZ
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_DOWN)
         myFixture.checkResult(
-            """foo bar baz
-              |FOO BAR BAZ<caret>
+            """
+                |foo bar baz
+                |FOO BAR BAZ<caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_EXCHANGE_MARK)
         myFixture.checkResult(
-            """<caret><selection>foo bar baz
-              |FOO BAR BAZ</selection>
+            """
+                |<caret><selection>foo bar baz
+                |FOO BAR BAZ</selection>
             """.trimMargin()
         )
     }

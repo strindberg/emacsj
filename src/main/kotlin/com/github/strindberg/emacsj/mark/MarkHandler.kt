@@ -29,7 +29,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
         private val places = mutableMapOf<Int, LimitedStack<PlaceInfo>>()
 
         internal fun pushPlaceInfo(editor: Editor) {
-            (editor as? EditorEx)?.let {
+            if (editor is EditorEx) {
                 editor.virtualFile?.let { virtualFile ->
                     placeInfo(editor, virtualFile)?.let { placeInfo ->
                         places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
@@ -48,11 +48,11 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
         internal fun placeInfo(editor: Editor, virtualFile: VirtualFile): PlaceInfo? =
             editor.project?.manager?.getSelectedEditorWithProvider(virtualFile)?.let { editorWithProvider ->
                 PlaceInfo(
-                    virtualFile,
-                    editorWithProvider.fileEditor.getState(FileEditorStateLevel.UNDO),
-                    editorWithProvider.provider.editorTypeId,
-                    editor.caretModel.primaryCaret.offset,
-                    editor.scrollingModel.verticalScrollOffset,
+                    file = virtualFile,
+                    state = editorWithProvider.fileEditor.getState(FileEditorStateLevel.UNDO),
+                    editorTypeId = editorWithProvider.provider.editorTypeId,
+                    caretPosition = editor.caretModel.primaryCaret.offset,
+                    scrollOffset = editor.scrollingModel.verticalScrollOffset,
                 )
             }
 
@@ -71,17 +71,17 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        (editor as? EditorEx)?.let {
+        if (editor is EditorEx) {
             editor.virtualFile?.let { virtualFile ->
                 if (type == POP || EmacsJService.instance.isLastStrictUniversal()) {
                     places[virtualFile.hashCode()]?.pop()?.let { place ->
                         gotoPlaceInfo(editor, place)
                     }
                 } else {
-                    val previousSticky = editor.isStickySelection
+                    val isPreviousSticky = editor.isStickySelection
                     editor.isStickySelection = false
                     placeInfo(editor, virtualFile)?.let { placeInfo ->
-                        if (placeInfo != peek(editor) || !previousSticky) {
+                        if (placeInfo != peek(editor) || !isPreviousSticky) {
                             places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
                             editor.isStickySelection = true
                         }
@@ -110,16 +110,16 @@ class PlaceInfo(
     override fun hashCode(): Int = 31 * file.hashCode() + caretPosition.hashCode()
 }
 
-class UndoStack<T> {
-    private var undoStack = listOf<T>()
-    private var redoStack = listOf<T>()
+class UndoRedoStack<T> {
+    private var undoStack = emptyList<T>()
+    private var redoStack = emptyList<T>()
 
     /**
      * Push a new position onto the undo stack and clear the redo stack.
      */
     fun push(position: T) {
         undoStack = prependElement(position, undoStack)
-        redoStack = listOf()
+        redoStack = emptyList()
     }
 
     /**
@@ -157,7 +157,7 @@ class UndoStack<T> {
 
 class LimitedStack<T> {
 
-    private var elements = listOf<T>()
+    private var elements = emptyList<T>()
 
     fun push(element: T) {
         elements = prependElement(element, elements)

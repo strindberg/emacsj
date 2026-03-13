@@ -67,7 +67,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     companion object {
 
         @VisibleForTesting
-        internal var testing = false
+        internal var isTesting = false
     }
 
     init {
@@ -140,7 +140,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
         editor.document.setReadOnly(false)
         cancel()
 
-        if (times == 1 || testing) {
+        if (times == 1 || isTesting) {
             repeat(times) {
                 action()
             }

@@ -20,7 +20,7 @@ class EmacsJLexer : LexerBase() {
     private var currentState = 0
     private var currentOffset = 0
     private var endOffset = 0
-    private var foundFirst = false
+    private var isFoundFirst = false
 
     override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
         this.buffer = buffer
@@ -41,8 +41,8 @@ class EmacsJLexer : LexerBase() {
                 TEXT_TOKEN_TYPE
             } else {
                 val currentToken = buffer.substring(currentOffset, getNextEnd())
-                if (currentToken == SEARCH_WORD && !foundFirst) {
-                    foundFirst = true
+                if (currentToken == SEARCH_WORD && !isFoundFirst) {
+                    isFoundFirst = true
                     PRIMARY_TOKEN_TYPE
                 } else if (currentToken == SEARCH_WORD) {
                     SECONDARY_TOKEN_TYPE
@@ -99,6 +99,7 @@ class EmacsJLexer : LexerBase() {
 
     private data class LexerPositionImpl(val myOffset: Int, val myState: Int) : LexerPosition {
         override fun getOffset(): Int = myOffset
+
         override fun getState(): Int = myState
     }
 }

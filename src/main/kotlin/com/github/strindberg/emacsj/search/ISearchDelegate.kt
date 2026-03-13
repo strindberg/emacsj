@@ -72,7 +72,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     private lateinit var actionHandlers: List<RestorableActionHandler<ISearchDelegate>>
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::hide, ::keyEventHandler)
+    internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
 
     @VisibleForTesting
     internal var state: ISearchState = SEARCH
@@ -81,7 +81,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
 
     private val rangeHighlighters = mutableListOf<RangeHighlighter>()
 
-    private var inhibitCancel = false
+    private var isInhibitCancel = false
 
     @VisibleForTesting
     internal var caseType: CaseType = UNSPECIFIED
@@ -110,7 +110,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
             editor.caretModel.removeSecondaryCarets()
         }
 
-        if (editor.selectionModel.hasSelection() && ISearchHandler.selectionISearch) {
+        if (editor.selectionModel.hasSelection() && ISearchHandler.isSelectionISearch) {
             searchSelected()
         } else {
             editor.caretModel.runForEachCaret {
@@ -128,7 +128,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     internal fun isActive() = state in listOf(SEARCH, FAILED)
 
     internal fun hide() {
-        if (!inhibitCancel) {
+        if (!isInhibitCancel) {
             editor.document.setReadOnly(false)
 
             unregisterHandlers()
@@ -178,9 +178,9 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     internal fun edit() {
         state = EDIT
         unregisterHandlers()
-        inhibitCancel = true
+        isInhibitCancel = true
         ui.makeWriteable(text)
-        inhibitCancel = false
+        isInhibitCancel = false
     }
 
     internal fun deleteChar() {
@@ -191,7 +191,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     }
 
     internal fun renewLaxState() {
-        renewState(if (ISearchHandler.lax) "[match spaces loosely]" else "[match spaces literally]")
+        renewState(if (ISearchHandler.isLax) "[match spaces loosely]" else "[match spaces literally]")
     }
 
     internal fun toggleCaseSensitive() {
@@ -238,10 +238,10 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         val result = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
             searchAndUpdate(caret, keepStart, startType)
         }.let { results ->
-            if (editor.caretModel.caretCount == 1) results[0] else SearchResult(results.any { it.found }, null, false)
+            if (editor.caretModel.caretCount == 1) results[0] else SearchResult(results.any { it.isFound }, null, false)
         }
 
-        state = if (result.found) SEARCH else FAILED
+        state = if (result.isFound) SEARCH else FAILED
 
         findAllAndHighlight(result.offset, isNewText)
         updateUI(result)
@@ -257,7 +257,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     }
 
     internal fun markSearchStopAndThenCancel() {
-        (editor as? EditorEx)?.let {
+        if (editor is EditorEx) {
             editor.caretModel.currentCaret.let { caret ->
                 caret.moveToOffset(if (direction == FORWARD) caret.search.match.start else caret.search.match.end)
                 editor.startStickySelection()
@@ -405,18 +405,14 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     }
 
     private fun unregisterHandlers() {
-        TypedAction.getInstance().apply {
-            setupRawHandler(typedHandler.originalHandler)
-        }
-        EditorActionManager.getInstance().apply {
-            actionHandlers.forEach {
-                setActionHandler(it.actionId, it.originalHandler)
-            }
+        TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
+        actionHandlers.forEach {
+            EditorActionManager.getInstance().setActionHandler(it.actionId, it.originalHandler)
         }
     }
 
     private fun updateUI(result: SearchResult) {
-        updateUI(titleText(found = result.found, wrapped = result.wrapped), text, result.found)
+        updateUI(titleText(found = result.isFound, wrapped = result.isWrapped), text, result.isFound)
     }
 
     private fun updateUI(title: String, text: String, found: Boolean) {
@@ -434,11 +430,11 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         removeAllHighlighters()
 
         val (isRegexp, searchString) = getSearchModelArguments()
-        CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
+        CommonHighlighter.findAllAndHighlight(editor = editor, searchArg = searchString, useRegexp = isRegexp, useCase = caseSensitive())
     }
 
     private fun searchSelected() {
-        val selectedText = editor.selectionModel.selectedText ?: ""
+        val selectedText = editor.selectionModel.selectedText.orEmpty()
         val origin = if (direction == FORWARD) editor.selectionModel.selectionStart else editor.selectionModel.selectionEnd
 
         editor.caretModel.primaryCaret.search = CaretSearch(origin)
@@ -462,7 +458,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     }
 
     private fun updateCount(count: Pair<Int?, Int>?) {
-        ui.count = if (count != null) Pair(count.first ?: 0, count.second) else null
+        ui.count = count?.let { Pair(count.first ?: 0, count.second) }
     }
 
     private fun titleText(found: Boolean = true, wrapped: Boolean = false): String =
@@ -480,7 +476,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
             editor.caretModel.runForEachCaret {
                 it.breadcrumbs.add(CaretBreadcrumb(it.search.match, direction))
             }
-            breadcrumbs.add(EditorBreadcrumb(ui.title, ui.text, state, caseType, ui.count))
+            breadcrumbs.add(EditorBreadcrumb(title = ui.title, text = ui.text, state = state, caseType = caseType, count = ui.count))
         }
     }
 
@@ -495,11 +491,16 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
 
             editor.caretModel.runForEachCaret { caret ->
                 caret.breadcrumbs.removeLastOrNull()?.let { latest ->
-                    moveAndUpdate(caret, latest.match, latest.direction, breadcrumb.state == SEARCH)
+                    moveAndUpdate(caret = caret, match = latest.match, direction = latest.direction, found = breadcrumb.state == SEARCH)
                 }
             }
             val (isRegexp, searchString) = getSearchModelArguments()
-            CommonHighlighter.findAllAndHighlight(editor, searchString, isRegexp, caseSensitive())
+            CommonHighlighter.findAllAndHighlight(
+                editor = editor,
+                searchArg = searchString,
+                useRegexp = isRegexp,
+                useCase = caseSensitive()
+            )
         }
     }
 
@@ -520,15 +521,11 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         }
     }
 
-    private fun searchAndUpdate(
-        caret: Caret,
-        keepStart: Boolean,
-        startType: StartType,
-    ): SearchResult {
+    private fun searchAndUpdate(caret: Caret, keepStart: Boolean, startType: StartType): SearchResult {
         val result = findString(searchStart(caret.search, keepStart, startType))
 
         if (result.isStringFound) {
-            moveAndUpdate(caret, Match(result.startOffset, result.endOffset), direction, true)
+            moveAndUpdate(caret = caret, match = Match(result.startOffset, result.endOffset), direction = direction, found = true)
         }
 
         return SearchResult(result.isStringFound, if (result.isStringFound) result.startOffset else null, startType == WRAPAROUND)
@@ -576,15 +573,21 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         }
 
     private fun matchEnd(start: Int): Int =
-        start + if (searchType == TEXT) text.length else Regex(text).matchAt(editor.text, start)?.value?.length ?: 0
+        start + if (searchType == TEXT) {
+            text.length
+        } else {
+            Regex(text).matchAt(editor.text, start)?.run {
+                value.length
+            } ?: 0
+        }
 
     private fun findAllAndHighlight(offset: Int?, highlight: Boolean) {
         val (isRegexp, searchString) = getSearchModelArguments()
         CommonHighlighter.findAllAndHighlight(
-            editor,
-            searchString,
-            isRegexp,
-            caseSensitive(),
+            editor = editor,
+            searchArg = searchString,
+            useRegexp = isRegexp,
+            useCase = caseSensitive(),
             callback = { matches ->
                 updateCount(Pair(matches.withIndex().find { it.value.startOffset == offset }?.let { it.index + 1 }, matches.size))
             },
@@ -607,7 +610,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     }
 
     private fun getSearchModelArguments(): Pair<Boolean, String> =
-        if (searchType == TEXT && ISearchHandler.lax) {
+        if (searchType == TEXT && ISearchHandler.isLax) {
             Pair(
                 true,
                 text.split(Regex(" +")).filter { it.isNotBlank() }

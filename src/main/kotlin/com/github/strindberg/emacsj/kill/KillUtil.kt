@@ -18,11 +18,11 @@ private enum class Type { COPY, CUT }
 object KillUtil {
 
     internal fun cut(editor: Editor, textStartOffset: Int, textEndOffset: Int, prepend: Boolean = false) {
-        cutOrCopy(CUT, editor, textStartOffset, textEndOffset, prepend)
+        cutOrCopy(type = CUT, editor = editor, textStartOffset = textStartOffset, textEndOffset = textEndOffset, prepend = prepend)
     }
 
     internal fun copy(editor: Editor, textStartOffset: Int, textEndOffset: Int, prepend: Boolean = false) {
-        cutOrCopy(COPY, editor, textStartOffset, textEndOffset, prepend)
+        cutOrCopy(type = COPY, editor = editor, textStartOffset = textStartOffset, textEndOffset = textEndOffset, prepend = prepend)
     }
 
     private fun cutOrCopy(type: Type, editor: Editor, textStartOffset: Int, textEndOffset: Int, prepend: Boolean) {

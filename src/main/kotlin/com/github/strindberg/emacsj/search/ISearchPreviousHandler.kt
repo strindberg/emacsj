@@ -12,12 +12,12 @@ internal const val ACTION_ISEARCH_PREVIOUS = "com.github.strindberg.emacsj.actio
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_NEXT = "com.github.strindberg.emacsj.actions.search.isearchnext"
 
-class ISearchPreviousHandler(private val forward: Boolean) : EditorActionHandler() {
+class ISearchPreviousHandler(private val isForward: Boolean) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.let { delegate ->
             delegate.editPrevious(
-                if (forward) ISearchHandler.getNext(delegate.searchType) else ISearchHandler.getPrevious(delegate.searchType)
+                if (isForward) ISearchHandler.getNext(delegate.searchType) else ISearchHandler.getPrevious(delegate.searchType)
             )
         }
     }

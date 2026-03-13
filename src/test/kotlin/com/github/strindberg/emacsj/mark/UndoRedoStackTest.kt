@@ -1,9 +1,11 @@
 package com.github.strindberg.emacsj.mark
 
-class UndoStackTest : junit.framework.TestCase() {
+import junit.framework.TestCase
+
+class UndoRedoStackTest : TestCase() {
 
     fun `test Basic undo test`() {
-        val stack = UndoStack<String>()
+        val stack = UndoRedoStack<String>()
 
         stack.push("A")
 
@@ -14,7 +16,7 @@ class UndoStackTest : junit.framework.TestCase() {
     }
 
     fun `test Push, undo, redo, undo`() {
-        val stack = UndoStack<String>()
+        val stack = UndoRedoStack<String>()
 
         stack.push("A")
         assertEquals("A", stack.undo("B")) // undo from B → A
@@ -23,7 +25,7 @@ class UndoStackTest : junit.framework.TestCase() {
     }
 
     fun `test Redo returns previous state after undo`() {
-        val stack = UndoStack<String>()
+        val stack = UndoRedoStack<String>()
 
         stack.push("A")
         stack.push("B")
@@ -32,14 +34,14 @@ class UndoStackTest : junit.framework.TestCase() {
     }
 
     fun `test Empty stack behavior`() {
-        val stack = UndoStack<String>()
+        val stack = UndoRedoStack<String>()
 
         assertNull(stack.undo("A"))
         assertNull(stack.redo("A"))
     }
 
     fun `test Redo is cleared after push`() {
-        val stack = UndoStack<String>()
+        val stack = UndoRedoStack<String>()
 
         stack.push("A")
         stack.push("B")
@@ -58,7 +60,7 @@ class UndoStackTest : junit.framework.TestCase() {
     }
 
     fun `test Multiple undo redo chain`() {
-        val stack = UndoStack<String>()
+        val stack = UndoRedoStack<String>()
 
         stack.push("1")
         stack.push("2")

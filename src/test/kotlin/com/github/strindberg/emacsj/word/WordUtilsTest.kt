@@ -1,12 +1,14 @@
 package com.github.strindberg.emacsj.word
 
-class WordUtilsTest : junit.framework.TestCase() {
+import junit.framework.TestCase
+
+class WordUtilsTest : TestCase() {
 
     fun `test Boundaries 00`() {
         val text = "ab dc"
         assertEquals(
             "ab",
-            currentWordBoundaries(text, 0, isCamel = false, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 0, isCamel = false, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -16,7 +18,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc"
         assertEquals(
             "ab",
-            currentWordBoundaries(text, 1, isCamel = false, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 1, isCamel = false, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -26,7 +28,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc"
         assertEquals(
             "ab",
-            currentWordBoundaries(text, 2, isCamel = false, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 2, isCamel = false, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -36,7 +38,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc"
         assertEquals(
             "dc",
-            currentWordBoundaries(text, 4, isCamel = false, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 4, isCamel = false, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -46,7 +48,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc"
         assertEquals(
             "dc",
-            currentWordBoundaries(text, 5, isCamel = false, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 5, isCamel = false, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -56,7 +58,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = " ab dc"
         assertEquals(
             " ab",
-            currentWordBoundaries(text, 0, isCamel = false, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 0, isCamel = false, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -66,7 +68,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = " ab dc"
         assertEquals(
             " ab",
-            currentWordBoundaries(text, 1, isCamel = false, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 1, isCamel = false, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -76,7 +78,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc"
         assertEquals(
             "ab",
-            currentWordBoundaries(text, 0, isCamel = false, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 0, isCamel = false, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -86,7 +88,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc"
         assertEquals(
             "ab",
-            currentWordBoundaries(text, 1, isCamel = false, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 1, isCamel = false, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -96,7 +98,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc"
         assertEquals(
             "dc",
-            currentWordBoundaries(text, 2, isCamel = false, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 2, isCamel = false, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -106,7 +108,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc"
         assertEquals(
             "dc",
-            currentWordBoundaries(text, 4, isCamel = false, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 4, isCamel = false, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -116,7 +118,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc"
         assertEquals(
             "dc",
-            currentWordBoundaries(text, 5, isCamel = false, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 5, isCamel = false, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -126,7 +128,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc "
         assertEquals(
             "dc ",
-            currentWordBoundaries(text, 5, isCamel = false, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 5, isCamel = false, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -136,7 +138,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "ab dc "
         assertEquals(
             "dc ",
-            currentWordBoundaries(text, 6, isCamel = false, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 6, isCamel = false, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -146,7 +148,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc"
         assertEquals(
             "Ab",
-            currentWordBoundaries(text, 0, isCamel = true, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 0, isCamel = true, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -156,7 +158,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc"
         assertEquals(
             "Ab",
-            currentWordBoundaries(text, 1, isCamel = true, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 1, isCamel = true, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -166,7 +168,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc"
         assertEquals(
             "Ab",
-            currentWordBoundaries(text, 2, isCamel = true, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 2, isCamel = true, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -176,7 +178,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc"
         assertEquals(
             "Dc",
-            currentWordBoundaries(text, 4, isCamel = true, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 4, isCamel = true, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -186,7 +188,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = " AbDc"
         assertEquals(
             " Ab",
-            currentWordBoundaries(text, 0, isCamel = true, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 0, isCamel = true, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -196,7 +198,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = " AbDc"
         assertEquals(
             " Ab",
-            currentWordBoundaries(text, 1, isCamel = true, isForward = true).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 1, isCamel = true, isForward = true).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -206,7 +208,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc"
         assertEquals(
             "Ab",
-            currentWordBoundaries(text, 0, isCamel = true, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 0, isCamel = true, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -216,7 +218,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc"
         assertEquals(
             "Ab",
-            currentWordBoundaries(text, 1, isCamel = true, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 1, isCamel = true, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -226,7 +228,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc"
         assertEquals(
             "Dc",
-            currentWordBoundaries(text, 2, isCamel = true, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 2, isCamel = true, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -236,7 +238,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc"
         assertEquals(
             "Dc",
-            currentWordBoundaries(text, 4, isCamel = true, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 4, isCamel = true, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -246,7 +248,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc "
         assertEquals(
             "Dc ",
-            currentWordBoundaries(text, 4, isCamel = true, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 4, isCamel = true, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )
@@ -256,7 +258,7 @@ class WordUtilsTest : junit.framework.TestCase() {
         val text = "AbDc "
         assertEquals(
             "Dc ",
-            currentWordBoundaries(text, 5, isCamel = true, isForward = false).let { (start, end) ->
+            currentWordBoundaries(text = text, offset = 5, isCamel = true, isForward = false).let { (start, end) ->
                 text.substring(start, end)
             }
         )

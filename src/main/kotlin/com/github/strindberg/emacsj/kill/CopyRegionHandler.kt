@@ -19,7 +19,7 @@ class CopyRegionHandler : EditorActionHandler() {
 
     companion object {
         @VisibleForTesting
-        internal var testing = false
+        internal var isTesting = false
     }
 
     private var lastInvocation = OffsetDateTime.MIN
@@ -44,5 +44,5 @@ class CopyRegionHandler : EditorActionHandler() {
     }
 
     // Avoid inadvertently running the command multiple times because of key repeat.
-    private fun debounced(): Boolean = testing || lastInvocation.isBefore(now().minus(100.milliseconds.toJavaDuration()))
+    private fun debounced(): Boolean = isTesting || lastInvocation.isBefore(now().minus(100.milliseconds.toJavaDuration()))
 }

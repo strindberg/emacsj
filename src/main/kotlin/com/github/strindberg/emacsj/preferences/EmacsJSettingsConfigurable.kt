@@ -33,7 +33,7 @@ internal class EmacsJSettingsConfigurable : Configurable {
         EmacsJSettings.getInstance().getState().useLaxISearch = component.getUseLaxISearch()
         EmacsJSettings.getInstance().getState().useSelectionISearch = component.getUseSelectionISearch()
 
-        ISearchHandler.lax = component.getUseLaxISearch()
-        ISearchHandler.selectionISearch = component.getUseSelectionISearch()
+        ISearchHandler.isLax = component.getUseLaxISearch()
+        ISearchHandler.isSelectionISearch = component.getUseSelectionISearch()
     }
 }

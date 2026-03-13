@@ -33,6 +33,15 @@ import org.jetbrains.annotations.VisibleForTesting
 
 internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val selection: IntRange?, lastSearch: Replace?) {
 
+    @VisibleForTesting
+    internal val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
+
+    internal var text: String
+        get() = ui.text
+        set(newText) {
+            ui.text = newText
+        }
+
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
             ui.cancelUI()
@@ -61,18 +70,9 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
             ui.title = getReplaceTitle()
         }
 
-    private var inhibitCancel = false
+    private var isInhibitCancel = false
 
     private var isReplaced = false
-
-    internal var text: String
-        get() = ui.text
-        set(newText) {
-            ui.text = newText
-        }
-
-    @VisibleForTesting
-    internal val ui = CommonUI(editor, true, ::hide, ::keyEventHandler)
 
     init {
         lastSearch?.let { (search, replace) ->
@@ -94,7 +94,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
     }
 
     internal fun hide() {
-        if (!inhibitCancel) {
+        if (!isInhibitCancel) {
             editor.markupModel.removeAllHighlighters()
 
             editor.caretModel.removeCaretListener(caretListener)
@@ -121,6 +121,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
         }
     }
 
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     private fun keyEventHandler(e: KeyEvent) {
         when (state) {
             ReplaceState.GET_SEARCH_ARG -> {
@@ -200,9 +201,9 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                         }
                         'e' -> {
                             state = ReplaceState.EDIT_REPLACE_ARG
-                            inhibitCancel = true
+                            isInhibitCancel = true
                             ui.makeWriteable(replaceArg)
-                            inhibitCancel = false
+                            isInhibitCancel = false
                         }
                         '.' -> {
                             try {

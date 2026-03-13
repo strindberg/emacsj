@@ -23,7 +23,9 @@ class TransposeLinesHandler : EditorWriteActionHandler() {
         val lastArgument = EmacsJService.instance.universalArgument()
         val replaceLineNumber =
             if (lastArgument == 0) {
-                MarkHandler.peek(editor)?.caretPosition?.let { position -> document.getLineNumber(position) } ?: (currentLineNumber - 1)
+                MarkHandler.peek(editor)?.run {
+                    document.getLineNumber(caretPosition)
+                } ?: (currentLineNumber - 1)
             } else {
                 currentLineNumber - lastArgument
             }

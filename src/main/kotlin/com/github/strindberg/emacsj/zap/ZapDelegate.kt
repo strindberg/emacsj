@@ -53,16 +53,26 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
                                 val (start, end) = when (type) {
                                     FORWARD_TO, FORWARD_UP_TO -> Pair(
                                         caret.offset,
-                                        nextCharacter(editor.text, caret.offset, charTyped, times)
+                                        nextCharacter(text = editor.text, startOffset = caret.offset, character = charTyped, times = times)
                                     )
                                     BACKWARD_TO, BACKWARD_UP_TO -> Pair(
-                                        previousCharacter(editor.text, caret.offset, charTyped, times),
+                                        previousCharacter(
+                                            text = editor.text,
+                                            startOffset = caret.offset,
+                                            character = charTyped,
+                                            times = times
+                                        ),
                                         caret.offset
                                     )
                                 }
                                 if (start != null && end != null) {
                                     WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
-                                        KillUtil.cut(editor, start, end, prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO))
+                                        KillUtil.cut(
+                                            editor = editor,
+                                            textStartOffset = start,
+                                            textEndOffset = end,
+                                            prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO)
+                                        )
                                     })
                                 } else {
                                     HintManager.getInstance().showInformationHint(editor, "Search failed: $charTyped")
@@ -118,17 +128,13 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     private fun unregisterHandlers() {
-        TypedAction.getInstance().apply {
-            setupRawHandler(typedHandler.originalHandler)
-        }
-        EditorActionManager.getInstance().apply {
-            actionHandlers.forEach {
-                setActionHandler(it.actionId, it.originalHandler)
-            }
+        TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
+        actionHandlers.forEach {
+            EditorActionManager.getInstance().setActionHandler(it.actionId, it.originalHandler)
         }
     }
 
-    private fun nextCharacter(text: CharSequence, offset: Int, character: Char, times: Int): Int? {
+    private fun nextCharacter(text: CharSequence, startOffset: Int, character: Char, times: Int): Int? {
         tailrec fun next(offset: Int, found: Int): Int? =
             if (offset >= text.length) {
                 null
@@ -145,10 +151,10 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
             } else {
                 next(offset + 1, found)
             }
-        return next(offset, 0)
+        return next(startOffset, 0)
     }
 
-    private fun previousCharacter(text: CharSequence, offset: Int, character: Char, times: Int): Int? {
+    private fun previousCharacter(text: CharSequence, startOffset: Int, character: Char, times: Int): Int? {
         tailrec fun previous(offset: Int, found: Int): Int? =
             if (offset <= 0) {
                 null
@@ -165,7 +171,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
             } else {
                 previous(offset - 1, found)
             }
-        return previous(offset, 0)
+        return previous(startOffset, 0)
     }
 }
 

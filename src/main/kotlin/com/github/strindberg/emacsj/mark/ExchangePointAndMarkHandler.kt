@@ -17,7 +17,7 @@ class ExchangePointAndMarkHandler : EditorActionHandler() {
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val primary = caret ?: editor.caretModel.primaryCaret
 
-        (editor as? EditorEx)?.let {
+        if (editor is EditorEx) {
             if (primary.hasSelection()) {
                 val selectionStart = primary.selectionStart
                 val selectionEnd = primary.selectionEnd
@@ -27,9 +27,9 @@ class ExchangePointAndMarkHandler : EditorActionHandler() {
                 editor.startStickySelection()
                 primary.moveToOffset(if (primary.offset == selectionEnd) selectionStart else selectionEnd)
             } else {
-                MarkHandler.peek(editor)?.caretPosition?.let { oldMark ->
+                MarkHandler.peek(editor)?.run {
                     editor.startStickySelection()
-                    primary.moveToOffset(oldMark)
+                    primary.moveToOffset(caretPosition)
                 }
             }
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)

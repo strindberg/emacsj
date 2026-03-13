@@ -14,6 +14,7 @@ internal var Caret.search: CaretSearch
         putUserData(CARET_SEARCH_DATA_KEY, searchData)
     }
 
+@Suppress("DoubleMutabilityForCollection")
 internal var Caret.breadcrumbs: MutableList<CaretBreadcrumb>
     get() = getUserData(CARET_BREADCRUMBS_KEY) ?: mutableListOf<CaretBreadcrumb>().apply {
         putUserData(CARET_BREADCRUMBS_KEY, this)
@@ -43,7 +44,7 @@ internal data class EditorBreadcrumb(
 
 internal enum class ISearchState { SEARCH, FAILED, EDIT }
 
-internal data class SearchResult(val found: Boolean, val offset: Int?, val wrapped: Boolean)
+internal data class SearchResult(val isFound: Boolean, val offset: Int?, val isWrapped: Boolean)
 
 enum class Direction {
     FORWARD,
