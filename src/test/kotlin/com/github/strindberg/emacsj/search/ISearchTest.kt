@@ -1610,6 +1610,62 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo Foo foo<caret> foo Foo bar")
     }
 
+    fun `test Search can be toggled from text to regexp`() {
+        myFixture.configureByText(FILE, "<caret>foo foo+ foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo+")
+        myFixture.checkResult("foo foo+<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo foo+<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_REGEXP)
+        assertEquals(SearchType.REGEXP, ISearchHandler.delegate?.searchType)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo foo+ foo<caret> bar")
+    }
+
+    fun `test Search can be toggled from regexp to text`() {
+        myFixture.configureByText(FILE, "<caret>foo fo[o] bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
+        myFixture.type("fo[o]")
+        myFixture.checkResult("foo<caret> fo[o] bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
+        myFixture.checkResult("foo<caret> fo[o] bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_REGEXP)
+        assertEquals(SearchType.TEXT, ISearchHandler.delegate?.searchType)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo fo[o]<caret> bar")
+    }
+
+    fun `test Search type is remembered in breadcrumbs`() {
+        myFixture.configureByText(FILE, "<caret>foo foo+ foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo+")
+        myFixture.checkResult("foo foo+<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_REGEXP)
+        assertEquals(SearchType.REGEXP, ISearchHandler.delegate?.searchType)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo foo+ foo<caret> bar")
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        assertEquals(SearchType.REGEXP, ISearchHandler.delegate?.searchType)
+        myFixture.checkResult("foo foo+<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        assertEquals(SearchType.TEXT, ISearchHandler.delegate?.searchType)
+        myFixture.checkResult("foo<caret> foo+ foo bar")
+    }
+
     fun `test First match can be reached when searching forward`() {
         myFixture.configureByText(
             FILE,

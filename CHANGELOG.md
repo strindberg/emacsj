@@ -4,6 +4,16 @@
 
 ## [Unreleased]
 
+### Added
+
+- New command *Back to Indentation*
+- New command *Isearch: toggle regexp*
+- New command *Isearch: delete character*
+
+### Fixed
+
+- Added a slight throttle to *Kill Ring Copy* to prevent unintended double invocation. 
+
 ## [1.5.3] - 2026-01-31
 
 ### Added

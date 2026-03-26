@@ -470,28 +470,39 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         ).joinToString(" ") + ": "
 
     private fun pushBreadcrumb() {
-        if (breadcrumbs.lastOrNull()?.text != ui.text ||
-            editor.caretModel.allCarets.any { CaretBreadcrumb(it.search.match, direction) != it.breadcrumbs.lastOrNull() }
+        if (breadcrumbs.lastOrNull()?.text != text || breadcrumbs.lastOrNull()?.direction != direction ||
+            editor.caretModel.allCarets.any { it.search.match != it.breadcrumbs.lastOrNull() }
         ) {
             editor.caretModel.runForEachCaret {
-                it.breadcrumbs.add(CaretBreadcrumb(it.search.match, direction))
+                it.breadcrumbs.add(it.search.match)
             }
-            breadcrumbs.add(EditorBreadcrumb(title = ui.title, text = ui.text, state = state, caseType = caseType, count = ui.count))
+            breadcrumbs.add(
+                EditorBreadcrumb(
+                    title = ui.title,
+                    text = ui.text,
+                    direction = direction,
+                    state = state,
+                    caseType = caseType,
+                    searchType = searchType,
+                    count = ui.count
+                )
+            )
         }
     }
 
     private fun popBreadcrumb() {
         breadcrumbs.removeLastOrNull()?.let { breadcrumb ->
-            removeHighlighters(breadcrumb.text != ui.text || breadcrumb.caseType != caseType)
+            removeHighlighters(breadcrumb.text != ui.text || breadcrumb.caseType != caseType || breadcrumb.searchType != searchType)
 
             state = breadcrumb.state
             caseType = breadcrumb.caseType
+            searchType = breadcrumb.searchType
             updateUI(breadcrumb.title, breadcrumb.text, breadcrumb.state == SEARCH)
             updateCount(breadcrumb.count)
 
             editor.caretModel.runForEachCaret { caret ->
                 caret.breadcrumbs.removeLastOrNull()?.let { latest ->
-                    moveAndUpdate(caret = caret, match = latest.match, direction = latest.direction, found = breadcrumb.state == SEARCH)
+                    moveAndUpdate(caret = caret, match = latest, direction = breadcrumb.direction, found = breadcrumb.state == SEARCH)
                 }
             }
             val (isRegexp, searchString) = getSearchModelArguments()
@@ -499,7 +510,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
                 editor = editor,
                 searchArg = searchString,
                 useRegexp = isRegexp,
-                useCase = caseSensitive()
+                useCase = caseSensitive(),
             )
         }
     }
