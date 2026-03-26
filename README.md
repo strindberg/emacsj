@@ -101,8 +101,8 @@ While searching, the following commands are available:
 - `ENTER`: finish search and leave the caret where it currently is.
 - `ctrl-ENTER`: finish search and leave the caret at the start of the final match (or end of match if reverse search).
 - `alt-ENTER`: finish search and mark the final match as selected.
-- `BACKSPACE`: if several matches with the current search string have been visited, go back in the history of matches. If not, remove
-  the last character from the search string.
+- `BACKSPACE`: Go back in the history of matches: either jump to previous match or remove the last character from the search string.
+- `ctrl-BACKSPACE`: Remove the last character from the search string regardless of previous history.
 - `ctrl-c SPACE`: toggle between lax and strict handling of whitespace in search string (only text search). The mode stays unchanged between
   searches so that a new search starts with the mode from the last search. The default mode can
   be [changed](#isearch-configuration--lax-mode-and-selection-search) under Settings.
@@ -112,6 +112,7 @@ While searching, the following commands are available:
 - `ctrl-alt-y`: add the character at point to the search string.
 - `ctrl-shift-ENTER`: add a new line character to the search string.
 - `alt-c`: toggle between case-sensitive and case-insensitive search.
+- `alt-r`: toggle between regular expression search and literal text search.
 - `alt-LESS`: move the caret to the first match of the current search without exiting Isearch.
 - `alt-GREATER`: move the caret to the last match of the current search without exiting Isearch.
 - `alt-p`: browse backward in the list of previous searches (with the current type).
@@ -563,7 +564,7 @@ Commands:
 Caret to Line Start* which can also be configured (under Editor -> General -> Smart Keys -> "Home moves caret to first non-whitespace
 character") to move the caret to the first non-whitspace character. If you prefer to have different keys for moving to line start and
 moving to start of indentation, you can turn off the IntelliJ setting, and use `ctrl-a` for *Move Caret to Line Start* and `alt-m` for
-*Back to Indentation*, as Eamcs does.
+*Back to Indentation*, as Emacs does.
 
 *Back to Indentation* works with multiple carets.
 

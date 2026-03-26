@@ -6,13 +6,14 @@
 
 ### Added
 
-- New command *Back to Indentation*
-- New command *Isearch: toggle regexp*
-- New command *Isearch: delete character*
+- New Isearch action *Isearch: Toggle Regexp Searching* toggles between regular expression and literal search. Bound to `alt-r`.
+- New Isearch action *Isearch: Delete Last Character* removes the last character of the search string. Bound to `ctrl-backspace`.
+- New command *Back to Indentation* moves the caret to the first non-whitespace character on the line. If IntelliJ's *Smart keys* are
+  disabled, one can use `ctrl-a` for beginning of line and `alt-m` for back to indentation.
 
 ### Fixed
 
-- Added a slight throttle to *Kill Ring Copy* to prevent unintended double invocation. 
+- Added a slight throttle to *Kill Ring Copy* to prevent unintended double invocation.
 
 ## [1.5.3] - 2026-01-31
 
@@ -52,7 +53,8 @@ and has been removed in this release. If this causes unforeseen consequences, pl
 - Two new XRef commands (contributor: Kyle Waldner)
     - XRef Go Forward: Go forward to the point where a previous XRef Go Back was invoked. Bound to `Control Alt COMMA`.
     - XRef Push Mark: Push the current position onto the XRef stack. (this action has no default key binding)
-- New command "Cancel Repeating Action": stop the repeating action that is currently running (after Universal argument). Bound to `Control G`.
+- New command "Cancel Repeating Action": stop the repeating action that is currently running (after Universal argument). Bound to
+  `Control G`.
 - The four zap commands now remove (or remove up to) the number of found occurrences specified by *Universal Argument*.
 
 ### Fixed
@@ -246,26 +248,49 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 - Initial release.
 
 [Unreleased]: https://github.com/strindberg/emacsj/compare/v1.5.3...HEAD
+
 [1.5.3]: https://github.com/strindberg/emacsj/compare/v1.5.2...v1.5.3
+
 [1.5.2]: https://github.com/strindberg/emacsj/compare/v1.5.1...v1.5.2
+
 [1.5.1]: https://github.com/strindberg/emacsj/compare/v1.5.0...v1.5.1
+
 [1.5.0]: https://github.com/strindberg/emacsj/compare/v1.4.3...v1.5.0
+
 [1.4.3]: https://github.com/strindberg/emacsj/compare/v1.4.2...v1.4.3
+
 [1.4.2]: https://github.com/strindberg/emacsj/compare/v1.4.1...v1.4.2
+
 [1.4.1]: https://github.com/strindberg/emacsj/compare/v1.4.0...v1.4.1
+
 [1.4.0]: https://github.com/strindberg/emacsj/compare/v1.3.6...v1.4.0
+
 [1.3.6]: https://github.com/strindberg/emacsj/compare/v1.3.5...v1.3.6
+
 [1.3.5]: https://github.com/strindberg/emacsj/compare/v1.3.4...v1.3.5
+
 [1.3.4]: https://github.com/strindberg/emacsj/compare/v1.3.3...v1.3.4
+
 [1.3.3]: https://github.com/strindberg/emacsj/compare/v1.3.2...v1.3.3
+
 [1.3.2]: https://github.com/strindberg/emacsj/compare/v1.3.1...v1.3.2
+
 [1.3.1]: https://github.com/strindberg/emacsj/compare/v1.3.0...v1.3.1
+
 [1.3.0]: https://github.com/strindberg/emacsj/compare/v1.2.2...v1.3.0
+
 [1.2.2]: https://github.com/strindberg/emacsj/compare/v1.2.1...v1.2.2
+
 [1.2.1]: https://github.com/strindberg/emacsj/compare/v1.2.0...v1.2.1
+
 [1.2.0]: https://github.com/strindberg/emacsj/compare/v1.1.0...v1.2.0
+
 [1.1.0]: https://github.com/strindberg/emacsj/compare/v1.0.2...v1.1.0
+
 [1.0.2]: https://github.com/strindberg/emacsj/compare/v1.0.1...v1.0.2
+
 [1.0.1]: https://github.com/strindberg/emacsj/compare/v0.9.3...v1.0.1
+
 [0.9.3]: https://github.com/strindberg/emacsj/compare/v0.9.2...v0.9.3
+
 [0.9.2]: https://github.com/strindberg/emacsj/commits/v0.9.2

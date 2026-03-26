@@ -33,7 +33,7 @@ class CopyRegionHandler : EditorActionHandler() {
                 textEndOffset = editor.selectionModel.selectionEnd,
                 prepend = primary.offset == editor.selectionModel.selectionStart,
             )
-        } else if (debounced()) {
+        } else if (throttled()) {
             KillUtil.copy(
                 editor = editor,
                 textStartOffset = DocumentUtil.getLineStartOffset(primary.offset, editor.document),
@@ -44,5 +44,5 @@ class CopyRegionHandler : EditorActionHandler() {
     }
 
     // Avoid inadvertently running the command multiple times because of key repeat.
-    private fun debounced(): Boolean = isTesting || lastInvocation.isBefore(now().minus(100.milliseconds.toJavaDuration()))
+    private fun throttled(): Boolean = isTesting || lastInvocation.isBefore(now().minus(200.milliseconds.toJavaDuration()))
 }
