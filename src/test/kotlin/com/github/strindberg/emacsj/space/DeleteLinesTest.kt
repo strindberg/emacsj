@@ -7,16 +7,18 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Do nothing on non-empty lines`() {
         myFixture.configureByText(
             FILE,
-            """foo
-            |bar<caret>
-            |baz
+            """
+                |foo
+                |bar<caret>
+                |baz
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo
-            |bar<caret>
-            |baz
+            """
+                |foo
+                |bar<caret>
+                |baz
             """.trimMargin()
         )
     }
@@ -24,16 +26,18 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Do nothing on non-empty lines 2`() {
         myFixture.configureByText(
             FILE,
-            """foo
-            |bar
-            |baz<caret>
+            """
+                |foo
+                |bar
+                |baz<caret>
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo
-            |bar
-            |baz<caret>
+            """
+                |foo
+                |bar
+                |baz<caret>
             """.trimMargin()
         )
     }
@@ -41,18 +45,20 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Delete all empty lines after non-empty line`() {
         myFixture.configureByText(
             FILE,
-            """foo
-            |bar<caret>
-            |
-            |  
-            |baz
+            """
+                |foo
+                |bar<caret>
+                |
+                |  
+                |baz
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo
-            |bar<caret>
-            |baz
+            """
+                |foo
+                |bar<caret>
+                |baz
             """.trimMargin()
         )
     }
@@ -60,16 +66,18 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Only empty lines are deleted, not all whitespace`() {
         myFixture.configureByText(
             FILE,
-            """foo<caret> bar
-            |  
-            |
-            |  baz
+            """
+                |foo<caret> bar
+                |  
+                |
+                |  baz
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo<caret> bar
-            |  baz
+            """
+                |foo<caret> bar
+                |  baz
             """.trimMargin()
         )
     }
@@ -77,10 +85,11 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Empty lines at document end are deleted`() {
         myFixture.configureByText(
             FILE,
-            """foo bar<caret>
-            |
-            |  
-            |
+            """
+                |foo bar<caret>
+                |
+                |  
+                |
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
@@ -90,15 +99,17 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Isolated blank line is deleted`() {
         myFixture.configureByText(
             FILE,
-            """foo bar
-            |<caret>
-            |  baz
+            """
+                |foo bar
+                |<caret>
+                |  baz
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo bar
-            |<caret>  baz
+            """
+                |foo bar
+                |<caret>  baz
             """.trimMargin()
         )
     }
@@ -106,14 +117,16 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Isolated blank line at document end is not deleted (mimic Emacs)`() {
         myFixture.configureByText(
             FILE,
-            """foo bar
-            |  <caret>
+            """
+                |foo bar
+                |  <caret>
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo bar
-            |<caret>
+            """
+                |foo bar
+                |<caret>
             """.trimMargin()
         )
     }
@@ -121,13 +134,15 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Isolated blank line at document start is deleted`() {
         myFixture.configureByText(
             FILE,
-            """<caret>
-            |foo bar
+            """
+                |<caret>
+                |foo bar
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """<caret>foo bar
+            """
+                |<caret>foo bar
             """.trimMargin()
         )
     }
@@ -135,18 +150,20 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Consecutive blank lines are reduced 1`() {
         myFixture.configureByText(
             FILE,
-            """foo bar
-            |<caret>
-            |
-            |   
-            |  baz
+            """
+                |foo bar
+                |<caret>
+                |
+                |   
+                |  baz
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo bar
-            |<caret>
-            |  baz
+            """
+                |foo bar
+                |<caret>
+                |  baz
             """.trimMargin()
         )
     }
@@ -154,18 +171,20 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Consecutive blank lines are reduced 2`() {
         myFixture.configureByText(
             FILE,
-            """foo bar
-            |
-            |<caret>
-            |
-            |  baz
+            """
+                |foo bar
+                |
+                |<caret>
+                |
+                |  baz
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo bar
-            |<caret>
-            |  baz
+            """
+                |foo bar
+                |<caret>
+                |  baz
             """.trimMargin()
         )
     }
@@ -173,18 +192,20 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Consecutive blank lines are reduced 3`() {
         myFixture.configureByText(
             FILE,
-            """foo bar
-            |
-            |
-            |<caret>
-            |  baz
+            """
+                |foo bar
+                |
+                |
+                |<caret>
+                |  baz
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo bar
-            |<caret>
-            |  baz
+            """
+                |foo bar
+                |<caret>
+                |  baz
             """.trimMargin()
         )
     }
@@ -192,16 +213,18 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Consecutive blank lines at document end are reduced`() {
         myFixture.configureByText(
             FILE,
-            """foo bar
-            |<caret>
-            |
-            |
+            """
+                |foo bar
+                |<caret>
+                |
+                |
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo bar
-            |<caret>
+            """
+                |foo bar
+                |<caret>
             """.trimMargin()
         )
     }
@@ -209,16 +232,18 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Consecutive blank lines at document end are reduced 2`() {
         myFixture.configureByText(
             FILE,
-            """foo bar
-            |
-            |
-            |<caret>
+            """
+                |foo bar
+                |
+                |
+                |<caret>
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """foo bar
-            |<caret>
+            """
+                |foo bar
+                |<caret>
             """.trimMargin()
         )
     }
@@ -226,16 +251,18 @@ class DeleteLinesTest : BasePlatformTestCase() {
     fun `test Consecutive blank lines at document start are reduced`() {
         myFixture.configureByText(
             FILE,
-            """<caret>
-            |
-            |
-            |foo bar
+            """
+                |<caret>
+                |
+                |
+                |foo bar
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_DELETE_LINES)
         myFixture.checkResult(
-            """<caret>
-               |foo bar
+            """
+                |<caret>
+                |foo bar
             """.trimMargin()
         )
     }

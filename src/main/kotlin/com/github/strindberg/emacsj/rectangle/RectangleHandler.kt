@@ -30,7 +30,7 @@ internal const val ACTION_KEEP_RECTANGLE = "com.github.strindberg.emacsj.actions
 class RectangleHandler(val type: Type) : EditorWriteActionHandler() {
 
     override fun executeWriteAction(editor: Editor, editorCaret: Caret?, dataContext: DataContext) {
-        (editor as? EditorEx)?.let {
+        if (editor is EditorEx) {
             val caret = editor.caretModel.primaryCaret
 
             if (caret.hasSelection()) {
@@ -47,13 +47,19 @@ class RectangleHandler(val type: Type) : EditorWriteActionHandler() {
                     val from = minOf(editor.document.getLineStartOffset(line) + minColumn, editor.document.getLineEndOffset(line))
                     val to = minOf(editor.document.getLineStartOffset(line) + maxColumn, editor.document.getLineEndOffset(line))
                     when (type) {
-                        Type.COPY -> buffer.add(editor.document.substring(from, to))
+                        Type.COPY -> {
+                            buffer.add(editor.document.substring(from, to))
+                        }
                         Type.CUT -> {
                             buffer.add(editor.document.substring(from, to))
                             editor.document.deleteString(from, to)
                         }
-                        Type.OPEN -> editor.document.insertString(from, " ".repeat(to - from))
-                        Type.CLEAR -> editor.document.replaceString(from, to, " ".repeat(to - from))
+                        Type.OPEN -> {
+                            editor.document.insertString(from, " ".repeat(to - from))
+                        }
+                        Type.CLEAR -> {
+                            editor.document.replaceString(from, to, " ".repeat(to - from))
+                        }
                         Type.KEEP -> {
                             val originalStart = editor.document.getLineStartOffset(line)
                             val originalEnd = editor.document.getLineEndOffset(line)

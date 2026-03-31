@@ -26,8 +26,6 @@ repositories {
 dependencies {
     testImplementation(libs.junit)
 
-    detektPlugins(libs.detekt)
-
     intellijPlatform {
         create(IntelliJPlatformType.IntellijIdeaCommunity, providers.gradleProperty("platformVersion")) {}
 
@@ -164,5 +162,6 @@ kover {
 }
 
 detekt {
-    config.setFrom(file("$rootDir/detekt.yml"))
+    config.setFrom(file("$rootDir/detekt2.yml"))
+    buildUponDefaultConfig = true
 }

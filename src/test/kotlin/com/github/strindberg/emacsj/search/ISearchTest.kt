@@ -15,11 +15,12 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
 
+@Suppress("LargeClass", "ReplaceSafeCallChainWithRun")
 class ISearchTest : BasePlatformTestCase() {
 
     override fun setUp() {
         super.setUp()
-        CommonHighlighter.testing = true
+        CommonHighlighter.isTesting = true
     }
 
     override fun tearDown() {
@@ -44,7 +45,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Empty text search doesn't crash`() {
         myFixture.configureByText(FILE, "<caret>foo")
-        ISearchHandler.lastStringSearches = listOf()
+        ISearchHandler.lastStringSearches = emptyList()
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -56,7 +57,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Empty regexp search doesn't crash`() {
         myFixture.configureByText(FILE, "<caret>foo")
-        ISearchHandler.lastRegexpSearches = listOf()
+        ISearchHandler.lastRegexpSearches = emptyList()
 
         myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -68,7 +69,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Empty reverse search doesn't crash`() {
         myFixture.configureByText(FILE, "foo<caret>")
-        ISearchHandler.lastStringSearches = listOf()
+        ISearchHandler.lastStringSearches = emptyList()
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -232,34 +233,38 @@ class ISearchTest : BasePlatformTestCase() {
     fun `test Wrap-around search works 2`() {
         myFixture.configureByText(
             FILE,
-            """foo
-            |private
-            |<caret>bar
+            """
+                |foo
+                |private
+                |<caret>bar
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("pri")
         myFixture.checkResult(
-            """foo
-            |private
-            |<caret>bar
+            """
+                |foo
+                |private
+                |<caret>bar
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult(
-            """foo
-            |pri<caret>vate
-            |bar
+            """
+                |foo
+                |pri<caret>vate
+                |bar
             """.trimMargin()
         )
 
         myFixture.type("v")
         myFixture.checkResult(
-            """foo
-            |priv<caret>ate
-            |bar
+            """
+                |foo
+                |priv<caret>ate
+                |bar
             """.trimMargin()
         )
     }
@@ -802,20 +807,22 @@ class ISearchTest : BasePlatformTestCase() {
     fun `test Search current line works`() {
         myFixture.configureByText(
             FILE,
-            """<caret>foo bar foo
-               |baz bar foo
-               |baz bar baz
-               |foo bar foo
+            """
+                |<caret>foo bar foo
+                |baz bar foo
+                |baz bar baz
+                |foo bar foo
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_LINE)
         myFixture.checkResult(
-            """foo bar foo<caret>
-            |baz bar foo
-            |baz bar baz
-            |foo bar foo
+            """
+                |foo bar foo<caret>
+                |baz bar foo
+                |baz bar baz
+                |foo bar foo
             """.trimMargin()
         )
         assertEquals("foo bar foo", ISearchHandler.delegate?.text)
@@ -823,10 +830,11 @@ class ISearchTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult(
-            """foo bar foo
-            |baz bar foo
-            |baz bar baz
-            |foo bar foo<caret>
+            """
+                |foo bar foo
+                |baz bar foo
+                |baz bar baz
+                |foo bar foo<caret>
             """.trimMargin()
         )
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
@@ -1164,10 +1172,11 @@ class ISearchTest : BasePlatformTestCase() {
     fun `test Search with new line works`() {
         myFixture.configureByText(
             FILE,
-            """<caret>foo
-                    |foo
-                    |bar
-                    |baz
+            """
+                |<caret>foo
+                |foo
+                |bar
+                |baz
             """.trimMargin()
         )
 
@@ -1177,10 +1186,11 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("bar")
 
         myFixture.checkResult(
-            """foo
-              |foo
-              |bar<caret>
-              |baz
+            """
+                |foo
+                |foo
+                |bar<caret>
+                |baz
             """.trimMargin()
         )
     }
@@ -1207,8 +1217,9 @@ class ISearchTest : BasePlatformTestCase() {
     fun `test Multiple caret search works over same texts`() {
         myFixture.configureByText(
             FILE,
-            """<caret>foo bar foo
-            |<caret>foo bar baz
+            """
+                |<caret>foo bar foo
+                |<caret>foo bar baz
             """.trimMargin()
         )
 
@@ -1216,16 +1227,18 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("foo")
 
         myFixture.checkResult(
-            """foo<caret> bar foo
-            |foo<caret> bar baz
+            """
+                |foo<caret> bar foo
+                |foo<caret> bar baz
             """.trimMargin()
         )
         assertEquals("foo", ISearchHandler.delegate?.text)
 
         myFixture.performEditorAction(ACTION_ISEARCH_WORD)
         myFixture.checkResult(
-            """foo bar<caret> foo
-            |foo bar<caret> baz
+            """
+                |foo bar<caret> foo
+                |foo bar<caret> baz
             """.trimMargin()
         )
         assertEquals("foo bar", ISearchHandler.delegate?.text)
@@ -1235,8 +1248,9 @@ class ISearchTest : BasePlatformTestCase() {
     fun `test Multiple caret search works over different texts`() {
         myFixture.configureByText(
             FILE,
-            """(<caret>foo bar) baz
-            |(<caret>foo baz) bar
+            """
+                |(<caret>foo bar) baz
+                |(<caret>foo baz) bar
             """.trimMargin()
         )
 
@@ -1244,8 +1258,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type(")")
 
         myFixture.checkResult(
-            """(foo bar)<caret> baz
-            |(foo baz)<caret> bar
+            """
+                |(foo bar)<caret> baz
+                |(foo baz)<caret> bar
             """.trimMargin()
         )
         assertEquals(")", ISearchHandler.delegate?.text)
@@ -1255,8 +1270,9 @@ class ISearchTest : BasePlatformTestCase() {
     fun `test Multiple caret search can be reversed after failed search`() {
         myFixture.configureByText(
             FILE,
-            """fool (<caret>foo bar) baz
-            |(<caret>foo baz) bar
+            """
+                |fool (<caret>foo bar) baz
+                |(<caret>foo baz) bar
             """.trimMargin()
         )
 
@@ -1264,8 +1280,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("fool")
 
         myFixture.checkResult(
-            """fool (foo<caret> bar) baz
-            |(foo<caret> baz) bar
+            """
+                |fool (foo<caret> bar) baz
+                |(foo<caret> baz) bar
             """.trimMargin()
         )
         assertEquals("fool", ISearchHandler.delegate?.text)
@@ -1274,8 +1291,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
 
         myFixture.checkResult(
-            """<caret>fool (foo bar) baz
-            |(foo baz) bar
+            """
+                |<caret>fool (foo bar) baz
+                |(foo baz) bar
             """.trimMargin()
         )
         assertEquals("fool", ISearchHandler.delegate?.text)
@@ -1285,9 +1303,10 @@ class ISearchTest : BasePlatformTestCase() {
     fun `test Multiple caret search works over overlapping texts`() {
         myFixture.configureByText(
             FILE,
-            """<caret>foo bar baz
-            |<caret>foo bar bax
-            |foo bar bay
+            """
+                |<caret>foo bar baz
+                |<caret>foo bar bax
+                |foo bar bay
             """.trimMargin()
         )
 
@@ -1295,26 +1314,29 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("foo")
 
         myFixture.checkResult(
-            """foo<caret> bar baz
-            |foo<caret> bar bax
-            |foo bar bay
+            """
+                |foo<caret> bar baz
+                |foo<caret> bar bax
+                |foo bar bay
             """.trimMargin()
         )
         assertEquals("foo", ISearchHandler.delegate?.text)
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult(
-            """foo bar baz
-            |foo<caret> bar bax
-            |foo<caret> bar bay
+            """
+                |foo bar baz
+                |foo<caret> bar bax
+                |foo<caret> bar bay
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
         myFixture.checkResult(
-            """foo<caret> bar baz
-            |foo<caret> bar bax
-            |foo bar bay
+            """
+                |foo<caret> bar baz
+                |foo<caret> bar bax
+                |foo bar bay
             """.trimMargin()
         )
         assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
@@ -1323,9 +1345,10 @@ class ISearchTest : BasePlatformTestCase() {
     fun `test Reverse multiple caret search works over overlapping texts`() {
         myFixture.configureByText(
             FILE,
-            """foo bar baz
-            |foo bar bax<caret>
-            |foo bar<caret> bay
+            """
+                |foo bar baz
+                |foo bar bax<caret>
+                |foo bar<caret> bay
             """.trimMargin()
         )
 
@@ -1333,26 +1356,29 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("foo")
 
         myFixture.checkResult(
-            """foo bar baz
-            |<caret>foo bar bax
-            |<caret>foo bar bay
+            """
+                |foo bar baz
+                |<caret>foo bar bax
+                |<caret>foo bar bay
             """.trimMargin()
         )
         assertEquals("foo", ISearchHandler.delegate?.text)
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
         myFixture.checkResult(
-            """<caret>foo bar baz
-            |<caret>foo bar bax
-            |foo bar bay
+            """
+                |<caret>foo bar baz
+                |<caret>foo bar bax
+                |foo bar bay
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
         myFixture.checkResult(
-            """foo bar baz
-            |<caret>foo bar bax
-            |<caret>foo bar bay
+            """
+                |foo bar baz
+                |<caret>foo bar bax
+                |<caret>foo bar bay
             """.trimMargin()
         )
         assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
@@ -1361,9 +1387,10 @@ class ISearchTest : BasePlatformTestCase() {
     fun `test Mark is set when search starts`() {
         myFixture.configureByText(
             FILE,
-            """<caret>foo bar baz
-            |foo bar bax
-            |foo bar bay
+            """
+                |<caret>foo bar baz
+                |foo bar bax
+                |foo bar bay
             """.trimMargin()
         )
 
@@ -1372,17 +1399,19 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult(
-            """foo bar baz
-            |foo bar bax
-            |foo<caret> bar bay
+            """
+                |foo bar baz
+                |foo bar bax
+                |foo<caret> bar bay
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult(
-            """<caret>foo bar baz
-            |foo bar bax
-            |foo bar bay
+            """
+                |<caret>foo bar baz
+                |foo bar bax
+                |foo bar bay
             """.trimMargin()
         )
     }
@@ -1449,7 +1478,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Isearch with lax search works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar yes sir")
-        ISearchHandler.lax = true
+        ISearchHandler.isLax = true
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("o e")
@@ -1458,7 +1487,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Isearch with lax search works 2`() {
         myFixture.configureByText(FILE, "<caret>foo bar yes sir")
-        ISearchHandler.lax = true
+        ISearchHandler.isLax = true
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("o e i")
@@ -1467,7 +1496,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Search can be toggled from lax to non-lax`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo bar foo bar")
-        ISearchHandler.lax = true
+        ISearchHandler.isLax = true
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("f r")
@@ -1482,7 +1511,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Search can be toggled from non-lax to lax`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo bar foo bar")
-        ISearchHandler.lax = false
+        ISearchHandler.isLax = false
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("f r")
@@ -1581,13 +1610,69 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo Foo foo<caret> foo Foo bar")
     }
 
+    fun `test Search can be toggled from text to regexp`() {
+        myFixture.configureByText(FILE, "<caret>foo foo+ foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo+")
+        myFixture.checkResult("foo foo+<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo foo+<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_REGEXP)
+        assertEquals(SearchType.REGEXP, ISearchHandler.delegate?.searchType)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo foo+ foo<caret> bar")
+    }
+
+    fun `test Search can be toggled from regexp to text`() {
+        myFixture.configureByText(FILE, "<caret>foo fo[o] bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
+        myFixture.type("fo[o]")
+        myFixture.checkResult("foo<caret> fo[o] bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
+        myFixture.checkResult("foo<caret> fo[o] bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_REGEXP)
+        assertEquals(SearchType.TEXT, ISearchHandler.delegate?.searchType)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo fo[o]<caret> bar")
+    }
+
+    fun `test Search type is remembered in breadcrumbs`() {
+        myFixture.configureByText(FILE, "<caret>foo foo+ foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo+")
+        myFixture.checkResult("foo foo+<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_TOGGLE_REGEXP)
+        assertEquals(SearchType.REGEXP, ISearchHandler.delegate?.searchType)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo foo+ foo<caret> bar")
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        assertEquals(SearchType.REGEXP, ISearchHandler.delegate?.searchType)
+        myFixture.checkResult("foo foo+<caret> foo bar")
+
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        assertEquals(SearchType.TEXT, ISearchHandler.delegate?.searchType)
+        myFixture.checkResult("foo<caret> foo+ foo bar")
+    }
+
     fun `test First match can be reached when searching forward`() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |<caret>import
-            |import
+                |import
+                |<caret>import
+                |import
             """.trimMargin()
         )
 
@@ -1595,18 +1680,18 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |import
-            |import<caret>
-            |import
+                |import
+                |import<caret>
+                |import
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
         myFixture.checkResult(
             """
-            |import<caret>
-            |import
-            |import
+                |import<caret>
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
@@ -1614,9 +1699,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
         myFixture.checkResult(
             """
-            |import
-            |import<caret>
-            |import
+                |import
+                |import<caret>
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
@@ -1626,9 +1711,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |<caret>import
-            |import
-            |import
+                |<caret>import
+                |import
+                |import
             """.trimMargin()
         )
 
@@ -1636,18 +1721,18 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |import<caret>
-            |import
-            |import
+                |import<caret>
+                |import
+                |import
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
         myFixture.checkResult(
             """
-            |import<caret>
-            |import
-            |import
+                |import<caret>
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
@@ -1657,9 +1742,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |import<caret>
-            |import
+                |import
+                |import<caret>
+                |import
             """.trimMargin()
         )
 
@@ -1667,9 +1752,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("purport")
         myFixture.checkResult(
             """
-            |import
-            |import
-            |imp<caret>ort
+                |import
+                |import
+                |imp<caret>ort
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -1677,9 +1762,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
         myFixture.checkResult(
             """
-            |import
-            |import
-            |imp<caret>ort
+                |import
+                |import
+                |imp<caret>ort
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -1689,9 +1774,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |import
-            |import<caret>
+                |import
+                |import
+                |import<caret>
             """.trimMargin()
         )
 
@@ -1699,9 +1784,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |import
-            |import
-            |import<caret>
+                |import
+                |import
+                |import<caret>
             """.trimMargin()
         )
         assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
@@ -1709,9 +1794,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
         myFixture.checkResult(
             """
-            |import<caret>
-            |import
-            |import
+                |import<caret>
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
@@ -1721,9 +1806,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |import<caret>
-            |import
+                |import
+                |import<caret>
+                |import
             """.trimMargin()
         )
 
@@ -1731,18 +1816,18 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |import
-            |<caret>import
-            |import
+                |import
+                |<caret>import
+                |import
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
         myFixture.checkResult(
             """
-            |<caret>import
-            |import
-            |import
+                |<caret>import
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
@@ -1750,9 +1835,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
         myFixture.checkResult(
             """
-            |import
-            |<caret>import
-            |import
+                |import
+                |<caret>import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
@@ -1762,9 +1847,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import<caret>
-            |import
-            |import
+                |import<caret>
+                |import
+                |import
             """.trimMargin()
         )
 
@@ -1772,18 +1857,18 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |<caret>import
-            |import
-            |import
+                |<caret>import
+                |import
+                |import
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
         myFixture.checkResult(
             """
-            |<caret>import
-            |import
-            |import
+                |<caret>import
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
@@ -1793,9 +1878,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |<caret>import
-            |import
+                |import
+                |<caret>import
+                |import
             """.trimMargin()
         )
 
@@ -1803,9 +1888,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("purport")
         myFixture.checkResult(
             """
-            |im<caret>port
-            |import
-            |import
+                |im<caret>port
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -1813,9 +1898,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
         myFixture.checkResult(
             """
-            |im<caret>port
-            |import
-            |import
+                |im<caret>port
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -1825,9 +1910,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |<caret>import
-            |import
-            |import
+                |<caret>import
+                |import
+                |import
             """.trimMargin()
         )
 
@@ -1835,9 +1920,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |<caret>import
-            |import
-            |import
+                |<caret>import
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
@@ -1845,9 +1930,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FIRST)
         myFixture.checkResult(
             """
-            |<caret>import
-            |import
-            |import
+                |<caret>import
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
@@ -1857,9 +1942,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |import<caret>
-            |import
+                |import
+                |import<caret>
+                |import
             """.trimMargin()
         )
 
@@ -1867,18 +1952,18 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |import
-            |<caret>import
-            |import
+                |import
+                |<caret>import
+                |import
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_LAST)
         myFixture.checkResult(
             """
-            |import
-            |import
-            |<caret>import
+                |import
+                |import
+                |<caret>import
             """.trimMargin()
         )
         assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
@@ -1886,9 +1971,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
         myFixture.checkResult(
             """
-            |import
-            |<caret>import
-            |import
+                |import
+                |<caret>import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
@@ -1898,9 +1983,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |import
-            |import<caret>
+                |import
+                |import
+                |import<caret>
             """.trimMargin()
         )
 
@@ -1908,18 +1993,18 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |import
-            |import
-            |<caret>import
+                |import
+                |import
+                |<caret>import
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_LAST)
         myFixture.checkResult(
             """
-            |import
-            |import
-            |<caret>import
+                |import
+                |import
+                |<caret>import
             """.trimMargin()
         )
         assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
@@ -1929,9 +2014,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |import<caret>
-            |import
+                |import
+                |import<caret>
+                |import
             """.trimMargin()
         )
 
@@ -1939,9 +2024,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("purport")
         myFixture.checkResult(
             """
-            |import
-            |im<caret>port
-            |import
+                |import
+                |im<caret>port
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -1949,9 +2034,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_LAST)
         myFixture.checkResult(
             """
-            |import
-            |im<caret>port
-            |import
+                |import
+                |im<caret>port
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -1961,9 +2046,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |<caret>import
-            |import
-            |import
+                |<caret>import
+                |import
+                |import
             """.trimMargin()
         )
 
@@ -1971,9 +2056,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |<caret>import
-            |import
-            |import
+                |<caret>import
+                |import
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
@@ -1981,9 +2066,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_LAST)
         myFixture.checkResult(
             """
-            |import
-            |import
-            |<caret>import
+                |import
+                |import
+                |<caret>import
             """.trimMargin()
         )
         assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
@@ -1993,9 +2078,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |<caret>import
-            |import
+                |import
+                |<caret>import
+                |import
             """.trimMargin()
         )
 
@@ -2003,18 +2088,18 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |import
-            |import<caret>
-            |import
+                |import
+                |import<caret>
+                |import
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_LAST)
         myFixture.checkResult(
             """
-            |import
-            |import
-            |import<caret>
+                |import
+                |import
+                |import<caret>
             """.trimMargin()
         )
         assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
@@ -2022,9 +2107,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
         myFixture.checkResult(
             """
-            |import
-            |import<caret>
-            |import
+                |import
+                |import<caret>
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(2, 3), ISearchHandler.delegate?.ui?.count)
@@ -2034,9 +2119,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |import
-            |<caret>import
+                |import
+                |import
+                |<caret>import
             """.trimMargin()
         )
 
@@ -2044,18 +2129,18 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |import
-            |import
-            |import<caret>
+                |import
+                |import
+                |import<caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_ISEARCH_LAST)
         myFixture.checkResult(
             """
-            |import
-            |import
-            |import<caret>
+                |import
+                |import
+                |import<caret>
             """.trimMargin()
         )
         assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
@@ -2065,9 +2150,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import<caret>
-            |import
-            |import
+                |import<caret>
+                |import
+                |import
             """.trimMargin()
         )
 
@@ -2075,9 +2160,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("purport")
         myFixture.checkResult(
             """
-            |import
-            |imp<caret>ort
-            |import
+                |import
+                |imp<caret>ort
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -2085,9 +2170,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_LAST)
         myFixture.checkResult(
             """
-            |import
-            |imp<caret>ort
-            |import
+                |import
+                |imp<caret>ort
+                |import
             """.trimMargin()
         )
         assertEquals(Pair(0, 0), ISearchHandler.delegate?.ui?.count)
@@ -2097,9 +2182,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |import
-            |import
-            |import<caret>
+                |import
+                |import
+                |import<caret>
             """.trimMargin()
         )
 
@@ -2107,9 +2192,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.type("import")
         myFixture.checkResult(
             """
-            |import
-            |import
-            |import<caret>
+                |import
+                |import
+                |import<caret>
             """.trimMargin()
         )
         assertEquals(Pair(0, 3), ISearchHandler.delegate?.ui?.count)
@@ -2117,9 +2202,9 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_LAST)
         myFixture.checkResult(
             """
-            |import
-            |import
-            |import<caret>
+                |import
+                |import
+                |import<caret>
             """.trimMargin()
         )
         assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
@@ -2127,7 +2212,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Forward selection search works`() {
         myFixture.configureByText(FILE, "<selection>foo<caret></selection> bar foo")
-        ISearchHandler.selectionISearch = true
+        ISearchHandler.isSelectionISearch = true
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult("foo<caret> bar foo")
@@ -2142,7 +2227,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Forward selection search works 2`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection> bar foo")
-        ISearchHandler.selectionISearch = true
+        ISearchHandler.isSelectionISearch = true
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult("foo<caret> bar foo")
@@ -2157,7 +2242,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Backward selection search works`() {
         myFixture.configureByText(FILE, "foo bar <selection><caret>foo</selection>")
-        ISearchHandler.selectionISearch = true
+        ISearchHandler.isSelectionISearch = true
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
         myFixture.checkResult("foo bar <caret>foo")
@@ -2172,7 +2257,7 @@ class ISearchTest : BasePlatformTestCase() {
 
     fun `test Backward selection search works 2`() {
         myFixture.configureByText(FILE, "foo bar <selection>foo<caret></selection>")
-        ISearchHandler.selectionISearch = true
+        ISearchHandler.isSelectionISearch = true
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
         myFixture.checkResult("foo bar <caret>foo")
@@ -2183,6 +2268,34 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>foo bar foo")
         assertEquals("foo", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Delete char in forward search works`() {
+        myFixture.configureByText(FILE, "<caret>foo bar fo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+
+        myFixture.checkResult("foo<caret> bar fo")
+        assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_DELETE_CHAR)
+        myFixture.checkResult("fo<caret>o bar fo")
+        assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
+    }
+
+    fun `test Delete char in backward search works`() {
+        myFixture.configureByText(FILE, "fo bar foo<caret>")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("foo")
+
+        myFixture.checkResult("fo bar <caret>foo")
+        assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
+
+        myFixture.performEditorAction(ACTION_ISEARCH_DELETE_CHAR)
+        myFixture.checkResult("fo bar <caret>foo")
+        assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
 
     private fun pressEnter() {

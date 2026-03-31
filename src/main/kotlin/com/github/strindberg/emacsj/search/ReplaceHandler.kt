@@ -21,19 +21,19 @@ class ReplaceHandler(private val type: SearchType) : EditorActionHandler() {
         if (delegate == null) {
             MarkHandler.pushPlaceInfo(editor)
             delegate = ReplaceDelegate(
-                editor,
-                type,
-                with(editor.selectionModel) { if (hasSelection()) selectionStart..selectionEnd else null },
-                getLast(type)
+                editor = editor,
+                type = type,
+                selection = with(editor.selectionModel) { if (hasSelection()) selectionStart..selectionEnd else null },
+                lastSearch = getLast(type)
             )
         }
     }
 
     companion object {
 
-        private var lastStringSearches = listOf<Replace>()
+        private var lastStringSearches = emptyList<Replace>()
 
-        private var lastRegexpSearches = listOf<Replace>()
+        private var lastRegexpSearches = emptyList<Replace>()
 
         private var savedPos = -1
 

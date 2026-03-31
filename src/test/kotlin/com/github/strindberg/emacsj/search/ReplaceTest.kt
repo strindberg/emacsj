@@ -11,7 +11,7 @@ class ReplaceTest : BasePlatformTestCase() {
 
     override fun setUp() {
         super.setUp()
-        CommonHighlighter.testing = true
+        CommonHighlighter.isTesting = true
     }
 
     override fun tearDown() {
@@ -463,8 +463,8 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |<caret>foo foo
-            |foo bar
+                |<caret>foo foo
+                |foo bar
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
@@ -480,7 +480,7 @@ class ReplaceTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            |foo bar<caret>foo bar
+                |foo bar<caret>foo bar
             """.trimMargin()
         )
     }
@@ -489,8 +489,8 @@ class ReplaceTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            |<caret>foo foo
-            |foo bar
+                |<caret>foo foo
+                |foo bar
             """.trimMargin()
         )
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
@@ -506,11 +506,11 @@ class ReplaceTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            |bar
-            | bar
-            |
-            |bar
-            |<caret> bar
+                |bar
+                | bar
+                |
+                |bar
+                |<caret> bar
             """.trimMargin()
         )
     }

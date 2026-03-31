@@ -43,12 +43,12 @@ internal fun previousWordBoundaries(text: CharSequence, offset: Int, isCamel: Bo
     }
 
 private fun nextWordStart(text: CharSequence, offset: Int, isCamel: Boolean): Int =
-    nextBoundary(text, offset, isCamel, ::isWordStart)
+    nextBoundary(text = text, startOffset = offset, isCamel = isCamel, check = ::isWordStart)
 
 private fun nextWordEnd(text: CharSequence, offset: Int, isCamel: Boolean): Int =
-    nextBoundary(text, offset, isCamel, ::isWordEnd)
+    nextBoundary(text = text, startOffset = offset, isCamel = isCamel, check = ::isWordEnd)
 
-private fun nextBoundary(text: CharSequence, offset: Int, isCamel: Boolean, check: (CharSequence, Int, Boolean) -> Boolean): Int {
+private fun nextBoundary(text: CharSequence, startOffset: Int, isCamel: Boolean, check: (CharSequence, Int, Boolean) -> Boolean): Int {
     tailrec fun next(offset: Int): Int =
         if (offset >= text.length) {
             text.length
@@ -57,16 +57,16 @@ private fun nextBoundary(text: CharSequence, offset: Int, isCamel: Boolean, chec
         } else {
             next(offset + 1)
         }
-    return next(offset)
+    return next(startOffset)
 }
 
 private fun previousWordStart(text: CharSequence, offset: Int, isCamel: Boolean): Int =
-    previousBoundary(text, offset, isCamel, ::isWordStart)
+    previousBoundary(text = text, startOffset = offset, isCamel = isCamel, check = ::isWordStart)
 
 private fun previousWordEnd(text: CharSequence, offset: Int, isCamel: Boolean): Int =
-    previousBoundary(text, offset, isCamel, ::isWordEnd)
+    previousBoundary(text = text, startOffset = offset, isCamel = isCamel, check = ::isWordEnd)
 
-private fun previousBoundary(text: CharSequence, offset: Int, isCamel: Boolean, check: (CharSequence, Int, Boolean) -> Boolean): Int {
+private fun previousBoundary(text: CharSequence, startOffset: Int, isCamel: Boolean, check: (CharSequence, Int, Boolean) -> Boolean): Int {
     tailrec fun previous(offset: Int): Int =
         if (offset <= 0) {
             0
@@ -75,11 +75,11 @@ private fun previousBoundary(text: CharSequence, offset: Int, isCamel: Boolean, 
         } else {
             previous(offset - 1)
         }
-    return previous(offset)
+    return previous(startOffset)
 }
 
 private fun isWordStart(text: CharSequence, offset: Int, isCamel: Boolean): Boolean =
-    (offset > 0 && offset < text.length) &&
+    offset > 0 && offset < text.length &&
         run {
             val previous = text[offset - 1]
             val current = text[offset]
@@ -87,14 +87,13 @@ private fun isWordStart(text: CharSequence, offset: Int, isCamel: Boolean): Bool
         }
 
 private fun isWordEnd(text: CharSequence, offset: Int, isCamel: Boolean): Boolean =
-    (offset > 0 && offset < text.length) &&
+    offset > 0 && offset < text.length &&
         run {
             val previous = text[offset - 1]
             val current = text[offset]
             previous.isLetterOrDigit() && (!current.isLetterOrDigit() || isCamelBoundary(previous, current, isCamel))
         }
 
-private fun isCamelBoundary(prev: Char, curr: Char, isCamel: Boolean): Boolean =
-    isCamel && prev.isLowerCaseOrDigit() && curr.isUpperCase()
+private fun isCamelBoundary(prev: Char, curr: Char, isCamel: Boolean): Boolean = isCamel && prev.isLowerCaseOrDigit() && curr.isUpperCase()
 
 private fun Char.isLowerCaseOrDigit(): Boolean = isLowerCase() || isDigit()

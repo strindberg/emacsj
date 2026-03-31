@@ -1,14 +1,8 @@
 package com.github.strindberg.emacsj.word
 
-import com.github.strindberg.emacsj.kill.KillUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class WordChangeTest : BasePlatformTestCase() {
-
-    override fun setUp() {
-        super.setUp()
-        KillUtil.testing = true
-    }
 
     fun `test Capitalize word 00`() {
         myFixture.configureByText(FILE, "<caret>foo bar")
@@ -326,6 +320,24 @@ class WordChangeTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>Bar")
     }
 
+    fun `test Delete next word works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |<caret>fooBar
+                |<caret>pooBear
+            """.trimMargin()
+        )
+        myFixture.editor.settings.isCamelWords = true
+        myFixture.performEditorAction(ACTION_DELETE_NEXT_WORD)
+        myFixture.checkResult(
+            """
+                |<caret>Bar
+                |<caret>Bear
+            """.trimMargin()
+        )
+    }
+
     fun `test Delete previous word 00`() {
         myFixture.configureByText(FILE, "<caret>foo bar")
         myFixture.performEditorAction(ACTION_DELETE_PREVIOUS_WORD)
@@ -373,5 +385,23 @@ class WordChangeTest : BasePlatformTestCase() {
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_DELETE_PREVIOUS_WORD)
         myFixture.checkResult("foo<caret>")
+    }
+
+    fun `test Delete previous word works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |fooBar<caret>
+                |pooBear<caret>
+            """.trimMargin()
+        )
+        myFixture.editor.settings.isCamelWords = true
+        myFixture.performEditorAction(ACTION_DELETE_PREVIOUS_WORD)
+        myFixture.checkResult(
+            """
+                |foo<caret>
+                |poo<caret>
+            """.trimMargin()
+        )
     }
 }

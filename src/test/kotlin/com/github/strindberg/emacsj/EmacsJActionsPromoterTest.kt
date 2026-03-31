@@ -46,7 +46,7 @@ class EmacsJActionsPromoterTest : BasePlatformTestCase() {
 
     fun `test Promoter sorts Replace actions first when Replace is active`() {
         myFixture.configureByText(FILE, "")
-        ReplaceHandler.delegate = ReplaceDelegate(myFixture.editor, SearchType.TEXT, null, null)
+        ReplaceHandler.delegate = ReplaceDelegate(editor = myFixture.editor, type = SearchType.TEXT, selection = null, lastSearch = null)
 
         val replace = ReplaceNewLineAction()
         val actions = setOf(replace, PushMarkAction(), ZapToCharAction())

@@ -42,7 +42,7 @@ private val pasteCommands =
 class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     companion object {
-        private var clipboardHistory = listOf<Transferable>()
+        private var clipboardHistory = emptyList<Transferable>()
 
         private var clipboardHistoryPos = 0
 

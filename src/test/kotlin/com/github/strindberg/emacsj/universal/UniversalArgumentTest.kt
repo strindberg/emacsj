@@ -12,7 +12,7 @@ class UniversalArgumentTest : BasePlatformTestCase() {
 
     override fun setUp() {
         super.setUp()
-        UniversalArgumentDelegate.testing = true
+        UniversalArgumentDelegate.isTesting = true
     }
 
     override fun tearDown() {
@@ -139,10 +139,12 @@ class UniversalArgumentTest : BasePlatformTestCase() {
     }
 
     private fun pressEscape() {
-        val popup = UniversalArgumentHandler.delegate?.ui?.popup
-        val textField = UniversalArgumentHandler.delegate?.ui?.textField
-        popup?.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
-        popup?.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
+        UniversalArgumentHandler.delegate?.run {
+            val popup = ui.popup
+            val textField = ui.textField
+            popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
+            popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
+        }
         UniversalArgumentHandler.delegate?.hide()
     }
 }

@@ -30,13 +30,17 @@ import org.jetbrains.annotations.VisibleForTesting
 
 internal class CommonUI(
     private val editor: Editor,
-    private var writeable: Boolean,
+    private var isWriteable: Boolean,
     private val cancelCallback: () -> Unit,
     private val keyEventHandler: (KeyEvent) -> Unit = { },
 ) {
 
     private val standardFont =
-        UIUtil.getLabelFont().deriveFont((editor as? EditorEx)?.colorsScheme?.editorFontSize2D?.times(1.1f) ?: UIUtil.getLabelFont().size2D)
+        UIUtil.getLabelFont().deriveFont(
+            (editor as? EditorEx)?.run {
+                colorsScheme.editorFontSize2D.times(1.1f)
+            } ?: UIUtil.getLabelFont().size2D
+        )
 
     private val panel: UIPanel = UIPanel(this, editor, standardFont)
 
@@ -67,9 +71,9 @@ internal class CommonUI(
         }
 
     internal var text: String
-        get() = scrubText(if (writeable) textField.text else textLabel.text)
+        get() = scrubText(if (isWriteable) textField.text else textLabel.text)
         set(newText) {
-            if (writeable) {
+            if (isWriteable) {
                 textField.text = displayText(newText)
                 textField.setCaretPosition(textField.text.length)
                 textField.removeSelection()
@@ -85,9 +89,9 @@ internal class CommonUI(
         }
 
     internal var textColor: Color
-        get() = if (writeable) textField.foreground else textLabel.foreground
+        get() = if (isWriteable) textField.foreground else textLabel.foreground
         set(newColor) {
-            if (writeable) textField.foreground = newColor else textLabel.foreground = newColor
+            if (isWriteable) textField.foreground = newColor else textLabel.foreground = newColor
         }
 
     init {
@@ -101,7 +105,7 @@ internal class CommonUI(
         panel.add(spaceLabel1, GridBagConstraints().apply { gridx = 0 })
         panel.add(titleLabel, GridBagConstraints().apply { gridx = 1 })
 
-        if (writeable) {
+        if (isWriteable) {
             setWriteableComponents(text)
         } else {
             setReadonlyComponents(text)
@@ -141,7 +145,7 @@ internal class CommonUI(
     }
 
     internal fun makeReadonly(newText: String, requestFocus: Boolean) {
-        writeable = false
+        isWriteable = false
 
         setReadonlyComponents(newText)
 
@@ -151,7 +155,7 @@ internal class CommonUI(
     }
 
     internal fun makeWriteable(text: String) {
-        writeable = true
+        isWriteable = true
 
         setWriteableComponents(text)
 
@@ -164,22 +168,23 @@ internal class CommonUI(
         show()
     }
 
-    private fun initPopup(): JBPopup = JBPopupFactory.getInstance()
-        .createComponentPopupBuilder(panel, if (writeable) textField else null)
-        .setCancelOnClickOutside(true)
-        .setCancelOnOtherWindowOpen(true)
-        .setMovable(false)
-        .setResizable(false)
-        .setRequestFocus(writeable)
-        .setCancelCallback {
-            cancelCallback()
-            true
-        }
-        .setKeyEventHandler { event ->
-            keyEventHandler(event)
-            false
-        }
-        .createPopup()
+    private fun initPopup(): JBPopup =
+        JBPopupFactory.getInstance()
+            .createComponentPopupBuilder(panel, if (isWriteable) textField else null)
+            .setCancelOnClickOutside(true)
+            .setCancelOnOtherWindowOpen(true)
+            .setMovable(false)
+            .setResizable(false)
+            .setRequestFocus(isWriteable)
+            .setCancelCallback {
+                cancelCallback()
+                true
+            }
+            .setKeyEventHandler { event ->
+                keyEventHandler(event)
+                false
+            }
+            .createPopup()
 
     private fun displayText(text: String): String = text.replace("\n", "\\n")
 

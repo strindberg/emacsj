@@ -22,11 +22,13 @@ class DeleteLinesHandler : EditorWriteActionHandler.ForEachCaret() {
         if (!DocumentUtil.isLineEmpty(document, lineNum)) {
             if (lineNum + 1 < document.lineCount) {
                 val (start, end) = getEmptySuccessorLines(document, lineNum)
-                end?.let { document.deleteString(start, minOf(end, editor.text.length)) }
+                if (end != null) {
+                    document.deleteString(start, minOf(end, editor.text.length))
+                }
             }
         } else {
-            val nextBlank = lineNum + 1 < document.lineCount && DocumentUtil.isLineEmpty(document, lineNum + 1)
-            if (!nextBlank && (lineNum == 0 || !DocumentUtil.isLineEmpty(document, lineNum - 1))) {
+            val isNextBlank = lineNum + 1 < document.lineCount && DocumentUtil.isLineEmpty(document, lineNum + 1)
+            if (!isNextBlank && (lineNum == 0 || !DocumentUtil.isLineEmpty(document, lineNum - 1))) {
                 document.deleteString(
                     document.getLineStartOffset(lineNum),
                     minOf(document.getLineEndOffset(lineNum) + 1, editor.text.length)
@@ -34,7 +36,7 @@ class DeleteLinesHandler : EditorWriteActionHandler.ForEachCaret() {
             } else {
                 if (lineNum + 1 < document.lineCount) {
                     val (start, end) = getEmptySuccessorLines(document, lineNum)
-                    end?.let {
+                    if (end != null) {
                         document.deleteString(start, minOf(end, editor.text.length))
                         if (caret.offset == editor.text.lastIndex) {
                             document.deleteString(caret.offset, caret.offset + 1)
@@ -43,30 +45,32 @@ class DeleteLinesHandler : EditorWriteActionHandler.ForEachCaret() {
                 }
                 if (lineNum > 0) {
                     val (start, end) = getEmptyPrecedingLines(document, lineNum)
-                    start?.let { document.deleteString(maxOf(0, start), end) }
+                    if (start != null) {
+                        document.deleteString(maxOf(0, start), end)
+                    }
                 }
             }
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
     }
 
-    private fun getEmptySuccessorLines(document: Document, lineNum: Int): Pair<Int, Int?> {
+    private fun getEmptySuccessorLines(document: Document, startLineNum: Int): Pair<Int, Int?> {
         tailrec fun findEnd(lineNum: Int, end: Int?): Int? =
             if (lineNum < document.lineCount && DocumentUtil.isLineEmpty(document, lineNum)) {
                 findEnd(lineNum + 1, document.getLineEndOffset(lineNum) + 1)
             } else {
                 end
             }
-        return Pair(document.getLineStartOffset(lineNum + 1), findEnd(lineNum + 1, null))
+        return Pair(document.getLineStartOffset(startLineNum + 1), findEnd(startLineNum + 1, null))
     }
 
-    private fun getEmptyPrecedingLines(document: Document, lineNum: Int): Pair<Int?, Int> {
+    private fun getEmptyPrecedingLines(document: Document, startLineNum: Int): Pair<Int?, Int> {
         tailrec fun findStart(lineNum: Int, start: Int?): Int? =
             if (lineNum > 0 && DocumentUtil.isLineEmpty(document, lineNum)) {
                 findStart(lineNum - 1, document.getLineStartOffset(lineNum))
             } else {
                 start
             }
-        return Pair(findStart(lineNum, null), document.getLineEndOffset(lineNum - 1) + 1)
+        return Pair(findStart(startLineNum, null), document.getLineEndOffset(startLineNum - 1) + 1)
     }
 }

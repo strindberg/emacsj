@@ -72,11 +72,7 @@ class DuplicateAndCommentHandler(val type: Type) : EditorWriteActionHandler.ForE
             true
         }
 
-    private fun commentDwim(
-        editor: Editor,
-        caret: Caret,
-        useLineComment: Boolean,
-    ) {
+    private fun commentDwim(editor: Editor, caret: Caret, useLineComment: Boolean) {
         editor.project?.let { project ->
             PsiDocumentManager.getInstance(project).getPsiFile(editor.document)?.let { psiFile ->
                 if (useLineComment) {

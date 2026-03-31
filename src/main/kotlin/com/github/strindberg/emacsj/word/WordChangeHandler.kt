@@ -65,10 +65,30 @@ class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler
 
         if (start != null) {
             when (type) {
-                DELETE, DELETE_PREVIOUS -> KillUtil.cut(editor, start, end, prepend = type == DELETE_PREVIOUS)
-                UPPER, UPPER_PREVIOUS -> replaceTextAndMove(editor.document, start, end, caret) { uppercase() }
-                LOWER, LOWER_PREVIOUS -> replaceTextAndMove(editor.document, start, end, caret) { lowercase() }
-                CAPITAL, CAPITAL_PREVIOUS -> capitalizeRegion(editor, start, end, caret)
+                DELETE, DELETE_PREVIOUS -> KillUtil.cut(
+                    editor = editor,
+                    textStartOffset = start,
+                    textEndOffset = end,
+                    prepend = type == DELETE_PREVIOUS
+                )
+                UPPER, UPPER_PREVIOUS -> replaceTextAndMove(
+                    document = editor.document,
+                    start = start,
+                    end = end,
+                    caret = caret
+                ) { uppercase() }
+                LOWER, LOWER_PREVIOUS -> replaceTextAndMove(
+                    document = editor.document,
+                    start = start,
+                    end = end,
+                    caret = caret
+                ) { lowercase() }
+                CAPITAL, CAPITAL_PREVIOUS -> capitalizeRegion(
+                    editor = editor,
+                    regionStart = start,
+                    regionEnd = end,
+                    caret = caret
+                )
             }
 
             caret.removeSelection()
@@ -99,7 +119,7 @@ class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler
         caret.moveToOffset(regionEnd)
     }
 
-    private fun firstLetterOrDigit(text: CharSequence, offset: Int): Int? {
+    private fun firstLetterOrDigit(text: CharSequence, startOffset: Int): Int? {
         tailrec fun next(offset: Int): Int? =
             if (offset >= text.length) {
                 null
@@ -108,6 +128,6 @@ class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler
             } else {
                 next(offset + 1)
             }
-        return next(offset)
+        return next(startOffset)
     }
 }

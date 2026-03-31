@@ -22,6 +22,6 @@ class WordMovementHandler(private val type: MovementType) : EditorActionHandler.
             MovementType.PREVIOUS -> currentWordStart(editor.text, caret.offset, editor.isCamel)
         }
 
-        offset.let { caret.moveToOffset(it) }
+        caret.moveToOffset(offset)
     }
 }

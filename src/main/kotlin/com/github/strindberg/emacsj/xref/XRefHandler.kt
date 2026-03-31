@@ -2,7 +2,7 @@ package com.github.strindberg.emacsj.xref
 
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.mark.PlaceInfo
-import com.github.strindberg.emacsj.mark.UndoStack
+import com.github.strindberg.emacsj.mark.UndoRedoStack
 import com.github.strindberg.emacsj.mark.manager
 import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.actionSystem.DataContext
@@ -36,7 +36,7 @@ class XRefHandler(private val type: XRefType) : EditorActionHandler() {
             ActionsBundle.actionText("GotoTypeDeclaration"),
         )
 
-        private val places = mutableMapOf<Int, UndoStack<PlaceInfo>>()
+        private val places = mutableMapOf<Int, UndoRedoStack<PlaceInfo>>()
 
         internal fun pushPlace(event: CommandEvent) {
             event.project?.let { project ->
@@ -64,14 +64,11 @@ class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
         private fun pushPlaceInfo(editor: Editor, project: Project, virtualFile: VirtualFile) {
             MarkHandler.placeInfo(editor, virtualFile)?.let {
-                places.getOrPut(project.hashCode()) { UndoStack() }.push(it)
+                places.getOrPut(project.hashCode()) { UndoRedoStack() }.push(it)
             }
         }
 
-        private fun getPlaceUsingHistory(
-            editor: Editor,
-            operation: (UndoStack<PlaceInfo>, PlaceInfo) -> PlaceInfo?,
-        ): PlaceInfo? =
+        private fun getPlaceUsingHistory(editor: Editor, operation: (UndoRedoStack<PlaceInfo>, PlaceInfo) -> PlaceInfo?): PlaceInfo? =
             editor.project?.let { project ->
                 places[project.hashCode()]?.let { stack ->
                     editor.virtualFile?.let { currentFile ->
@@ -84,7 +81,7 @@ class XRefHandler(private val type: XRefType) : EditorActionHandler() {
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        (editor as? EditorEx)?.let {
+        if (editor is EditorEx) {
             when (type) {
                 XRefType.BACK -> getPlaceForBackAction(editor)?.let { place ->
                     MarkHandler.gotoPlaceInfo(editor, place)

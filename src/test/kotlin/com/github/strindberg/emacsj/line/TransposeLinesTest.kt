@@ -20,9 +20,9 @@ class TransposeLinesTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            foo
-            bar<caret>
-            baz
+                foo
+                bar<caret>
+                baz
             """.trimIndent()
         )
 
@@ -30,9 +30,9 @@ class TransposeLinesTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            bar
-            foo
-            <caret>baz
+                bar
+                foo
+                <caret>baz
             """.trimIndent()
         )
     }
@@ -41,8 +41,8 @@ class TransposeLinesTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            foo<caret>
-            bar
+                foo<caret>
+                bar
             """.trimIndent()
         )
 
@@ -50,8 +50,8 @@ class TransposeLinesTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            foo<caret>
-            bar
+                foo<caret>
+                bar
             """.trimIndent()
         )
     }
@@ -60,9 +60,9 @@ class TransposeLinesTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            foo
-            bar
-            baz<caret>
+                foo
+                bar
+                baz<caret>
             """.trimIndent()
         )
 
@@ -70,10 +70,10 @@ class TransposeLinesTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            foo
-            baz
-            bar
-            <caret>
+                foo
+                baz
+                bar
+                <caret>
             """.trimIndent()
         )
     }
@@ -82,9 +82,9 @@ class TransposeLinesTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            foo
-            bar
-            baz<caret>
+                foo
+                bar
+                baz<caret>
             """.trimIndent()
         )
 
@@ -93,10 +93,10 @@ class TransposeLinesTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            baz
-            bar
-            foo
-            <caret>
+                baz
+                bar
+                foo
+                <caret>
             """.trimIndent()
         )
     }
@@ -105,10 +105,10 @@ class TransposeLinesTest : BasePlatformTestCase() {
         myFixture.configureByText(
             FILE,
             """
-            foo<caret>
-            bar
-            baz
-            baf
+                foo<caret>
+                bar
+                baz
+                baf
             """.trimIndent()
         )
 
@@ -122,11 +122,11 @@ class TransposeLinesTest : BasePlatformTestCase() {
 
         myFixture.checkResult(
             """
-            baf
-            bar
-            baz
-            foo
-            <caret>
+                baf
+                bar
+                baz
+                foo
+                <caret>
             """.trimIndent()
         )
     }

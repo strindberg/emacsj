@@ -12,13 +12,13 @@ class EmacsJServiceImpl : EmacsJService {
 
     private var lastArgument = 1
 
-    private var repeating = false
+    private var isRepeating = false
 
-    private val registeredSingleActions = mutableSetOf(*singleActions.toTypedArray())
+    private val registeredSingleActions = singleActions.toMutableSet()
 
     override fun addCommand(commandName: String) {
         synchronized(this) {
-            lastCommandNames = CommandNames(commandName, lastCommandNames.last)
+            lastCommandNames = CommandNames(last = commandName, previous = lastCommandNames.last)
         }
     }
 
@@ -40,10 +40,10 @@ class EmacsJServiceImpl : EmacsJService {
     override fun isLastUniversal() = lastCommandNames.last in universalCommandNames
 
     override fun setRepeating(repeating: Boolean) {
-        this.repeating = repeating
+        this.isRepeating = repeating
     }
 
-    override fun isRepeating() = repeating
+    override fun isRepeating() = isRepeating
 
     override fun registerSingleAction(actionId: String) {
         registeredSingleActions.add(actionId)

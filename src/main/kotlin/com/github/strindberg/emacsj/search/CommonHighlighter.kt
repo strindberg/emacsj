@@ -17,7 +17,7 @@ import org.jetbrains.annotations.VisibleForTesting
 object CommonHighlighter {
 
     @VisibleForTesting
-    internal var testing = false
+    internal var isTesting = false
 
     private val progressIndicators = mutableListOf<ProgressIndicator>()
 
@@ -39,8 +39,16 @@ object CommonHighlighter {
         callback: (List<FindResult>) -> Unit = {},
         highlight: Boolean = true,
     ) {
-        if (testing) {
-            doFindAllAndHighlight(editor, searchArg, useRegexp, useCase, range, callback, highlight)
+        if (isTesting) {
+            doFindAllAndHighlight(
+                editor = editor,
+                searchArg = searchArg,
+                useRegexp = useRegexp,
+                useCase = useCase,
+                range = range,
+                callback = callback,
+                highlight = highlight
+            )
         } else {
             val indicator = ProgressIndicatorBase()
             progressIndicators.add(indicator)
@@ -49,7 +57,15 @@ object CommonHighlighter {
                     .runProcess(
                         {
                             Thread.sleep(50)
-                            doFindAllAndHighlight(editor, searchArg, useRegexp, useCase, range, callback, highlight)
+                            doFindAllAndHighlight(
+                                editor = editor,
+                                searchArg = searchArg,
+                                useRegexp = useRegexp,
+                                useCase = useCase,
+                                range = range,
+                                callback = callback,
+                                highlight = highlight
+                            )
                         },
                         indicator
                     )
@@ -77,7 +93,7 @@ object CommonHighlighter {
             val text = editor.text.substring(0, range?.last ?: editor.text.length)
             var offset = range?.start ?: 0
 
-            if (!testing) {
+            if (!isTesting) {
                 ProgressManager.checkCanceled()
             }
             while (offset < text.length) {
@@ -95,7 +111,7 @@ object CommonHighlighter {
     }
 
     private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>) {
-        if (testing) {
+        if (isTesting) {
             matches.forEach { match ->
                 addHighlight(editor, match)
             }

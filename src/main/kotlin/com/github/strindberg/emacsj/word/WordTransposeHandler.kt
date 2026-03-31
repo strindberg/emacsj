@@ -23,21 +23,32 @@ class WordTransposeHandler(private val direction: Direction) : EditorWriteAction
         val currentBoundaries = if (hasSelection) {
             Pair(caret.selectionStart, caret.selectionEnd)
         } else {
-            currentWordBoundaries(editor.text, caret.offset, editor.isCamel, direction == Direction.FORWARD)
+            currentWordBoundaries(
+                text = editor.text,
+                offset = caret.offset,
+                isCamel = editor.isCamel,
+                isForward = direction == Direction.FORWARD
+            )
         }
         currentBoundaries.let { (currentStart, currentEnd) ->
             val currentWord = editor.document.substring(currentStart, currentEnd)
 
             if (direction == Direction.FORWARD) {
-                nextWordBoundaries(editor.text, currentEnd, editor.isCamel).let { (nextStart, nextEnd) ->
+                nextWordBoundaries(text = editor.text, offset = currentEnd, isCamel = editor.isCamel).let { (nextStart, nextEnd) ->
                     val nextWord = editor.document.substring(nextStart, nextEnd)
 
                     editor.document.replaceWords(
-                        currentStart,
-                        currentEnd,
-                        nextStart,
-                        nextEnd,
-                        lowerCamelCase(caret, currentEnd, nextStart, currentWord, nextWord)
+                        firstStart = currentStart,
+                        firstEnd = currentEnd,
+                        secondStart = nextStart,
+                        secondEnd = nextEnd,
+                        words = lowerCamelCase(
+                            caret = caret,
+                            firstEnd = currentEnd,
+                            secondStart = nextStart,
+                            firstWord = currentWord,
+                            secondWord = nextWord
+                        )
                     )
 
                     caret.moveToOffset(nextEnd)
@@ -47,15 +58,21 @@ class WordTransposeHandler(private val direction: Direction) : EditorWriteAction
                     }
                 }
             } else {
-                previousWordBoundaries(editor.text, currentStart, editor.isCamel).let { (prevStart, prevEnd) ->
+                previousWordBoundaries(text = editor.text, offset = currentStart, isCamel = editor.isCamel).let { (prevStart, prevEnd) ->
                     val prevWord = editor.document.substring(prevStart, prevEnd)
 
                     editor.document.replaceWords(
-                        prevStart,
-                        prevEnd,
-                        currentStart,
-                        currentEnd,
-                        lowerCamelCase(caret, prevEnd, currentStart, prevWord, currentWord)
+                        firstStart = prevStart,
+                        firstEnd = prevEnd,
+                        secondStart = currentStart,
+                        secondEnd = currentEnd,
+                        words = lowerCamelCase(
+                            caret = caret,
+                            firstEnd = prevEnd,
+                            secondStart = currentStart,
+                            firstWord = prevWord,
+                            secondWord = currentWord
+                        )
                     )
 
                     caret.moveToOffset(prevStart)

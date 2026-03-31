@@ -29,58 +29,11 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Copy works 03`() {
         myFixture.configureByText(
             FILE,
-            """foo
-               |FOO<selection>bar
-               |BARbaz</selection><caret>BAZ
-               |omf
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
-
-        assertEquals(
-            """bar
-            |baz
-            """.trimMargin(),
-            CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
-        )
-        myFixture.checkResult(
-            """foo
-               |FOObar
-               |BARbaz<caret>BAZ
-               |omf
-            """.trimMargin()
-        )
-    }
-
-    fun `test Copy works 04`() {
-        myFixture.configureByText(
-            FILE,
-            """foo<selection>bar
-            |barbaz</selection><caret>
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
-
-        assertEquals(
-            """bar
-            |baz
-            """.trimMargin(),
-            CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
-        )
-        myFixture.checkResult(
-            """foobar
-            |barbaz<caret>
-            """.trimMargin()
-        )
-    }
-
-    fun `test Copy works 05`() {
-        myFixture.configureByText(
-            FILE,
-            """foo<selection>
-            |barbaz</selection><caret>
+            """
+                |foo
+                |FOO<selection>bar
+                |BARbaz</selection><caret>BAZ
+                |omf
             """.trimMargin()
         )
 
@@ -88,14 +41,69 @@ class RectangleTest : BasePlatformTestCase() {
 
         assertEquals(
             """
-            |
-            |baz
+                |bar
+                |baz
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """foo
-            |barbaz<caret>
+            """
+                |foo
+                |FOObar
+                |BARbaz<caret>BAZ
+                |omf
+            """.trimMargin()
+        )
+    }
+
+    fun `test Copy works 04`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |foo<selection>bar
+                |barbaz</selection><caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
+
+        assertEquals(
+            """
+                |bar
+                |baz
+            """.trimMargin(),
+            CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
+        )
+        myFixture.checkResult(
+            """
+                |foobar
+                |barbaz<caret>
+            """.trimMargin()
+        )
+    }
+
+    fun `test Copy works 05`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |foo<selection>
+                |barbaz</selection><caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
+
+        assertEquals(
+            """
+                |
+                |baz
+            """.trimMargin(),
+            CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
+        )
+        myFixture.checkResult(
+            """
+                |foo
+                |barbaz<caret>
             """.trimMargin()
         )
     }
@@ -103,25 +111,28 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Copy works 06`() {
         myFixture.configureByText(
             FILE,
-            """<selection>foo
-            |
-            |bar</selection><caret>
+            """
+                |<selection>foo
+                |
+                |bar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
 
         assertEquals(
-            """foo
-            |
-            |bar
+            """
+                |foo
+                |
+                |bar
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """foo
-            |
-            |bar<caret>
+            """
+                |foo
+                |
+                |bar<caret>
             """.trimMargin()
         )
     }
@@ -129,25 +140,28 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Copy works 07`() {
         myFixture.configureByText(
             FILE,
-            """a<selection>foo
-            |b
-            |cbar</selection><caret>
+            """
+                |a<selection>foo
+                |b
+                |cbar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
 
         assertEquals(
-            """foo
-            |
-            |bar
+            """
+                |foo
+                |
+                |bar
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """afoo
-            |b
-            |cbar<caret>
+            """
+                |afoo
+                |b
+                |cbar<caret>
             """.trimMargin()
         )
     }
@@ -155,25 +169,28 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Copy works 08`() {
         myFixture.configureByText(
             FILE,
-            """<selection>fooa
-            |
-            |bar</selection><caret>c
+            """
+                |<selection>fooa
+                |
+                |bar</selection><caret>c
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
 
         assertEquals(
-            """foo
-            |
-            |bar
+            """
+                |foo
+                |
+                |bar
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """fooa
-            |
-            |bar<caret>c
+            """
+                |fooa
+                |
+                |bar<caret>c
             """.trimMargin()
         )
     }
@@ -181,25 +198,28 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Copy works 09`() {
         myFixture.configureByText(
             FILE,
-            """   <selection>foo
-            |      
-            |   bar</selection><caret>
+            """
+                |   <selection>foo
+                |      
+                |   bar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
 
         assertEquals(
-            """foo
-            |   
-            |bar
+            """
+                |foo
+                |   
+                |bar
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """   foo
-            |      
-            |   bar<caret>
+            """
+                |   foo
+                |      
+                |   bar<caret>
             """.trimMargin()
         )
     }
@@ -225,26 +245,29 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Cut works 03`() {
         myFixture.configureByText(
             FILE,
-            """foo
-               |FOO<selection>bar
-               |BARbaz</selection><caret>BAZ
-               |omf
+            """
+                |foo
+                |FOO<selection>bar
+                |BARbaz</selection><caret>BAZ
+                |omf
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
 
         assertEquals(
-            """bar
-            |baz
+            """
+                |bar
+                |baz
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """foo
-               |FOO
-               |BAR<caret>BAZ
-               |omf
+            """
+                |foo
+                |FOO
+                |BAR<caret>BAZ
+                |omf
             """.trimMargin()
         )
     }
@@ -252,22 +275,25 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Cut works 04`() {
         myFixture.configureByText(
             FILE,
-            """foo<selection>bar
-            |barbaz</selection><caret>
+            """
+                |foo<selection>bar
+                |barbaz</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
 
         assertEquals(
-            """bar
-            |baz
+            """
+                |bar
+                |baz
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """foo
-            |bar<caret>
+            """
+                |foo
+                |bar<caret>
             """.trimMargin()
         )
     }
@@ -275,8 +301,9 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Cut works 05`() {
         myFixture.configureByText(
             FILE,
-            """foo<selection>
-            |barbaz</selection><caret>
+            """
+                |foo<selection>
+                |barbaz</selection><caret>
             """.trimMargin()
         )
 
@@ -284,14 +311,15 @@ class RectangleTest : BasePlatformTestCase() {
 
         assertEquals(
             """
-            |
-            |baz
+                |
+                |baz
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """foo
-            |bar<caret>
+            """
+                |foo
+                |bar<caret>
             """.trimMargin()
         )
     }
@@ -299,26 +327,28 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Cut works 06`() {
         myFixture.configureByText(
             FILE,
-            """<selection>foo
-            |
-            |bar</selection><caret>
+            """
+                |<selection>foo
+                |
+                |bar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
 
         assertEquals(
-            """foo
-            |
-            |bar
+            """
+                |foo
+                |
+                |bar
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
             """
-            |
-            |
-            |<caret>
+                |
+                |
+                |<caret>
             """.trimMargin()
         )
     }
@@ -326,25 +356,28 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Cut works 07`() {
         myFixture.configureByText(
             FILE,
-            """a<selection>foo
-            |b
-            |cbar</selection><caret>
+            """
+                |a<selection>foo
+                |b
+                |cbar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
 
         assertEquals(
-            """foo
-            |
-            |bar
+            """
+                |foo
+                |
+                |bar
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """a
-            |b
-            |c<caret>
+            """
+                |a
+                |b
+                |c<caret>
             """.trimMargin()
         )
     }
@@ -352,25 +385,28 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Cut works 08`() {
         myFixture.configureByText(
             FILE,
-            """<selection>fooa
-            |
-            |bar</selection><caret>c
+            """
+                |<selection>fooa
+                |
+                |bar</selection><caret>c
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
 
         assertEquals(
-            """foo
-            |
-            |bar
+            """
+                |foo
+                |
+                |bar
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
-            """a
-            |
-            |<caret>c
+            """
+                |a
+                |
+                |<caret>c
             """.trimMargin()
         )
     }
@@ -378,26 +414,28 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Cut works 09`() {
         myFixture.configureByText(
             FILE,
-            """   <selection>foo
-            |      
-            |   bar</selection><caret>
+            """
+                |   <selection>foo
+                |      
+                |   bar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
 
         assertEquals(
-            """foo
-            |   
-            |bar
+            """
+                |foo
+                |   
+                |bar
             """.trimMargin(),
             CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString()
         )
         myFixture.checkResult(
             """
-            |   
-            |   
-            |   <caret>
+                |   
+                |   
+                |   <caret>
             """.trimMargin()
         )
     }
@@ -421,20 +459,22 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Open works 03`() {
         myFixture.configureByText(
             FILE,
-            """foo
-               |FOO<selection>bar
-               |BARbaz</selection><caret>BAZ
-               |omf
+            """
+                |foo
+                |FOO<selection>bar
+                |BARbaz</selection><caret>BAZ
+                |omf
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
 
         myFixture.checkResult(
-            """foo
-               |FOO<caret>   bar
-               |BAR   bazBAZ
-               |omf
+            """
+                |foo
+                |FOO<caret>   bar
+                |BAR   bazBAZ
+                |omf
             """.trimMargin()
         )
     }
@@ -442,16 +482,18 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Open works 04`() {
         myFixture.configureByText(
             FILE,
-            """foo<selection>bar
-            |barbaz</selection><caret>
+            """
+                |foo<selection>bar
+                |barbaz</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
 
         myFixture.checkResult(
-            """foo<caret>   bar
-            |bar   baz
+            """
+                |foo<caret>   bar
+                |bar   baz
             """.trimMargin()
         )
     }
@@ -459,16 +501,18 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Open works 05`() {
         myFixture.configureByText(
             FILE,
-            """foo<selection>
-            |barbaz</selection><caret>
+            """
+                |foo<selection>
+                |barbaz</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
 
         myFixture.checkResult(
-            """foo<caret>
-            |bar   baz
+            """
+                |foo<caret>
+                |bar   baz
             """.trimMargin()
         )
     }
@@ -476,18 +520,20 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Open works 06`() {
         myFixture.configureByText(
             FILE,
-            """<selection>foo
-            |
-            |bar</selection><caret>
+            """
+                |<selection>foo
+                |
+                |bar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
 
         myFixture.checkResult(
-            """<caret>   foo
-            |
-            |   bar
+            """
+                |<caret>   foo
+                |
+                |   bar
             """.trimMargin()
         )
     }
@@ -495,18 +541,20 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Open works 07`() {
         myFixture.configureByText(
             FILE,
-            """a<selection>foo
-            |b
-            |cbar</selection><caret>
+            """
+                |a<selection>foo
+                |b
+                |cbar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
 
         myFixture.checkResult(
-            """a<caret>   foo
-            |b
-            |c   bar
+            """
+                |a<caret>   foo
+                |b
+                |c   bar
             """.trimMargin()
         )
     }
@@ -514,18 +562,20 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Open works 08`() {
         myFixture.configureByText(
             FILE,
-            """<selection>fooa
-            |
-            |bar</selection><caret>c
+            """
+                |<selection>fooa
+                |
+                |bar</selection><caret>c
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
 
         myFixture.checkResult(
-            """<caret>   fooa
-            |
-            |   barc
+            """
+                |<caret>   fooa
+                |
+                |   barc
             """.trimMargin()
         )
     }
@@ -533,18 +583,20 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Open works 09`() {
         myFixture.configureByText(
             FILE,
-            """   <selection>foo
-            |      
-            |   bar</selection><caret>
+            """
+                |   <selection>foo
+                |      
+                |   bar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
 
         myFixture.checkResult(
-            """   <caret>   foo
-            |         
-            |      bar
+            """
+                |   <caret>   foo
+                |         
+                |      bar
             """.trimMargin()
         )
     }
@@ -568,20 +620,22 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Clear works 03`() {
         myFixture.configureByText(
             FILE,
-            """foo
-               |FOO<selection>bar
-               |BARbaz</selection><caret>BAZ
-               |omf
+            """
+                |foo
+                |FOO<selection>bar
+                |BARbaz</selection><caret>BAZ
+                |omf
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
 
         myFixture.checkResult(
-            """foo
-               |FOO<caret>   
-               |BAR   BAZ
-               |omf
+            """
+                |foo
+                |FOO<caret>   
+                |BAR   BAZ
+                |omf
             """.trimMargin()
         )
     }
@@ -589,16 +643,18 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Clear works 04`() {
         myFixture.configureByText(
             FILE,
-            """foo<selection>bar
-            |barbaz</selection><caret>
+            """
+                |foo<selection>bar
+                |barbaz</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
 
         myFixture.checkResult(
-            """foo<caret>   
-            |bar   
+            """
+                |foo<caret>   
+                |bar   
             """.trimMargin()
         )
     }
@@ -606,16 +662,18 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Clear works 05`() {
         myFixture.configureByText(
             FILE,
-            """foo<selection>
-            |barbaz</selection><caret>
+            """
+                |foo<selection>
+                |barbaz</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
 
         myFixture.checkResult(
-            """foo<caret>
-            |bar   
+            """
+                |foo<caret>
+                |bar   
             """.trimMargin()
         )
     }
@@ -623,18 +681,20 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Clear works 06`() {
         myFixture.configureByText(
             FILE,
-            """<selection>foo
-            |
-            |bar</selection><caret>
+            """
+                |<selection>foo
+                |
+                |bar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
 
         myFixture.checkResult(
-            """<caret>   
-            |
-            |   
+            """
+                |<caret>   
+                |
+                |   
             """.trimMargin()
         )
     }
@@ -642,18 +702,20 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Clear works 07`() {
         myFixture.configureByText(
             FILE,
-            """a<selection>foo
-            |b
-            |cbar</selection><caret>
+            """
+                |a<selection>foo
+                |b
+                |cbar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
 
         myFixture.checkResult(
-            """a<caret>   
-            |b
-            |c   
+            """
+                |a<caret>   
+                |b
+                |c   
             """.trimMargin()
         )
     }
@@ -661,18 +723,20 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Clear works 08`() {
         myFixture.configureByText(
             FILE,
-            """<selection>fooa
-            |
-            |bar</selection><caret>c
+            """
+                |<selection>fooa
+                |
+                |bar</selection><caret>c
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
 
         myFixture.checkResult(
-            """<caret>   a
-            |
-            |   c
+            """
+                |<caret>   a
+                |
+                |   c
             """.trimMargin()
         )
     }
@@ -680,18 +744,20 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Clear works 09`() {
         myFixture.configureByText(
             FILE,
-            """   <selection>foo
-            |      
-            |   bar</selection><caret>
+            """
+                |   <selection>foo
+                |      
+                |   bar</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
 
         myFixture.checkResult(
-            """   <caret>   
-            |      
-            |      
+            """
+                |   <caret>   
+                |      
+                |      
             """.trimMargin()
         )
     }
@@ -715,20 +781,22 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Keep works 03`() {
         myFixture.configureByText(
             FILE,
-            """foo
-               |FOO<selection>bar
-               |BARbaz</selection><caret>BAZ
-               |omf
+            """
+                |foo
+                |FOO<selection>bar
+                |BARbaz</selection><caret>BAZ
+                |omf
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
 
         myFixture.checkResult(
-            """foo
-               |bar
-               |baz<caret>
-               |omf
+            """
+                |foo
+                |bar
+                |baz<caret>
+                |omf
             """.trimMargin()
         )
     }
@@ -736,22 +804,24 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Keep works 04`() {
         myFixture.configureByText(
             FILE,
-            """foo
-               |FOO<selection>bar
-               |BARba
-               |BARbaz</selection><caret>BAZ
-               |omf
+            """
+                |foo
+                |FOO<selection>bar
+                |BARba
+                |BARbaz</selection><caret>BAZ
+                |omf
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
 
         myFixture.checkResult(
-            """foo
-               |bar
-               |ba
-               |baz<caret>
-               |omf
+            """
+                |foo
+                |bar
+                |ba
+                |baz<caret>
+                |omf
             """.trimMargin()
         )
     }
@@ -759,18 +829,20 @@ class RectangleTest : BasePlatformTestCase() {
     fun `test Keep works 05`() {
         myFixture.configureByText(
             FILE,
-            """<selection>foo
-               |bar
-               |baz</selection><caret>
+            """
+                |<selection>foo
+                |bar
+                |baz</selection><caret>
             """.trimMargin()
         )
 
         myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
 
         myFixture.checkResult(
-            """foo
-               |bar
-               |baz<caret>
+            """
+                |foo
+                |bar
+                |baz<caret>
             """.trimMargin()
         )
     }
