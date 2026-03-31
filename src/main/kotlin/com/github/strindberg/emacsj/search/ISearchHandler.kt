@@ -31,7 +31,7 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
             if (current.isActive()) {
                 if (current.text.isEmpty()) {
                     if (current.direction == direction) {
-                        current.searchAllCarets(searchDirection = direction, newText = getPrevious(current.type))
+                        current.searchAllCarets(searchDirection = direction, newText = getPrevious(current.searchType))
                     } else {
                         current.direction = direction
                         current.initTitleText()
@@ -53,45 +53,45 @@ class ISearchHandler(private val direction: Direction, private val type: SearchT
         internal var delegate: ISearchDelegate? = null
 
         @VisibleForTesting
-        internal var lastStringSearches = listOf<String>()
+        internal var lastStringSearches = emptyList<String>()
 
         @VisibleForTesting
-        internal var lastRegexpSearches = listOf<String>()
+        internal var lastRegexpSearches = emptyList<String>()
 
         private var savedPos = -1
 
-        private var laxInitialized = false
+        private var isLaxInitialized = false
 
-        private var selectionSearchInitialized = false
+        private var isSelectionSearchInitialized = false
 
-        internal var lax: Boolean = false
+        internal var isLax: Boolean = false
             get() {
-                if (!laxInitialized) {
+                if (!isLaxInitialized) {
                     field = EmacsJSettings.getInstance().state.useLaxISearch // We can't access this value in constructor
-                    laxInitialized = true
+                    isLaxInitialized = true
                 }
                 return field
             }
             set(value) {
                 field = value
-                laxInitialized = true
+                isLaxInitialized = true
             }
 
         internal fun toggleLax() {
-            lax = !lax
+            isLax = !isLax
         }
 
-        internal var selectionISearch: Boolean = false
+        internal var isSelectionISearch: Boolean = false
             get() {
-                if (!selectionSearchInitialized) {
+                if (!isSelectionSearchInitialized) {
                     field = EmacsJSettings.getInstance().state.useSelectionISearch // We can't access this value in constructor
-                    selectionSearchInitialized = true
+                    isSelectionSearchInitialized = true
                 }
                 return field
             }
             set(value) {
                 field = value
-                selectionSearchInitialized = true
+                isSelectionSearchInitialized = true
             }
 
         internal fun searchConcluded(text: String, type: SearchType) {

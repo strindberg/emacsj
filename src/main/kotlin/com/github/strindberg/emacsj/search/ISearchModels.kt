@@ -4,7 +4,7 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.util.Key
 
 private val CARET_SEARCH_DATA_KEY = Key.create<CaretSearch>("ISearchHandler.CARET_SEARCH_DATA_KEY")
-private val CARET_BREADCRUMBS_KEY = Key.create<MutableList<CaretBreadcrumb>>("ISearchHandler.CARET_BREADCRUMBS_KEY")
+private val CARET_BREADCRUMBS_KEY = Key.create<MutableList<Match>>("ISearchHandler.CARET_BREADCRUMBS_KEY")
 
 internal var Caret.search: CaretSearch
     get() = getUserData(CARET_SEARCH_DATA_KEY) ?: CaretSearch(offset).apply {
@@ -14,8 +14,9 @@ internal var Caret.search: CaretSearch
         putUserData(CARET_SEARCH_DATA_KEY, searchData)
     }
 
-internal var Caret.breadcrumbs: MutableList<CaretBreadcrumb>
-    get() = getUserData(CARET_BREADCRUMBS_KEY) ?: mutableListOf<CaretBreadcrumb>().apply {
+@Suppress("DoubleMutabilityForCollection")
+internal var Caret.breadcrumbs: MutableList<Match>
+    get() = getUserData(CARET_BREADCRUMBS_KEY) ?: mutableListOf<Match>().apply {
         putUserData(CARET_BREADCRUMBS_KEY, this)
     }
     set(breadcrumbs) {
@@ -31,19 +32,19 @@ internal data class CaretSearch(val origin: Int, val match: Match = Match(origin
 
 internal data class Match(val start: Int, val end: Int)
 
-internal data class CaretBreadcrumb(val match: Match, val direction: Direction)
-
 internal data class EditorBreadcrumb(
     val title: String,
     val text: String,
+    val direction: Direction,
     val state: ISearchState,
     val caseType: CaseType,
+    val searchType: SearchType,
     val count: Pair<Int, Int>?,
 )
 
 internal enum class ISearchState { SEARCH, FAILED, EDIT }
 
-internal data class SearchResult(val found: Boolean, val offset: Int?, val wrapped: Boolean)
+internal data class SearchResult(val isFound: Boolean, val offset: Int?, val isWrapped: Boolean)
 
 enum class Direction {
     FORWARD,

@@ -101,8 +101,8 @@ While searching, the following commands are available:
 - `ENTER`: finish search and leave the caret where it currently is.
 - `ctrl-ENTER`: finish search and leave the caret at the start of the final match (or end of match if reverse search).
 - `alt-ENTER`: finish search and mark the final match as selected.
-- `BACKSPACE`: if several matches with the current search string have been visited, go back in the history of matches. If not, remove
-  the last character from the search string.
+- `BACKSPACE`: Go back in the history of matches: either jump to previous match or remove the last character from the search string.
+- `ctrl-BACKSPACE`: Remove the last character from the search string regardless of previous history.
 - `ctrl-c SPACE`: toggle between lax and strict handling of whitespace in search string (only text search). The mode stays unchanged between
   searches so that a new search starts with the mode from the last search. The default mode can
   be [changed](#isearch-configuration--lax-mode-and-selection-search) under Settings.
@@ -112,6 +112,7 @@ While searching, the following commands are available:
 - `ctrl-alt-y`: add the character at point to the search string.
 - `ctrl-shift-ENTER`: add a new line character to the search string.
 - `alt-c`: toggle between case-sensitive and case-insensitive search.
+- `alt-r`: toggle between regular expression search and literal text search.
 - `alt-LESS`: move the caret to the first match of the current search without exiting Isearch.
 - `alt-GREATER`: move the caret to the last match of the current search without exiting Isearch.
 - `alt-p`: browse backward in the list of previous searches (with the current type).
@@ -506,7 +507,7 @@ IntelliJ command such that the newline character is also killed if the caret is 
 *Kill Whole Line* kills (and copies) the whole current line (before and after the caret), including the newline character. It places the
 caret at the start of the following line.
 
-*Kill Ring Copy* and *Kill Ring Cut* kill the current selection with copy or cut. If no selection is active, the commands affect the
+*Kill Ring Copy* and *Kill Ring Cut* kill the current selection with copy or cut. If no selection is active, these commands copy/cut the
 whole current line, including the newline character.
 
 The command *Append Next Kill* will set up a waiting state. If the next command is a cut or copy, the killed text is joined (appended
@@ -518,6 +519,9 @@ as well as the zap commands &mdash; *Zap To Character*, *Zap Up To Character*, *
 If the kill is "backwards" after *Append Next Kill* or if the caret is in front of the killed region, the region is prepended to the
 previous kill ring item. This means that *Kill Ring Copy* and *Kill Ring Cut* both prepend if the caret is before the selection. *Delete
 Previous Word*, *Zap Back To Character* and *Zap Back Up To Character* also prepend after *Append Next Kill*.
+
+Note that none of the killing commands copy or cut the text as rich text, i.e. text which retains it formatting and/or coloring when pasted
+into other applications which support rich text. If you want to copy text as rich text, use the standard IntelliJ copy command.
 
 Commands:
 
