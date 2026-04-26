@@ -31,7 +31,7 @@ import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
-internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val selection: IntRange?, lastSearch: Replace?) {
+internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val selection: IntRange? = null, lastSearch: Replace? = null) {
 
     @VisibleForTesting
     internal val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
@@ -89,7 +89,9 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
 
         identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
+    }
 
+    internal fun show() {
         ui.show()
     }
 
@@ -133,10 +135,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                         replaceArg = matchResult.component2()
                         startSearch()
                     } else {
-                        searchArg = ui.text
-                        state = ReplaceState.GET_REPLACE_ARG
-                        ui.text = ""
-                        ReplaceHandler.resetPos()
+                        setReplaceState()
                     }
                 } else if (e.id == KeyEvent.KEY_RELEASED) {
                     editor.markupModel.removeAllHighlighters()
@@ -253,6 +252,13 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                 }
             }
         }
+    }
+
+    internal fun setReplaceState() {
+        searchArg = ui.text
+        state = ReplaceState.GET_REPLACE_ARG
+        ui.text = ""
+        ReplaceHandler.resetPos()
     }
 
     private fun startSearch() {

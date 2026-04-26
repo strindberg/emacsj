@@ -107,6 +107,14 @@
                 class="com.github.strindberg.emacsj.actions.search.ISearchDeleteCharAction">
             <keyboard-shortcut first-keystroke="control BACK_SPACE" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchreplacetext"
+                class="com.github.strindberg.emacsj.actions.search.ISearchReplaceTextAction">
+            <keyboard-shortcut first-keystroke="alt shift 5" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchreplaceregexp"
+                class="com.github.strindberg.emacsj.actions.search.ISearchReplaceRegexpAction">
+            <keyboard-shortcut first-keystroke="control alt shift 5" keymap="Emacs"/>
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.search.replacetext"
                 class="com.github.strindberg.emacsj.actions.search.ReplaceTextAction">

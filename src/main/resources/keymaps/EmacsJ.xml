@@ -57,6 +57,12 @@
     <action id="com.github.strindberg.emacsj.actions.search.isearchdeletechar">
         <keyboard-shortcut first-keystroke="control BACK_SPACE"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchreplacetext">
+        <keyboard-shortcut first-keystroke="alt shift 5"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchreplaceregexp">
+        <keyboard-shortcut first-keystroke="control alt shift 5"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.replacetext">
         <keyboard-shortcut first-keystroke="alt S"/>
     </action>
@@ -302,6 +308,7 @@
         <keyboard-shortcut first-keystroke="control A"/>
     </action>
     <action id="GotoLine"/>
+    <action id="Replace"/>
 
     <!-- Conflicting shortcuts from $default.xml -->
     <action id="ReplaceInPath"/>

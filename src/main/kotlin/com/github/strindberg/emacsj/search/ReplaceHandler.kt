@@ -25,7 +25,9 @@ class ReplaceHandler(private val type: SearchType) : EditorActionHandler() {
                 type = type,
                 selection = with(editor.selectionModel) { if (hasSelection()) selectionStart..selectionEnd else null },
                 lastSearch = getLast(type)
-            )
+            ).apply {
+                show()
+            }
         }
     }
 
