@@ -115,6 +115,8 @@ While searching, the following commands are available:
 - `alt-r`: toggle between regular expression search and literal text search.
 - `alt-LESS`: move the caret to the first match of the current search without exiting Isearch.
 - `alt-GREATER`: move the caret to the last match of the current search without exiting Isearch.
+- `alt-shift-5`: start *Search and Replace Text* with string to replace from the current search argument.
+- `ctrl-alt-shift-5`: start *Search and Replace Regexp* with string to replace from the current search argument.
 - `alt-p`: browse backward in the list of previous searches (with the current type).
 - `alt-n`: browse forward in the list of previous searches (with the current type).
 - `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search. Repeated use behaves

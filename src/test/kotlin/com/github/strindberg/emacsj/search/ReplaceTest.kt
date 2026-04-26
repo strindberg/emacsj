@@ -16,6 +16,7 @@ class ReplaceTest : BasePlatformTestCase() {
 
     override fun tearDown() {
         ReplaceHandler.delegate?.hide()
+        ISearchHandler.delegate?.hide()
         super.tearDown()
     }
 
@@ -593,6 +594,83 @@ class ReplaceTest : BasePlatformTestCase() {
         typeChar('y')
 
         myFixture.checkResult(""""label" () other () other<caret>""")
+    }
+
+    fun `test Invoking text replace while searching forward works`() {
+        myFixture.configureByText(FILE, "<caret>foo foo foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.type("foo")
+        myFixture.checkResult("foo<caret> foo foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REPLACE_TEXT)
+
+        setText("bar")
+        pressEnter()
+
+        typeChar('y')
+        pressEnter()
+
+        myFixture.checkResult("bar foo<caret> foo")
+    }
+
+    fun `test Invoking text replace while searching backward works`() {
+        myFixture.configureByText(FILE, "foo foo foo<caret>")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.type("foo")
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
+        myFixture.checkResult("foo <caret>foo foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REPLACE_TEXT)
+
+        setText("bar")
+        pressEnter()
+
+        typeChar('y')
+        pressEnter()
+
+        myFixture.checkResult("foo bar foo<caret>")
+    }
+
+    fun `test Invoking regexp replace while searching forward works`() {
+        myFixture.configureByText(FILE, "<caret>foo foo foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
+        myFixture.type("fo+")
+        myFixture.checkResult("foo<caret> foo foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REPLACE_REGEXP)
+
+        setText("baz")
+        pressEnter()
+
+        typeChar('y')
+        typeChar('y')
+        pressEnter()
+
+        myFixture.checkResult("baz baz foo<caret>")
+    }
+
+    fun `test Invoking regexp replace while searching backward works`() {
+        myFixture.configureByText(FILE, "foo foo foo<caret>")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_BACKWARD)
+        myFixture.type("fo+")
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_BACKWARD)
+        myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_BACKWARD)
+        myFixture.checkResult("<caret>foo foo foo")
+
+        myFixture.performEditorAction(ACTION_ISEARCH_REPLACE_REGEXP)
+
+        setText("baz")
+        pressEnter()
+
+        typeChar('y')
+        typeChar('y')
+        pressEnter()
+
+        myFixture.checkResult("baz baz foo<caret>")
     }
 
     private fun setText(text: String) {

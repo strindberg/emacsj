@@ -6,9 +6,12 @@
 
 ### Added
 
-- New command *Goto Line*: move caret to specified line (and optionally column), and add mark at current caret position before jump.
-- New Isearch actions *Isearch: Search and Replace Text* and *Isearch: Search and Replace Regexp*: Start Search and Replace with string to
+- New command *Goto Line*: move caret to specified line (and optionally column) and add mark at current caret position before jump.
+- New Isearch actions *Isearch: Search and Replace Text* and *Isearch: Search and Replace Regexp*: start Search and Replace with string to
   replace from current search argument.
+
+### Fixed
+- Briefly highlight current line when invoking *Kill Ring Copy* without selection.
 
 ## [1.5.4] - 2026-03-31
 
