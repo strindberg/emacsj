@@ -59,13 +59,12 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     private var counter = 4
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::hide).apply {
+    internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
         title = "Argument: "
         text = getTimes().toString()
     }
 
     companion object {
-
         @VisibleForTesting
         internal var isTesting = false
     }

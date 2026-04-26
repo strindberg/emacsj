@@ -208,6 +208,9 @@
     <action id="com.github.strindberg.emacsj.actions.movement.toindentation">
         <keyboard-shortcut first-keystroke="alt M"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.movement.gotoline">
+        <keyboard-shortcut first-keystroke="alt G"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument">
         <keyboard-shortcut first-keystroke="control U"/>
     </action>
@@ -298,6 +301,7 @@
         <keyboard-shortcut first-keystroke="HOME"/>
         <keyboard-shortcut first-keystroke="control A"/>
     </action>
+    <action id="GotoLine"/>
 
     <!-- Conflicting shortcuts from $default.xml -->
     <action id="ReplaceInPath"/>

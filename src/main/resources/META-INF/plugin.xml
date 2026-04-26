@@ -331,6 +331,10 @@
                 class="com.github.strindberg.emacsj.actions.movement.ToIndentationAction">
             <keyboard-shortcut first-keystroke="alt M" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.movement.gotoline"
+                class="com.github.strindberg.emacsj.actions.movement.GotoLineAction">
+            <keyboard-shortcut first-keystroke="alt G" keymap="Emacs"/>
+        </action>
 
         <action id="com.github.strindberg.emacsj.actions.universal.universalargument"
                 class="com.github.strindberg.emacsj.actions.universal.UniversalArgumentAction">

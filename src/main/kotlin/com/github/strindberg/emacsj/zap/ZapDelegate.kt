@@ -28,7 +28,7 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     private val actionHandlers: List<RestorableActionHandler<ZapDelegate>>
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor, false, ::hide).apply {
+    internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
         title = when (type) {
             FORWARD_TO -> "Zap to char: "
             FORWARD_UP_TO -> "Zap up to char: "

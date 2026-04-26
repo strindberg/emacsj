@@ -7,7 +7,6 @@ import com.github.strindberg.emacsj.actions.search.ReplaceNewLineAction
 import com.github.strindberg.emacsj.actions.universal.CancelRepeatAction
 import com.github.strindberg.emacsj.actions.zap.ZapToCharAction
 import com.github.strindberg.emacsj.search.Direction
-import com.github.strindberg.emacsj.search.FILE
 import com.github.strindberg.emacsj.search.ISearchDelegate
 import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.search.ReplaceDelegate
@@ -18,6 +17,8 @@ import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.actions.EnterAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+
+const val FILE = "file.txt"
 
 class EmacsJActionsPromoterTest : BasePlatformTestCase() {
 

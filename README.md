@@ -571,3 +571,15 @@ moving to start of indentation, you can turn off the IntelliJ setting, and use `
 Commands:
 
 - Back to Indentation (`alt-m`). Move each caret to the first non-whitespace character on its line.
+
+### Goto Line
+
+*Goto Line* asks the user for a line number and moves the primary caret to the specified line. If the position is given in the format
+"line: column", the caret is also moved to the specified column. If a selection is not active, the current position before the jump is added
+to the mark ring.
+
+Commands:
+
+- Goto Line (`alt-g`). move caret to specified line (and optionally column). If selection is not active, add mark at current caret position
+  before jump.
+

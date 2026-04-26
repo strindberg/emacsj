@@ -429,6 +429,9 @@
     <action id="com.github.strindberg.emacsj.actions.movement.toindentation">
         <keyboard-shortcut first-keystroke="meta M"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.movement.gotoline">
+        <keyboard-shortcut first-keystroke="meta G"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.universal.universalargument">
         <keyboard-shortcut first-keystroke="control U"/>
     </action>
@@ -522,6 +525,7 @@
     <action id="EditorDecreaseFontSizeGlobal"/>
     <action id="EditorIncreaseFontSizeGlobal"/>
     <action id="ZoomOutIdeAction"/>
+    <action id="GotoLine"/>
 
     <!-- Conflicting shortcuts from Terminal plugin -->
     <action id="Terminal.DeletePreviousWord"/>

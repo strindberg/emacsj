@@ -1,7 +1,6 @@
 package com.github.strindberg.emacsj.movement
 
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
-import com.github.strindberg.emacsj.word.FILE
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class TextMovementTest : BasePlatformTestCase() {

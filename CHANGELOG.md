@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- New command *Goto Line*: move caret to specified line (and optionally column), add mark at current caret position before jump.
+
 ## [1.5.4] - 2026-03-31
 
 ### Added
