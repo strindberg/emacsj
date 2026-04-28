@@ -32,14 +32,12 @@ class GotoLineDelegate(val editor: Editor) {
 
     private fun keyEventHandler(e: KeyEvent) {
         if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED && e.modifiersEx == 0) {
-            if (!editor.selectionModel.hasSelection()) {
-                MarkHandler.pushPlaceInfo(editor)
-            }
-            val parts = ui.text.split(":")
-            val (line, column) = try {
-                Pair(parts.getOrNull(0)?.takeIf { it.isNotEmpty() }?.toInt(), parts.getOrNull(1)?.takeIf { it.isNotEmpty() }?.toInt())
-            } catch (_: NumberFormatException) {
-                Pair(null, null)
+            val (line, column) = ui.text.split(":").let { parts ->
+                try {
+                    Pair(parts.getOrNull(0)?.takeIf { it.isNotEmpty() }?.toInt(), parts.getOrNull(1)?.takeIf { it.isNotEmpty() }?.toInt())
+                } catch (_: NumberFormatException) {
+                    Pair(null, null)
+                }
             }
             if (line != null) {
                 val boundedLine = minOf(maxOf(0, line - 1), editor.document.lineCount - 1)
@@ -55,6 +53,10 @@ class GotoLineDelegate(val editor: Editor) {
                     } else {
                         editor.document.getLineStartOffset(boundedLine)
                     }
+
+                if (!editor.selectionModel.hasSelection()) {
+                    MarkHandler.pushPlaceInfo(editor)
+                }
                 editor.caretModel.primaryCaret.moveToOffset(position)
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }

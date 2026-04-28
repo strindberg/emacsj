@@ -3,6 +3,7 @@ package com.github.strindberg.emacsj.movement
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
+import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
@@ -32,6 +33,15 @@ class GotoLineTest : BasePlatformTestCase() {
             """
                 foo
                 <caret>bar
+                baz
+            """.trimIndent()
+        )
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+        myFixture.checkResult(
+            """
+                <caret>foo
+                bar
                 baz
             """.trimIndent()
         )
