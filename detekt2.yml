@@ -656,8 +656,8 @@ style:
     rules: []
   ForbiddenVoid:
     active: true
-    ignoreOverridden: false
-    ignoreUsageInGenerics: false
+    ignoreOverridden: true
+    ignoreUsageInGenerics: true
   FunctionOnlyReturningConstant:
     active: true
     ignoreOverridableFunction: true
