@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.5.5] - 2026-04-30
+
 ### Added
 
 - New command *Goto Line*: move caret to specified line (and optionally column) and add mark at current caret position before jump.
@@ -11,6 +13,7 @@
   replace from current search argument.
 
 ### Fixed
+
 - Briefly highlight current line when invoking *Kill Ring Copy* without selection.
 
 ## [1.5.4] - 2026-03-31
@@ -258,28 +261,29 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.5.4...HEAD
-[1.5.4]: https://github.com/strindberg/emacsj/compare/v1.5.3...v1.5.4
-[1.5.3]: https://github.com/strindberg/emacsj/compare/v1.5.2...v1.5.3
-[1.5.2]: https://github.com/strindberg/emacsj/compare/v1.5.1...v1.5.2
-[1.5.1]: https://github.com/strindberg/emacsj/compare/v1.5.0...v1.5.1
-[1.5.0]: https://github.com/strindberg/emacsj/compare/v1.4.3...v1.5.0
-[1.4.3]: https://github.com/strindberg/emacsj/compare/v1.4.2...v1.4.3
-[1.4.2]: https://github.com/strindberg/emacsj/compare/v1.4.1...v1.4.2
-[1.4.1]: https://github.com/strindberg/emacsj/compare/v1.4.0...v1.4.1
-[1.4.0]: https://github.com/strindberg/emacsj/compare/v1.3.6...v1.4.0
-[1.3.6]: https://github.com/strindberg/emacsj/compare/v1.3.5...v1.3.6
-[1.3.5]: https://github.com/strindberg/emacsj/compare/v1.3.4...v1.3.5
-[1.3.4]: https://github.com/strindberg/emacsj/compare/v1.3.3...v1.3.4
-[1.3.3]: https://github.com/strindberg/emacsj/compare/v1.3.2...v1.3.3
-[1.3.2]: https://github.com/strindberg/emacsj/compare/v1.3.1...v1.3.2
-[1.3.1]: https://github.com/strindberg/emacsj/compare/v1.3.0...v1.3.1
-[1.3.0]: https://github.com/strindberg/emacsj/compare/v1.2.2...v1.3.0
-[1.2.2]: https://github.com/strindberg/emacsj/compare/v1.2.1...v1.2.2
-[1.2.1]: https://github.com/strindberg/emacsj/compare/v1.2.0...v1.2.1
-[1.2.0]: https://github.com/strindberg/emacsj/compare/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/strindberg/emacsj/compare/v1.0.2...v1.1.0
-[1.0.2]: https://github.com/strindberg/emacsj/compare/v1.0.1...v1.0.2
-[1.0.1]: https://github.com/strindberg/emacsj/compare/v0.9.3...v1.0.1
-[0.9.3]: https://github.com/strindberg/emacsj/compare/v0.9.2...v0.9.3
-[0.9.2]: https://github.com/strindberg/emacsj/commits/v0.9.2
+[Unreleased]: https://github.com/strindberg/emacsj/compare/1.5.5...HEAD
+[1.5.5]: https://github.com/strindberg/emacsj/compare/1.5.4...1.5.5
+[1.5.4]: https://github.com/strindberg/emacsj/compare/1.5.3...1.5.4
+[1.5.3]: https://github.com/strindberg/emacsj/compare/1.5.2...1.5.3
+[1.5.2]: https://github.com/strindberg/emacsj/compare/1.5.1...1.5.2
+[1.5.1]: https://github.com/strindberg/emacsj/compare/1.5.0...1.5.1
+[1.5.0]: https://github.com/strindberg/emacsj/compare/1.4.3...1.5.0
+[1.4.3]: https://github.com/strindberg/emacsj/compare/1.4.2...1.4.3
+[1.4.2]: https://github.com/strindberg/emacsj/compare/1.4.1...1.4.2
+[1.4.1]: https://github.com/strindberg/emacsj/compare/1.4.0...1.4.1
+[1.4.0]: https://github.com/strindberg/emacsj/compare/1.3.6...1.4.0
+[1.3.6]: https://github.com/strindberg/emacsj/compare/1.3.5...1.3.6
+[1.3.5]: https://github.com/strindberg/emacsj/compare/1.3.4...1.3.5
+[1.3.4]: https://github.com/strindberg/emacsj/compare/1.3.3...1.3.4
+[1.3.3]: https://github.com/strindberg/emacsj/compare/1.3.2...1.3.3
+[1.3.2]: https://github.com/strindberg/emacsj/compare/1.3.1...1.3.2
+[1.3.1]: https://github.com/strindberg/emacsj/compare/1.3.0...1.3.1
+[1.3.0]: https://github.com/strindberg/emacsj/compare/1.2.2...1.3.0
+[1.2.2]: https://github.com/strindberg/emacsj/compare/1.2.1...1.2.2
+[1.2.1]: https://github.com/strindberg/emacsj/compare/1.2.0...1.2.1
+[1.2.0]: https://github.com/strindberg/emacsj/compare/1.1.0...1.2.0
+[1.1.0]: https://github.com/strindberg/emacsj/compare/1.0.2...1.1.0
+[1.0.2]: https://github.com/strindberg/emacsj/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/strindberg/emacsj/compare/0.9.3...1.0.1
+[0.9.3]: https://github.com/strindberg/emacsj/compare/0.9.2...0.9.3
+[0.9.2]: https://github.com/strindberg/emacsj/commits/0.9.2
