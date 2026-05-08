@@ -15,7 +15,7 @@ internal const val ACTION_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.action
 @Language("devkit-action-id")
 internal const val ACTION_REVERSE_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.actions.word.transposewordsreverse"
 
-class WordTransposeHandler(private val direction: Direction) : EditorWriteActionHandler.ForEachCaret() {
+class TransposeWordHandler(private val direction: Direction) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val hasSelection = caret.hasSelection() // This value is false after modification if using sticky selection
