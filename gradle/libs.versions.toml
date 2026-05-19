@@ -4,7 +4,7 @@ detekt = "2.0.0-alpha.3"
 intellij-platform = "2.16.0"
 junit = "4.13.2"
 kotlin = "2.3.21"
-kotlinter = "5.4.2"
+kotlinter = "5.5.0"
 kover = "0.9.8"
 
 [libraries]
