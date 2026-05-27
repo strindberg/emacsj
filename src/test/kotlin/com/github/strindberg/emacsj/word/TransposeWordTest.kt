@@ -1,10 +1,18 @@
 package com.github.strindberg.emacsj.word
 
+import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT0
+import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
 
 class TransposeWordTest : BasePlatformTestCase() {
+
+    override fun tearDown() {
+        UniversalArgumentHandler.delegate?.hide()
+        super.tearDown()
+    }
 
     fun `test Transpose 00`() {
         myFixture.configureByText(FILE, "<caret>foo bar")
@@ -304,5 +312,33 @@ class TransposeWordTest : BasePlatformTestCase() {
         myFixture.configureByText(FILE, "foo bar<caret> baz")
         myFixture.performEditorAction(ACTION_REVERSE_TRANSPOSE_WORDS)
         myFixture.checkResult("foo <caret>baz bar")
+    }
+
+    fun `test Mark Transpose 00`() {
+        myFixture.configureByText(FILE, "<caret>foo bar baz")
+
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        repeat(3) {
+            myFixture.performEditorAction(ACTION_NEXT_WORD)
+        }
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
+        myFixture.performEditorAction(ACTION_TRANSPOSE_WORDS)
+
+        myFixture.checkResult("<caret>baz bar foo")
+    }
+
+    fun `test Mark Transpose 01`() {
+        myFixture.configureByText(FILE, "foo bar baz<caret>")
+
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        repeat(3) {
+            myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
+        }
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
+        myFixture.performEditorAction(ACTION_TRANSPOSE_WORDS)
+
+        myFixture.checkResult("baz bar foo<caret>")
     }
 }

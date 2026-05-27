@@ -295,10 +295,14 @@ of this is that both commands can be used repeatedly to move the current word fo
 
 If the selection is active, the selected region is transposed with the following or previous word, respectively.
 
+If the command is preceded by Universal Argument 0, the current word (or selection) is transposed with the word around mark.
+
 Commands:
 
-- Transpose Current and Next Word (`alt-t`). Change the order of the word at point (or region) and the following word.
-- Transpose Previous and Current Word (`shift-alt-t`). Change the order of the word at point (or region) and the previous word.
+- Transpose Current and Next Word (`alt-t`). Change the order of the word at point (or selection) and the following word. With Universal
+  argument 0, exchange current word/selection with word around mark.
+- Transpose Previous and Current Word (`shift-alt-t`). Change the order of the word at point (or selection) and the previous word. With
+  Universal argument 0, exchange current word/selection with word around mark.
 
 The *Transpose Word* commands work with multiple carets.
 

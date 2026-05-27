@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Transpose Word commands now accept universal argument 0 to transpose the current word with word around mark.
+
 ## [1.5.5] - 2026-04-30
 
 ### Added

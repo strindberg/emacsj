@@ -1,5 +1,7 @@
 package com.github.strindberg.emacsj.word
 
+import com.github.strindberg.emacsj.EmacsJService
+import com.github.strindberg.emacsj.mark.MarkHandler
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Document
@@ -20,78 +22,73 @@ class TransposeWordHandler(private val direction: Direction) : EditorWriteAction
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val hasSelection = caret.hasSelection() // This value is false after modification if using sticky selection
 
-        val currentBoundaries = if (hasSelection) {
-            Pair(caret.selectionStart, caret.selectionEnd)
-        } else {
-            currentWordBoundaries(
-                text = editor.text,
-                offset = caret.offset,
-                isCamel = editor.isCamel,
-                isForward = direction == Direction.FORWARD
-            )
-        }
-        currentBoundaries.let { (currentStart, currentEnd) ->
-            val currentWord = editor.document.substring(currentStart, currentEnd)
+        val originalRange =
+            if (hasSelection) {
+                Pair(caret.selectionStart, caret.selectionEnd)
+            } else {
+                currentWordBoundaries(
+                    text = editor.text,
+                    offset = caret.offset,
+                    isCamel = editor.isCamel,
+                    isForward = direction == Direction.FORWARD,
+                )
+            }
+        val (originalStart, originalEnd) = originalRange
 
-            if (direction == Direction.FORWARD) {
-                nextWordBoundaries(text = editor.text, offset = currentEnd, isCamel = editor.isCamel).let { (nextStart, nextEnd) ->
-                    val nextWord = editor.document.substring(nextStart, nextEnd)
-
-                    editor.document.replaceWords(
-                        firstStart = currentStart,
-                        firstEnd = currentEnd,
-                        secondStart = nextStart,
-                        secondEnd = nextEnd,
-                        words = lowerCamelCase(
-                            caret = caret,
-                            firstEnd = currentEnd,
-                            secondStart = nextStart,
-                            firstWord = currentWord,
-                            secondWord = nextWord
-                        )
+        val replacementRange =
+            if (EmacsJService.instance.universalArgument() == 0) {
+                MarkHandler.peek(editor)?.let { mark ->
+                    currentWordBoundaries(
+                        text = editor.text,
+                        offset = mark.caretPosition,
+                        isCamel = editor.isCamel,
+                        isForward = true,
                     )
+                }
+            } else if (direction == Direction.FORWARD) {
+                nextWordBoundaries(editor.text, originalEnd, editor.isCamel)
+            } else {
+                previousWordBoundaries(editor.text, originalStart, editor.isCamel)
+            }
 
-                    caret.moveToOffset(nextEnd)
+        replacementRange?.let { (replacementStart, replacementEnd) ->
+            editor.document.replaceWords(hasSelection, originalRange, replacementRange)
 
-                    if (hasSelection) {
-                        caret.setSelection(nextEnd - (currentEnd - currentStart), nextEnd)
-                    }
+            if (originalStart <= replacementStart) {
+                caret.moveToOffset(replacementEnd)
+                if (hasSelection) {
+                    caret.setSelection(replacementEnd - (originalEnd - originalStart), replacementEnd)
                 }
             } else {
-                previousWordBoundaries(text = editor.text, offset = currentStart, isCamel = editor.isCamel).let { (prevStart, prevEnd) ->
-                    val prevWord = editor.document.substring(prevStart, prevEnd)
-
-                    editor.document.replaceWords(
-                        firstStart = prevStart,
-                        firstEnd = prevEnd,
-                        secondStart = currentStart,
-                        secondEnd = currentEnd,
-                        words = lowerCamelCase(
-                            caret = caret,
-                            firstEnd = prevEnd,
-                            secondStart = currentStart,
-                            firstWord = prevWord,
-                            secondWord = currentWord
-                        )
-                    )
-
-                    caret.moveToOffset(prevStart)
-
-                    if (hasSelection) {
-                        caret.setSelection(prevStart, prevStart + (currentEnd - currentStart))
-                    }
+                caret.moveToOffset(replacementStart)
+                if (hasSelection) {
+                    caret.setSelection(replacementStart, replacementStart + (originalEnd - originalStart))
                 }
             }
         }
     }
 
-    private fun Document.replaceWords(firstStart: Int, firstEnd: Int, secondStart: Int, secondEnd: Int, words: Pair<String, String>) {
-        replaceString(secondStart, secondEnd, words.first)
-        replaceString(firstStart, firstEnd, words.second)
+    private fun Document.replaceWords(hasSelection: Boolean, originalRange: Pair<Int, Int>, replacementRange: Pair<Int, Int>) {
+        val (firstRange, secondRange) =
+            if (originalRange.first <= replacementRange.first) {
+                Pair(originalRange, replacementRange)
+            } else {
+                Pair(replacementRange, originalRange)
+            }
+
+        val (firstWord, secondWord) = lowerCamelCase(
+            hasSelection = hasSelection,
+            firstEnd = firstRange.second,
+            secondStart = secondRange.first,
+            firstWord = substring(firstRange.first, firstRange.second),
+            secondWord = substring(secondRange.first, secondRange.second),
+        )
+        replaceString(secondRange.first, secondRange.second, firstWord)
+        replaceString(firstRange.first, firstRange.second, secondWord)
     }
 
-    private fun lowerCamelCase(caret: Caret, firstEnd: Int, secondStart: Int, firstWord: String, secondWord: String) =
-        if (!caret.hasSelection() &&
+    private fun lowerCamelCase(hasSelection: Boolean, firstEnd: Int, secondStart: Int, firstWord: String, secondWord: String) =
+        if (!hasSelection &&
             firstEnd == secondStart &&
             firstWord.isNotEmpty() &&
             firstWord[0].isLowerCase() &&
