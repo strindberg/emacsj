@@ -7,6 +7,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 import com.github.strindberg.emacsj.search.EMACSJ_SECONDARY
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
@@ -54,7 +55,9 @@ class CopyRegionHandler : EditorActionHandler() {
             )
             thread {
                 Thread.sleep(500)
-                editor.markupModel.removeHighlighter(highlighter)
+                ApplicationManager.getApplication().invokeLater {
+                    editor.markupModel.removeHighlighter(highlighter)
+                }
             }
         }
         lastInvocation = now()

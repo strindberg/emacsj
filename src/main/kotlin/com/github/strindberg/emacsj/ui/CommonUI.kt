@@ -16,6 +16,7 @@ import javax.swing.JScrollPane
 import javax.swing.SwingUtilities
 import kotlin.concurrent.thread
 import com.intellij.codeInsight.hint.HintUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.SpellCheckingEditorCustomizationProvider
 import com.intellij.openapi.editor.ex.EditorEx
@@ -118,7 +119,9 @@ internal class CommonUI(
         countLabel.text = message
         thread {
             Thread.sleep(1500)
-            countLabel.text = finalText
+            ApplicationManager.getApplication().invokeLater {
+                countLabel.text = finalText
+            }
         }
     }
 

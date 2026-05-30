@@ -4,7 +4,6 @@ import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.mark.PlaceInfo
 import com.github.strindberg.emacsj.mark.UndoRedoStack
 import com.github.strindberg.emacsj.mark.manager
-import com.intellij.idea.ActionsBundle
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.editor.Caret
@@ -31,12 +30,12 @@ class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
     companion object {
         internal val xRefCommandNames = setOf(
-            ActionsBundle.actionText("GotoDeclaration"),
-            ActionsBundle.actionText("GotoDeclarationOnly"),
-            ActionsBundle.actionText("GotoTypeDeclaration"),
+            "Go to Declaration or Usages",
+            "Go to Declaration",
+            "Go to Type Declaration",
         )
 
-        private val places = mutableMapOf<Int, UndoRedoStack<PlaceInfo>>()
+        private val places = mutableMapOf<String, UndoRedoStack<PlaceInfo>>()
 
         internal fun pushPlace(event: CommandEvent) {
             event.project?.let { project ->
@@ -64,13 +63,13 @@ class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
         private fun pushPlaceInfo(editor: Editor, project: Project, virtualFile: VirtualFile) {
             MarkHandler.placeInfo(editor, virtualFile)?.let {
-                places.getOrPut(project.hashCode()) { UndoRedoStack() }.push(it)
+                places.getOrPut(project.name) { UndoRedoStack() }.push(it)
             }
         }
 
         private fun getPlaceUsingHistory(editor: Editor, operation: (UndoRedoStack<PlaceInfo>, PlaceInfo) -> PlaceInfo?): PlaceInfo? =
             editor.project?.let { project ->
-                places[project.hashCode()]?.let { stack ->
+                places[project.name]?.let { stack ->
                     editor.virtualFile?.let { currentFile ->
                         MarkHandler.placeInfo(editor, currentFile)?.let { currentPlace ->
                             operation(stack, currentPlace)

@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent.VK_ENTER
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.txt"
+private const val FILE = "gotofile.txt"
 
 class GotoLineTest : BasePlatformTestCase() {
 

@@ -2,6 +2,8 @@ package com.github.strindberg.emacsj.movement
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "indentationfile.txt"
+
 class ToIndentationTest : BasePlatformTestCase() {
 
     fun `test Caret is moved back to indentation`() {

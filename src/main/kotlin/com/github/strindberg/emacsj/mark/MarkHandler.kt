@@ -26,13 +26,14 @@ internal const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.
 class MarkHandler(val type: Type) : EditorActionHandler() {
 
     companion object {
-        private val places = mutableMapOf<Int, LimitedStack<PlaceInfo>>()
+
+        private val places = mutableMapOf<String, LimitedStack<PlaceInfo>>()
 
         internal fun pushPlaceInfo(editor: Editor) {
             if (editor is EditorEx) {
                 editor.virtualFile?.let { virtualFile ->
                     placeInfo(editor, virtualFile)?.let { placeInfo ->
-                        places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
+                        places.getOrPut(virtualFile.signature()) { LimitedStack() }.push(placeInfo)
                     }
                 }
             }
@@ -41,7 +42,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
         internal fun peek(editor: Editor): PlaceInfo? =
             (editor as? EditorEx)?.let {
                 editor.virtualFile?.let { virtualFile ->
-                    places[virtualFile.hashCode()]?.peek()
+                    places[virtualFile.signature()]?.peek()
                 }
             }
 
@@ -74,7 +75,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
         if (editor is EditorEx) {
             editor.virtualFile?.let { virtualFile ->
                 if (type == POP || EmacsJService.instance.isLastStrictUniversal()) {
-                    places[virtualFile.hashCode()]?.pop()?.let { place ->
+                    places[virtualFile.signature()]?.pop()?.let { place ->
                         gotoPlaceInfo(editor, place)
                     }
                 } else {
@@ -82,7 +83,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
                     editor.isStickySelection = false
                     placeInfo(editor, virtualFile)?.let { placeInfo ->
                         if (placeInfo != peek(editor) || !isPreviousSticky) {
-                            places.getOrPut(virtualFile.hashCode()) { LimitedStack() }.push(placeInfo)
+                            places.getOrPut(virtualFile.signature()) { LimitedStack() }.push(placeInfo)
                             editor.isStickySelection = true
                         }
                     }
@@ -91,6 +92,8 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
         }
     }
 }
+
+private fun VirtualFile.signature(): String = fileSystem.protocol + path
 
 internal val Project.manager: FileEditorManagerEx?
     get() = FileEditorManagerEx.getInstanceExIfCreated(this)

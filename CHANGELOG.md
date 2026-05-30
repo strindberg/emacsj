@@ -8,6 +8,10 @@
 
 - Transpose Word commands now accept universal argument 0 to transpose the current word with word around mark.
 
+### Fixed
+
+- Mark ring and xref history could sometimes leak between projects and/or files.
+
 ## [1.5.5] - 2026-04-30
 
 ### Added

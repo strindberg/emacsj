@@ -3,6 +3,8 @@ package com.github.strindberg.emacsj.movement
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "movementfile.txt"
+
 class TextMovementTest : BasePlatformTestCase() {
 
     fun `test Text start sets mark`() {

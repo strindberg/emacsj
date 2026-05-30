@@ -24,7 +24,7 @@ import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_UP_TO
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.invokeLater
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
@@ -152,13 +152,13 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
                 doRepeat(batchSize, action)
             }
             doRepeat(times % batchSize, action)
-            invokeLater { EmacsJService.instance.setRepeating(false) }
+            ApplicationManager.getApplication().invokeLater { EmacsJService.instance.setRepeating(false) }
         }
     }
 
     private fun doRepeat(times: Int, action: () -> Unit) {
         if (times > 0) {
-            invokeLater {
+            ApplicationManager.getApplication().invokeLater {
                 repeat(times) {
                     if (EmacsJService.instance.isRepeating()) {
                         try {
