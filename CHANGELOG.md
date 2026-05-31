@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.5.6] - 2026-05-31
+
 ### Added
 
 - Transpose Word commands now accept universal argument 0 to transpose the current word with word around mark.
@@ -269,7 +271,8 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/1.5.5...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/1.5.6...HEAD
+[1.5.6]: https://github.com/strindberg/emacsj/compare/1.5.5...1.5.6
 [1.5.5]: https://github.com/strindberg/emacsj/compare/1.5.4...1.5.5
 [1.5.4]: https://github.com/strindberg/emacsj/compare/1.5.3...1.5.4
 [1.5.3]: https://github.com/strindberg/emacsj/compare/1.5.2...1.5.3
