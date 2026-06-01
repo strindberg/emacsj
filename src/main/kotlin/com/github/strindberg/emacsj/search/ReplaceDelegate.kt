@@ -167,7 +167,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                     when (e.keyChar.lowercaseChar()) {
                         '\u000c' -> { // Ctrl-L
                             val recenterAction = ActionManager.getInstance().getAction(ACTION_RECENTER)
-                            ActionUtil.invokeAction(
+                            ActionUtil.performAction(
                                 recenterAction,
                                 AnActionEvent.createEvent(
                                     DataManager.getInstance().getDataContext(editor.component),
@@ -175,8 +175,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
                                     "Recenter",
                                     ActionUiKind.NONE,
                                     e
-                                ),
-                                null
+                                )
                             )
                         }
                         'y', ' ' -> {
