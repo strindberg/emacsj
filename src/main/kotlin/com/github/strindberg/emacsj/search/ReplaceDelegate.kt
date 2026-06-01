@@ -304,7 +304,7 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
 
     private fun fixBackReferences(replaceArgument: String): String {
         var argument = replaceArgument
-        val matches = Regex("""(\\\\[0-9]+|\\\\&)""").findAll(argument).toList().map { result ->
+        val matches = Regex("""(\\\\[0-9]+|\\\\&)""").findAll(argument).map { result ->
             argument = argument.replaceRange(result.range, "A".repeat(result.range.last - result.range.first))
             Pair(result.range, result.value)
         }
