@@ -40,7 +40,7 @@ class XRefHandler(private val type: XRefType) : EditorActionHandler() {
         internal fun pushPlace(event: CommandEvent) {
             event.project?.let { project ->
                 project.manager?.let { manager ->
-                    manager.currentFile?.let { virtualFile ->
+                    manager.selectedFiles.getOrNull(0)?.let { virtualFile ->
                         (manager.getSelectedEditor(virtualFile) as? TextEditor)?.let { fileEditor ->
                             pushPlaceInfo(fileEditor.editor, project, virtualFile)
                         }
