@@ -5,7 +5,7 @@ intellij-platform = "2.18.1"
 junit = "4.13.2"
 kotlin = "2.4.10"
 kotlinter = "5.6.0"
-kover = "0.9.8"
+kover = "0.9.9"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
