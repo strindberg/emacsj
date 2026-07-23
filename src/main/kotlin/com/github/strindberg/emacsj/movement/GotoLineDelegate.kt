@@ -14,7 +14,7 @@ class GotoLineDelegate(val editor: Editor) {
 
     @VisibleForTesting
     internal val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler).apply {
-        title = "Go to line[:column]: "
+        title = "Go to line[:column] : "
     }
 
     private val caretListener = object : CaretListener {
@@ -34,7 +34,10 @@ class GotoLineDelegate(val editor: Editor) {
         if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED && e.modifiersEx == 0) {
             val (line, column) = ui.text.split(":").let { parts ->
                 try {
-                    Pair(parts.getOrNull(0)?.takeIf { it.isNotEmpty() }?.toInt(), parts.getOrNull(1)?.takeIf { it.isNotEmpty() }?.toInt())
+                    Pair(
+                        parts.getOrNull(0)?.takeIf { it.isNotEmpty() }?.run { trim().toInt() },
+                        parts.getOrNull(1)?.takeIf { it.isNotEmpty() }?.run { trim().toInt() }
+                    )
                 } catch (_: NumberFormatException) {
                     Pair(null, null)
                 }

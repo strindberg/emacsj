@@ -70,6 +70,29 @@ class GotoLineTest : BasePlatformTestCase() {
         )
     }
 
+    fun `test Goto Line strips whitespace from arguments`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                <caret>foo
+                bar
+                baz
+            """.trimIndent()
+        )
+        myFixture.performEditorAction(ACTION_GOTO_LINE)
+
+        setText(" 2 : 3 ")
+        pressEnter()
+
+        myFixture.checkResult(
+            """
+                foo
+                ba<caret>r
+                baz
+            """.trimIndent()
+        )
+    }
+
     fun `test Goto Line with argument 0 moves to first line`() {
         myFixture.configureByText(
             FILE,

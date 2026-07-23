@@ -16,6 +16,8 @@ class GotoLineHandler : EditorActionHandler() {
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        delegate = GotoLineDelegate(editor)
+        if (delegate == null) {
+            delegate = GotoLineDelegate(editor)
+        }
     }
 }
