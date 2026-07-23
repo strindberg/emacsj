@@ -5,14 +5,9 @@ import com.github.strindberg.emacsj.actions.search.ReplaceAction
 import com.github.strindberg.emacsj.actions.universal.RepeatAction
 import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.search.ReplaceHandler
-import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.ActionPromoter
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.editor.actions.BackspaceAction
-import com.intellij.openapi.editor.actions.EnterAction
-import com.intellij.openapi.editor.actions.PasteAction
-import com.github.strindberg.emacsj.actions.paste.PasteAction as EmacsJPasteAction
 
 internal class EmacsJActionsPromoter : ActionPromoter {
 
@@ -20,7 +15,7 @@ internal class EmacsJActionsPromoter : ActionPromoter {
         actions.toMutableList().apply {
             when {
                 ISearchHandler.delegate != null -> {
-                    sortByDescending { it.isISearchAction() }
+                    sortByDescending { it is ISearchAction }
                 }
                 ReplaceHandler.delegate != null -> {
                     sortByDescending { it is ReplaceAction }
@@ -28,19 +23,9 @@ internal class EmacsJActionsPromoter : ActionPromoter {
                 EmacsJService.instance.isRepeating() -> {
                     sortByDescending { it is RepeatAction }
                 }
-                UniversalArgumentHandler.delegate != null -> {
-                    sortByDescending { it is EnterAction }
-                }
                 else -> {
                     sortBy { it is ISearchAction || it is ReplaceAction || it is RepeatAction }
                 }
             }
         }
-
-    private fun AnAction.isISearchAction() =
-        this is ISearchAction ||
-            this is BackspaceAction ||
-            this is EnterAction ||
-            this is PasteAction ||
-            this is EmacsJPasteAction
 }

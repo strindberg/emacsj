@@ -26,7 +26,10 @@
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.strindberg.emacsj.EmacsJCommandListener" topic="com.intellij.openapi.command.CommandListener"/>
+        <listener class="com.github.strindberg.emacsj.EmacsJCommandListener"
+                  topic="com.intellij.openapi.command.CommandListener"/>
+        <listener class="com.github.strindberg.emacsj.EmacsJCancelListener"
+                  topic="com.intellij.openapi.actionSystem.ex.AnActionListener"/>
     </applicationListeners>
 
     <actions>
@@ -45,6 +48,18 @@
         <action id="com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
                 class="com.github.strindberg.emacsj.actions.search.ISearchRegexpBackwardAction">
             <keyboard-shortcut first-keystroke="control shift R" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchenter"
+                class="com.github.strindberg.emacsj.actions.search.ISearchEnterAction">
+            <keyboard-shortcut first-keystroke="ENTER" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchbackspace"
+                class="com.github.strindberg.emacsj.actions.search.ISearchBackspaceAction">
+            <keyboard-shortcut first-keystroke="BACK_SPACE" keymap="Emacs"/>
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchpaste"
+                class="com.github.strindberg.emacsj.actions.search.ISearchPasteAction">
+            <keyboard-shortcut first-keystroke="control Y" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchword"
                 class="com.github.strindberg.emacsj.actions.search.ISearchWordAction">
@@ -91,7 +106,7 @@
             <keyboard-shortcut first-keystroke="alt GREATER" keymap="Emacs"/>
             <keyboard-shortcut first-keystroke="shift alt LESS" keymap="Emacs"/>
         </action>
-        <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch"
+        <action id="com.github.strindberg.emacsj.actions.search.isearchtogglelaxsearch"
                 class="com.github.strindberg.emacsj.actions.search.ISearchToggleLaxSearchAction">
             <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE" keymap="Emacs"/>
         </action>
@@ -345,7 +360,7 @@
         </action>
 
         <action id="com.github.strindberg.emacsj.actions.universal.universalargument"
-                class="com.github.strindberg.emacsj.actions.universal.UniversalArgumentAction">
+                class="com.github.strindberg.emacsj.actions.universal.UniversalArgumentDefaultAction">
             <keyboard-shortcut first-keystroke="control U" keymap="Emacs"/>
         </action>
         <action id="com.github.strindberg.emacsj.actions.universal.universalargument1"

@@ -41,7 +41,7 @@ internal const val ACTION_UNIVERSAL_ARGUMENT9 = "com.github.strindberg.emacsj.ac
 @Language("devkit-action-id")
 internal const val ACTION_UNIVERSAL_ARGUMENT0 = "com.github.strindberg.emacsj.actions.universal.universalargument0"
 
-internal val universalCommandIds = setOf(
+private val universalCommandIds = setOf(
     ACTION_UNIVERSAL_ARGUMENT,
     ACTION_UNIVERSAL_ARGUMENT1,
     ACTION_UNIVERSAL_ARGUMENT2,
@@ -77,7 +77,7 @@ class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler(
             }
             EmacsJService.instance.registerUniversalArgument(current.getTimes())
         } else {
-            val newDelegate = UniversalArgumentDelegate(editor, numeric)
+            val newDelegate = UniversalArgumentDelegate(editor, numeric, caret, dataContext)
             delegate = newDelegate
             EmacsJService.instance.registerUniversalArgument(newDelegate.getTimes())
         }

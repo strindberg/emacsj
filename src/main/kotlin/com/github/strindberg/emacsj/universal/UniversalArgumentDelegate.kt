@@ -13,7 +13,6 @@ import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_BACKWARD
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_FORWARD
 import com.github.strindberg.emacsj.search.ACTION_REPLACE_REGEXP
 import com.github.strindberg.emacsj.search.ACTION_REPLACE_TEXT
-import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
 import com.github.strindberg.emacsj.space.ACTION_DELETE_SPACE
 import com.github.strindberg.emacsj.ui.CommonUI
@@ -22,11 +21,11 @@ import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_UP_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_UP_TO
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
@@ -52,11 +51,9 @@ internal val singleActions = setOf(
     ACTION_COPY_ABOVE_COMMAND,
 )
 
-class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
+class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?, val caret: Caret?, val dataContext: DataContext) {
 
     private val typedHandler: RestorableTypedActionHandler
-
-    private val actionHandlers: List<RestorableActionHandler<UniversalArgumentDelegate>>
 
     private var counter = 4
 
@@ -72,8 +69,6 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     }
 
     init {
-        editor.document.setReadOnly(true) // Prevent dead keys such as '^' and '~' from showing up in the editor while searching.
-
         TypedAction.getInstance().apply {
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
@@ -82,7 +77,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
                             if (charTyped.isDigit()) {
                                 addDigit(charTyped.digitToInt())
                             } else {
-                                repeatAction(getTimes()) { myOriginalHandler?.execute(editor, charTyped, dataContext) }
+                                repeatCommand(getTimes()) { myOriginalHandler?.execute(editor, charTyped, dataContext) }
                             }
                         } else {
                             myOriginalHandler?.execute(editor, charTyped, dataContext)
@@ -92,27 +87,17 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
             )
         }
 
-        EditorActionManager.getInstance().apply {
-            actionHandlers = buildList {
-                editorActions().forEach { actionId ->
-                    getActionHandler(actionId)?.let { originalHandler ->
-                        setActionHandler(
-                            actionId,
-                            RestorableActionHandler(
-                                actionId,
-                                originalHandler,
-                                { UniversalArgumentHandler.delegate }
-                            ) { caret, dataContext ->
-                                val times = if (actionId in EmacsJService.instance.getSingleActions()) 1 else getTimes()
-                                repeatAction(times) { originalHandler.execute(editor, caret, dataContext) }
-                            }.also { add(it) }
-                        )
-                    }
-                }
+        ui.show()
+    }
+
+    internal fun repeatAction(actionId: String) {
+        val times = if (actionId in EmacsJService.instance.getSingleActions()) 1 else getTimes()
+        if (times > 1) {
+            // The command has already been run once when we get here. We hence subtract 1 from the number of repetitions.
+            EditorActionManager.getInstance().getActionHandler(actionId)?.let { handler ->
+                repeatCommand(times - 1) { handler.execute(editor, caret, dataContext) }
             }
         }
-
-        ui.show()
     }
 
     internal fun multiply() {
@@ -128,8 +113,6 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
     internal fun getTimes(): Int = numeric ?: counter
 
     internal fun hide() {
-        editor.document.setReadOnly(false)
-
         unregisterHandlers()
 
         ui.cancelUI()
@@ -137,8 +120,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
         UniversalArgumentHandler.delegate = null
     }
 
-    private fun repeatAction(times: Int, action: () -> Unit) {
-        editor.document.setReadOnly(false)
+    private fun repeatCommand(times: Int, action: () -> Unit) {
         cancel()
 
         if (times == 1 || isTesting) {
@@ -156,6 +138,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun doRepeat(times: Int, action: () -> Unit) {
         if (times > 0) {
             ApplicationManager.getApplication().invokeLater {
@@ -163,8 +146,9 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
                     if (EmacsJService.instance.isRepeating()) {
                         try {
                             action()
-                        } catch (_: Exception) {
+                        } catch (e: Exception) {
                             EmacsJService.instance.setRepeating(false)
+                            thisLogger().warn(e)
                         }
                     }
                 }
@@ -172,23 +156,11 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?) {
         }
     }
 
-    private fun editorActions(): List<String> {
-        val actionManager = ActionManager.getInstance()
-        return actionManager.getActionIdList("").filter { actionId ->
-            actionId !in universalCommandIds &&
-                !actionManager.isGroup(actionId) &&
-                actionManager.getAction(actionId)?.let { it is EditorAction } == true
-        }
-    }
-
-    private fun cancel() {
+    internal fun cancel() {
         ui.cancelUI()
     }
 
     private fun unregisterHandlers() {
         TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
-        actionHandlers.forEach {
-            EditorActionManager.getInstance().setActionHandler(it.actionId, it.originalHandler)
-        }
     }
 }

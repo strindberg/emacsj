@@ -61,7 +61,7 @@ class EmacsJActionsPromoterTest : BasePlatformTestCase() {
 
     fun `test Promoter sorts Enter action first when Universal Argument is active`() {
         myFixture.configureByText(FILE, "")
-        UniversalArgumentHandler.delegate = UniversalArgumentDelegate(myFixture.editor, null)
+        UniversalArgumentHandler.delegate = UniversalArgumentDelegate(myFixture.editor, null, null, DataContext.EMPTY_CONTEXT)
 
         val enter = EnterAction()
         val actions = setOf(enter, PushMarkAction(), ZapToCharAction())

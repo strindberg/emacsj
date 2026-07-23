@@ -3,7 +3,6 @@ package com.github.strindberg.emacsj.zap
 import java.util.UUID
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.kill.KillUtil
-import com.github.strindberg.emacsj.search.RestorableActionHandler
 import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.word.text
@@ -12,20 +11,15 @@ import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_UP_TO
 import com.intellij.codeInsight.hint.HintManager
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.actionSystem.EditorAction
-import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
 class ZapDelegate(val editor: Editor, val type: ZapType) {
 
     private val typedHandler: RestorableTypedActionHandler
-
-    private val actionHandlers: List<RestorableActionHandler<ZapDelegate>>
 
     @VisibleForTesting
     internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
@@ -38,47 +32,13 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     init {
-        editor.document.setReadOnly(true) // Prevent dead keys such as '^' and '~' from showing up in the editor while searching.
-
         TypedAction.getInstance().apply {
             setupRawHandler(
                 object : RestorableTypedActionHandler(rawHandler) {
                     override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
                         val delegate = ZapHandler.delegate
                         if (delegate != null) {
-                            val undoGroupId = UUID.randomUUID().toString()
-                            editor.document.setReadOnly(false)
-                            editor.caretModel.allCarets.reversed().forEach { caret ->
-                                val times = EmacsJService.instance.universalArgumentRelaxed()
-                                val (start, end) = when (type) {
-                                    FORWARD_TO, FORWARD_UP_TO -> Pair(
-                                        caret.offset,
-                                        nextCharacter(text = editor.text, startOffset = caret.offset, character = charTyped, times = times)
-                                    )
-                                    BACKWARD_TO, BACKWARD_UP_TO -> Pair(
-                                        previousCharacter(
-                                            text = editor.text,
-                                            startOffset = caret.offset,
-                                            character = charTyped,
-                                            times = times
-                                        ),
-                                        caret.offset
-                                    )
-                                }
-                                if (start != null && end != null) {
-                                    WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
-                                        KillUtil.cut(
-                                            editor = editor,
-                                            textStartOffset = start,
-                                            textEndOffset = end,
-                                            prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO)
-                                        )
-                                    })
-                                } else {
-                                    HintManager.getInstance().showInformationHint(editor, "Search failed: $charTyped")
-                                }
-                            }
-                            cancel()
+                            doZap(charTyped)
                         } else {
                             myOriginalHandler?.execute(editor, charTyped, dataContext)
                         }
@@ -87,28 +47,45 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
             )
         }
 
-        EditorActionManager.getInstance().apply {
-            actionHandlers = buildList {
-                editorActions().forEach { actionId ->
-                    getActionHandler(actionId)?.let { originalHandler ->
-                        setActionHandler(
-                            actionId,
-                            RestorableActionHandler(actionId, originalHandler, { ZapHandler.delegate }) { caret, dataContext ->
-                                cancel()
-                                originalHandler.execute(editor, caret, dataContext)
-                            }.also { add(it) }
-                        )
-                    }
-                }
-            }
-        }
-
         ui.show()
     }
 
-    internal fun hide() {
-        editor.document.setReadOnly(false)
+    private fun doZap(charTyped: Char) {
+        val undoGroupId = UUID.randomUUID().toString()
+        editor.caretModel.allCarets.reversed().forEach { caret ->
+            val times = EmacsJService.instance.universalArgumentRelaxed()
+            val (start, end) = when (type) {
+                FORWARD_TO, FORWARD_UP_TO -> Pair(
+                    caret.offset,
+                    nextCharacter(text = editor.text, startOffset = caret.offset, character = charTyped, times = times)
+                )
+                BACKWARD_TO, BACKWARD_UP_TO -> Pair(
+                    previousCharacter(
+                        text = editor.text,
+                        startOffset = caret.offset,
+                        character = charTyped,
+                        times = times
+                    ),
+                    caret.offset
+                )
+            }
+            if (start != null && end != null) {
+                WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
+                    KillUtil.cut(
+                        editor = editor,
+                        textStartOffset = start,
+                        textEndOffset = end,
+                        prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO)
+                    )
+                })
+            } else {
+                HintManager.getInstance().showInformationHint(editor, "Search failed: $charTyped")
+            }
+        }
+        cancel()
+    }
 
+    internal fun hide() {
         unregisterHandlers()
 
         ui.cancelUI()
@@ -116,22 +93,12 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
         ZapHandler.delegate = null
     }
 
-    private fun editorActions(): List<String> {
-        val actionManager = ActionManager.getInstance()
-        return actionManager.getActionIdList("").filter { actionId ->
-            !actionManager.isGroup(actionId) && actionManager.getAction(actionId)?.let { it is EditorAction } == true
-        }
-    }
-
-    private fun cancel() {
+    internal fun cancel() {
         ui.cancelUI()
     }
 
     private fun unregisterHandlers() {
         TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
-        actionHandlers.forEach {
-            EditorActionManager.getInstance().setActionHandler(it.actionId, it.originalHandler)
-        }
     }
 
     private fun nextCharacter(text: CharSequence, startOffset: Int, character: Char, times: Int): Int? {

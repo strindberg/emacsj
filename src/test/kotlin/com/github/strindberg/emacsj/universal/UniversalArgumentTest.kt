@@ -3,6 +3,7 @@ package com.github.strindberg.emacsj.universal
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
+import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
@@ -73,54 +74,81 @@ class UniversalArgumentTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.type("a")
         myFixture.checkResult("a<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>a")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
         myFixture.type("a")
         myFixture.checkResult("aa<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>aa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
         myFixture.type("a")
         myFixture.checkResult("aaa<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>aaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT4)
         myFixture.type("a")
         myFixture.checkResult("aaaa<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT4)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>aaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
         myFixture.type("a")
         myFixture.checkResult("aaaaa<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>aaaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT6)
         myFixture.type("a")
         myFixture.checkResult("aaaaaa<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT6)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>aaaaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT7)
         myFixture.type("a")
         myFixture.checkResult("aaaaaaa<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT7)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>aaaaaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT8)
         myFixture.type("a")
         myFixture.checkResult("aaaaaaaa<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT8)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>aaaaaaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT9)
         myFixture.type("a")
         myFixture.checkResult("aaaaaaaaa<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT9)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>aaaaaaaaa")
     }
 
     fun `test Numeric universal argument 10 works two ways`() {
@@ -136,6 +164,10 @@ class UniversalArgumentTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
         myFixture.type("a")
         myFixture.checkResult("aaaaaaaaaa<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+        myFixture.checkResult("<caret>aaaaaaaaaa")
     }
 
     private fun pressEscape() {

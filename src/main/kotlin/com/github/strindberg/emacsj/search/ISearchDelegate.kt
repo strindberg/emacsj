@@ -6,8 +6,6 @@ import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_G
 import java.util.regex.Pattern
-import com.github.strindberg.emacsj.actions.search.ISearchAction
-import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.preferences.EmacsJSettings
 import com.github.strindberg.emacsj.search.CaseType.INSENSITIVE
 import com.github.strindberg.emacsj.search.CaseType.SENSITIVE
@@ -23,22 +21,14 @@ import com.github.strindberg.emacsj.search.StartType.FIRST_SEARCH
 import com.github.strindberg.emacsj.search.StartType.REPEATED_SEARCH
 import com.github.strindberg.emacsj.search.StartType.WRAPAROUND
 import com.github.strindberg.emacsj.ui.CommonUI
-import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
 import com.intellij.find.FindResult
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
-import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
-import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
-import com.intellij.openapi.application.ex.ClipboardUtil
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
-import com.intellij.openapi.editor.actionSystem.EditorAction
-import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedAction
 import com.intellij.openapi.editor.colors.EditorColors.IDENTIFIER_UNDER_CARET_ATTRIBUTES
 import com.intellij.openapi.editor.event.CaretEvent
@@ -53,8 +43,6 @@ import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
-private const val ACTION_EDITOR_SCROLL_TO_CENTER = "EditorScrollToCenter"
-
 private enum class StartType { WRAPAROUND, FIRST_SEARCH, REPEATED_SEARCH }
 
 internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, var direction: Direction) {
@@ -68,8 +56,6 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     private val identifierAttributes: TextAttributes
 
     private lateinit var typedHandler: RestorableTypedActionHandler
-
-    private lateinit var actionHandlers: List<RestorableActionHandler<ISearchDelegate>>
 
     @VisibleForTesting
     internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
@@ -93,8 +79,6 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         }
 
     init {
-        editor.document.setReadOnly(true) // Prevent dead keys such as '^' and '~' from showing up in the editor while searching.
-
         identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
 
@@ -103,8 +87,6 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         initTitleText()
 
         setupTypedActionHandler()
-
-        setupActionHandlers()
 
         if (editor.selectionModel.hasSelection()) {
             editor.caretModel.removeSecondaryCarets()
@@ -129,8 +111,6 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
 
     internal fun hide() {
         if (!isInhibitCancel) {
-            editor.document.setReadOnly(false)
-
             unregisterHandlers()
 
             editor.markupModel.removeAllHighlighters()
@@ -153,7 +133,6 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
 
     internal fun startEditedSearch() {
         setupTypedActionHandler()
-        setupActionHandlers()
 
         state = SEARCH
         ui.makeReadonly(text, false)
@@ -290,91 +269,6 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         }
     }
 
-    private fun setupActionHandlers() {
-        EditorActionManager.getInstance().apply {
-            actionHandlers = buildList {
-                setActionHandler(
-                    ACTION_EDITOR_BACKSPACE,
-                    RestorableActionHandler(
-                        ACTION_EDITOR_BACKSPACE,
-                        getActionHandler(ACTION_EDITOR_BACKSPACE),
-                        { ISearchHandler.delegate }
-                    ) { _, _ ->
-                        when (state) {
-                            EDIT -> text = text.dropLast(1)
-                            SEARCH, FAILED -> popBreadcrumb()
-                        }
-                    }.also { add(it) }
-                )
-
-                setActionHandler(
-                    ACTION_EDITOR_ENTER,
-                    RestorableActionHandler(
-                        ACTION_EDITOR_ENTER,
-                        getActionHandler(ACTION_EDITOR_ENTER),
-                        { ISearchHandler.delegate }
-                    ) { _, _ ->
-                        when (state) {
-                            EDIT -> startEditedSearch()
-                            SEARCH, FAILED -> cancel()
-                        }
-                    }.also { add(it) }
-                )
-
-                listOf(ACTION_EDITOR_PASTE, ACTION_PASTE).forEach { actionId ->
-                    setActionHandler(
-                        actionId,
-                        RestorableActionHandler(
-                            actionId,
-                            getActionHandler(actionId),
-                            { ISearchHandler.delegate }
-                        ) { _, _ ->
-                            when (state) {
-                                EDIT -> text += ClipboardUtil.getTextInClipboard()
-                                SEARCH, FAILED -> searchAllCarets(
-                                    searchDirection = direction,
-                                    newText = ClipboardUtil.getTextInClipboard().orEmpty()
-                                )
-                            }
-                        }.also { add(it) }
-                    )
-                }
-
-                editorActions().forEach { actionId ->
-                    getActionHandler(actionId)?.let { originalHandler ->
-                        setActionHandler(
-                            actionId,
-                            RestorableActionHandler(
-                                actionId,
-                                originalHandler,
-                                { ISearchHandler.delegate }
-                            ) { caret, dataContext ->
-                                cancel()
-                                originalHandler.execute(editor, caret, dataContext)
-                            }.also { add(it) }
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private fun editorActions(): List<String> {
-        val actionManager = ActionManager.getInstance()
-        return actionManager.getActionIdList("").filter { actionId ->
-            !actionManager.isGroup(actionId) &&
-                actionManager.getAction(actionId)?.let { it is EditorAction && it !is ISearchAction } == true &&
-                actionId !in listOf(
-                    ACTION_EDITOR_BACKSPACE,
-                    ACTION_EDITOR_ENTER,
-                    ACTION_EDITOR_PASTE,
-                    ACTION_PASTE,
-                    ACTION_EDITOR_SCROLL_TO_CENTER,
-                    ACTION_RECENTER
-                )
-        }
-    }
-
     private fun keyEventHandler(e: KeyEvent) {
         // ESC or ctrl-g pressed
         if (e.id == KeyEvent.KEY_PRESSED &&
@@ -400,15 +294,12 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         }
     }
 
-    private fun cancel() {
+    internal fun cancel() {
         ui.cancelUI()
     }
 
     private fun unregisterHandlers() {
         TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
-        actionHandlers.forEach {
-            EditorActionManager.getInstance().setActionHandler(it.actionId, it.originalHandler)
-        }
     }
 
     private fun updateUI(result: SearchResult) {
@@ -490,7 +381,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         }
     }
 
-    private fun popBreadcrumb() {
+    internal fun popBreadcrumb() {
         breadcrumbs.removeLastOrNull()?.let { breadcrumb ->
             removeHighlighters(breadcrumb.text != ui.text || breadcrumb.caseType != caseType || breadcrumb.searchType != searchType)
 

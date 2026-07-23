@@ -11,6 +11,15 @@
     <action id="com.github.strindberg.emacsj.actions.search.isearchregexpbackward">
         <keyboard-shortcut first-keystroke="control shift R"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchenter">
+        <keyboard-shortcut first-keystroke="ENTER"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchbackspace">
+        <keyboard-shortcut first-keystroke="BACK_SPACE"/>
+    </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchpaste">
+        <keyboard-shortcut first-keystroke="control Y"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.isearchword">
         <keyboard-shortcut first-keystroke="control W"/>
     </action>
@@ -45,7 +54,7 @@
         <keyboard-shortcut first-keystroke="alt GREATER"/>
         <keyboard-shortcut first-keystroke="shift alt LESS"/>
     </action>
-    <action id="com.github.strindberg.emacsj.actions.search.togglelaxsearch">
+    <action id="com.github.strindberg.emacsj.actions.search.isearchtogglelaxsearch">
         <keyboard-shortcut first-keystroke="control C" second-keystroke="SPACE"/>
     </action>
     <action id="com.github.strindberg.emacsj.actions.search.isearchtogglecase">

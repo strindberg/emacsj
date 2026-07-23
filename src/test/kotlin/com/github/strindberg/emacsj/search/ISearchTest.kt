@@ -6,10 +6,6 @@ import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
-import com.github.strindberg.emacsj.paste.ACTION_PASTE
-import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
-import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_ENTER
-import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_PASTE
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
@@ -37,7 +33,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("o", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo")
         assertEquals("", ISearchHandler.delegate?.text)
         assertNull(ISearchHandler.delegate?.ui?.count)
@@ -51,7 +47,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult("<caret>foo")
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo")
     }
 
@@ -63,7 +59,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
         myFixture.checkResult("<caret>foo")
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo")
     }
 
@@ -75,7 +71,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
         myFixture.checkResult("foo<caret>")
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret>")
     }
 
@@ -88,7 +84,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("oo", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("fo<caret>o")
         assertEquals("o", ISearchHandler.delegate?.text)
     }
@@ -105,7 +101,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo bar foo<caret>")
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret> bar foo")
         assertEquals("foo", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
@@ -193,15 +189,15 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar foo<caret>")
         assertEquals("foo", ISearchHandler.delegate?.text)
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret> bar foo")
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("fo<caret>o bar foo")
         assertEquals("fo", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
@@ -221,11 +217,11 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo bar <caret>foo")
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo bar foo")
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar <caret>foo")
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
     }
@@ -285,7 +281,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("oo", ISearchHandler.delegate?.text)
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret> foo")
         assertEquals("", ISearchHandler.delegate?.text)
         assertNull(ISearchHandler.delegate?.ui?.count)
@@ -307,7 +303,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("o", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo")
         assertEquals("", ISearchHandler.delegate?.text)
         assertNull(ISearchHandler.delegate?.ui?.count)
@@ -352,7 +348,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("foo")
 
-        myFixture.performEditorAction(ACTION_EDITOR_ENTER)
+        myFixture.performEditorAction(ACTION_ISEARCH_ENTER)
 
         myFixture.checkResult("foo<caret> fooz foo")
 
@@ -385,7 +381,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret> foo")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -446,9 +442,9 @@ class ISearchTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
-        myFixture.performEditorAction(ACTION_EDITOR_PASTE)
+        myFixture.performEditorAction(ACTION_ISEARCH_PASTE)
 
-        myFixture.performEditorAction(ACTION_EDITOR_ENTER)
+        myFixture.performEditorAction(ACTION_ISEARCH_ENTER)
         myFixture.checkResult("foo fooz foobar<caret>")
         assertEquals("foobar", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 1), ISearchHandler.delegate?.ui?.count)
@@ -523,7 +519,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
         myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
-        myFixture.performEditorAction(ACTION_EDITOR_ENTER)
+        myFixture.performEditorAction(ACTION_ISEARCH_ENTER)
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD) // Wrap-around
         assertEquals("bar", ISearchHandler.delegate?.text)
@@ -536,7 +532,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
         myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
         myFixture.performEditorAction(ACTION_ISEARCH_PREVIOUS)
-        myFixture.performEditorAction(ACTION_EDITOR_ENTER)
+        myFixture.performEditorAction(ACTION_ISEARCH_ENTER)
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD) // Wrap-around
         assertEquals("foo", ISearchHandler.delegate?.text)
@@ -601,7 +597,7 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo bar foo")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -623,15 +619,15 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo bar foo bar<caret>")
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar<caret> foo bar")
         assertEquals("foo bar", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret> bar foo bar")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo bar foo bar")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -675,11 +671,11 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("foo.bar", ISearchHandler.delegate?.text)
         assertEquals(Pair(2, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo.bar foo<caret>.bar bar")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret>.bar foo.bar bar")
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
@@ -697,10 +693,10 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>foo bar foo")
         assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar <caret>foo")
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar <caret>foo")
     }
 
@@ -720,15 +716,15 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
         myFixture.checkResult("<caret>foo bar foo bar")
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar <caret>foo bar")
         assertEquals("foo bar", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar <caret>foo bar")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar <caret>foo bar")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -746,11 +742,11 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("fooBar<caret>Foo")
         assertEquals("fooBar", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret>BarFoo")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>fooBarFoo")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -764,7 +760,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo<caret> bar foo")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("fo<caret>o bar foo")
         assertEquals("fo", ISearchHandler.delegate?.text)
     }
@@ -787,19 +783,19 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>bar foo bar foo")
         assertEquals("bar", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("bar foo <caret>bar foo")
         assertEquals("bar", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("bar foo <caret>bar foo")
         assertEquals("ba", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("bar foo <caret>bar foo")
         assertEquals("b", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("bar foo bar <caret>foo")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -849,15 +845,15 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo bar foo<caret>")
         assertEquals("oo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret> bar foo")
         assertEquals("oo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("fo<caret>o bar foo")
         assertEquals("o", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo bar foo")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -876,22 +872,22 @@ class ISearchTest : BasePlatformTestCase() {
         assertEquals("barrab", ISearchHandler.delegate?.text)
         assertEquals(ISearchState.FAILED, ISearchHandler.delegate?.state)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar<caret> foo")
         assertEquals("barra", ISearchHandler.delegate?.text)
         assertEquals(ISearchState.FAILED, ISearchHandler.delegate?.state)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar<caret> foo")
         assertEquals("barr", ISearchHandler.delegate?.text)
         assertEquals(ISearchState.FAILED, ISearchHandler.delegate?.state)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar<caret> foo")
         assertEquals("bar", ISearchHandler.delegate?.text)
         assertEquals(ISearchState.SEARCH, ISearchHandler.delegate?.state)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo ba<caret>r foo")
         assertEquals("ba", ISearchHandler.delegate?.text)
         assertEquals(ISearchState.SEARCH, ISearchHandler.delegate?.state)
@@ -984,11 +980,11 @@ class ISearchTest : BasePlatformTestCase() {
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
-        myFixture.performEditorAction(ACTION_EDITOR_PASTE)
+        myFixture.performEditorAction(ACTION_ISEARCH_PASTE)
         myFixture.checkResult("foo bar<caret> foo")
         assertEquals("bar", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo bar foo")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -998,11 +994,11 @@ class ISearchTest : BasePlatformTestCase() {
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
-        myFixture.performEditorAction(ACTION_PASTE)
+        myFixture.performEditorAction(ACTION_ISEARCH_PASTE)
         myFixture.checkResult("foo bar<caret> foo")
         assertEquals("bar", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo bar foo")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -1016,11 +1012,11 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("foo b<caret>ar foo")
         assertEquals("b", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_PASTE)
+        myFixture.performEditorAction(ACTION_ISEARCH_PASTE)
         myFixture.checkResult("foo bar<caret> foo")
         assertEquals("bar", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo b<caret>ar foo")
         assertEquals("b", ISearchHandler.delegate?.text)
     }
@@ -1057,27 +1053,27 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>foo bar foo")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar <caret>foo")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo bar foo<caret>")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret> bar foo")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("fo<caret>o bar foo")
         assertEquals("fo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("f<caret>oo bar foo")
         assertEquals("f", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("<caret>foo bar foo")
         assertEquals("", ISearchHandler.delegate?.text)
     }
@@ -1094,7 +1090,7 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.checkResult("<caret>foo")
         assertEquals("foo", ISearchHandler.delegate?.text)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo<caret>")
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
@@ -1331,7 +1327,7 @@ class ISearchTest : BasePlatformTestCase() {
             """.trimMargin()
         )
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult(
             """
                 |foo<caret> bar baz
@@ -1373,7 +1369,7 @@ class ISearchTest : BasePlatformTestCase() {
             """.trimMargin()
         )
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult(
             """
                 |foo bar baz
@@ -1601,8 +1597,8 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult("foo Foo foo foo Foo<caret> bar")
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         assertEquals(CaseType.INSENSITIVE, ISearchHandler.delegate?.caseType)
         myFixture.checkResult("foo Foo<caret> foo foo Foo bar")
 
@@ -1657,11 +1653,11 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult("foo foo+ foo<caret> bar")
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         assertEquals(SearchType.REGEXP, ISearchHandler.delegate?.searchType)
         myFixture.checkResult("foo foo+<caret> foo bar")
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         assertEquals(SearchType.TEXT, ISearchHandler.delegate?.searchType)
         myFixture.checkResult("foo<caret> foo+ foo bar")
     }
@@ -1696,7 +1692,7 @@ class ISearchTest : BasePlatformTestCase() {
         )
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult(
             """
                 |import
@@ -1832,7 +1828,7 @@ class ISearchTest : BasePlatformTestCase() {
         )
         assertEquals(Pair(1, 3), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult(
             """
                 |import
@@ -1968,7 +1964,7 @@ class ISearchTest : BasePlatformTestCase() {
         )
         assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult(
             """
                 |import
@@ -2104,7 +2100,7 @@ class ISearchTest : BasePlatformTestCase() {
         )
         assertEquals(Pair(3, 3), ISearchHandler.delegate?.ui?.count)
 
-        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult(
             """
                 |import
@@ -2299,7 +2295,7 @@ class ISearchTest : BasePlatformTestCase() {
     }
 
     private fun pressEnter() {
-        myFixture.performEditorAction(ACTION_EDITOR_ENTER)
+        myFixture.performEditorAction(ACTION_ISEARCH_ENTER)
         ISearchHandler.delegate?.hide()
     }
 

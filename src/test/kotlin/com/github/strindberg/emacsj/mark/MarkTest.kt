@@ -11,6 +11,11 @@ const val FILE = "file.txt"
 
 class MarkTest : BasePlatformTestCase() {
 
+    override fun tearDown() {
+        UniversalArgumentHandler.delegate?.hide()
+        super.tearDown()
+    }
+
     fun `test Set mark and pop mark works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
@@ -34,7 +39,6 @@ class MarkTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.performEditorAction(ACTION_PUSH_MARK)
         myFixture.checkResult("<caret>foo bar baz")
-        UniversalArgumentHandler.delegate?.hide()
     }
 
     fun `test Pressing mark twice pushes mark without starting selection`() {

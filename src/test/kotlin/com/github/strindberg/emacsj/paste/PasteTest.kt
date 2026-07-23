@@ -16,6 +16,11 @@ const val FILE = "file.txt"
 
 class PasteTest : BasePlatformTestCase() {
 
+    override fun tearDown() {
+        UniversalArgumentHandler.delegate?.hide()
+        super.tearDown()
+    }
+
     fun `test Paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
@@ -63,7 +68,6 @@ class PasteTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult("foobar<caret>")
-        UniversalArgumentHandler.delegate?.hide()
     }
 
     fun `test Prefix paste works with selection 1`() {
@@ -89,7 +93,6 @@ class PasteTest : BasePlatformTestCase() {
 
         myFixture.performEditorAction(ACTION_POP_MARK)
         myFixture.checkResult("BARbar<caret>BAZ")
-        UniversalArgumentHandler.delegate?.hide()
     }
 
     fun `test Paste history after paste works`() {
