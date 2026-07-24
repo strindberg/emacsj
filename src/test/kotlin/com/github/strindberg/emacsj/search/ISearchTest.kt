@@ -287,28 +287,6 @@ class ISearchTest : BasePlatformTestCase() {
         assertNull(ISearchHandler.delegate?.ui?.count)
     }
 
-    fun `test Using previous search works after finishing with escape`() {
-        myFixture.configureByText(FILE, "<caret>foo")
-
-        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
-        myFixture.type("o")
-
-        pressEscape()
-
-        myFixture.checkResult("<caret>foo")
-
-        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
-        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
-        myFixture.checkResult("fo<caret>o")
-        assertEquals("o", ISearchHandler.delegate?.text)
-        assertEquals(Pair(1, 2), ISearchHandler.delegate?.ui?.count)
-
-        myFixture.performEditorAction(ACTION_ISEARCH_BACKSPACE)
-        myFixture.checkResult("<caret>foo")
-        assertEquals("", ISearchHandler.delegate?.text)
-        assertNull(ISearchHandler.delegate?.ui?.count)
-    }
-
     fun `test Previous search is not triggered if changing direction with empty search`() {
         myFixture.configureByText(FILE, "<caret>foo foo")
 

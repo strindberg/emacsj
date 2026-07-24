@@ -233,34 +233,12 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         cancel()
     }
 
-    private fun setupTypedActionHandler() {
-        TypedAction.getInstance().apply {
-            setupRawHandler(
-                object : RestorableTypedActionHandler(rawHandler) {
-                    override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
-                        val delegate = ISearchHandler.delegate
-                        if (delegate != null) {
-                            when (delegate.state) {
-                                EDIT -> delegate.text += charTyped.toString()
-                                SEARCH, FAILED -> delegate.searchAllCarets(
-                                    searchDirection = delegate.direction,
-                                    newText = charTyped.toString()
-                                )
-                            }
-                        } else {
-                            myOriginalHandler?.execute(editor, charTyped, dataContext)
-                        }
-                    }
-                }.also { typedHandler = it }
-            )
-        }
-    }
-
     private fun keyEventHandler(e: KeyEvent) {
         // ESC or ctrl-g pressed
         if (e.id == KeyEvent.KEY_PRESSED &&
             (e.keyCode == VK_ESCAPE || (e.keyCode == VK_G && (e.modifiersEx and CTRL_DOWN_MASK == CTRL_DOWN_MASK)))
         ) {
+            text = "" // Make sure search is not saved as previous search
             editor.caretModel.runForEachCaret { caret -> if (caret.isValid) caret.moveToOffset(caret.search.origin) }
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
