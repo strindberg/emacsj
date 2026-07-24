@@ -25,11 +25,9 @@ import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
 import com.intellij.find.FindResult
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
-import com.intellij.openapi.editor.actionSystem.TypedAction
 import com.intellij.openapi.editor.colors.EditorColors.IDENTIFIER_UNDER_CARET_ATTRIBUTES
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
@@ -37,7 +35,6 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
-import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
 import com.intellij.ui.JBColor
@@ -53,9 +50,7 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         }
     }
 
-    private val identifierAttributes: TextAttributes
-
-    private lateinit var typedHandler: RestorableTypedActionHandler
+    private val identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
 
     @VisibleForTesting
     internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
@@ -79,14 +74,11 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         }
 
     init {
-        identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
 
         editor.caretModel.addCaretListener(caretListener)
 
         initTitleText()
-
-        setupTypedActionHandler()
 
         if (editor.selectionModel.hasSelection()) {
             editor.caretModel.removeSecondaryCarets()
@@ -111,8 +103,6 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
 
     internal fun hide() {
         if (!isInhibitCancel) {
-            unregisterHandlers()
-
             editor.markupModel.removeAllHighlighters()
 
             editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
@@ -132,8 +122,6 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
     }
 
     internal fun startEditedSearch() {
-        setupTypedActionHandler()
-
         state = SEARCH
         ui.makeReadonly(text, false)
         searchAllCarets(searchDirection = direction, newText = text.also { text = "" })
@@ -156,7 +144,6 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
 
     internal fun edit() {
         state = EDIT
-        unregisterHandlers()
         isInhibitCancel = true
         ui.makeWriteable(text)
         isInhibitCancel = false
@@ -298,8 +285,14 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         ui.cancelUI()
     }
 
-    private fun unregisterHandlers() {
-        TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
+    internal fun handleChar(charTyped: Char) {
+        when (state) {
+            EDIT -> text += charTyped.toString()
+            SEARCH, FAILED -> searchAllCarets(
+                searchDirection = direction,
+                newText = charTyped.toString()
+            )
+        }
     }
 
     private fun updateUI(result: SearchResult) {

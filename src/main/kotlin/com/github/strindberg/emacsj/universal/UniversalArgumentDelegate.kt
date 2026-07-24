@@ -13,7 +13,6 @@ import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_BACKWARD
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_FORWARD
 import com.github.strindberg.emacsj.search.ACTION_REPLACE_REGEXP
 import com.github.strindberg.emacsj.search.ACTION_REPLACE_TEXT
-import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
 import com.github.strindberg.emacsj.space.ACTION_DELETE_SPACE
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.word.ACTION_TRANSPOSE_WORDS
@@ -27,7 +26,7 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
-import com.intellij.openapi.editor.actionSystem.TypedAction
+import com.intellij.openapi.editor.actionSystem.TypedActionHandler
 import org.jetbrains.annotations.VisibleForTesting
 
 internal val singleActions = setOf(
@@ -53,8 +52,6 @@ internal val singleActions = setOf(
 
 class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?, val caret: Caret?, val dataContext: DataContext) {
 
-    private val typedHandler: RestorableTypedActionHandler
-
     private var counter = 4
 
     @VisibleForTesting
@@ -69,25 +66,15 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?, v
     }
 
     init {
-        TypedAction.getInstance().apply {
-            setupRawHandler(
-                object : RestorableTypedActionHandler(rawHandler) {
-                    override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
-                        if (UniversalArgumentHandler.delegate != null) {
-                            if (charTyped.isDigit()) {
-                                addDigit(charTyped.digitToInt())
-                            } else {
-                                repeatCommand(getTimes()) { myOriginalHandler?.execute(editor, charTyped, dataContext) }
-                            }
-                        } else {
-                            myOriginalHandler?.execute(editor, charTyped, dataContext)
-                        }
-                    }
-                }.also { typedHandler = it }
-            )
-        }
-
         ui.show()
+    }
+
+    internal fun handleChar(originalHandler: TypedActionHandler, charTyped: Char) {
+        if (charTyped.isDigit()) {
+            addDigit(charTyped.digitToInt())
+        } else {
+            repeatCommand(getTimes()) { originalHandler.execute(editor, charTyped, dataContext) }
+        }
     }
 
     internal fun repeatAction(actionId: String) {
@@ -113,10 +100,7 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?, v
     internal fun getTimes(): Int = numeric ?: counter
 
     internal fun hide() {
-        unregisterHandlers()
-
         ui.cancelUI()
-
         UniversalArgumentHandler.delegate = null
     }
 
@@ -158,9 +142,5 @@ class UniversalArgumentDelegate(val editor: Editor, private var numeric: Int?, v
 
     internal fun cancel() {
         ui.cancelUI()
-    }
-
-    private fun unregisterHandlers() {
-        TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
     }
 }

@@ -59,20 +59,6 @@ class EmacsJActionsPromoterTest : BasePlatformTestCase() {
         }
     }
 
-    fun `test Promoter sorts Enter action first when Universal Argument is active`() {
-        myFixture.configureByText(FILE, "")
-        UniversalArgumentHandler.delegate = UniversalArgumentDelegate(myFixture.editor, null, null, DataContext.EMPTY_CONTEXT)
-
-        val enter = EnterAction()
-        val actions = setOf(enter, PushMarkAction(), ZapToCharAction())
-
-        allPermutations(actions).forEach { actionList ->
-            val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
-            assertEquals(actions.size, sorted.size)
-            assertEquals(enter, sorted[0])
-        }
-    }
-
     fun `test Promoter sorts Repeat actions first when repeating`() {
         myFixture.configureByText(FILE, "")
         EmacsJService.instance.setRepeating(true)

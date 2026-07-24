@@ -3,7 +3,6 @@ package com.github.strindberg.emacsj.zap
 import java.util.UUID
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.kill.KillUtil
-import com.github.strindberg.emacsj.search.RestorableTypedActionHandler
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.word.text
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_TO
@@ -11,15 +10,11 @@ import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_UP_TO
 import com.intellij.codeInsight.hint.HintManager
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.actionSystem.TypedAction
 import org.jetbrains.annotations.VisibleForTesting
 
 class ZapDelegate(val editor: Editor, val type: ZapType) {
-
-    private val typedHandler: RestorableTypedActionHandler
 
     @VisibleForTesting
     internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
@@ -32,25 +27,10 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     init {
-        TypedAction.getInstance().apply {
-            setupRawHandler(
-                object : RestorableTypedActionHandler(rawHandler) {
-                    override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
-                        val delegate = ZapHandler.delegate
-                        if (delegate != null) {
-                            doZap(charTyped)
-                        } else {
-                            myOriginalHandler?.execute(editor, charTyped, dataContext)
-                        }
-                    }
-                }.also { typedHandler = it }
-            )
-        }
-
         ui.show()
     }
 
-    private fun doZap(charTyped: Char) {
+    internal fun doZap(charTyped: Char) {
         val undoGroupId = UUID.randomUUID().toString()
         editor.caretModel.allCarets.reversed().forEach { caret ->
             val times = EmacsJService.instance.universalArgumentRelaxed()
@@ -86,19 +66,12 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     internal fun hide() {
-        unregisterHandlers()
-
         ui.cancelUI()
-
         ZapHandler.delegate = null
     }
 
     internal fun cancel() {
         ui.cancelUI()
-    }
-
-    private fun unregisterHandlers() {
-        TypedAction.getInstance().setupRawHandler(typedHandler.originalHandler)
     }
 
     private fun nextCharacter(text: CharSequence, startOffset: Int, character: Char, times: Int): Int? {
