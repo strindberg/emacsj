@@ -3,11 +3,13 @@ package com.github.strindberg.emacsj
 import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.github.strindberg.emacsj.zap.ZapHandler
+import com.intellij.codeInsight.template.impl.editorActions.TypedActionHandlerBase
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.TypedAction
+import com.intellij.openapi.editor.actionSystem.TypedActionHandler
 
 @Service
 internal class TypedActionHandlerInstaller : Disposable {
@@ -43,3 +45,5 @@ internal class TypedActionHandlerInstaller : Disposable {
         TypedAction.getInstance().setupRawHandler(handler.originalHandler)
     }
 }
+
+internal abstract class RestorableTypedActionHandler(val originalHandler: TypedActionHandler) : TypedActionHandlerBase(originalHandler)
