@@ -1,5 +1,6 @@
-package com.github.strindberg.emacsj
+package com.github.strindberg.emacsj.ui
 
+import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.actions.search.ISearchAction
 import com.github.strindberg.emacsj.actions.search.ReplaceAction
 import com.github.strindberg.emacsj.actions.universal.RepeatAction
@@ -15,13 +16,31 @@ internal class EmacsJActionsPromoter : ActionPromoter {
         actions.toMutableList().apply {
             when {
                 ISearchHandler.delegate != null -> {
-                    sortByDescending { it is ISearchAction }
+                    sortByDescending {
+                        when (it) {
+                            is ISearchAction -> 1
+                            is ReplaceAction, is RepeatAction -> -1
+                            else -> 0
+                        }
+                    }
                 }
                 ReplaceHandler.delegate != null -> {
-                    sortByDescending { it is ReplaceAction }
+                    sortByDescending {
+                        when (it) {
+                            is ReplaceAction -> 1
+                            is ISearchAction, is RepeatAction -> -1
+                            else -> 0
+                        }
+                    }
                 }
                 EmacsJService.instance.isRepeating() -> {
-                    sortByDescending { it is RepeatAction }
+                    sortByDescending {
+                        when (it) {
+                            is RepeatAction -> 1
+                            is ISearchAction, is ReplaceAction -> -1
+                            else -> 0
+                        }
+                    }
                 }
                 else -> {
                     sortBy { it is ISearchAction || it is ReplaceAction || it is RepeatAction }

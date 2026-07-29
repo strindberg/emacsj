@@ -8,7 +8,7 @@
     <resource-bundle>messages.EmacsJBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <actionPromoter implementation="com.github.strindberg.emacsj.EmacsJActionsPromoter" order="last"/>
+        <actionPromoter implementation="com.github.strindberg.emacsj.ui.EmacsJActionsPromoter" order="last"/>
         <additionalTextAttributes scheme="Default" file="colorSchemes/EmacsJDefault.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/EmacsJDarcula.xml"/>
         <bundledKeymap file="EmacsJ.xml"/>
@@ -28,7 +28,7 @@
     <applicationListeners>
         <listener class="com.github.strindberg.emacsj.EmacsJCommandListener"
                   topic="com.intellij.openapi.command.CommandListener"/>
-        <listener class="com.github.strindberg.emacsj.EmacsJCancelListener"
+        <listener class="com.github.strindberg.emacsj.ui.EmacsJCancelListener"
                   topic="com.intellij.openapi.actionSystem.ex.AnActionListener"/>
     </applicationListeners>
 

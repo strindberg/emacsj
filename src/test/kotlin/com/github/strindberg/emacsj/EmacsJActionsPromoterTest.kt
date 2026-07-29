@@ -12,10 +12,9 @@ import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.search.ReplaceDelegate
 import com.github.strindberg.emacsj.search.ReplaceHandler
 import com.github.strindberg.emacsj.search.SearchType
-import com.github.strindberg.emacsj.universal.UniversalArgumentDelegate
+import com.github.strindberg.emacsj.ui.EmacsJActionsPromoter
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.editor.actions.EnterAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 const val FILE = "file.txt"
@@ -36,12 +35,15 @@ class EmacsJActionsPromoterTest : BasePlatformTestCase() {
 
         val isearch1 = ISearchTextForwardAction()
         val isearch2 = ISearchRegexpForwardAction()
-        val actions = setOf(isearch1, isearch2, PushMarkAction(), ZapToCharAction())
+        val cancelRepeat = CancelRepeatAction()
+        val replace = ReplaceNewLineAction()
+
+        val actions = setOf(isearch1, isearch2, cancelRepeat, replace, PushMarkAction(), ZapToCharAction())
 
         allPermutations(actions).forEach { actionList ->
             val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
             assertEquals(actions.size, sorted.size)
-            assertTrue(sorted[0] == isearch1 || sorted[0] == isearch2)
+            assertTrue((sorted[0] == isearch1 || sorted[0] == isearch2) && (sorted[5] == cancelRepeat || sorted[5] == replace))
         }
     }
 
@@ -50,12 +52,14 @@ class EmacsJActionsPromoterTest : BasePlatformTestCase() {
         ReplaceHandler.delegate = ReplaceDelegate(editor = myFixture.editor, type = SearchType.TEXT, selection = null, lastSearch = null)
 
         val replace = ReplaceNewLineAction()
-        val actions = setOf(replace, PushMarkAction(), ZapToCharAction())
+        val isearch = ISearchTextForwardAction()
+        val cancelRepeat = CancelRepeatAction()
+        val actions = setOf(replace, isearch, cancelRepeat, PushMarkAction(), ZapToCharAction())
 
         allPermutations(actions).forEach { actionList ->
             val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
             assertEquals(actions.size, sorted.size)
-            assertEquals(replace, sorted[0])
+            assertTrue(replace == sorted[0] && (sorted[4] == cancelRepeat || sorted[4] == isearch))
         }
     }
 
@@ -64,12 +68,31 @@ class EmacsJActionsPromoterTest : BasePlatformTestCase() {
         EmacsJService.instance.setRepeating(true)
 
         val cancel = CancelRepeatAction()
-        val actions = setOf(cancel, PushMarkAction(), ZapToCharAction())
+        val replace = ReplaceNewLineAction()
+        val isearch = ISearchTextForwardAction()
+        val actions = setOf(cancel, replace, isearch, PushMarkAction(), ZapToCharAction())
 
         allPermutations(actions).forEach { actionList ->
             val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
             assertEquals(actions.size, sorted.size)
-            assertEquals(cancel, sorted[0])
+            assertTrue(cancel == sorted[0] && (sorted[4] == replace || sorted[4] == isearch))
+        }
+    }
+
+    fun `test Promoter sorts EmacsJ actions last when no ui is active`() {
+        myFixture.configureByText(FILE, "")
+
+        val cancel = CancelRepeatAction()
+        val replace = ReplaceNewLineAction()
+        val isearch = ISearchTextForwardAction()
+        val push = PushMarkAction()
+        val zap = ZapToCharAction()
+        val actions = setOf(cancel, replace, isearch, push, zap)
+
+        allPermutations(actions).forEach { actionList ->
+            val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
+            assertEquals(actions.size, sorted.size)
+            assertTrue((push == sorted[0] || zap == sorted[0]) && (sorted[4] == replace || sorted[4] == isearch || sorted[4] == cancel))
         }
     }
 }

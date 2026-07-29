@@ -1,4 +1,4 @@
-package com.github.strindberg.emacsj
+package com.github.strindberg.emacsj.ui
 
 import com.github.strindberg.emacsj.actions.search.ISearchAction
 import com.github.strindberg.emacsj.actions.universal.UniversalArgumentAction
@@ -19,7 +19,7 @@ internal class EmacsJCancelListener : AnActionListener {
     private var universalArgumentDelegate: UniversalArgumentDelegate? = null
 
     init {
-        ApplicationManager.getApplication().service<TypedActionHandlerInstaller>()
+        ApplicationManager.getApplication().service<EmacsJTypedActionService>()
     }
 
     override fun beforeActionPerformed(action: AnAction, event: AnActionEvent) {
