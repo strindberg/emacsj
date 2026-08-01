@@ -90,7 +90,9 @@ There are four ways to start a search:
 
 Directly after a search has been initiated, pressing one of the search keys again will bring up the previous text used for search. This is
 the quickest way to resume a search. History is kept separate between text search and regexp search, so only previous searches by the same
-type are offered. The search history does not distinguish between forward and backward searches.
+type are offered. The search history does not distinguish between forward and backward searches. Previous searches can also be cycled
+through with `alt-p` and `alt-n` when Isearch is active. Note that if a search is aborted with `ESCAPE` or `ctrl-g`, the history of that
+search is not saved.
 
 Except for the keys below, any command key will abort search and execute the command. This makes Isearch handy as a navigation tool
 as well: search for the word where you want to end up and keep on navigating with no extra key press required.
@@ -581,7 +583,7 @@ Commands:
 ### Goto Line
 
 *Goto Line* asks the user for a line number and moves the primary caret to the specified line. If the position is given in the format
-"line: column", the caret is also moved to the specified column. If a selection is not active, the current position before the jump is added
+"line:column", the caret is also moved to the specified column. If a selection is not active, the current position before the jump is added
 to the mark ring.
 
 Commands:
