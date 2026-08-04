@@ -21,10 +21,14 @@ import com.github.strindberg.emacsj.search.StartType.FIRST_SEARCH
 import com.github.strindberg.emacsj.search.StartType.REPEATED_SEARCH
 import com.github.strindberg.emacsj.search.StartType.WRAPAROUND
 import com.github.strindberg.emacsj.ui.CommonUI
+import com.github.strindberg.emacsj.ui.UIDelegate
+import com.github.strindberg.emacsj.ui.constructInput
+import com.github.strindberg.emacsj.ui.isActive
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
 import com.intellij.find.FindResult
+import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
@@ -32,17 +36,19 @@ import com.intellij.openapi.editor.colors.EditorColors.IDENTIFIER_UNDER_CARET_AT
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
 private enum class StartType { WRAPAROUND, FIRST_SEARCH, REPEATED_SEARCH }
 
-internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, var direction: Direction) {
+internal class ISearchDelegate(override val editor: Editor, var searchType: SearchType, var direction: Direction) : UIDelegate {
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -64,6 +70,8 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
 
     private var isInhibitCancel = false
 
+    private var isDisposed = false
+
     @VisibleForTesting
     internal var caseType: CaseType = UNSPECIFIED
 
@@ -74,6 +82,24 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         }
 
     init {
+        EditorUtil.disposeWithEditor(editor, this)
+
+        // Handle dead keys, i.e. accents waiting for their main character. If this dispatcher is not used,
+        // typed accents show in the editor until the full character is composed.
+        IdeEventQueue.getInstance().addDispatcher(
+            { e ->
+                val delegate = ISearchHandler.delegate
+                if (delegate.isActive(e)) {
+                    e.constructInput()?.let { delegate.handleChar(it) }
+                    e.consume()
+                    true
+                } else {
+                    false
+                }
+            },
+            this
+        )
+
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
 
         editor.caretModel.addCaretListener(caretListener)
@@ -103,20 +129,32 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
 
     internal fun hide() {
         if (!isInhibitCancel) {
-            editor.markupModel.removeAllHighlighters()
+            Disposer.dispose(this)
+        }
+    }
 
-            editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
+    override fun dispose() {
+        if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
+            isDisposed = true
 
-            editor.caretModel.removeCaretListener(caretListener)
+            if (!editor.isDisposed) {
+                editor.markupModel.removeAllHighlighters()
 
-            ISearchHandler.searchConcluded(text, searchType)
+                editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
+
+                editor.caretModel.removeCaretListener(caretListener)
+            }
+
+            ISearchHandler.searchConcluded(text, searchType) // This line needs to run before the line below since it reads UI text.
 
             ui.cancelUI()
 
             ISearchHandler.delegate = null
 
-            editor.caretModel.runForEachCaret {
-                it.clearData()
+            if (!editor.isDisposed) {
+                editor.caretModel.runForEachCaret {
+                    it.clearData()
+                }
             }
         }
     }
@@ -263,12 +301,12 @@ internal class ISearchDelegate(val editor: Editor, var searchType: SearchType, v
         ui.cancelUI()
     }
 
-    internal fun handleChar(charTyped: Char) {
+    internal fun handleChar(charTyped: String) {
         when (state) {
-            EDIT -> text += charTyped.toString()
+            EDIT -> text += charTyped
             SEARCH, FAILED -> searchAllCarets(
                 searchDirection = direction,
-                newText = charTyped.toString()
+                newText = charTyped
             )
         }
     }

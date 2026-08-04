@@ -4,13 +4,18 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ENTER
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.ui.CommonUI
+import com.github.strindberg.emacsj.ui.UIDelegate
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
+import com.intellij.openapi.editor.ex.util.EditorUtil
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.VisibleForTesting
 
-class GotoLineDelegate(val editor: Editor) {
+class GotoLineDelegate(override val editor: Editor) : UIDelegate {
+
+    private var isDisposed = false
 
     @VisibleForTesting
     internal val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler).apply {
@@ -24,6 +29,8 @@ class GotoLineDelegate(val editor: Editor) {
     }
 
     init {
+        EditorUtil.disposeWithEditor(editor, this)
+
         editor.caretModel.removeSecondaryCarets()
         editor.caretModel.addCaretListener(caretListener)
 
@@ -68,8 +75,15 @@ class GotoLineDelegate(val editor: Editor) {
     }
 
     internal fun hide() {
-        ui.cancelUI()
+        Disposer.dispose(this)
+    }
 
-        GotoLineHandler.delegate = null
+    override fun dispose() {
+        if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
+            isDisposed = true
+            ui.cancelUI()
+
+            GotoLineHandler.delegate = null
+        }
     }
 }

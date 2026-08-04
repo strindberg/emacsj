@@ -4,17 +4,25 @@ import java.util.UUID
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.ui.CommonUI
+import com.github.strindberg.emacsj.ui.UIDelegate
+import com.github.strindberg.emacsj.ui.constructInput
+import com.github.strindberg.emacsj.ui.isActive
 import com.github.strindberg.emacsj.word.text
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_UP_TO
 import com.intellij.codeInsight.hint.HintManager
+import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ex.util.EditorUtil
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.VisibleForTesting
 
-class ZapDelegate(val editor: Editor, val type: ZapType) {
+class ZapDelegate(override val editor: Editor, val type: ZapType) : UIDelegate {
+
+    private var isDisposed = false
 
     @VisibleForTesting
     internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
@@ -27,6 +35,24 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     init {
+        EditorUtil.disposeWithEditor(editor, this)
+
+        // Handle dead keys, i.e. accents waiting for their main character. If this dispatcher is not used,
+        // typed accents show in the editor until the full character is composed.
+        IdeEventQueue.getInstance().addDispatcher(
+            { e ->
+                val delegate = ZapHandler.delegate
+                if (delegate.isActive(e)) {
+                    e.constructInput()?.let { delegate.doZap(it.first()) }
+                    e.consume()
+                    true
+                } else {
+                    false
+                }
+            },
+            this
+        )
+
         ui.show()
     }
 
@@ -66,8 +92,17 @@ class ZapDelegate(val editor: Editor, val type: ZapType) {
     }
 
     internal fun hide() {
-        ui.cancelUI()
-        ZapHandler.delegate = null
+        Disposer.dispose(this)
+    }
+
+    override fun dispose() {
+        if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
+            isDisposed = true
+
+            ui.cancelUI()
+
+            ZapHandler.delegate = null
+        }
     }
 
     internal fun cancel() {
