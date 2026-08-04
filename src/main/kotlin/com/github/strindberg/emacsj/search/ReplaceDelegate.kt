@@ -6,6 +6,7 @@ import java.util.UUID
 import com.github.strindberg.emacsj.search.ReplaceHandler.Companion.addPrevious
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.ui.CommonUI
+import com.github.strindberg.emacsj.ui.UIDelegate
 import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.github.strindberg.emacsj.word.substring
 import com.github.strindberg.emacsj.word.text
@@ -24,14 +25,23 @@ import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.colors.EditorColors.IDENTIFIER_UNDER_CARET_ATTRIBUTES
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
+import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
-internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val selection: IntRange? = null, lastSearch: Replace? = null) {
+internal class ReplaceDelegate(
+    override val editor: Editor,
+    val type: SearchType,
+    val selection: IntRange? = null,
+    lastSearch: Replace? = null,
+) : UIDelegate {
+
+    private var isDisposed = false
 
     @VisibleForTesting
     internal val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
@@ -75,6 +85,8 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
     private var isReplaced = false
 
     init {
+        EditorUtil.disposeWithEditor(editor, this)
+
         lastSearch?.let { (search, replace) ->
             searchArg = search
             replaceArg = replace
@@ -97,6 +109,14 @@ internal class ReplaceDelegate(val editor: Editor, val type: SearchType, val sel
 
     internal fun hide() {
         if (!isInhibitCancel) {
+            Disposer.dispose(this)
+        }
+    }
+
+    override fun dispose() {
+        if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
+            isDisposed = true
+
             editor.markupModel.removeAllHighlighters()
 
             editor.caretModel.removeCaretListener(caretListener)
