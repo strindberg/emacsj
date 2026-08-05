@@ -1,7 +1,5 @@
 package com.github.strindberg.emacsj.zap
 
-import java.awt.event.KeyEvent
-import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
@@ -12,67 +10,6 @@ import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT5
 private const val FILE = "zapfile.txt"
 
 class ZapTest : EmacsJTestCase() {
-
-    fun `test Universal argument applies to every caret`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |a<caret>bxcxd e
-                |f<caret>gxhxi j
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
-        myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
-        myFixture.type("x")
-
-        myFixture.checkResult(
-            """
-                |a<caret>d e
-                |f<caret>i j
-            """.trimMargin()
-        )
-    }
-
-    fun `test Zap forward works with multiple carets`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |bar <caret>fool baz
-                |qux <caret>fool zed
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
-        myFixture.type("l")
-
-        myFixture.checkResult(
-            """
-                |bar <caret> baz
-                |qux <caret> zed
-            """.trimMargin()
-        )
-    }
-
-    fun `test Zap backward works with multiple carets`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |bar fool<caret> baz
-                |qux fool<caret> zed
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
-        myFixture.type("f")
-
-        myFixture.checkResult(
-            """
-                |bar <caret> baz
-                |qux <caret> zed
-            """.trimMargin()
-        )
-    }
 
     fun `test Zap up to works`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
@@ -298,6 +235,67 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult(") ) ) ) )<caret>")
     }
 
+    fun `test Universal argument applies to every caret`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |a<caret>bxcxd e
+                |f<caret>gxhxi j
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
+        myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
+        myFixture.type("x")
+
+        myFixture.checkResult(
+            """
+                |a<caret>d e
+                |f<caret>i j
+            """.trimMargin()
+        )
+    }
+
+    fun `test Zap forward works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |bar <caret>fool baz
+                |qux <caret>fool zed
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
+        myFixture.type("l")
+
+        myFixture.checkResult(
+            """
+                |bar <caret> baz
+                |qux <caret> zed
+            """.trimMargin()
+        )
+    }
+
+    fun `test Zap backward works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |bar fool<caret> baz
+                |qux fool<caret> zed
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
+        myFixture.type("f")
+
+        myFixture.checkResult(
+            """
+                |bar <caret> baz
+                |qux <caret> zed
+            """.trimMargin()
+        )
+    }
+
     fun `test Pressing escape aborts`() {
         myFixture.configureByText(FILE, "<caret>bar Foo foo")
 
@@ -308,12 +306,6 @@ class ZapTest : EmacsJTestCase() {
     }
 
     private fun pressEscape() {
-        ZapHandler.delegate?.run {
-            val popup = ui.popup
-            val textField = ui.textField
-            popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
-            popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
-        }
-        ZapHandler.delegate?.hide()
+        pressKey(ZapHandler.delegate?.ui, VK_ESCAPE)
     }
 }

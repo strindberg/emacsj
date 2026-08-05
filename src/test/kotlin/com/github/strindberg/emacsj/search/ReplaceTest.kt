@@ -1,7 +1,6 @@
 package com.github.strindberg.emacsj.search
 
 import java.awt.event.KeyEvent
-import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
@@ -11,25 +10,6 @@ import com.intellij.openapi.editor.VisualPosition
 private const val FILE = "replacefile.txt"
 
 class ReplaceTest : EmacsJTestCase() {
-
-    fun `test Adding a caret cancels the replace session`() {
-        myFixture.configureByText(FILE, "<caret>foo\nbar")
-        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
-        assertNotNull(ReplaceHandler.delegate)
-
-        myFixture.editor.caretModel.addCaret(VisualPosition(1, 0))
-
-        assertNull(ReplaceHandler.delegate)
-    }
-
-    fun `test Replace reduces multiple carets to one`() {
-        myFixture.configureByText(FILE, "fo<caret>o\nba<caret>r")
-        assertEquals(2, myFixture.editor.caretModel.caretCount)
-
-        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
-
-        assertEquals(1, myFixture.editor.caretModel.caretCount)
-    }
 
     override fun setUp() {
         super.setUp()
@@ -122,8 +102,6 @@ class ReplaceTest : EmacsJTestCase() {
 
         typeChar('y')
         typeChar('y')
-
-        ReplaceHandler.delegate!!.hide()
 
         myFixture.checkResult("bar bar<caret> foo")
     }
@@ -697,16 +675,31 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("baz baz foo<caret>")
     }
 
+    fun `test Adding a caret cancels the replace session`() {
+        myFixture.configureByText(FILE, "<caret>foo\nbar")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+        assertNotNull(ReplaceHandler.delegate)
+
+        myFixture.editor.caretModel.addCaret(VisualPosition(1, 0))
+
+        assertNull(ReplaceHandler.delegate)
+    }
+
+    fun `test Replace reduces multiple carets to one`() {
+        myFixture.configureByText(FILE, "fo<caret>o\nba<caret>r")
+        assertEquals(2, myFixture.editor.caretModel.caretCount)
+
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        assertEquals(1, myFixture.editor.caretModel.caretCount)
+    }
+
     private fun setText(text: String) {
-        ReplaceHandler.delegate!!.ui.text = (text)
+        ReplaceHandler.delegate!!.ui.text = text
     }
 
     private fun pressEnter() {
-        val textField = ReplaceHandler.delegate!!.ui.textField
-        ReplaceHandler.delegate!!.ui.popup.apply {
-            dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
-            dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
-        }
+        pressKey(ReplaceHandler.delegate?.ui, VK_ENTER)
     }
 
     private fun typeChar(char: Char) {

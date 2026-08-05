@@ -6,44 +6,6 @@ private const val FILE = "wordchangefile.txt"
 
 class WordChangeTest : EmacsJTestCase() {
 
-    fun `test Upper case works with multiple carets`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |<caret>foo bar
-                |<caret>baz qux
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_UPPER_CASE)
-
-        myFixture.checkResult(
-            """
-                |FOO<caret> bar
-                |BAZ<caret> qux
-            """.trimMargin()
-        )
-    }
-
-    fun `test Capital case works with multiple carets`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |<caret>foo bar
-                |<caret>baz qux
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_CAPITAL_CASE)
-
-        myFixture.checkResult(
-            """
-                |Foo<caret> bar
-                |Baz<caret> qux
-            """.trimMargin()
-        )
-    }
-
     fun `test Capitalize word 00`() {
         myFixture.configureByText(FILE, "<caret>foo bar")
         myFixture.performEditorAction(ACTION_CAPITAL_CASE)
@@ -441,6 +403,44 @@ class WordChangeTest : EmacsJTestCase() {
             """
                 |foo<caret>
                 |poo<caret>
+            """.trimMargin()
+        )
+    }
+
+    fun `test Upper case works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |<caret>foo bar
+                |<caret>baz qux
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_UPPER_CASE)
+
+        myFixture.checkResult(
+            """
+                |FOO<caret> bar
+                |BAZ<caret> qux
+            """.trimMargin()
+        )
+    }
+
+    fun `test Capital case works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |<caret>foo bar
+                |<caret>baz qux
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_CAPITAL_CASE)
+
+        myFixture.checkResult(
+            """
+                |Foo<caret> bar
+                |Baz<caret> qux
             """.trimMargin()
         )
     }

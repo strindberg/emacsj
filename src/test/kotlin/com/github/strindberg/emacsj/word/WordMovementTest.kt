@@ -6,44 +6,6 @@ private const val FILE = "wordmovementfile.txt"
 
 class WordMovementTest : EmacsJTestCase() {
 
-    fun `test Move to next word works with multiple carets`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |<caret>foo bar
-                |<caret>baz qux
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_NEXT_WORD)
-
-        myFixture.checkResult(
-            """
-                |foo<caret> bar
-                |baz<caret> qux
-            """.trimMargin()
-        )
-    }
-
-    fun `test Move to previous word works with multiple carets`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |foo bar<caret>
-                |baz qux<caret>
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
-
-        myFixture.checkResult(
-            """
-                |foo <caret>bar
-                |baz <caret>qux
-            """.trimMargin()
-        )
-    }
-
     fun `test Next word 00`() {
         myFixture.configureByText(FILE, "foo<caret>")
         myFixture.performEditorAction(ACTION_NEXT_WORD)
@@ -162,5 +124,43 @@ class WordMovementTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret>BarBaz")
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
         myFixture.checkResult("<caret>fooBarBaz")
+    }
+
+    fun `test Move to next word works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |<caret>foo bar
+                |<caret>baz qux
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_NEXT_WORD)
+
+        myFixture.checkResult(
+            """
+                |foo<caret> bar
+                |baz<caret> qux
+            """.trimMargin()
+        )
+    }
+
+    fun `test Move to previous word works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |foo bar<caret>
+                |baz qux<caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
+
+        myFixture.checkResult(
+            """
+                |foo <caret>bar
+                |baz <caret>qux
+            """.trimMargin()
+        )
     }
 }

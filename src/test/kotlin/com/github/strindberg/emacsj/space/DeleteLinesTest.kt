@@ -6,33 +6,6 @@ private const val FILE = "deletelinesfile.txt"
 
 class DeleteLinesTest : EmacsJTestCase() {
 
-    fun `test Delete lines works with multiple carets`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |foo<caret>
-                |
-                |
-                |bar
-                |baz<caret>
-                |
-                |
-                |qux
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_DELETE_LINES)
-
-        myFixture.checkResult(
-            """
-                |foo<caret>
-                |bar
-                |baz<caret>
-                |qux
-            """.trimMargin()
-        )
-    }
-
     fun `test Do nothing on non-empty lines`() {
         myFixture.configureByText(
             FILE,
@@ -292,6 +265,33 @@ class DeleteLinesTest : EmacsJTestCase() {
             """
                 |<caret>
                 |foo bar
+            """.trimMargin()
+        )
+    }
+
+    fun `test Delete lines works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |foo<caret>
+                |
+                |
+                |bar
+                |baz<caret>
+                |
+                |
+                |qux
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_DELETE_LINES)
+
+        myFixture.checkResult(
+            """
+                |foo<caret>
+                |bar
+                |baz<caret>
+                |qux
             """.trimMargin()
         )
     }

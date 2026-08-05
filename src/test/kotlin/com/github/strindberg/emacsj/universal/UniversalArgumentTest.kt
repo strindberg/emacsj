@@ -1,7 +1,5 @@
 package com.github.strindberg.emacsj.universal
 
-import java.awt.event.KeyEvent
-import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.EmacsJTestCase
@@ -62,95 +60,40 @@ class UniversalArgumentTest : EmacsJTestCase() {
     }
 
     fun `test Numeric universal arguments work`() {
-        myFixture.configureByText(FILE, "<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
-        myFixture.type("a")
-        checkResult("a<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        checkResult("<caret>a")
-        UniversalArgumentHandler.delegate?.hide()
+        listOf(
+            ACTION_UNIVERSAL_ARGUMENT1 to 1,
+            ACTION_UNIVERSAL_ARGUMENT2 to 2,
+            ACTION_UNIVERSAL_ARGUMENT3 to 3,
+            ACTION_UNIVERSAL_ARGUMENT4 to 4,
+            ACTION_UNIVERSAL_ARGUMENT5 to 5,
+            ACTION_UNIVERSAL_ARGUMENT6 to 6,
+            ACTION_UNIVERSAL_ARGUMENT7 to 7,
+            ACTION_UNIVERSAL_ARGUMENT8 to 8,
+            ACTION_UNIVERSAL_ARGUMENT9 to 9
+        ).forEach { (action, times) ->
+            myFixture.configureByText(FILE, "<caret>")
 
-        myFixture.configureByText(FILE, "<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
-        myFixture.type("a")
-        checkResult("aa<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        checkResult("<caret>aa")
-        UniversalArgumentHandler.delegate?.hide()
+            myFixture.performEditorAction(action)
+            myFixture.type("a")
+            checkResult("a".repeat(times) + "<caret>")
 
-        myFixture.configureByText(FILE, "<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
-        myFixture.type("a")
-        checkResult("aaa<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        checkResult("<caret>aaa")
-        UniversalArgumentHandler.delegate?.hide()
+            myFixture.performEditorAction(action)
+            myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
+            checkResult("<caret>" + "a".repeat(times))
 
-        myFixture.configureByText(FILE, "<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT4)
-        myFixture.type("a")
-        checkResult("aaaa<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT4)
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        checkResult("<caret>aaaa")
-        UniversalArgumentHandler.delegate?.hide()
-
-        myFixture.configureByText(FILE, "<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
-        myFixture.type("a")
-        checkResult("aaaaa<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        checkResult("<caret>aaaaa")
-        UniversalArgumentHandler.delegate?.hide()
-
-        myFixture.configureByText(FILE, "<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT6)
-        myFixture.type("a")
-        checkResult("aaaaaa<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT6)
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        checkResult("<caret>aaaaaa")
-        UniversalArgumentHandler.delegate?.hide()
-
-        myFixture.configureByText(FILE, "<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT7)
-        myFixture.type("a")
-        checkResult("aaaaaaa<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT7)
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        checkResult("<caret>aaaaaaa")
-        UniversalArgumentHandler.delegate?.hide()
-
-        myFixture.configureByText(FILE, "<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT8)
-        myFixture.type("a")
-        checkResult("aaaaaaaa<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT8)
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        checkResult("<caret>aaaaaaaa")
-        UniversalArgumentHandler.delegate?.hide()
-
-        myFixture.configureByText(FILE, "<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT9)
-        myFixture.type("a")
-        checkResult("aaaaaaaaa<caret>")
-        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT9)
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        checkResult("<caret>aaaaaaaaa")
+            UniversalArgumentHandler.delegate?.hide()
+        }
     }
 
-    fun `test Numeric universal argument 10 works two ways`() {
+    fun `test Numeric universal argument 10 works 1`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.type("0")
         myFixture.type("a")
         checkResult("aaaaaaaaaa<caret>")
-        UniversalArgumentHandler.delegate?.hide()
+    }
 
+    fun `test Numeric universal argument 10 works 2`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
@@ -207,12 +150,7 @@ class UniversalArgumentTest : EmacsJTestCase() {
     }
 
     private fun pressEscape() {
-        UniversalArgumentHandler.delegate?.run {
-            val popup = ui.popup
-            val textField = ui.textField
-            popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
-            popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
-        }
+        pressKey(UniversalArgumentHandler.delegate?.ui, VK_ESCAPE)
         UniversalArgumentHandler.delegate?.hide()
     }
 }

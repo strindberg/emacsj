@@ -18,16 +18,12 @@ private const val HIGHLIGHT_TIMEOUT_SECONDS = 10
 @Suppress("LargeClass", "ReplaceSafeCallChainWithRun")
 class ISearchTest : EmacsJTestCase() {
 
-    fun `test Adding a caret cancels the search`() {
-        myFixture.configureByText(FILE, "<caret>foo\nbar")
-        performEditorAction(ACTION_ISEARCH_FORWARD)
-        type("o")
-        assertNotNull(ISearchHandler.delegate)
-
-        myFixture.editor.caretModel.addCaret(VisualPosition(1, 0))
-
-        assertNull(ISearchHandler.delegate)
-    }
+    /** Match count as shown in the search UI, once debounced highlighting has reported it. */
+    private val searchCount: Pair<Int, Int>?
+        get() {
+            waitForHighlighting()
+            return ISearchHandler.delegate?.ui?.count
+        }
 
     override fun setUp() {
         super.setUp()
@@ -42,12 +38,16 @@ class ISearchTest : EmacsJTestCase() {
         }
     }
 
-    /** Match count as shown in the search UI, once debounced highlighting has reported it. */
-    private val searchCount: Pair<Int, Int>?
-        get() {
-            waitForHighlighting()
-            return ISearchHandler.delegate?.ui?.count
-        }
+    fun `test Adding a caret cancels the search`() {
+        myFixture.configureByText(FILE, "<caret>foo\nbar")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("o")
+        assertNotNull(ISearchHandler.delegate)
+
+        myFixture.editor.caretModel.addCaret(VisualPosition(1, 0))
+
+        assertNull(ISearchHandler.delegate)
+    }
 
     fun `test Simple search works`() {
         myFixture.configureByText(FILE, "<caret>foo")
@@ -977,20 +977,6 @@ class ISearchTest : EmacsJTestCase() {
     }
 
     fun `test Pasting from clipboard works`() {
-        myFixture.configureByText(FILE, "<caret>foo bar foo")
-        CopyPasteManager.getInstance().setContents(StringSelection("bar"))
-
-        performEditorAction(ACTION_ISEARCH_FORWARD)
-        performEditorAction(ACTION_ISEARCH_PASTE)
-        myFixture.checkResult("foo bar<caret> foo")
-        assertEquals("bar", ISearchHandler.delegate?.text)
-
-        performEditorAction(ACTION_ISEARCH_BACKSPACE)
-        myFixture.checkResult("<caret>foo bar foo")
-        assertEquals("", ISearchHandler.delegate?.text)
-    }
-
-    fun `test Pasting with plugin paste works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -2295,11 +2281,6 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    private fun pressEnter() {
-        performEditorAction(ACTION_ISEARCH_ENTER)
-        ISearchHandler.delegate?.hide()
-    }
-
     /**
      * Search actions settle before returning. Highlighting is debounced, and a breadcrumb records the match count
      * as it stands when the next action starts, so firing actions faster than the debounce would snapshot counts
@@ -2332,11 +2313,12 @@ class ISearchTest : EmacsJTestCase() {
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
 
+    private fun pressEnter() {
+        performEditorAction(ACTION_ISEARCH_ENTER)
+    }
+
     private fun pressEscape() {
-        val popup = ISearchHandler.delegate?.ui?.popup
-        val textField = ISearchHandler.delegate?.ui?.textField
-        popup?.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
-        popup?.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ESCAPE, CHAR_UNDEFINED))
+        pressKey(ISearchHandler.delegate?.ui, VK_ESCAPE)
         ISearchHandler.delegate?.hide()
     }
 

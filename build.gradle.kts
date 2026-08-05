@@ -130,16 +130,16 @@ tasks {
     }
 }
 
-val runIde52 by intellijPlatformTesting.runIde.registering {
-    version = "2025.2.6.3"
-}
-
 val runIde53 by intellijPlatformTesting.runIde.registering {
     version = "2025.3.6.1"
 }
 
 val runIde61 by intellijPlatformTesting.runIde.registering {
     version = "2026.1.4"
+}
+
+val runIde62 by intellijPlatformTesting.runIde.registering {
+    version = "2026.2.0.1"
 }
 
 changelog {
