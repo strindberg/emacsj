@@ -7,6 +7,29 @@ private const val FILE = "file.txt"
 
 class CopyFromAboveCommandTest : EmacsJTestCase() {
 
+    fun `test Copy from above works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |el pueblo
+                |<caret>
+                |unido
+                |<caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
+
+        myFixture.checkResult(
+            """
+                |el pueblo
+                |el pueblo<caret>
+                |unido
+                |unido<caret>
+            """.trimMargin()
+        )
+    }
+
     fun `test Whole line is duplicated from position 0`() {
         myFixture.configureByText(
             FILE,

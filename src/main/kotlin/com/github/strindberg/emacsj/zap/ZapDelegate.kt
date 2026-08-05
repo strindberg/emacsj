@@ -58,8 +58,8 @@ class ZapDelegate(override val editor: Editor, val type: ZapType) : UIDelegate {
 
     internal fun doZap(charTyped: Char) {
         val undoGroupId = UUID.randomUUID().toString()
+        val times = EmacsJService.instance.universalArgumentRelaxed()
         editor.caretModel.allCarets.reversed().forEach { caret ->
-            val times = EmacsJService.instance.universalArgumentRelaxed()
             val (start, end) = when (type) {
                 FORWARD_TO, FORWARD_UP_TO -> Pair(
                     caret.offset,
