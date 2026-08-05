@@ -18,7 +18,7 @@ class ISearchEnterHandler : EditorActionHandler() {
         ISearchHandler.delegate?.let { delegate ->
             when (delegate.state) {
                 EDIT -> delegate.startEditedSearch()
-                SEARCH, FAILED -> delegate.cancel()
+                SEARCH, FAILED -> delegate.hide()
             }
         }
     }

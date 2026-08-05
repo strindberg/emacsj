@@ -88,7 +88,7 @@ class ZapDelegate(override val editor: Editor, val type: ZapType) : UIDelegate {
                 HintManager.getInstance().showInformationHint(editor, "Search failed: $charTyped")
             }
         }
-        cancel()
+        hide()
     }
 
     internal fun hide() {
@@ -103,10 +103,6 @@ class ZapDelegate(override val editor: Editor, val type: ZapType) : UIDelegate {
 
             ZapHandler.delegate = null
         }
-    }
-
-    internal fun cancel() {
-        ui.cancelUI()
     }
 
     private fun nextCharacter(text: CharSequence, startOffset: Int, character: Char, times: Int): Int? {

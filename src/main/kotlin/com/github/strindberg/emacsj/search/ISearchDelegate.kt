@@ -52,7 +52,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
-            cancel()
+            hide()
         }
     }
 
@@ -257,7 +257,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
                 caret.moveToOffset(if (direction == FORWARD) caret.search.match.start else caret.search.match.end)
             }
         }
-        cancel()
+        hide()
     }
 
     internal fun markSearchStopAndThenCancel() {
@@ -268,7 +268,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
                 caret.moveToOffset(if (direction == FORWARD) caret.search.match.end else caret.search.match.start)
             }
         }
-        cancel()
+        hide()
     }
 
     private fun keyEventHandler(e: KeyEvent) {
@@ -295,10 +295,6 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
                 )
             }
         }
-    }
-
-    internal fun cancel() {
-        ui.cancelUI()
     }
 
     internal fun handleChar(charTyped: String) {
