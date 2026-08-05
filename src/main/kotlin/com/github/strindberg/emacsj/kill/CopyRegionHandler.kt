@@ -57,7 +57,7 @@ class CopyRegionHandler : EditorActionHandler() {
                 HighlighterTargetArea.EXACT_RANGE
             )
             AppExecutorUtil.getAppScheduledExecutorService().schedule(
-                { ApplicationManager.getApplication().invokeLater { editor.markupModel.removeHighlighter(highlighter) } },
+                { ApplicationManager.getApplication().invokeLater { highlighter.dispose() } },
                 HIGHLIGHT_MILLIS,
                 TimeUnit.MILLISECONDS
             )
