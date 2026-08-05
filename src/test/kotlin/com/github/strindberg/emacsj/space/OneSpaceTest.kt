@@ -6,6 +6,25 @@ private const val FILE = "onespacefile.txt"
 
 class OneSpaceTest : EmacsJTestCase() {
 
+    fun `test One space works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |foo<caret>   bar
+                |baz<caret>   qux
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_ONE_SPACE)
+
+        myFixture.checkResult(
+            """
+                |foo <caret>bar
+                |baz <caret>qux
+            """.trimMargin()
+        )
+    }
+
     fun `test Nothing to delete`() {
         myFixture.configureByText(FILE, "foo<caret>bar")
         myFixture.performEditorAction(ACTION_ONE_SPACE)

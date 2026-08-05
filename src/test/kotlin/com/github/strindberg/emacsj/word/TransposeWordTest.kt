@@ -8,6 +8,25 @@ private const val FILE = "transposewordfile.txt"
 
 class TransposeWordTest : EmacsJTestCase() {
 
+    fun `test Transpose words works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |foo <caret>bar
+                |baz <caret>qux
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_TRANSPOSE_WORDS)
+
+        myFixture.checkResult(
+            """
+                |bar foo<caret>
+                |qux baz<caret>
+            """.trimMargin()
+        )
+    }
+
     fun `test Transpose 00`() {
         myFixture.configureByText(FILE, "<caret>foo bar")
         myFixture.performEditorAction(ACTION_TRANSPOSE_WORDS)

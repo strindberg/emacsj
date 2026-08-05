@@ -10,6 +10,22 @@ private const val FILE = "gotofile.txt"
 
 class GotoLineTest : EmacsJTestCase() {
 
+    fun `test Goto line reduces multiple carets to one`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |aa<caret>a
+                |bb<caret>b
+                |ccc
+            """.trimMargin()
+        )
+        assertEquals(2, myFixture.editor.caretModel.caretCount)
+
+        myFixture.performEditorAction(ACTION_GOTO_LINE)
+
+        assertEquals(1, myFixture.editor.caretModel.caretCount)
+    }
+
     fun `test Goto Line works`() {
         myFixture.configureByText(
             FILE,
