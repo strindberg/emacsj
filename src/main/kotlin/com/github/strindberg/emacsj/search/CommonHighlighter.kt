@@ -17,6 +17,8 @@ import org.jetbrains.annotations.VisibleForTesting
 
 private const val HIGHLIGHT_DELAY_MILLIS = 50L
 
+private const val HIGHLIGHT_CHUNK_SIZE = 100
+
 object CommonHighlighter {
 
     @VisibleForTesting
@@ -50,7 +52,8 @@ object CommonHighlighter {
                 useCase = useCase,
                 range = range,
                 callback = callback,
-                highlight = highlight
+                highlight = highlight,
+                indicator = null
             )
         } else {
             val indicator = ProgressIndicatorBase()
@@ -59,15 +62,18 @@ object CommonHighlighter {
                 {
                     ProgressManager.getInstance().runProcess(
                         {
-                            doFindAllAndHighlight(
-                                editor = editor,
-                                searchArg = searchArg,
-                                useRegexp = useRegexp,
-                                useCase = useCase,
-                                range = range,
-                                callback = callback,
-                                highlight = highlight
-                            )
+                            ApplicationManager.getApplication().runReadAction {
+                                doFindAllAndHighlight(
+                                    editor = editor,
+                                    searchArg = searchArg,
+                                    useRegexp = useRegexp,
+                                    useCase = useCase,
+                                    range = range,
+                                    callback = callback,
+                                    highlight = highlight,
+                                    indicator = indicator
+                                )
+                            }
                         },
                         indicator
                     )
@@ -86,6 +92,7 @@ object CommonHighlighter {
         range: IntRange?,
         callback: (List<FindResult>) -> Unit,
         highlight: Boolean,
+        indicator: ProgressIndicator?,
     ) {
         val matches = mutableListOf<FindResult>()
         if (searchArg.isNotEmpty()) {
@@ -95,7 +102,8 @@ object CommonHighlighter {
                 isCaseSensitive = useCase
                 isRegularExpressions = useRegexp
             }
-            val text = editor.text.substring(0, range?.last ?: editor.text.length)
+            val documentText = editor.text
+            val text = documentText.substring(0, minOf(range?.last ?: documentText.length, documentText.length))
             var offset = range?.start ?: 0
 
             if (!isTesting) {
@@ -109,24 +117,37 @@ object CommonHighlighter {
             }
 
             if (highlight) {
-                addSecondaryHighlights(editor, matches)
+                addSecondaryHighlights(editor, matches, indicator)
             }
         }
-        callback(matches)
+        onEdt(editor, indicator) { callback(matches) }
     }
 
-    private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>) {
-        if (isTesting) {
-            matches.forEach { match ->
-                addHighlight(editor, match)
-            }
-        } else {
-            matches.chunked(100).forEach { chunk ->
+    private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>, indicator: ProgressIndicator?) {
+        matches.chunked(HIGHLIGHT_CHUNK_SIZE).forEach { chunk ->
+            if (!isTesting) {
                 ProgressManager.checkCanceled()
-                ApplicationManager.getApplication().invokeLater {
-                    chunk.forEach { match ->
-                        addHighlight(editor, match)
-                    }
+            }
+            onEdt(editor, indicator) {
+                chunk.forEach { match ->
+                    addHighlight(editor, match)
+                }
+            }
+        }
+    }
+
+    /**
+     * Runs [action] on the EDT, re-checking cancellation there. A checkCanceled() on the background thread only
+     * proves the search was live when the task was queued: cancel() can still run on the EDT in between, clearing
+     * the highlighters, after which the queued task would paint stale matches back in.
+     */
+    private fun onEdt(editor: Editor, indicator: ProgressIndicator?, action: () -> Unit) {
+        if (isTesting) {
+            action()
+        } else {
+            ApplicationManager.getApplication().invokeLater {
+                if (!editor.isDisposed && indicator?.isCanceled != true) {
+                    action()
                 }
             }
         }
