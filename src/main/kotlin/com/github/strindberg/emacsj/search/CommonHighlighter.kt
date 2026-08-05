@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.search
 
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
@@ -21,10 +22,12 @@ private const val HIGHLIGHT_CHUNK_SIZE = 100
 
 object CommonHighlighter {
 
-    @VisibleForTesting
-    internal var isTesting = false
-
     private val progressIndicators = mutableListOf<ProgressIndicator>()
+
+    private val scheduledSearches = mutableListOf<ScheduledFuture<*>>()
+
+    internal val isIdle: Boolean
+        @VisibleForTesting get() = scheduledSearches.all { it.isDone }
 
     internal fun cancel(editor: Editor) {
         val iterator = progressIndicators.iterator()
@@ -44,20 +47,15 @@ object CommonHighlighter {
         callback: (List<FindResult>) -> Unit = {},
         highlight: Boolean = true,
     ) {
-        if (isTesting) {
-            doFindAllAndHighlight(
-                editor = editor,
-                searchArg = searchArg,
-                useRegexp = useRegexp,
-                useCase = useCase,
-                range = range,
-                callback = callback,
-                highlight = highlight,
-                indicator = null
-            )
-        } else {
-            val indicator = ProgressIndicatorBase()
-            progressIndicators.add(indicator)
+        // A new search supersedes any still-pending one. Without this, two searches scheduled inside the debounce
+        // window run concurrently on the pool and can report back out of order, leaving a stale match count.
+        progressIndicators.forEach { it.cancel() }
+        progressIndicators.clear()
+
+        val indicator = ProgressIndicatorBase()
+        progressIndicators.add(indicator)
+        scheduledSearches.removeAll { it.isDone }
+        scheduledSearches.add(
             AppExecutorUtil.getAppScheduledExecutorService().schedule(
                 {
                     ProgressManager.getInstance().runProcess(
@@ -81,7 +79,7 @@ object CommonHighlighter {
                 HIGHLIGHT_DELAY_MILLIS,
                 TimeUnit.MILLISECONDS
             )
-        }
+        )
     }
 
     private fun doFindAllAndHighlight(
@@ -92,7 +90,7 @@ object CommonHighlighter {
         range: IntRange?,
         callback: (List<FindResult>) -> Unit,
         highlight: Boolean,
-        indicator: ProgressIndicator?,
+        indicator: ProgressIndicator,
     ) {
         val matches = mutableListOf<FindResult>()
         if (searchArg.isNotEmpty()) {
@@ -106,9 +104,7 @@ object CommonHighlighter {
             val text = documentText.substring(0, minOf(range?.last ?: documentText.length, documentText.length))
             var offset = range?.start ?: 0
 
-            if (!isTesting) {
-                ProgressManager.checkCanceled()
-            }
+            ProgressManager.checkCanceled()
             while (offset < text.length) {
                 val result = findManager.findString(text, offset, findModel)
                 if (!result.isStringFound) break
@@ -123,11 +119,9 @@ object CommonHighlighter {
         onEdt(editor, indicator) { callback(matches) }
     }
 
-    private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>, indicator: ProgressIndicator?) {
+    private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>, indicator: ProgressIndicator) {
         matches.chunked(HIGHLIGHT_CHUNK_SIZE).forEach { chunk ->
-            if (!isTesting) {
-                ProgressManager.checkCanceled()
-            }
+            ProgressManager.checkCanceled()
             onEdt(editor, indicator) {
                 chunk.forEach { match ->
                     addHighlight(editor, match)
@@ -141,15 +135,10 @@ object CommonHighlighter {
      * proves the search was live when the task was queued: cancel() can still run on the EDT in between, clearing
      * the highlighters, after which the queued task would paint stale matches back in.
      */
-    @Suppress("CanBeNonNullable")
-    private fun onEdt(editor: Editor, indicator: ProgressIndicator?, action: () -> Unit) {
-        if (isTesting) {
-            action()
-        } else {
-            ApplicationManager.getApplication().invokeLater {
-                if (!editor.isDisposed && indicator?.isCanceled != true) {
-                    action()
-                }
+    private fun onEdt(editor: Editor, indicator: ProgressIndicator, action: () -> Unit) {
+        ApplicationManager.getApplication().invokeLater {
+            if (!editor.isDisposed && !indicator.isCanceled) {
+                action()
             }
         }
     }

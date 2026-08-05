@@ -1,7 +1,7 @@
 package com.github.strindberg.emacsj.kill
 
+import java.time.Clock
 import java.time.OffsetDateTime
-import java.time.OffsetDateTime.now
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
@@ -23,11 +23,13 @@ internal const val ACTION_COPY = "com.github.strindberg.emacsj.actions.kill.copy
 
 private const val HIGHLIGHT_MILLIS = 500L
 
+internal const val THROTTLE_MILLIS = 200L
+
 class CopyRegionHandler : EditorActionHandler() {
 
     companion object {
         @VisibleForTesting
-        internal var isTesting = false
+        internal var clock: Clock = Clock.systemDefaultZone()
     }
 
     private var lastInvocation = OffsetDateTime.MIN
@@ -62,9 +64,10 @@ class CopyRegionHandler : EditorActionHandler() {
                 TimeUnit.MILLISECONDS
             )
         }
-        lastInvocation = now()
+        lastInvocation = OffsetDateTime.now(clock)
     }
 
     // Avoid inadvertently running the command multiple times because of key repeat.
-    private fun notThrottled(): Boolean = isTesting || lastInvocation.isBefore(now().minus(200.milliseconds.toJavaDuration()))
+    private fun notThrottled(): Boolean =
+        lastInvocation.isBefore(OffsetDateTime.now(clock).minus(THROTTLE_MILLIS.milliseconds.toJavaDuration()))
 }
