@@ -1,6 +1,7 @@
 package com.github.strindberg.emacsj.ui
 
 import java.awt.Color
+import java.awt.Container
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.GridBagConstraints
@@ -252,9 +253,11 @@ private class UIPanel(private val commonUI: CommonUI, private val editor: Editor
         }
     }
 
+    private val ancestor: Container? = editor.component.topLevelAncestor
+
     init {
         editor.component.addComponentListener(resizeListener)
-        editor.component.topLevelAncestor?.addComponentListener(moveListener)
+        ancestor?.addComponentListener(moveListener)
     }
 
     override fun getPreferredSize(): Dimension = Dimension(editor.component.width, (baseFont.size * 2.5).toInt())
@@ -263,6 +266,6 @@ private class UIPanel(private val commonUI: CommonUI, private val editor: Editor
 
     fun cancel() {
         editor.component.removeComponentListener(resizeListener)
-        editor.component.topLevelAncestor?.removeComponentListener(moveListener)
+        ancestor?.removeComponentListener(moveListener)
     }
 }

@@ -102,7 +102,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
 
-        editor.caretModel.addCaretListener(caretListener)
+        editor.caretModel.addCaretListener(caretListener, this)
 
         initTitleText()
 
@@ -142,7 +142,9 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
                 editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
 
-                editor.caretModel.removeCaretListener(caretListener)
+                editor.caretModel.runForEachCaret {
+                    it.clearData()
+                }
             }
 
             ISearchHandler.searchConcluded(text, searchType) // This line needs to run before the line below since it reads UI text.
@@ -150,12 +152,6 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
             ui.cancelUI()
 
             ISearchHandler.delegate = null
-
-            if (!editor.isDisposed) {
-                editor.caretModel.runForEachCaret {
-                    it.clearData()
-                }
-            }
         }
     }
 

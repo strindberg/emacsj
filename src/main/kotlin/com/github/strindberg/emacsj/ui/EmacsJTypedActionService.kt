@@ -66,7 +66,7 @@ interface UIDelegate : Disposable {
 @OptIn(ExperimentalContracts::class)
 internal fun UIDelegate?.isActive(e: AWTEvent): Boolean {
     contract {
-        returns(true) implies (e is InputMethodEvent && this@isActive != null)
+        returns(true) implies (this@isActive != null && e is InputMethodEvent)
     }
     return this != null && e is InputMethodEvent && UIUtil.isDescendingFrom(e.source as? Component, editor.contentComponent)
 }
@@ -79,5 +79,5 @@ internal fun InputMethodEvent.constructInput(): String? =
                 append(c)
                 c = iter.next()
             }
-        }
-    }?.takeIf { it.isNotEmpty() }
+        }.takeIf { it.isNotEmpty() }
+    }

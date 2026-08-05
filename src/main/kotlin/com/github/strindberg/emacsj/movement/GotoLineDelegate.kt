@@ -32,7 +32,7 @@ class GotoLineDelegate(override val editor: Editor) : UIDelegate {
         EditorUtil.disposeWithEditor(editor, this)
 
         editor.caretModel.removeSecondaryCarets()
-        editor.caretModel.addCaretListener(caretListener)
+        editor.caretModel.addCaretListener(caretListener, this)
 
         ui.show()
     }
@@ -81,6 +81,7 @@ class GotoLineDelegate(override val editor: Editor) : UIDelegate {
     override fun dispose() {
         if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
             isDisposed = true
+
             ui.cancelUI()
 
             GotoLineHandler.delegate = null
