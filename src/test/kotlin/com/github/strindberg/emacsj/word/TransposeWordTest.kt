@@ -1,18 +1,12 @@
 package com.github.strindberg.emacsj.word
 
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT0
-import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "transposewordfile.txt"
 
-class TransposeWordTest : BasePlatformTestCase() {
-
-    override fun tearDown() {
-        UniversalArgumentHandler.delegate?.hide()
-        super.tearDown()
-    }
+class TransposeWordTest : EmacsJTestCase() {
 
     fun `test Transpose 00`() {
         myFixture.configureByText(FILE, "<caret>foo bar")

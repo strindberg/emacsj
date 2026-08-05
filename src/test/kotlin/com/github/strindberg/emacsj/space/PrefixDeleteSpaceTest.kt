@@ -1,17 +1,11 @@
 package com.github.strindberg.emacsj.space
 
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
-import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "prefixdeletefile.txt"
 
-class PrefixDeleteSpaceTest : BasePlatformTestCase() {
-
-    override fun tearDown() {
-        UniversalArgumentHandler.delegate?.hide()
-        super.tearDown()
-    }
+class PrefixDeleteSpaceTest : EmacsJTestCase() {
 
     fun `test Nothing to delete`() {
         myFixture.configureByText(FILE, "foo<caret>bar")

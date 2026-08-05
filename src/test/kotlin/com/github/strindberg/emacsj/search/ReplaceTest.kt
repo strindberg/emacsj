@@ -3,23 +3,17 @@ package com.github.strindberg.emacsj.search
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_START
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "replacefile.txt"
 
-class ReplaceTest : BasePlatformTestCase() {
+class ReplaceTest : EmacsJTestCase() {
 
     override fun setUp() {
         super.setUp()
         CommonHighlighter.isTesting = true
-    }
-
-    override fun tearDown() {
-        ReplaceHandler.delegate?.hide()
-        ISearchHandler.delegate?.hide()
-        super.tearDown()
     }
 
     fun `test Simple text replace works`() {

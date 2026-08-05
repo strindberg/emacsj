@@ -13,21 +13,11 @@ import com.github.strindberg.emacsj.search.ReplaceDelegate
 import com.github.strindberg.emacsj.search.ReplaceHandler
 import com.github.strindberg.emacsj.search.SearchType
 import com.github.strindberg.emacsj.ui.EmacsJActionsPromoter
-import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "promoterfile.txt"
 
-class EmacsJActionsPromoterTest : BasePlatformTestCase() {
-
-    override fun tearDown() {
-        ISearchHandler.delegate?.hide()
-        ReplaceHandler.delegate?.hide()
-        UniversalArgumentHandler.delegate?.hide()
-        EmacsJService.instance.setRepeating(false)
-        super.tearDown()
-    }
+class EmacsJActionsPromoterTest : EmacsJTestCase() {
 
     fun `test Promoter sorts ISearch actions first when ISearch is active`() {
         myFixture.configureByText(FILE, "")

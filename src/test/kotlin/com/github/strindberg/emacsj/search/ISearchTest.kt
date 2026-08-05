@@ -5,23 +5,18 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.openapi.ide.CopyPasteManager
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "isearchfile.txt"
 
 @Suppress("LargeClass", "ReplaceSafeCallChainWithRun")
-class ISearchTest : BasePlatformTestCase() {
+class ISearchTest : EmacsJTestCase() {
 
     override fun setUp() {
         super.setUp()
         CommonHighlighter.isTesting = true
-    }
-
-    override fun tearDown() {
-        ISearchHandler.delegate?.hide()
-        super.tearDown()
     }
 
     fun `test Simple search works`() {

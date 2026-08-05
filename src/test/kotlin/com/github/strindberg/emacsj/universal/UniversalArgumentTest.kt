@@ -3,22 +3,17 @@ package com.github.strindberg.emacsj.universal
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "universalfile.txt"
 
-class UniversalArgumentTest : BasePlatformTestCase() {
+class UniversalArgumentTest : EmacsJTestCase() {
 
     override fun setUp() {
         super.setUp()
         UniversalArgumentDelegate.isTesting = true
-    }
-
-    override fun tearDown() {
-        UniversalArgumentHandler.delegate?.hide()
-        super.tearDown()
     }
 
     fun `test Universal argument before movement moves four steps`() {

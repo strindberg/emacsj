@@ -1,12 +1,12 @@
 package com.github.strindberg.emacsj.rectangle
 
 import java.awt.datatransfer.DataFlavor
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.ide.CopyPasteManager
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "rectanglefile.txt"
 
-class RectangleTest : BasePlatformTestCase() {
+class RectangleTest : EmacsJTestCase() {
 
     fun `test copy works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")

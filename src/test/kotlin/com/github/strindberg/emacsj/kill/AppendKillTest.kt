@@ -2,6 +2,7 @@ package com.github.strindberg.emacsj.kill
 
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.movement.ACTION_TEXT_END
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
 import com.github.strindberg.emacsj.word.ACTION_DELETE_NEXT_WORD
@@ -10,11 +11,10 @@ import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
 import com.github.strindberg.emacsj.zap.ZapHandler
 import com.intellij.openapi.ide.CopyPasteManager
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "appendkillfile.txt"
 
-class AppendKillTest : BasePlatformTestCase() {
+class AppendKillTest : EmacsJTestCase() {
 
     override fun setUp() {
         super.setUp()

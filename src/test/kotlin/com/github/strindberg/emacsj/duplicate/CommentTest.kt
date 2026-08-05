@@ -1,10 +1,10 @@
 package com.github.strindberg.emacsj.duplicate
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.github.strindberg.emacsj.EmacsJTestCase
 
 private const val FILE = "file.java"
 
-class CommentTest : BasePlatformTestCase() {
+class CommentTest : EmacsJTestCase() {
 
     fun `test Java line is commented`() {
         myFixture.configureByText(
