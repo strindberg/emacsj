@@ -17,6 +17,19 @@ private const val HIGHLIGHT_TIMEOUT_SECONDS = 10
 @Suppress("LargeClass", "ReplaceSafeCallChainWithRun")
 class ISearchTest : EmacsJTestCase() {
 
+    override fun setUp() {
+        super.setUp()
+        CommonHighlighter.delayMillis = 0
+    }
+
+    override fun tearDown() {
+        try {
+            CommonHighlighter.delayMillis = HIGHLIGHT_DELAY_MILLIS
+        } finally {
+            super.tearDown()
+        }
+    }
+
     /** Match count as shown in the search UI, once debounced highlighting has reported it. */
     private val searchCount: Pair<Int, Int>?
         get() {
