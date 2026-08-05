@@ -54,7 +54,7 @@ internal class ReplaceDelegate(
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
-            ui.cancelUI()
+            hide()
         }
     }
 

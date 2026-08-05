@@ -24,7 +24,7 @@ class GotoLineDelegate(override val editor: Editor) : UIDelegate {
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
-            ui.cancelUI()
+            hide()
         }
     }
 

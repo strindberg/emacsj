@@ -6,10 +6,30 @@ import java.awt.event.KeyEvent.VK_ENTER
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_START
+import com.intellij.openapi.editor.VisualPosition
 
 private const val FILE = "replacefile.txt"
 
 class ReplaceTest : EmacsJTestCase() {
+
+    fun `test Adding a caret cancels the replace session`() {
+        myFixture.configureByText(FILE, "<caret>foo\nbar")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+        assertNotNull(ReplaceHandler.delegate)
+
+        myFixture.editor.caretModel.addCaret(VisualPosition(1, 0))
+
+        assertNull(ReplaceHandler.delegate)
+    }
+
+    fun `test Replace reduces multiple carets to one`() {
+        myFixture.configureByText(FILE, "fo<caret>o\nba<caret>r")
+        assertEquals(2, myFixture.editor.caretModel.caretCount)
+
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        assertEquals(1, myFixture.editor.caretModel.caretCount)
+    }
 
     override fun setUp() {
         super.setUp()
