@@ -11,11 +11,11 @@ import java.awt.Rectangle
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.KeyEvent
+import java.util.concurrent.TimeUnit
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.SwingUtilities
-import kotlin.concurrent.thread
 import com.intellij.codeInsight.hint.HintUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -27,8 +27,11 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.JBColor
 import com.intellij.ui.LanguageTextField
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.VisibleForTesting
+
+private const val FLASH_MILLIS = 1500L
 
 internal class CommonUI(
     private val editor: Editor,
@@ -118,12 +121,11 @@ internal class CommonUI(
 
     internal fun flashText(message: String, finalText: String = "") {
         countLabel.text = message
-        thread {
-            Thread.sleep(1500)
-            ApplicationManager.getApplication().invokeLater {
-                countLabel.text = finalText
-            }
-        }
+        AppExecutorUtil.getAppScheduledExecutorService().schedule(
+            { ApplicationManager.getApplication().invokeLater { countLabel.text = finalText } },
+            FLASH_MILLIS,
+            TimeUnit.MILLISECONDS
+        )
     }
 
     internal fun selectText() {

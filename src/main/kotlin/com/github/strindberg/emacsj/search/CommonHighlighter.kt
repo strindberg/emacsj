@@ -1,6 +1,6 @@
 package com.github.strindberg.emacsj.search
 
-import kotlin.concurrent.thread
+import java.util.concurrent.TimeUnit
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
@@ -12,7 +12,10 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
+import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.VisibleForTesting
+
+private const val HIGHLIGHT_DELAY_MILLIS = 50L
 
 object CommonHighlighter {
 
@@ -52,11 +55,10 @@ object CommonHighlighter {
         } else {
             val indicator = ProgressIndicatorBase()
             progressIndicators.add(indicator)
-            thread {
-                ProgressManager.getInstance()
-                    .runProcess(
+            AppExecutorUtil.getAppScheduledExecutorService().schedule(
+                {
+                    ProgressManager.getInstance().runProcess(
                         {
-                            Thread.sleep(50)
                             doFindAllAndHighlight(
                                 editor = editor,
                                 searchArg = searchArg,
@@ -69,7 +71,10 @@ object CommonHighlighter {
                         },
                         indicator
                     )
-            }
+                },
+                HIGHLIGHT_DELAY_MILLIS,
+                TimeUnit.MILLISECONDS
+            )
         }
     }
 

@@ -2,7 +2,7 @@ package com.github.strindberg.emacsj.kill
 
 import java.time.OffsetDateTime
 import java.time.OffsetDateTime.now
-import kotlin.concurrent.thread
+import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 import com.github.strindberg.emacsj.search.EMACSJ_SECONDARY
@@ -14,11 +14,14 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.util.DocumentUtil
+import com.intellij.util.concurrency.AppExecutorUtil
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.VisibleForTesting
 
 @Language("devkit-action-id")
 internal const val ACTION_COPY = "com.github.strindberg.emacsj.actions.kill.copy"
+
+private const val HIGHLIGHT_MILLIS = 500L
 
 class CopyRegionHandler : EditorActionHandler() {
 
@@ -53,12 +56,11 @@ class CopyRegionHandler : EditorActionHandler() {
                 HighlighterLayer.LAST + 1,
                 HighlighterTargetArea.EXACT_RANGE
             )
-            thread {
-                Thread.sleep(500)
-                ApplicationManager.getApplication().invokeLater {
-                    editor.markupModel.removeHighlighter(highlighter)
-                }
-            }
+            AppExecutorUtil.getAppScheduledExecutorService().schedule(
+                { ApplicationManager.getApplication().invokeLater { editor.markupModel.removeHighlighter(highlighter) } },
+                HIGHLIGHT_MILLIS,
+                TimeUnit.MILLISECONDS
+            )
         }
         lastInvocation = now()
     }
