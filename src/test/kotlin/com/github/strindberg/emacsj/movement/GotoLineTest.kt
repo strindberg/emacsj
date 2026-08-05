@@ -5,10 +5,21 @@ import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
+import com.intellij.openapi.editor.VisualPosition
 
 private const val FILE = "gotofile.txt"
 
 class GotoLineTest : EmacsJTestCase() {
+
+    fun `test Adding a caret cancels the goto line session`() {
+        myFixture.configureByText(FILE, "<caret>aaa\nbbb")
+        myFixture.performEditorAction(ACTION_GOTO_LINE)
+        assertNotNull(GotoLineHandler.delegate)
+
+        myFixture.editor.caretModel.addCaret(VisualPosition(1, 0))
+
+        assertNull(GotoLineHandler.delegate)
+    }
 
     fun `test Goto line reduces multiple carets to one`() {
         myFixture.configureByText(

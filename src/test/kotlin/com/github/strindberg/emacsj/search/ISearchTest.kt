@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
+import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.PlatformTestUtil
 
@@ -16,6 +17,17 @@ private const val HIGHLIGHT_TIMEOUT_SECONDS = 10
 
 @Suppress("LargeClass", "ReplaceSafeCallChainWithRun")
 class ISearchTest : EmacsJTestCase() {
+
+    fun `test Adding a caret cancels the search`() {
+        myFixture.configureByText(FILE, "<caret>foo\nbar")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("o")
+        assertNotNull(ISearchHandler.delegate)
+
+        myFixture.editor.caretModel.addCaret(VisualPosition(1, 0))
+
+        assertNull(ISearchHandler.delegate)
+    }
 
     override fun setUp() {
         super.setUp()
