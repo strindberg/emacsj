@@ -100,7 +100,8 @@ tasks {
             listOf(
                 "-Dide.show.tips.on.startup.default.value=false",
                 "-Dide.experimental.ui=true",
-                "-Didea.trust.all.projects=true"
+                "-Didea.trust.all.projects=true",
+                "-Dide.plugins.snapshot.on.unload.fail=true",
             )
         }
     }
