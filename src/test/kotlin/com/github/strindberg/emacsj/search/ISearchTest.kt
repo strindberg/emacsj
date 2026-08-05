@@ -9,7 +9,7 @@ import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.txt"
+private const val FILE = "isearchfile.txt"
 
 @Suppress("LargeClass", "ReplaceSafeCallChainWithRun")
 class ISearchTest : BasePlatformTestCase() {

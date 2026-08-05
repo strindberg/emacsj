@@ -2,7 +2,7 @@ package com.github.strindberg.emacsj.space
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.txt"
+private const val FILE = "deletespacefile.txt"
 
 class DeleteSpaceTest : BasePlatformTestCase() {
 

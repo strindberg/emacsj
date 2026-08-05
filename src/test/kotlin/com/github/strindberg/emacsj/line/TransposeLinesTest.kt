@@ -7,7 +7,7 @@ import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.txt"
+private const val FILE = "transposelinesfile.txt"
 
 class TransposeLinesTest : BasePlatformTestCase() {
 

@@ -4,6 +4,8 @@ import java.awt.datatransfer.StringSelection
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "rectanglepastefile.txt"
+
 class RectanglePasteTest : BasePlatformTestCase() {
 
     fun `test Paste works 01`() {

@@ -7,6 +7,8 @@ import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_START
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "replacefile.txt"
+
 class ReplaceTest : BasePlatformTestCase() {
 
     override fun setUp() {

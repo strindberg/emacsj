@@ -2,6 +2,8 @@ package com.github.strindberg.emacsj.word
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "wordchangefile.txt"
+
 class WordChangeTest : BasePlatformTestCase() {
 
     fun `test Capitalize word 00`() {

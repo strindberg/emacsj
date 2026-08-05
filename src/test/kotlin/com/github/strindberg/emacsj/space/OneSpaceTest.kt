@@ -2,6 +2,8 @@ package com.github.strindberg.emacsj.space
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "onespacefile.txt"
+
 class OneSpaceTest : BasePlatformTestCase() {
 
     fun `test Nothing to delete`() {

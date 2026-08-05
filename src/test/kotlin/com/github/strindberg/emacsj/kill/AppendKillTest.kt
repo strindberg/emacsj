@@ -12,6 +12,8 @@ import com.github.strindberg.emacsj.zap.ZapHandler
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "appendkillfile.txt"
+
 class AppendKillTest : BasePlatformTestCase() {
 
     override fun setUp() {

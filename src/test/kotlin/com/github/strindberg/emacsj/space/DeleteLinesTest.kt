@@ -2,6 +2,8 @@ package com.github.strindberg.emacsj.space
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "deletelinesfile.txt"
+
 class DeleteLinesTest : BasePlatformTestCase() {
 
     fun `test Do nothing on non-empty lines`() {
