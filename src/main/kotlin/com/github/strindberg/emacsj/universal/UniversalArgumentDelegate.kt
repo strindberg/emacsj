@@ -57,6 +57,8 @@ internal val singleActions = setOf(
     ACTION_COPY_ABOVE_COMMAND,
 )
 
+const val BATCH_SIZE = 100
+
 class UniversalArgumentDelegate(override val editor: Editor, private var numeric: Int?, val caret: Caret?, val dataContext: DataContext) :
     UIDelegate {
 
@@ -68,11 +70,6 @@ class UniversalArgumentDelegate(override val editor: Editor, private var numeric
     internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
         title = "Argument: "
         text = getTimes().toString()
-    }
-
-    companion object {
-        @VisibleForTesting
-        internal var isTesting = false
     }
 
     init {
@@ -144,19 +141,12 @@ class UniversalArgumentDelegate(override val editor: Editor, private var numeric
     private fun repeatCommand(times: Int, action: () -> Unit) {
         hide()
 
-        if (times == 1 || isTesting) {
-            repeat(times) {
-                action()
-            }
-        } else {
-            val batchSize = 100
-            EmacsJService.instance.setRepeating(true)
-            repeat(times / batchSize) {
-                doRepeat(batchSize, action)
-            }
-            doRepeat(times % batchSize, action)
-            ApplicationManager.getApplication().invokeLater { EmacsJService.instance.setRepeating(false) }
+        EmacsJService.instance.setRepeating(true)
+        repeat(times / BATCH_SIZE) {
+            doRepeat(BATCH_SIZE, action)
         }
+        doRepeat(times % BATCH_SIZE, action)
+        ApplicationManager.getApplication().invokeLater { EmacsJService.instance.setRepeating(false) }
     }
 
     @Suppress("TooGenericExceptionCaught")

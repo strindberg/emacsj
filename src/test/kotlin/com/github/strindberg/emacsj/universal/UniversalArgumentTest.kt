@@ -3,24 +3,21 @@ package com.github.strindberg.emacsj.universal
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
+import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
+import com.intellij.testFramework.PlatformTestUtil
 
 private const val FILE = "universalfile.txt"
 
 class UniversalArgumentTest : EmacsJTestCase() {
 
-    override fun setUp() {
-        super.setUp()
-        UniversalArgumentDelegate.isTesting = true
-    }
-
     fun `test Universal argument before movement moves four steps`() {
         myFixture.configureByText(FILE, "<caret>foobar")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_RIGHT)
-        myFixture.checkResult("foob<caret>ar")
+        checkResult("foob<caret>ar")
     }
 
     fun `test Universal argument with '5' before movement moves five steps`() {
@@ -28,7 +25,7 @@ class UniversalArgumentTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.type("5")
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_RIGHT)
-        myFixture.checkResult("fooba<caret>r")
+        checkResult("fooba<caret>r")
     }
 
     fun `test First non-digit after Universal argument triggers action`() {
@@ -36,7 +33,7 @@ class UniversalArgumentTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.type("5")
         myFixture.type("a")
-        myFixture.checkResult("aaaaa<caret>")
+        checkResult("aaaaa<caret>")
     }
 
     fun `test Multiple digits are interpreted as number`() {
@@ -45,7 +42,7 @@ class UniversalArgumentTest : EmacsJTestCase() {
         myFixture.type("1")
         myFixture.type("5")
         myFixture.type("a")
-        myFixture.checkResult("aaaaaaaaaaaaaaa<caret>")
+        checkResult("aaaaaaaaaaaaaaa<caret>")
     }
 
     fun `test Repeated Universal argument multiplies by four`() {
@@ -53,7 +50,7 @@ class UniversalArgumentTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.type("a")
-        myFixture.checkResult("aaaaaaaaaaaaaaaa<caret>")
+        checkResult("aaaaaaaaaaaaaaaa<caret>")
     }
 
     fun `test Pressing 'Escape' aborts universal argument`() {
@@ -61,89 +58,89 @@ class UniversalArgumentTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         pressEscape()
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_RIGHT)
-        myFixture.checkResult("f<caret>oobar")
+        checkResult("f<caret>oobar")
     }
 
     fun `test Numeric universal arguments work`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.type("a")
-        myFixture.checkResult("a<caret>")
+        checkResult("a<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>a")
+        checkResult("<caret>a")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
         myFixture.type("a")
-        myFixture.checkResult("aa<caret>")
+        checkResult("aa<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>aa")
+        checkResult("<caret>aa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
         myFixture.type("a")
-        myFixture.checkResult("aaa<caret>")
+        checkResult("aaa<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>aaa")
+        checkResult("<caret>aaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT4)
         myFixture.type("a")
-        myFixture.checkResult("aaaa<caret>")
+        checkResult("aaaa<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT4)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>aaaa")
+        checkResult("<caret>aaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
         myFixture.type("a")
-        myFixture.checkResult("aaaaa<caret>")
+        checkResult("aaaaa<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>aaaaa")
+        checkResult("<caret>aaaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT6)
         myFixture.type("a")
-        myFixture.checkResult("aaaaaa<caret>")
+        checkResult("aaaaaa<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT6)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>aaaaaa")
+        checkResult("<caret>aaaaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT7)
         myFixture.type("a")
-        myFixture.checkResult("aaaaaaa<caret>")
+        checkResult("aaaaaaa<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT7)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>aaaaaaa")
+        checkResult("<caret>aaaaaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT8)
         myFixture.type("a")
-        myFixture.checkResult("aaaaaaaa<caret>")
+        checkResult("aaaaaaaa<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT8)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>aaaaaaaa")
+        checkResult("<caret>aaaaaaaa")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT9)
         myFixture.type("a")
-        myFixture.checkResult("aaaaaaaaa<caret>")
+        checkResult("aaaaaaaaa<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT9)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>aaaaaaaaa")
+        checkResult("<caret>aaaaaaaaa")
     }
 
     fun `test Numeric universal argument 10 works two ways`() {
@@ -151,18 +148,62 @@ class UniversalArgumentTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.type("0")
         myFixture.type("a")
-        myFixture.checkResult("aaaaaaaaaa<caret>")
+        checkResult("aaaaaaaaaa<caret>")
         UniversalArgumentHandler.delegate?.hide()
 
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
         myFixture.type("a")
-        myFixture.checkResult("aaaaaaaaaa<caret>")
+        checkResult("aaaaaaaaaa<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_LEFT)
-        myFixture.checkResult("<caret>aaaaaaaaaa")
+        checkResult("<caret>aaaaaaaaaa")
+    }
+
+    fun `test A repeat larger than the batch size runs every repetition`() {
+        myFixture.configureByText(FILE, "<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
+        myFixture.type("5")
+        myFixture.type("0")
+        myFixture.type("a")
+        checkResult("a".repeat(150) + "<caret>")
+    }
+
+    fun `test Repeating is switched off once the repeat has finished`() {
+        myFixture.configureByText(FILE, "<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
+        myFixture.type("a")
+
+        runPendingRepeats()
+
+        assertFalse(EmacsJService.instance.isRepeating())
+    }
+
+    fun `test Cancelling the repeat drops repetitions that have not run yet`() {
+        myFixture.configureByText(FILE, "<caret>")
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
+        myFixture.type("a")
+
+        myFixture.performEditorAction(ACTION_CANCEL_REPEAT)
+
+        checkResult("<caret>")
+    }
+
+    /** Repeats of more than one are queued rather than run inline, so let them finish before asserting. */
+    private fun checkResult(expected: String) {
+        runPendingRepeats()
+        myFixture.checkResult(expected)
+    }
+
+    /**
+     * Runs whatever the universal-argument machinery has queued. Repeats are dispatched in batches through
+     * `invokeLater` so that a long repeat stays interruptible, which means they have not run yet by the time the
+     * triggering action returns.
+     */
+    private fun runPendingRepeats() {
+        PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
 
     private fun pressEscape() {

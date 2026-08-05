@@ -2,6 +2,10 @@ package com.github.strindberg.emacsj.kill
 
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.movement.ACTION_TEXT_END
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
@@ -10,15 +14,45 @@ import com.github.strindberg.emacsj.word.ACTION_DELETE_PREVIOUS_WORD
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
 import com.github.strindberg.emacsj.zap.ZapHandler
+import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
 import com.intellij.openapi.ide.CopyPasteManager
 
 private const val FILE = "appendkillfile.txt"
+
+private const val THROTTLE_CLEARANCE_MILLIS = 1000L
+
+/**
+ * Clock behind the copy throttle. Tests move it explicitly rather than switching the throttle off, so that the
+ * throttling logic itself is exercised.
+ */
+private object TestClock : Clock() {
+
+    private var current: Instant = Instant.EPOCH
+
+    override fun getZone(): ZoneId = ZoneOffset.UTC
+
+    override fun withZone(zone: ZoneId): Clock = this
+
+    override fun instant(): Instant = current
+
+    fun advance(millis: Long) {
+        current = current.plusMillis(millis)
+    }
+}
 
 class AppendKillTest : EmacsJTestCase() {
 
     override fun setUp() {
         super.setUp()
-        CopyRegionHandler.isTesting = true
+        // CopyRegionHandler is shared between tests, so its last-invocation stamp would throttle the first copy of
+        // the next test. Start every test well past the throttle window.
+        advanceClock(THROTTLE_CLEARANCE_MILLIS)
+        CopyRegionHandler.clock = TestClock
+    }
+
+    override fun tearDown() {
+        CopyRegionHandler.clock = Clock.systemDefaultZone()
+        super.tearDown()
     }
 
     fun `test Basic Copy works`() {
@@ -59,6 +93,55 @@ class AppendKillTest : EmacsJTestCase() {
             """.trimMargin()
         )
         assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
+    }
+
+    fun `test A whole-line copy repeated inside the throttle window is ignored`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |baz<caret>zoo
+                |bar
+            """.trimMargin()
+        )
+        myFixture.performEditorAction(ACTION_COPY)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_DOWN)
+
+        myFixture.performEditorAction(ACTION_COPY)
+
+        assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
+    }
+
+    fun `test A whole-line copy repeated after the throttle window copies the new line`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |baz<caret>zoo
+                |bar
+            """.trimMargin()
+        )
+        myFixture.performEditorAction(ACTION_COPY)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_DOWN)
+
+        advanceClock(THROTTLE_MILLIS + 1)
+        myFixture.performEditorAction(ACTION_COPY)
+
+        assertEquals("bar", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
+    }
+
+    fun `test An explicit selection is copied even inside the throttle window`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |baz<caret>zoo
+                |bar
+            """.trimMargin()
+        )
+        myFixture.performEditorAction(ACTION_COPY)
+
+        myFixture.configureByText(FILE, "<selection>quux</selection><caret>")
+        myFixture.performEditorAction(ACTION_COPY)
+
+        assertEquals("quux", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
     fun `test Basic Cut works`() {
@@ -373,5 +456,10 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("bazzed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
 
         ZapHandler.delegate?.hide()
+    }
+
+    /** Moves the clock the copy throttle reads. */
+    private fun advanceClock(millis: Long) {
+        TestClock.advance(millis)
     }
 }
