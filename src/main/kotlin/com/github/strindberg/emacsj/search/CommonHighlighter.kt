@@ -141,6 +141,7 @@ object CommonHighlighter {
      * proves the search was live when the task was queued: cancel() can still run on the EDT in between, clearing
      * the highlighters, after which the queued task would paint stale matches back in.
      */
+    @Suppress("CanBeNonNullable")
     private fun onEdt(editor: Editor, indicator: ProgressIndicator?, action: () -> Unit) {
         if (isTesting) {
             action()
