@@ -142,7 +142,7 @@ class UniversalArgumentDelegate(override val editor: Editor, private var numeric
     }
 
     private fun repeatCommand(times: Int, action: () -> Unit) {
-        cancel()
+        hide()
 
         if (times == 1 || isTesting) {
             repeat(times) {
@@ -175,9 +175,5 @@ class UniversalArgumentDelegate(override val editor: Editor, private var numeric
                 }
             }
         }
-    }
-
-    internal fun cancel() {
-        ui.cancelUI()
     }
 }

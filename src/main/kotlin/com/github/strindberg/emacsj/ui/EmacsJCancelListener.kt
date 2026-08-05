@@ -25,16 +25,16 @@ internal class EmacsJCancelListener : AnActionListener {
     override fun beforeActionPerformed(action: AnAction, event: AnActionEvent) {
         ISearchHandler.delegate?.let { delegate ->
             if (action !is ISearchAction) {
-                delegate.cancel()
+                delegate.hide()
             }
         }
         UniversalArgumentHandler.delegate?.let { delegate ->
             if (action !is UniversalArgumentAction) {
-                delegate.cancel()
                 universalArgumentDelegate = delegate
+                delegate.hide()
             }
         }
-        ZapHandler.delegate?.cancel()
+        ZapHandler.delegate?.hide()
     }
 
     override fun afterActionPerformed(action: AnAction, event: AnActionEvent, result: AnActionResult) {

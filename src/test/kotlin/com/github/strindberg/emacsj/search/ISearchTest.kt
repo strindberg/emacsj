@@ -326,8 +326,6 @@ class ISearchTest : BasePlatformTestCase() {
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.type("foo")
 
-        myFixture.performEditorAction(ACTION_ISEARCH_ENTER)
-
         myFixture.checkResult("foo<caret> fooz foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_EDIT)
