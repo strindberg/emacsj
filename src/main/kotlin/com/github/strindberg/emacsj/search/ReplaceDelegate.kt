@@ -97,7 +97,7 @@ internal class ReplaceDelegate(
         ui.title = getReplaceTitle()
 
         editor.caretModel.removeSecondaryCarets()
-        editor.caretModel.addCaretListener(caretListener)
+        editor.caretModel.addCaretListener(caretListener, this)
 
         identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
@@ -118,8 +118,6 @@ internal class ReplaceDelegate(
             isDisposed = true
 
             editor.markupModel.removeAllHighlighters()
-
-            editor.caretModel.removeCaretListener(caretListener)
 
             editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
 
