@@ -80,4 +80,4 @@ internal fun InputMethodEvent.constructInput(): String? =
                 c = iter.next()
             }
         }
-    }
+    }?.takeIf { it.isNotEmpty() }
