@@ -5,7 +5,7 @@ import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT0
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.txt"
+private const val FILE = "transposewordfile.txt"
 
 class TransposeWordTest : BasePlatformTestCase() {
 

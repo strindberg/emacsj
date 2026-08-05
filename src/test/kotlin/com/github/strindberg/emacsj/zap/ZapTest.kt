@@ -9,7 +9,7 @@ import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT5
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.txt"
+private const val FILE = "zapfile.txt"
 
 class ZapTest : BasePlatformTestCase() {
 

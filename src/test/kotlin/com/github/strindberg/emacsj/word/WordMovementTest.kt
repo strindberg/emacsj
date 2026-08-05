@@ -2,6 +2,8 @@ package com.github.strindberg.emacsj.word
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
+private const val FILE = "wordmovementfile.txt"
+
 class WordMovementTest : BasePlatformTestCase() {
 
     fun `test Next word 00`() {

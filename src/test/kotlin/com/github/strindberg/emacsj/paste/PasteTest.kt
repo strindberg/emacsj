@@ -12,7 +12,7 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIG
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.txt"
+private const val FILE = "pastefile.txt"
 
 class PasteTest : BasePlatformTestCase() {
 

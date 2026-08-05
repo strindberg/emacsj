@@ -17,7 +17,7 @@ import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.txt"
+private const val FILE = "promoterfile.txt"
 
 class EmacsJActionsPromoterTest : BasePlatformTestCase() {
 

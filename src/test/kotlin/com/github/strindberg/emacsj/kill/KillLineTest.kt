@@ -4,7 +4,7 @@ import java.awt.datatransfer.DataFlavor
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-const val FILE = "file.txt"
+private const val FILE = "killlinefile.txt"
 
 class KillLineTest : BasePlatformTestCase() {
 
