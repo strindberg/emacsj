@@ -1,11 +1,11 @@
 package com.github.strindberg.emacsj.duplicate
 
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.ide.highlighter.XmlFileType
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "file.java"
 
-class DuplicateTest : BasePlatformTestCase() {
+class DuplicateTest : EmacsJTestCase() {
 
     fun `test Line is duplicated`() {
         myFixture.configureByText(

@@ -1,20 +1,14 @@
 package com.github.strindberg.emacsj.line
 
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT0
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT2
-import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "transposelinesfile.txt"
 
-class TransposeLinesTest : BasePlatformTestCase() {
-
-    override fun tearDown() {
-        UniversalArgumentHandler.delegate?.hide()
-        super.tearDown()
-    }
+class TransposeLinesTest : EmacsJTestCase() {
 
     fun `test Transpose lines works as intended`() {
         myFixture.configureByText(

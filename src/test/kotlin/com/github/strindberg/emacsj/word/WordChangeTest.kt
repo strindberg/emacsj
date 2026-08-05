@@ -1,10 +1,10 @@
 package com.github.strindberg.emacsj.word
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.github.strindberg.emacsj.EmacsJTestCase
 
 private const val FILE = "wordchangefile.txt"
 
-class WordChangeTest : BasePlatformTestCase() {
+class WordChangeTest : EmacsJTestCase() {
 
     fun `test Capitalize word 00`() {
         myFixture.configureByText(FILE, "<caret>foo bar")

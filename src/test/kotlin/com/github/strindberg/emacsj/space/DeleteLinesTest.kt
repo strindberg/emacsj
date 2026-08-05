@@ -1,10 +1,10 @@
 package com.github.strindberg.emacsj.space
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.github.strindberg.emacsj.EmacsJTestCase
 
 private const val FILE = "deletelinesfile.txt"
 
-class DeleteLinesTest : BasePlatformTestCase() {
+class DeleteLinesTest : EmacsJTestCase() {
 
     fun `test Do nothing on non-empty lines`() {
         myFixture.configureByText(

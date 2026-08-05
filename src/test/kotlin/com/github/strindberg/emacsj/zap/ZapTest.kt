@@ -3,21 +3,14 @@ package com.github.strindberg.emacsj.zap
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ESCAPE
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT3
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT5
-import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "zapfile.txt"
 
-class ZapTest : BasePlatformTestCase() {
-
-    override fun tearDown() {
-        ZapHandler.delegate?.hide()
-        UniversalArgumentHandler.delegate?.hide()
-        super.tearDown()
-    }
+class ZapTest : EmacsJTestCase() {
 
     fun `test Zap up to works`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")

@@ -1,12 +1,12 @@
 package com.github.strindberg.emacsj.kill
 
 import java.awt.datatransfer.DataFlavor
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.ide.CopyPasteManager
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "killlinefile.txt"
 
-class KillLineTest : BasePlatformTestCase() {
+class KillLineTest : EmacsJTestCase() {
 
     fun `test Line is killed to line end`() {
         myFixture.configureByText(

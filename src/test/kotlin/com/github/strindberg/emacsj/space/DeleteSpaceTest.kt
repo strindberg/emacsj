@@ -1,10 +1,10 @@
 package com.github.strindberg.emacsj.space
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.github.strindberg.emacsj.EmacsJTestCase
 
 private const val FILE = "deletespacefile.txt"
 
-class DeleteSpaceTest : BasePlatformTestCase() {
+class DeleteSpaceTest : EmacsJTestCase() {
 
     fun `test Nothing to delete`() {
         myFixture.configureByText(FILE, "foo<caret>bar")

@@ -1,11 +1,11 @@
 package com.github.strindberg.emacsj.movement
 
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "movementfile.txt"
 
-class TextMovementTest : BasePlatformTestCase() {
+class TextMovementTest : EmacsJTestCase() {
 
     fun `test Text start sets mark`() {
         myFixture.configureByText(FILE, "foo<caret>bar")

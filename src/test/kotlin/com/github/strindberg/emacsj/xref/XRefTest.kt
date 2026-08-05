@@ -1,12 +1,12 @@
 package com.github.strindberg.emacsj.xref
 
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_GOTO_DECLARATION
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "MyClass.kt"
 
-class XRefTest : BasePlatformTestCase() {
+class XRefTest : EmacsJTestCase() {
 
     fun `test XRef redo after back works`() {
         myFixture.configureByText(

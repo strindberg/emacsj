@@ -1,10 +1,10 @@
 package com.github.strindberg.emacsj.word
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.github.strindberg.emacsj.EmacsJTestCase
 
 private const val FILE = "wordmovementfile.txt"
 
-class WordMovementTest : BasePlatformTestCase() {
+class WordMovementTest : EmacsJTestCase() {
 
     fun `test Next word 00`() {
         myFixture.configureByText(FILE, "foo<caret>")

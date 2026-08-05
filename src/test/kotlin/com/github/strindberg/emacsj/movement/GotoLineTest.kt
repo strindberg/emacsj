@@ -3,17 +3,12 @@ package com.github.strindberg.emacsj.movement
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
+import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 private const val FILE = "gotofile.txt"
 
-class GotoLineTest : BasePlatformTestCase() {
-
-    override fun tearDown() {
-        GotoLineHandler.delegate?.hide()
-        super.tearDown()
-    }
+class GotoLineTest : EmacsJTestCase() {
 
     fun `test Goto Line works`() {
         myFixture.configureByText(

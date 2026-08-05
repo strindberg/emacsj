@@ -1,10 +1,10 @@
 package com.github.strindberg.emacsj.movement
 
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.github.strindberg.emacsj.EmacsJTestCase
 
 private const val FILE = "indentationfile.txt"
 
-class ToIndentationTest : BasePlatformTestCase() {
+class ToIndentationTest : EmacsJTestCase() {
 
     fun `test Caret is moved back to indentation`() {
         myFixture.configureByText(

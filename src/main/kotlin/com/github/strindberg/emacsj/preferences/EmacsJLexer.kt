@@ -14,18 +14,23 @@ internal val PRIMARY_TOKEN_TYPE = IElementType("primary", Language.ANY)
 internal val SECONDARY_TOKEN_TYPE = IElementType("secondary", Language.ANY)
 internal val TEXT_TOKEN_TYPE = IElementType("text", Language.ANY)
 
+private const val NO_MATCH = -1
+
 class EmacsJLexer : LexerBase() {
 
     private lateinit var buffer: CharSequence
     private var currentState = 0
     private var currentOffset = 0
     private var endOffset = 0
-    private var isFoundFirst = false
+
+    /** Offset of the first [SEARCH_WORD] seen, or [NO_MATCH]. */
+    private var firstMatchOffset = NO_MATCH
 
     override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
         this.buffer = buffer
         currentOffset = startOffset
         this.endOffset = endOffset
+        firstMatchOffset = NO_MATCH
         currentState = getCurrentState()
     }
 
@@ -41,13 +46,13 @@ class EmacsJLexer : LexerBase() {
                 TEXT_TOKEN_TYPE
             } else {
                 val currentToken = buffer.substring(currentOffset, getNextEnd())
-                if (currentToken == SEARCH_WORD && !isFoundFirst) {
-                    isFoundFirst = true
-                    PRIMARY_TOKEN_TYPE
-                } else if (currentToken == SEARCH_WORD) {
-                    SECONDARY_TOKEN_TYPE
-                } else {
+                if (currentToken != SEARCH_WORD) {
                     TEXT_TOKEN_TYPE
+                } else {
+                    if (firstMatchOffset == NO_MATCH) {
+                        firstMatchOffset = currentOffset
+                    }
+                    if (currentOffset == firstMatchOffset) PRIMARY_TOKEN_TYPE else SECONDARY_TOKEN_TYPE
                 }
             }
         } else {
