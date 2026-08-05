@@ -3,7 +3,7 @@ package com.github.strindberg.emacsj.duplicate
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.ide.highlighter.XmlFileType
 
-private const val FILE = "file.java"
+private const val FILE = "duplicatefile.java"
 
 class DuplicateTest : EmacsJTestCase() {
 

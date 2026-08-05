@@ -3,32 +3,9 @@ package com.github.strindberg.emacsj.duplicate
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 
-private const val FILE = "file.txt"
+private const val FILE = "copyfromabovefile.txt"
 
 class CopyFromAboveCommandTest : EmacsJTestCase() {
-
-    fun `test Copy from above works with multiple carets`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |el pueblo
-                |<caret>
-                |unido
-                |<caret>
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
-
-        myFixture.checkResult(
-            """
-                |el pueblo
-                |el pueblo<caret>
-                |unido
-                |unido<caret>
-            """.trimMargin()
-        )
-    }
 
     fun `test Whole line is duplicated from position 0`() {
         myFixture.configureByText(
@@ -204,6 +181,29 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
             """
                 |el pueblo unido
                 |          unido
+            """.trimMargin()
+        )
+    }
+
+    fun `test Copy from above works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |el pueblo
+                |<caret>
+                |unido
+                |<caret>
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
+
+        myFixture.checkResult(
+            """
+                |el pueblo
+                |el pueblo<caret>
+                |unido
+                |unido<caret>
             """.trimMargin()
         )
     }

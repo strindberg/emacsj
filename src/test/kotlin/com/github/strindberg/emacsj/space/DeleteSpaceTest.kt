@@ -6,25 +6,6 @@ private const val FILE = "deletespacefile.txt"
 
 class DeleteSpaceTest : EmacsJTestCase() {
 
-    fun `test Delete space works with multiple carets`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |foo<caret>   bar
-                |baz<caret>   qux
-            """.trimMargin()
-        )
-
-        myFixture.performEditorAction(ACTION_DELETE_SPACE)
-
-        myFixture.checkResult(
-            """
-                |foo<caret>bar
-                |baz<caret>qux
-            """.trimMargin()
-        )
-    }
-
     fun `test Nothing to delete`() {
         myFixture.configureByText(FILE, "foo<caret>bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
@@ -107,5 +88,24 @@ class DeleteSpaceTest : EmacsJTestCase() {
         myFixture.configureByText(FILE, "foo  \n  <caret>bar")
         myFixture.performEditorAction(ACTION_DELETE_SPACE)
         myFixture.checkResult("foo  \n<caret>bar")
+    }
+
+    fun `test Delete space works with multiple carets`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |foo<caret>   bar
+                |baz<caret>   qux
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_DELETE_SPACE)
+
+        myFixture.checkResult(
+            """
+                |foo<caret>bar
+                |baz<caret>qux
+            """.trimMargin()
+        )
     }
 }

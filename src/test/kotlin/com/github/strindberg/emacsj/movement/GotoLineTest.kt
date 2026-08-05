@@ -1,7 +1,5 @@
 package com.github.strindberg.emacsj.movement
 
-import java.awt.event.KeyEvent
-import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
@@ -10,32 +8,6 @@ import com.intellij.openapi.editor.VisualPosition
 private const val FILE = "gotofile.txt"
 
 class GotoLineTest : EmacsJTestCase() {
-
-    fun `test Adding a caret cancels the goto line session`() {
-        myFixture.configureByText(FILE, "<caret>aaa\nbbb")
-        myFixture.performEditorAction(ACTION_GOTO_LINE)
-        assertNotNull(GotoLineHandler.delegate)
-
-        myFixture.editor.caretModel.addCaret(VisualPosition(1, 0))
-
-        assertNull(GotoLineHandler.delegate)
-    }
-
-    fun `test Goto line reduces multiple carets to one`() {
-        myFixture.configureByText(
-            FILE,
-            """
-                |aa<caret>a
-                |bb<caret>b
-                |ccc
-            """.trimMargin()
-        )
-        assertEquals(2, myFixture.editor.caretModel.caretCount)
-
-        myFixture.performEditorAction(ACTION_GOTO_LINE)
-
-        assertEquals(1, myFixture.editor.caretModel.caretCount)
-    }
 
     fun `test Goto Line works`() {
         myFixture.configureByText(
@@ -149,7 +121,7 @@ class GotoLineTest : EmacsJTestCase() {
         )
         myFixture.performEditorAction(ACTION_GOTO_LINE)
 
-        setText("0")
+        setText("-10")
         pressEnter()
 
         myFixture.checkResult(
@@ -276,15 +248,37 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
+    fun `test Adding a caret cancels the goto line session`() {
+        myFixture.configureByText(FILE, "<caret>aaa\nbbb")
+        myFixture.performEditorAction(ACTION_GOTO_LINE)
+        assertNotNull(GotoLineHandler.delegate)
+
+        myFixture.editor.caretModel.addCaret(VisualPosition(1, 0))
+
+        assertNull(GotoLineHandler.delegate)
+    }
+
+    fun `test Goto line reduces multiple carets to one`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |aa<caret>a
+                |bb<caret>b
+                |ccc
+            """.trimMargin()
+        )
+        assertEquals(2, myFixture.editor.caretModel.caretCount)
+
+        myFixture.performEditorAction(ACTION_GOTO_LINE)
+
+        assertEquals(1, myFixture.editor.caretModel.caretCount)
+    }
+
     private fun setText(text: String) {
         GotoLineHandler.delegate!!.ui.text = (text)
     }
 
     private fun pressEnter() {
-        val textField = GotoLineHandler.delegate!!.ui.textField
-        GotoLineHandler.delegate!!.ui.popup.apply {
-            dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
-            dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
-        }
+        pressKey(GotoLineHandler.delegate?.ui, VK_ENTER)
     }
 }
