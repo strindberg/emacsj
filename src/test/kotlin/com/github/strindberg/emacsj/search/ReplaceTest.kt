@@ -11,6 +11,19 @@ private const val FILE = "replacefile.txt"
 
 class ReplaceTest : EmacsJTestCase() {
 
+    override fun setUp() {
+        super.setUp()
+        CommonHighlighter.delayMillis = 0
+    }
+
+    override fun tearDown() {
+        try {
+            CommonHighlighter.delayMillis = HIGHLIGHT_DELAY_MILLIS
+        } finally {
+            super.tearDown()
+        }
+    }
+
     fun `test Simple text replace works`() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)

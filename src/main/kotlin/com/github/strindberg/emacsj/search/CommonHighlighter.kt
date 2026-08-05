@@ -16,11 +16,18 @@ import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.VisibleForTesting
 
-private const val HIGHLIGHT_DELAY_MILLIS = 50L
+internal const val HIGHLIGHT_DELAY_MILLIS = 50L
 
 private const val HIGHLIGHT_CHUNK_SIZE = 100
 
 object CommonHighlighter {
+
+    /**
+     * Debounce applied before a scheduled search runs. Overridable purely so that tests need not wait it out on
+     * every keystroke; nothing in production changes it.
+     */
+    @VisibleForTesting
+    internal var delayMillis = HIGHLIGHT_DELAY_MILLIS
 
     private val progressIndicators = mutableListOf<ProgressIndicator>()
 
@@ -76,7 +83,7 @@ object CommonHighlighter {
                         indicator
                     )
                 },
-                HIGHLIGHT_DELAY_MILLIS,
+                delayMillis,
                 TimeUnit.MILLISECONDS
             )
         )
