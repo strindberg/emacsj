@@ -59,6 +59,8 @@ internal class CommonUI(
 
     private val countLabel = newLabel(false)
 
+    private var flashGeneration = 0
+
     @VisibleForTesting
     internal val textField = object : LanguageTextField(PlainTextLanguage.INSTANCE, editor.project, "") {
         override fun createEditor(): EditorEx =
@@ -121,8 +123,16 @@ internal class CommonUI(
 
     internal fun flashText(message: String, finalText: String = "") {
         countLabel.text = message
+        // Only the newest flash may clear the label.
+        val generation = ++flashGeneration
         AppExecutorUtil.getAppScheduledExecutorService().schedule(
-            { ApplicationManager.getApplication().invokeLater { countLabel.text = finalText } },
+            {
+                ApplicationManager.getApplication().invokeLater {
+                    if (generation == flashGeneration) {
+                        countLabel.text = finalText
+                    }
+                }
+            },
             FLASH_MILLIS,
             TimeUnit.MILLISECONDS
         )
@@ -137,6 +147,7 @@ internal class CommonUI(
     }
 
     internal fun cancelUI() {
+        flashGeneration++ // Drop any pending flash so it cannot write to a closed popup.
         popup.cancel()
         panel.cancel()
     }
