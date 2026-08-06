@@ -1,12 +1,11 @@
 package com.github.strindberg.emacsj.kill
 
 import java.awt.datatransfer.DataFlavor
-import com.github.strindberg.emacsj.EmacsJBundle
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.kill.Type.COPY
 import com.github.strindberg.emacsj.kill.Type.CUT
 import com.github.strindberg.emacsj.word.substring
-import com.github.strindberg.emacsj.zap.zapCommandNames
+import com.github.strindberg.emacsj.zap.zapActionIds
 import com.intellij.ide.CopyPasteManagerEx
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.EditorEx
@@ -57,8 +56,8 @@ object KillUtil {
     }
 
     private fun appendNextKill(): Boolean {
-        val lastCommandNames = EmacsJService.instance.lastCommandNames()
-        return lastCommandNames.last == EmacsJBundle.actionText(ACTION_APPEND_NEXT_KILL) ||
-            (lastCommandNames.last in zapCommandNames && lastCommandNames.previous == EmacsJBundle.actionText(ACTION_APPEND_NEXT_KILL))
+        val lastActionIds = EmacsJService.instance.lastActionIds()
+        return lastActionIds.last == ACTION_APPEND_NEXT_KILL ||
+            (lastActionIds.last in zapActionIds && lastActionIds.previous == ACTION_APPEND_NEXT_KILL)
     }
 }

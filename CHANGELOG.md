@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- XRef handling now works regardless of the IDE's language setting.
+
 ## [1.5.7] - 2026-07-31
 
 ### Fixed

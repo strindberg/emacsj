@@ -1,10 +1,12 @@
 package com.github.strindberg.emacsj.ui
 
+import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.actions.search.ISearchAction
 import com.github.strindberg.emacsj.actions.universal.UniversalArgumentAction
 import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.universal.UniversalArgumentDelegate
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
+import com.github.strindberg.emacsj.xref.XRefHandler
 import com.github.strindberg.emacsj.zap.ZapHandler
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
@@ -19,10 +21,17 @@ internal class EmacsJCancelListener : AnActionListener {
     private var universalArgumentDelegate: UniversalArgumentDelegate? = null
 
     init {
+        // Installs the raw typed-action handler that routes keystrokes into the isearch, zap and universal-argument delegates.
         ApplicationManager.getApplication().service<EmacsJTypedActionService>()
     }
 
     override fun beforeActionPerformed(action: AnAction, event: AnActionEvent) {
+        EmacsJService.instance.setPerformingAction(true)
+
+        if (ActionManager.getInstance().getId(action) in XRefHandler.xRefActionIds) {
+            event.project?.let { XRefHandler.pushPlace(it) }
+        }
+
         ISearchHandler.delegate?.let { delegate ->
             if (action !is ISearchAction) {
                 delegate.hide()
@@ -38,11 +47,19 @@ internal class EmacsJCancelListener : AnActionListener {
     }
 
     override fun afterActionPerformed(action: AnAction, event: AnActionEvent, result: AnActionResult) {
-        universalArgumentDelegate?.let { delegate ->
-            ActionManager.getInstance().getId(action)?.let { actionId ->
-                delegate.repeatAction(actionId)
+        try {
+            val actionId = ActionManager.getInstance().getId(action)
+
+            if (result.isPerformed && actionId != null) {
+                EmacsJService.instance.addAction(actionId)
             }
-            universalArgumentDelegate = null
+
+            universalArgumentDelegate?.let { delegate ->
+                actionId?.let { delegate.repeatAction(it) }
+                universalArgumentDelegate = null
+            }
+        } finally {
+            EmacsJService.instance.setPerformingAction(false)
         }
     }
 }
