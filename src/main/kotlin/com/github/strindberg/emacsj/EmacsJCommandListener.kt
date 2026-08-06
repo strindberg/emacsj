@@ -1,21 +1,21 @@
 package com.github.strindberg.emacsj
 
-import com.github.strindberg.emacsj.xref.XRefHandler
 import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.command.CommandListener
 
+/**
+ * Records everything that reaches the editor without being an action -- typing, mouse edits, commands started in
+ * code. Actions are recorded by [com.github.strindberg.emacsj.ui.EmacsJCancelListener] instead, by id; editor
+ * actions raise a command too, so those are skipped here to avoid recording them twice.
+ */
 class EmacsJCommandListener : CommandListener {
 
     override fun commandFinished(event: CommandEvent) {
+        if (EmacsJService.instance.isPerformingAction()) return
+
         // Empty, "Undefined" or "Dummy" commands are present when running tests
         if (!event.commandName.isNullOrBlank() && event.commandName !in listOf("Undefined", "Dummy")) {
-            EmacsJService.instance.addCommand(event.commandName)
-        }
-    }
-
-    override fun commandStarted(event: CommandEvent) {
-        if (event.commandName in XRefHandler.xRefCommandNames) {
-            XRefHandler.pushPlace(event)
+            EmacsJService.instance.addAction(event.commandName)
         }
     }
 }

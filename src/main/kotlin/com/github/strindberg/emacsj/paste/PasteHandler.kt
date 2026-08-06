@@ -2,7 +2,6 @@ package com.github.strindberg.emacsj.paste
 
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
-import com.github.strindberg.emacsj.EmacsJBundle
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.paste.Type.HISTORY
@@ -32,12 +31,7 @@ internal const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.
 
 private val LAST_PASTED_REGIONS = Key.create<List<TextRange>>("PasteHandler.LAST_PASTED_REGIONS")
 
-private val pasteCommands =
-    listOf(
-        EmacsJBundle.actionText(ACTION_PASTE),
-        EmacsJBundle.actionText(ACTION_PREFIX_PASTE),
-        EmacsJBundle.actionText(ACTION_HISTORY_PASTE)
-    )
+private val pasteActionIds = setOf(ACTION_PASTE, ACTION_PREFIX_PASTE, ACTION_HISTORY_PASTE)
 
 class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
@@ -67,7 +61,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             }
             HISTORY -> {
                 editor.getUserData(LAST_PASTED_REGIONS)?.let { regions ->
-                    if (EmacsJService.instance.lastCommandName() in pasteCommands) {
+                    if (EmacsJService.instance.lastActionId() in pasteActionIds) {
                         regions.sortedByDescending { it.startOffset }.forEach { region ->
                             editor.document.deleteString(region.startOffset, region.endOffset)
                         }

@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj.view
 
-import com.github.strindberg.emacsj.EmacsJBundle
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.view.Position.BOTTOM
 import com.github.strindberg.emacsj.view.Position.MIDDLE
@@ -14,8 +13,6 @@ import org.intellij.lang.annotations.Language
 
 @Language("devkit-action-id")
 internal const val ACTION_REPOSITION = "com.github.strindberg.emacsj.actions.view.reposition"
-
-private val repositionCommandName = EmacsJBundle.actionText(ACTION_REPOSITION)
 
 class RepositionHandler : EditorActionHandler() {
 
@@ -32,12 +29,12 @@ class RepositionHandler : EditorActionHandler() {
         val middlePos = VisualPosition((viewOffset + viewHeight / 2) / editor.lineHeight, 0)
         val bottomPos = VisualPosition((viewOffset + viewHeight) / editor.lineHeight - 1, 0)
 
-        when (EmacsJService.instance.lastCommandName()) {
-            repositionCommandName if lastPosition == MIDDLE -> {
+        when (EmacsJService.instance.lastActionId()) {
+            ACTION_REPOSITION if lastPosition == MIDDLE -> {
                 lastPosition = TOP
                 primary.moveToVisualPosition(topPos)
             }
-            repositionCommandName if lastPosition == TOP -> {
+            ACTION_REPOSITION if lastPosition == TOP -> {
                 lastPosition = BOTTOM
                 primary.moveToVisualPosition(bottomPos)
             }

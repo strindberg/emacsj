@@ -15,11 +15,11 @@ interface EmacsJService {
 
     fun universalArgumentRelaxed(): Int
 
-    fun addCommand(commandName: String)
+    fun addAction(actionId: String)
 
-    fun lastCommandNames(): CommandNames
+    fun lastActionIds(): ActionIds
 
-    fun lastCommandName(): String?
+    fun lastActionId(): String?
 
     fun isLastStrictUniversal(): Boolean
 
@@ -28,6 +28,14 @@ interface EmacsJService {
     fun setRepeating(repeating: Boolean)
 
     fun isRepeating(): Boolean
+
+    /**
+     * Whether an action is currently being performed. Editor actions raise a command as well, and this lets the
+     * command listener leave those to the action listener instead of recording them twice.
+     */
+    fun setPerformingAction(performing: Boolean)
+
+    fun isPerformingAction(): Boolean
 
     fun registerSingleAction(actionId: String)
 

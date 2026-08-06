@@ -2,20 +2,20 @@ package com.github.strindberg.emacsj
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.github.strindberg.emacsj.universal.singleActions
-import com.github.strindberg.emacsj.universal.universalCommandName
-import com.github.strindberg.emacsj.universal.universalCommandNames
+import com.github.strindberg.emacsj.universal.universalActionIds
 import com.intellij.openapi.components.Service
 
 /**
- * Holds global command state. Most callers are on the EDT, but [com.github.strindberg.emacsj.ui.EmacsJActionsPromoter]
+ * Holds global action state. Most callers are on the EDT, but [com.github.strindberg.emacsj.ui.EmacsJActionsPromoter]
  * runs wherever the platform chooses to update actions, so the state here is made safe for any thread rather than
  * relying on an EDT-confinement invariant that nothing enforces.
  */
 @Service
 class EmacsJServiceImpl : EmacsJService {
 
-    private val lastCommandNames = AtomicReference(CommandNames(null, null))
+    private val lastActionIds = AtomicReference(ActionIds(null, null))
 
     @Volatile
     private var lastArgument = 1
@@ -23,10 +23,13 @@ class EmacsJServiceImpl : EmacsJService {
     @Volatile
     private var isRepeating = false
 
+    @Volatile
+    private var isPerformingAction = false
+
     private val registeredSingleActions = ConcurrentHashMap.newKeySet<String>().apply { addAll(singleActions) }
 
-    override fun addCommand(commandName: String) {
-        lastCommandNames.updateAndGet { CommandNames(last = commandName, previous = it.last) }
+    override fun addAction(actionId: String) {
+        lastActionIds.updateAndGet { ActionIds(last = actionId, previous = it.last) }
     }
 
     override fun registerUniversalArgument(lastArgument: Int) {
@@ -36,23 +39,29 @@ class EmacsJServiceImpl : EmacsJService {
     override fun universalArgument() = if (isLastUniversal()) lastArgument else 1
 
     override fun universalArgumentRelaxed() =
-        lastCommandNames.get().let { names ->
-            if (names.last in universalCommandNames || names.previous in universalCommandNames) lastArgument else 1
+        lastActionIds.get().let { ids ->
+            if (ids.last in universalActionIds || ids.previous in universalActionIds) lastArgument else 1
         }
 
-    override fun lastCommandNames(): CommandNames = lastCommandNames.get()
+    override fun lastActionIds(): ActionIds = lastActionIds.get()
 
-    override fun lastCommandName() = lastCommandNames.get().last
+    override fun lastActionId() = lastActionIds.get().last
 
-    override fun isLastStrictUniversal() = lastCommandNames.get().last == universalCommandName
+    override fun isLastStrictUniversal() = lastActionIds.get().last == ACTION_UNIVERSAL_ARGUMENT
 
-    override fun isLastUniversal() = lastCommandNames.get().last in universalCommandNames
+    override fun isLastUniversal() = lastActionIds.get().last in universalActionIds
 
     override fun setRepeating(repeating: Boolean) {
         this.isRepeating = repeating
     }
 
     override fun isRepeating() = isRepeating
+
+    override fun setPerformingAction(performing: Boolean) {
+        this.isPerformingAction = performing
+    }
+
+    override fun isPerformingAction() = isPerformingAction
 
     override fun registerSingleAction(actionId: String) {
         registeredSingleActions.add(actionId)
@@ -61,4 +70,4 @@ class EmacsJServiceImpl : EmacsJService {
     override fun getSingleActions() = registeredSingleActions.toSet()
 }
 
-data class CommandNames(val last: String?, val previous: String?)
+data class ActionIds(val last: String?, val previous: String?)

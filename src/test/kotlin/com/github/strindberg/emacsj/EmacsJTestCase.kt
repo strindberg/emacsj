@@ -15,9 +15,9 @@ private const val KEY_EVENT_TIME = 1234L
 /**
  * Base class for EmacsJ fixture tests.
  *
- * The interactive features keep their delegate in a companion-object field, and the command history and copy
- * throttle live on application-level state. All of it outlives a single test, so cleanup has to happen centrally:
- * doing it per class means the next test class added to the project silently inherits what the previous one left.
+ * The interactive features keep their delegates in a companion-object field. All of it outlives a single test,
+ * so cleanup has to happen centrally: doing it per class means the next test class added to the project silently
+ * inherits what the previous one left.
  */
 @Suppress("AbstractClassCanBeConcreteClass")
 abstract class EmacsJTestCase : BasePlatformTestCase() {
@@ -43,10 +43,10 @@ abstract class EmacsJTestCase : BasePlatformTestCase() {
 
             EmacsJService.instance.setRepeating(false)
 
-            // Command history is application-scoped and outlives the test. Handlers that behave differently when
+            // Action history is application-scoped and outlives the test. Handlers that behave differently when
             // repeated (recenter, reposition, append-kill) would otherwise start mid-cycle in the next test. Two
-            // pushes are needed to clear both the last and the previous slot; "" matches no command name.
-            repeat(2) { EmacsJService.instance.addCommand("") }
+            // pushes are needed to clear both the last and the previous slot; "" matches no action id.
+            repeat(2) { EmacsJService.instance.addAction("") }
         } finally {
             super.tearDown()
         }

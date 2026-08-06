@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj.universal
 
-import com.github.strindberg.emacsj.EmacsJBundle
 import com.github.strindberg.emacsj.EmacsJService
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
@@ -41,7 +40,7 @@ internal const val ACTION_UNIVERSAL_ARGUMENT9 = "com.github.strindberg.emacsj.ac
 @Language("devkit-action-id")
 internal const val ACTION_UNIVERSAL_ARGUMENT0 = "com.github.strindberg.emacsj.actions.universal.universalargument0"
 
-private val universalCommandIds = setOf(
+internal val universalActionIds = setOf(
     ACTION_UNIVERSAL_ARGUMENT,
     ACTION_UNIVERSAL_ARGUMENT1,
     ACTION_UNIVERSAL_ARGUMENT2,
@@ -54,10 +53,6 @@ private val universalCommandIds = setOf(
     ACTION_UNIVERSAL_ARGUMENT9,
     ACTION_UNIVERSAL_ARGUMENT0,
 )
-
-internal val universalCommandName = EmacsJBundle.actionText(ACTION_UNIVERSAL_ARGUMENT)
-
-internal val universalCommandNames = universalCommandIds.map { EmacsJBundle.actionText(it) }.toSet()
 
 class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 

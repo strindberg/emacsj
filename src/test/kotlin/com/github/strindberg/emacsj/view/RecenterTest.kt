@@ -57,6 +57,21 @@ class RecenterTest : EmacsJTestCase() {
         assertEquals(middle, scrollOffset)
     }
 
+    fun `test Typing restarts the cycle at middle`() {
+        configure()
+
+        myFixture.performEditorAction(ACTION_RECENTER)
+        val middle = scrollOffset
+        myFixture.performEditorAction(ACTION_RECENTER)
+        assertTrue(scrollOffset != middle)
+
+        myFixture.type("x")
+
+        myFixture.performEditorAction(ACTION_RECENTER)
+
+        assertEquals(middle, scrollOffset)
+    }
+
     fun `test An intervening command restarts the cycle at middle`() {
         configure()
 

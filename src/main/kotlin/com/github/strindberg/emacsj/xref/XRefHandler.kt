@@ -5,7 +5,6 @@ import com.github.strindberg.emacsj.mark.PlaceInfo
 import com.github.strindberg.emacsj.mark.UndoRedoStack
 import com.github.strindberg.emacsj.mark.manager
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.command.CommandEvent
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
@@ -29,21 +28,20 @@ internal const val ACTION_XREF_FORWARD = "com.github.strindberg.emacsj.actions.x
 class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
     companion object {
-        internal val xRefCommandNames = setOf(
-            "Go to Declaration or Usages",
-            "Go to Declaration",
-            "Go to Type Declaration",
+
+        internal val xRefActionIds = setOf(
+            "GotoDeclaration",
+            "GotoDeclarationOnly",
+            "GotoTypeDeclaration",
         )
 
         private val places = mutableMapOf<String, UndoRedoStack<PlaceInfo>>()
 
-        internal fun pushPlace(event: CommandEvent) {
-            event.project?.let { project ->
-                project.manager?.let { manager ->
-                    manager.selectedFiles.getOrNull(0)?.let { virtualFile ->
-                        (manager.getSelectedEditor(virtualFile) as? TextEditor)?.let { fileEditor ->
-                            pushPlaceInfo(fileEditor.editor, project, virtualFile)
-                        }
+        internal fun pushPlace(project: Project) {
+            project.manager?.let { manager ->
+                manager.selectedFiles.getOrNull(0)?.let { virtualFile ->
+                    (manager.getSelectedEditor(virtualFile) as? TextEditor)?.let { fileEditor ->
+                        pushPlaceInfo(fileEditor.editor, project, virtualFile)
                     }
                 }
             }
