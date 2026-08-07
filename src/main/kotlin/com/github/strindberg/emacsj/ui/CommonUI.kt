@@ -24,6 +24,8 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.text.StringUtil.escapeXmlEntities
+import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.ui.LanguageTextField
 import com.intellij.ui.awt.RelativePoint
@@ -61,6 +63,9 @@ internal class CommonUI(
 
     private var flashGeneration = 0
 
+    // What the read-only label stands for. The label itself may hold markup, so it cannot be read back as the value.
+    private var readonlyText: String = ""
+
     @VisibleForTesting
     internal val textField = object : LanguageTextField(PlainTextLanguage.INSTANCE, editor.project, "") {
         override fun createEditor(): EditorEx =
@@ -78,16 +83,35 @@ internal class CommonUI(
         }
 
     internal var text: String
-        get() = scrubText(if (isWriteable) textField.text else textLabel.text)
+        get() = if (isWriteable) scrubText(textField.text) else readonlyText
         set(newText) {
             if (isWriteable) {
                 textField.text = displayText(newText)
                 textField.setCaretPosition(textField.text.length)
                 textField.removeSelection()
             } else {
+                readonlyText = newText
                 textLabel.text = displayText(newText)
             }
         }
+
+    internal fun showText(found: String, notFound: String = "") {
+        readonlyText = found + notFound
+        textLabel.text = if (notFound.isEmpty()) {
+            displayText(readonlyText)
+        } else {
+            buildString {
+                append("<html>")
+                append(escapeXmlEntities(displayText(found)))
+                append("""<font color="${ColorUtil.toHtmlColor(JBColor.RED)}">""")
+                append(escapeXmlEntities(displayText(notFound)))
+                append("</font></html>")
+            }
+        }
+    }
+
+    internal val markup: String
+        @VisibleForTesting get() = textLabel.text
 
     internal var count: Pair<Int, Int>? = null
         set(newCount) {
@@ -216,6 +240,8 @@ internal class CommonUI(
         }
 
     private fun setReadonlyComponents(newText: String) {
+        readonlyText = newText
+
         panel.remove(textField)
 
         panel.add(textLabel, GridBagConstraints().apply { gridx = 2 })

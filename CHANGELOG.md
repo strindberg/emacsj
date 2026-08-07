@@ -4,9 +4,12 @@
 
 ## [Unreleased]
 
+### Added
+- When using Isearch, search field now marks non-matching part of the search string in red.
+
 ### Fixed
 
-- XRef history now works regardless of the IDE's language setting.a
+- XRef history now works regardless of the IDE's language setting.
 
 ## [1.5.7] - 2026-07-31
 

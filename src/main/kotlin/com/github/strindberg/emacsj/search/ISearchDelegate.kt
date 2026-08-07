@@ -72,6 +72,9 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
     private var isDisposed = false
 
+    /** The longest search string that matched, so that a failing search can call out only what was added after it. */
+    private var foundText: String = ""
+
     @VisibleForTesting
     internal var caseType: CaseType = UNSPECIFIED
 
@@ -312,8 +315,15 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
     private fun updateUI(title: String, text: String, found: Boolean) {
         ui.title = title
-        ui.text = text
-        ui.textColor = if (found) JBColor.foreground() else JBColor.RED
+        ui.textColor = JBColor.foreground()
+
+        if (found) {
+            foundText = text
+            ui.showText(text)
+        } else {
+            val matched = text.commonPrefixWith(foundText)
+            ui.showText(matched, text.substring(matched.length))
+        }
     }
 
     private fun renewState(message: String?) {
@@ -506,18 +516,18 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
         )
     }
 
-    private fun findString(offset: Int, isRegexp: Boolean, searchString: String): FindResult = FindManager.getInstance(
-        editor.project
-    ).findString(
-        editor.text,
-        offset,
-        FindModel().apply {
-            stringToFind = searchString
-            isForward = direction == FORWARD
-            isCaseSensitive = caseSensitive()
-            isRegularExpressions = isRegexp
-        }
-    )
+    private fun findString(offset: Int, isRegexp: Boolean, searchString: String): FindResult =
+        FindManager.getInstance(editor.project)
+            .findString(
+                editor.text,
+                offset,
+                FindModel().apply {
+                    stringToFind = searchString
+                    isForward = direction == FORWARD
+                    isCaseSensitive = caseSensitive()
+                    isRegularExpressions = isRegexp
+                }
+            )
 
     private fun getSearchModelArguments(): Pair<Boolean, String> =
         if (searchType == TEXT && ISearchHandler.isLax) {

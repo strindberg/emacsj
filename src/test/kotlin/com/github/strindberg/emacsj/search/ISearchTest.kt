@@ -10,6 +10,8 @@ import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.ui.ColorUtil
+import com.intellij.ui.JBColor
 
 private const val FILE = "isearchfile.txt"
 
@@ -17,6 +19,54 @@ private const val HIGHLIGHT_TIMEOUT_SECONDS = 10
 
 @Suppress("LargeClass", "ReplaceSafeCallChainWithRun")
 class ISearchTest : EmacsJTestCase() {
+
+    fun `test Failing search marks only the characters added since the last match`() {
+        myFixture.configureByText(FILE, "<caret>foo bar")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+        assertEquals("foo", markup())
+
+        type("b")
+
+        assertEquals(markupOf(found = "foo", notFound = "b"), markup())
+        assertEquals("foob", ISearchHandler.delegate?.text)
+    }
+
+    fun `test Further failing characters extend the marked part`() {
+        myFixture.configureByText(FILE, "<caret>foo bar")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+        type("b")
+
+        type("z")
+
+        assertEquals(markupOf(found = "foo", notFound = "bz"), markup())
+    }
+
+    fun `test Backspacing back to a matching search clears the marking`() {
+        myFixture.configureByText(FILE, "<caret>foo bar")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+        type("bz")
+
+        performEditorAction(ACTION_ISEARCH_BACKSPACE)
+        assertEquals(markupOf(found = "foo", notFound = "b"), markup())
+
+        performEditorAction(ACTION_ISEARCH_BACKSPACE)
+
+        assertEquals("foo", markup())
+    }
+
+    fun `test Marked search text is escaped`() {
+        myFixture.configureByText(FILE, "<caret>a<b & c")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("a<")
+
+        type("Z")
+
+        assertEquals(markupOf(found = "a&lt;", notFound = "Z"), markup())
+        assertEquals("a<Z", ISearchHandler.delegate?.text)
+    }
 
     /** Match count as shown in the search UI, once debounced highlighting has reported it. */
     private val searchCount: Pair<Int, Int>?
@@ -2316,6 +2366,11 @@ class ISearchTest : EmacsJTestCase() {
     private fun pressEnter() {
         performEditorAction(ACTION_ISEARCH_ENTER)
     }
+
+    private fun markup() = ISearchHandler.delegate?.ui?.markup
+
+    private fun markupOf(found: String, notFound: String) =
+        """<html>$found<font color="${ColorUtil.toHtmlColor(JBColor.RED)}">$notFound</font></html>"""
 
     private fun pressEscape() {
         pressKey(ISearchHandler.delegate?.ui, VK_ESCAPE)
