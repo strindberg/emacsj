@@ -43,12 +43,14 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
+import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
 private enum class StartType { WRAPAROUND, FIRST_SEARCH, REPEATED_SEARCH }
 
-internal class ISearchDelegate(editor: Editor, var searchType: SearchType, var direction: SearchDirection) : UIDelegate(editor) {
+internal class ISearchDelegate(editor: Editor, val project: Project, var searchType: SearchType, var direction: SearchDirection) :
+    UIDelegate(editor) {
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -321,6 +323,7 @@ internal class ISearchDelegate(editor: Editor, var searchType: SearchType, var d
                 editor.markupModel.removeAllHighlighters()
                 CommonHighlighter.findAllAndHighlight(
                     editor = editor,
+                    project = project,
                     searchArg = ui.text,
                     useRegexp = searchType == REGEXP,
                     useCase = searchType == REGEXP || caseSensitive(ui.text),
@@ -367,7 +370,13 @@ internal class ISearchDelegate(editor: Editor, var searchType: SearchType, var d
         removeAllHighlighters()
 
         val (isRegexp, searchString) = getSearchModelArguments()
-        CommonHighlighter.findAllAndHighlight(editor = editor, searchArg = searchString, useRegexp = isRegexp, useCase = caseSensitive())
+        CommonHighlighter.findAllAndHighlight(
+            editor = editor,
+            project = project,
+            searchArg = searchString,
+            useRegexp = isRegexp,
+            useCase = caseSensitive()
+        )
     }
 
     private fun searchSelected() {
@@ -445,6 +454,7 @@ internal class ISearchDelegate(editor: Editor, var searchType: SearchType, var d
             val (isRegexp, searchString) = getSearchModelArguments()
             CommonHighlighter.findAllAndHighlight(
                 editor = editor,
+                project = project,
                 searchArg = searchString,
                 useRegexp = isRegexp,
                 useCase = caseSensitive(),
@@ -538,6 +548,7 @@ internal class ISearchDelegate(editor: Editor, var searchType: SearchType, var d
     private fun findAllAndHighlight(offset: Int?, highlight: Boolean, isRegexp: Boolean, searchString: String) {
         CommonHighlighter.findAllAndHighlight(
             editor = editor,
+            project = project,
             searchArg = searchString,
             useRegexp = isRegexp,
             useCase = caseSensitive(),
@@ -549,7 +560,7 @@ internal class ISearchDelegate(editor: Editor, var searchType: SearchType, var d
     }
 
     private fun findString(offset: Int, isRegexp: Boolean, searchString: String): FindResult =
-        FindManager.getInstance(editor.project)
+        FindManager.getInstance(project)
             .findString(
                 editor.text,
                 offset,
@@ -590,7 +601,7 @@ internal class ISearchDelegate(editor: Editor, var searchType: SearchType, var d
             }
 
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
-            IdeDocumentHistory.getInstance(editor.project).includeCurrentCommandAsNavigation()
+            IdeDocumentHistory.getInstance(project).includeCurrentCommandAsNavigation()
         }
     }
 

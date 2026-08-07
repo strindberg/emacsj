@@ -13,12 +13,24 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
+import com.intellij.openapi.project.Project
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.VisibleForTesting
 
 internal const val HIGHLIGHT_DELAY_MILLIS = 50L
 
 private const val HIGHLIGHT_CHUNK_SIZE = 100
+
+private data class SearchRequest(
+    val editor: Editor,
+    val project: Project,
+    val searchArg: String,
+    val useRegexp: Boolean,
+    val useCase: Boolean,
+    val range: IntRange?,
+    val callback: (List<FindResult>) -> Unit,
+    val highlight: Boolean,
+)
 
 object CommonHighlighter {
 
@@ -39,11 +51,13 @@ object CommonHighlighter {
     internal fun cancel(editor: Editor) {
         progressIndicators.forEach { it.cancel() }
         progressIndicators.clear()
+
         editor.markupModel.removeAllHighlighters()
     }
 
     internal fun findAllAndHighlight(
         editor: Editor,
+        project: Project,
         searchArg: String,
         useRegexp: Boolean,
         useCase: Boolean,
@@ -66,14 +80,17 @@ object CommonHighlighter {
                         {
                             ApplicationManager.getApplication().runReadAction {
                                 doFindAllAndHighlight(
-                                    editor = editor,
-                                    searchArg = searchArg,
-                                    useRegexp = useRegexp,
-                                    useCase = useCase,
-                                    range = range,
-                                    callback = callback,
-                                    highlight = highlight,
-                                    indicator = indicator
+                                    SearchRequest(
+                                        editor = editor,
+                                        project = project,
+                                        searchArg = searchArg,
+                                        useRegexp = useRegexp,
+                                        useCase = useCase,
+                                        range = range,
+                                        callback = callback,
+                                        highlight = highlight
+                                    ),
+                                    indicator
                                 )
                             }
                         },
@@ -86,41 +103,34 @@ object CommonHighlighter {
         )
     }
 
-    private fun doFindAllAndHighlight(
-        editor: Editor,
-        searchArg: String,
-        useRegexp: Boolean,
-        useCase: Boolean,
-        range: IntRange?,
-        callback: (List<FindResult>) -> Unit,
-        highlight: Boolean,
-        indicator: ProgressIndicator,
-    ) {
-        val matches = mutableListOf<FindResult>()
-        if (searchArg.isNotEmpty()) {
-            val findManager = FindManager.getInstance(editor.project)
-            val findModel = FindModel().apply {
-                stringToFind = searchArg
-                isCaseSensitive = useCase
-                isRegularExpressions = useRegexp
-            }
-            val documentText = editor.text
-            val text = documentText.substring(0, minOf(range?.last ?: documentText.length, documentText.length))
-            var offset = range?.start ?: 0
+    private fun doFindAllAndHighlight(request: SearchRequest, indicator: ProgressIndicator) {
+        with(request) {
+            val matches = mutableListOf<FindResult>()
+            if (searchArg.isNotEmpty()) {
+                val findManager = FindManager.getInstance(project)
+                val findModel = FindModel().apply {
+                    stringToFind = searchArg
+                    isCaseSensitive = useCase
+                    isRegularExpressions = useRegexp
+                }
+                val documentText = editor.text
+                val text = documentText.substring(0, minOf(range?.last ?: documentText.length, documentText.length))
+                var offset = range?.start ?: 0
 
-            ProgressManager.checkCanceled()
-            while (offset < text.length) {
-                val result = findManager.findString(text, offset, findModel)
-                if (!result.isStringFound) break
-                matches.add(result)
-                offset = maxOf(result.endOffset, offset + 1) // regexp match can be length zero
-            }
+                ProgressManager.checkCanceled()
+                while (offset < text.length) {
+                    val result = findManager.findString(text, offset, findModel)
+                    if (!result.isStringFound) break
+                    matches.add(result)
+                    offset = maxOf(result.endOffset, offset + 1) // regexp match can be length zero
+                }
 
-            if (highlight) {
-                addSecondaryHighlights(editor, matches, indicator)
+                if (highlight) {
+                    addSecondaryHighlights(editor, matches, indicator)
+                }
             }
+            onEdt(editor, indicator) { callback(matches) }
         }
-        onEdt(editor, indicator) { callback(matches) }
     }
 
     private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>, indicator: ProgressIndicator) {

@@ -32,11 +32,17 @@ import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
+import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
-internal class ReplaceDelegate(editor: Editor, val type: SearchType, private val selection: IntRange? = null, lastSearch: Replace? = null) :
-    UIDelegate(editor) {
+internal class ReplaceDelegate(
+    editor: Editor,
+    private val project: Project,
+    val type: SearchType,
+    private val selection: IntRange? = null,
+    lastSearch: Replace? = null,
+) : UIDelegate(editor) {
 
     @VisibleForTesting
     override val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
@@ -149,6 +155,7 @@ internal class ReplaceDelegate(editor: Editor, val type: SearchType, private val
                     editor.markupModel.removeAllHighlighters()
                     CommonHighlighter.findAllAndHighlight(
                         editor = editor,
+                        project = project,
                         searchArg = ui.text,
                         useRegexp = type == REGEXP,
                         useCase = type == REGEXP || caseSensitive(ui.text),
@@ -367,9 +374,9 @@ internal class ReplaceDelegate(editor: Editor, val type: SearchType, private val
 
     private fun searchForReplacement(highlight: Boolean) {
         val result = if (selection != null) {
-            FindManager.getInstance(editor.project).findString(editor.text.substring(0, selection.last), selection.first, replaceModel)
+            FindManager.getInstance(project).findString(editor.text.substring(0, selection.last), selection.first, replaceModel)
         } else {
-            FindManager.getInstance(editor.project).findString(editor.text, editor.caretModel.offset, replaceModel)
+            FindManager.getInstance(project).findString(editor.text, editor.caretModel.offset, replaceModel)
         }
 
         if (result.isStringFound) {
@@ -393,10 +400,10 @@ internal class ReplaceDelegate(editor: Editor, val type: SearchType, private val
     private fun replaceInEditor() {
         if (!isReplaced) {
             val foundString = editor.document.substring(lastResult.startOffset, lastResult.endOffset)
-            val replacement = FindManager.getInstance(editor.project)
+            val replacement = FindManager.getInstance(project)
                 .getStringToReplace(foundString, replaceModel, lastResult.startOffset, editor.text)
 
-            WriteCommandAction.runWriteCommandAction(editor.project, "Replace ${type.name.lowercase()}", undoGroupId, {
+            WriteCommandAction.runWriteCommandAction(project, "Replace ${type.name.lowercase()}", undoGroupId, {
                 editor.document.replaceString(lastResult.startOffset, lastResult.endOffset, replacement)
             })
 
@@ -409,7 +416,7 @@ internal class ReplaceDelegate(editor: Editor, val type: SearchType, private val
     }
 
     private fun undoReplacement(item: Replaced) {
-        WriteCommandAction.runWriteCommandAction(editor.project, "Undo replace ${type.name.lowercase()}", undoGroupId, {
+        WriteCommandAction.runWriteCommandAction(project, "Undo replace ${type.name.lowercase()}", undoGroupId, {
             editor.document.replaceString(item.startOffset, item.endOffset, item.original)
         })
 
@@ -441,6 +448,7 @@ internal class ReplaceDelegate(editor: Editor, val type: SearchType, private val
 
         CommonHighlighter.findAllAndHighlight(
             editor = editor,
+            project = project,
             searchArg = searchArg,
             useRegexp = type == REGEXP,
             useCase = replaceModel.isCaseSensitive,

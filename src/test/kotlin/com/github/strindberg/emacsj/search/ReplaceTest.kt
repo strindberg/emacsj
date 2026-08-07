@@ -4,7 +4,9 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ENTER
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_START
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.VisualPosition
 
 private const val FILE = "replacefile.txt"
@@ -724,6 +726,23 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
         assertEquals(1, myFixture.editor.caretModel.caretCount)
+    }
+
+    fun `test Replace is disabled in an editor without a project`() {
+        val factory = EditorFactory.getInstance()
+        val editor = factory.createEditor(factory.createDocument("foo bar baz"))
+        try {
+            assertNull(editor.project)
+            val handler = ReplaceHandler(type = SearchType.TEXT)
+
+            assertFalse(handler.isEnabled(editor, editor.caretModel.primaryCaret, DataContext.EMPTY_CONTEXT))
+
+            // FindManager is a project service, so starting a replace here would fail on the first typed character.
+            handler.execute(editor, null, DataContext.EMPTY_CONTEXT)
+            assertNull(ReplaceHandler.delegate)
+        } finally {
+            factory.releaseEditor(editor)
+        }
     }
 
     private fun setText(text: String) {
