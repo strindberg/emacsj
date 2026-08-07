@@ -2406,6 +2406,27 @@ class ISearchTest : EmacsJTestCase() {
         }
     }
 
+    fun `test Half-typed regexp does not break a backward search`() {
+        // ISearchDelegate.matchEnd() compiles the search string itself, but only on the backward first-search path, and only once a
+        // match has moved the caret away from where the search started.
+        myFixture.configureByText(FILE, "foo bar <caret>baz")
+
+        performEditorAction(ACTION_ISEARCH_REGEXP_BACKWARD)
+        type("b")
+        myFixture.checkResult("foo <caret>bar baz")
+
+        listOf("(", "[", "\\").forEach { unfinished ->
+            type(unfinished)
+            assertEquals(ISearchState.FAILED, ISearchHandler.delegate?.state)
+            performEditorAction(ACTION_ISEARCH_BACKSPACE)
+        }
+
+        // Completing the pattern picks the search up again where the half-typed one left it.
+        type("(a)")
+        assertEquals(ISearchState.SEARCH, ISearchHandler.delegate?.state)
+        myFixture.checkResult("foo <caret>bar baz")
+    }
+
     /**
      * Search actions settle before returning. Highlighting is debounced, and a breadcrumb records the match count
      * as it stands when the next action starts, so firing actions faster than the debounce would snapshot counts
