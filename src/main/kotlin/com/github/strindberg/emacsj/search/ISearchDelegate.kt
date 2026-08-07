@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_G
 import java.util.regex.Pattern
+import java.util.regex.PatternSyntaxException
 import com.github.strindberg.emacsj.paste.clipboardHistoryTexts
 import com.github.strindberg.emacsj.preferences.EmacsJSettings
 import com.github.strindberg.emacsj.search.CaseType.INSENSITIVE
@@ -540,9 +541,14 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         start + if (searchType == TEXT) {
             text.length
         } else {
-            Regex(text).matchAt(editor.text, start)?.run {
-                value.length
-            } ?: 0
+            try {
+                Regex(text).matchAt(editor.text, start)?.run {
+                    value.length
+                } ?: 0
+            } catch (_: PatternSyntaxException) {
+                // Half-typed patterns such as "(" or "[" are normal while a regexp is being composed.
+                0
+            }
         }
 
     private fun findAllAndHighlight(offset: Int?, highlight: Boolean, isRegexp: Boolean, searchString: String) {
@@ -559,6 +565,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         )
     }
 
+    // A malformed regexp needs no handling here: FindManager reports a not-found result rather than throwing.
     private fun findString(offset: Int, isRegexp: Boolean, searchString: String): FindResult =
         FindManager.getInstance(project)
             .findString(

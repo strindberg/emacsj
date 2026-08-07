@@ -355,7 +355,7 @@ internal class ReplaceDelegate(
         }
 
     private fun handleReplacementError(e: FindManager.MalformedReplacementStringException) {
-        thisLogger().warn(e.message)
+        thisLogger().warn(e)
         ui.textColor = JBColor.RED
         editor.markupModel.removeAllHighlighters()
         state = ReplaceState.REPLACE_FAILED
