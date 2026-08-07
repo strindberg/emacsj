@@ -1,0 +1,121 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this is
+
+EmacsJ is an IntelliJ IDEA plugin that adds Emacs-style editing commands (incremental search, kill ring, mark ring, universal argument, word/rectangle/zap commands, etc.) to IntelliJ-based IDEs. It is built with the IntelliJ Platform Gradle Plugin v2.
+
+## Commands
+
+```bash
+./gradlew buildPlugin          # Build the distributable plugin zip
+./gradlew check                # Tests + ktlint + detekt + kover verify (what CI runs)
+./gradlew test                 # Run tests only
+./gradlew formatKotlin         # Apply ktlint formatting
+./gradlew runIde               # Sandbox IDE on the default platform (platformVersion in gradle.properties)
+./gradlew runIde53             # Sandbox against IDEA 2025.3.6.1
+./gradlew runIde61             # Sandbox against IDEA 2026.1.4
+./gradlew runIde62             # Sandbox against IDEA 2026.2.0.1
+```
+
+Run a single test class or method:
+```bash
+./gradlew test --tests "com.github.strindberg.emacsj.search.ISearchTest"
+./gradlew test --tests "com.github.strindberg.emacsj.search.ISearchTest.test Simple search works"
+```
+
+Linting and static analysis use **ktlint** and **detekt** (config: `detekt2.yml`). Both run as part of `check`. Code coverage uses **kover**.
+
+The default sandbox runs with `-Dide.plugins.snapshot.on.unload.fail=true`: when the plugin fails to unload dynamically, the IDE writes a heap snapshot naming whatever still holds the plugin classloader.
+
+`instrumentCode` / `instrumentTestCode` occasionally fail with `1 >= 1` after classes are added or removed. It is stale incremental state, cleared by rerunning that task with `--rerun`.
+
+## Code style
+
+Beyond what ktlint and detekt enforce:
+
+- **Private methods come after all non-private ones.** A class reads as its public surface first, with the helpers it happens to be built from below. This applies to test classes too: private helpers such as `pressEscape` or `setText` belong at the bottom, after every test method.
+
+## Architecture
+
+### Two-layer structure
+
+Every feature follows the same split:
+
+- `src/main/kotlin/.../actions/<feature>/` — thin `EditorAction` subclasses. Each constructs a handler and passes it to `EditorAction`. No logic lives here.
+- `src/main/kotlin/.../emacsj/<feature>/` — the handler implementing `EditorActionHandler` (or a plain class). All logic lives here.
+
+### Action history
+
+`EmacsJService` / `EmacsJServiceImpl` is an application-level `@Service` holding global state:
+
+- **Action history** (`lastActionIds`) — the two most recent things the user did, used by handlers that behave differently when repeated (recenter/reposition cycling, append-next-kill, paste history).
+- **Universal argument** — the numeric prefix argument, default 1.
+- **Repeat flag**, and a **single-action registry** of action ids that ignore the universal argument.
+
+Two listeners feed the history, and the split matters:
+
+- `EmacsJActionListener` (`AnActionListener`) records **action ids** in `afterActionPerformed`, gated on `result.isPerformed`. All matching is by id, never by display text — action texts are localized, so text matching silently stops working in a translated IDE.
+- `EmacsJCommandListener` (`CommandListener`) records command **names**, but only for commands *not* raised by an action: typing, mouse edits, commands started in code. Editor actions raise a command as well, so `isPerformingAction()` stops those being recorded twice. A command name can never equal an action id, so these entries simply read as "something unrelated happened" — which is exactly what has to break a repeat chain.
+
+Neither listener sees everything on its own. Only `EditorAction` wraps execution in a command, so plain `AnAction`s (`NextSplitter`, most of `ide.actions`) produce no command; and typing while an interactive command is active is consumed by the raw typed-action handler, so it produces neither an action nor a command. Delegates that depend on "nothing happened since" must therefore invalidate their own state too — see `pastedText` in `ISearchDelegate`.
+
+### Interactive-mode delegates
+
+Multi-keystroke features use a **delegate**: a stateful object held in a `companion object` field (`ISearchHandler.delegate` and friends). While it is non-null, `EmacsJActionsPromoter` moves that feature's actions to the front of the action list so they receive keystrokes ahead of built-in ones, and the raw typed-action handler in `EmacsJTypedActionService` routes typed characters into the delegate instead of the document.
+
+- `ISearchDelegate` — one incremental search session: caret positions, match highlights, direction, search type, breadcrumb history for backspace, and the clipboard-history walk behind isearch paste.
+- `ReplaceDelegate` — a query-replace session.
+- `UniversalArgumentDelegate` — accumulates digits, then repeats the following command in batches so a long repeat stays interruptible.
+- `ZapDelegate` — waits for the target character.
+- `GotoLineDelegate` — reads a `line[:column]`.
+
+All of them implement `UIDelegate : Disposable` and call `EditorUtil.disposeWithEditor(editor, this)` in `init`. That parenting is what guarantees teardown when the editor or project closes mid-session; `hide()` is only the user-initiated route into the same `dispose()`.
+
+`CommonUI` is the shared popup: a title, the text (a `JLabel` while read-only, a `LanguageTextField` while editable) and a match counter. Its `showText(found, notFound)` renders the not-yet-matching tail of a failing search in red, so the read-only text is held in a backing field rather than read back off the label.
+
+### Mark ring
+
+`MarkHandler` keeps a per-file stack (`places: Map<String, LimitedStack<PlaceInfo>>`, keyed by a virtual-file signature) of saved positions, separate from IntelliJ's own navigation history. The isearch handler always pushes a mark before starting a search. `XRefHandler` keeps an equivalent undo/redo stack for declaration navigation, fed from `EmacsJActionListener` when a `GotoDeclaration*` action runs.
+
+### Settings
+
+User-configurable preferences (lax isearch whitespace, selection-based isearch start, custom whitespace regexp) live in `EmacsJSettings` / `EmacsJState`, persisted via `PersistentStateComponent`.
+
+### Dynamic plugin unloading
+
+The plugin is expected to unload without an IDE restart, which constrains anything outliving a keystroke:
+
+- **No raw threads.** `kotlin.concurrent.thread { }` creates a `Thread` whose lambda pins the plugin classloader for as long as anything holds that `Thread` object — and the platform does hold them. Use `AppExecutorUtil.getAppScheduledExecutorService()`.
+- **Anything registered with the platform needs a parent disposable**: `IdeEventQueue` dispatchers, caret listeners, and so on. Delegates pass `this`.
+- **Swing listeners on long-lived components must be removed from the object they were added to.** `UIPanel` captures `editor.component.topLevelAncestor` once for exactly this reason: re-deriving it at removal time can yield a different window, or null.
+- `EmacsJActionListener`'s `init` touches `EmacsJTypedActionService` solely to instantiate it. That service is a lazy `@Service` whose constructor installs the raw typed-action handler, so without the touch, typing during isearch/zap/universal-argument goes into the document. It looks like dead code; it is not.
+
+## Testing
+
+Tests are **JUnit 3**: `BasePlatformTestCase` extends `junit.framework.TestCase`, so there are no annotations and methods are discovered by name. The backticked names work because they still begin with `test`.
+
+Fixture tests extend **`EmacsJTestCase`**, not `BasePlatformTestCase` directly. Its `tearDown` hides every delegate, clears the repeat flag and pushes two empty entries onto the action history — all application-scoped state that would otherwise leak into the next test class. It also offers `pressKey(ui, keyCode)` for driving a delegate's popup. Three pure-logic classes (`WordUtilsTest`, `UndoRedoStackTest`, `EmacsJLexerTest`) extend `TestCase` directly.
+
+The typical pattern:
+
+```kotlin
+myFixture.configureByText("file.txt", "<caret>foo bar")
+myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+myFixture.type("bar")
+myFixture.checkResult("foo <caret>bar")
+```
+
+`<caret>` marks the caret position and `<selection>...</selection>` a selection; several `<caret>` markers give multiple carets. Internal state read by tests is marked `@VisibleForTesting`.
+
+**Add new tests last** among the test methods of an existing class — appended after the final test, and still above the private helpers. Do not insert them next to thematically related tests; the reading order of a test class is the order it grew in.
+
+### Test seams
+
+Two pieces of production state exist so tests can be deterministic, rather than to switch behaviour off:
+
+- `CommonHighlighter.delayMillis` — the debounce before a search highlights. `ISearchTest` and `ReplaceTest` set it to 0 in `setUp` and restore it, otherwise the suite pays the delay on every keystroke; they wait on `CommonHighlighter.isIdle`.
+- `CopyRegionHandler.clock` — the key-repeat throttle reads it, so `AppendKillTest` can move time explicitly and test the throttle instead of disabling it.
+
+Some things cannot be asserted headlessly. Popups are suppressed in unit-test mode, so anything depending on a popup being genuinely on screen (its position, whether it follows a window resize) needs `runIde`. Clipboard history is application-scoped and is polluted by other test classes, so a test that walks it must pin it first.
