@@ -176,9 +176,12 @@ internal class CommonUI(
         panel.cancel()
     }
 
+    internal val anchor: JScrollPane
+        get() = SwingUtilities.getAncestorOfClass(JScrollPane::class.java, editor.contentComponent) as JScrollPane
+
     internal fun popupPoint(): RelativePoint =
-        SwingUtilities.getAncestorOfClass(JScrollPane::class.java, editor.contentComponent).let { scroll ->
-            RelativePoint(scroll, Point(0, scroll.y + scroll.height - panel.preferredSize.height))
+        anchor.let { scroll ->
+            RelativePoint(scroll, Point(0, scroll.height - panel.preferredSize.height))
         }
 
     internal fun setPopupBounds(rectangle: Rectangle) {
@@ -299,7 +302,7 @@ private class UIPanel(private val commonUI: CommonUI, private val editor: Editor
         ancestor?.addComponentListener(moveListener)
     }
 
-    override fun getPreferredSize(): Dimension = Dimension(editor.component.width, (baseFont.size * 2.5).toInt())
+    override fun getPreferredSize(): Dimension = Dimension(commonUI.anchor.width, (baseFont.size * 2.5).toInt())
 
     fun getNewBounds(): Rectangle = Rectangle(commonUI.popupPoint().screenPoint, preferredSize)
 
