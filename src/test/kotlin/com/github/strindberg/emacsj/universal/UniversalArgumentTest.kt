@@ -134,6 +134,26 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("<caret>")
     }
 
+    fun `test Universal argument repeat applies to every caret`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |<caret>abcdef
+                |<caret>abcdef
+            """.trimMargin()
+        )
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
+        myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_RIGHT)
+
+        checkResult(
+            """
+                |abc<caret>def
+                |abc<caret>def
+            """.trimMargin()
+        )
+    }
+
     /** Repeats of more than one are queued rather than run inline, so let them finish before asserting. */
     private fun checkResult(expected: String) {
         runPendingRepeats()

@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_EDIT = "com.github.strindberg.emacsj.actions.search.isearchedit"
 
-class ISearchEditHandler : EditorActionHandler() {
+internal class ISearchEditHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.edit()

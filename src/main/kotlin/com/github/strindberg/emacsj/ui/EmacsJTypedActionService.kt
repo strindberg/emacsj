@@ -1,10 +1,5 @@
 package com.github.strindberg.emacsj.ui
 
-import java.awt.AWTEvent
-import java.awt.Component
-import java.awt.event.InputMethodEvent
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.github.strindberg.emacsj.zap.ZapHandler
@@ -16,7 +11,6 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.TypedAction
 import com.intellij.openapi.editor.actionSystem.TypedActionHandler
-import com.intellij.util.ui.UIUtil
 
 @Service
 internal class EmacsJTypedActionService : Disposable {
@@ -58,26 +52,3 @@ internal class EmacsJTypedActionService : Disposable {
         TypedAction.getInstance().setupRawHandler(originalHandler)
     }
 }
-
-interface UIDelegate : Disposable {
-    val editor: Editor
-}
-
-@OptIn(ExperimentalContracts::class)
-internal fun UIDelegate?.isActive(e: AWTEvent): Boolean {
-    contract {
-        returns(true) implies (this@isActive != null && e is InputMethodEvent)
-    }
-    return this != null && e is InputMethodEvent && UIUtil.isDescendingFrom(e.source as? Component, editor.contentComponent)
-}
-
-internal fun InputMethodEvent.constructInput(): String? =
-    text?.let { iter ->
-        buildString {
-            var c = iter.first()
-            repeat(committedCharacterCount) {
-                append(c)
-                c = iter.next()
-            }
-        }.takeIf { it.isNotEmpty() }
-    }

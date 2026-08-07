@@ -14,7 +14,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_REPOSITION = "com.github.strindberg.emacsj.actions.view.reposition"
 
-class RepositionHandler : EditorActionHandler() {
+internal class RepositionHandler : EditorActionHandler() {
 
     private var lastPosition = MIDDLE
 

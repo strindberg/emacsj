@@ -3,9 +3,9 @@ package com.github.strindberg.emacsj.paste
 import java.awt.datatransfer.Transferable
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.mark.MarkHandler
-import com.github.strindberg.emacsj.paste.Type.HISTORY
-import com.github.strindberg.emacsj.paste.Type.PREFIX
-import com.github.strindberg.emacsj.paste.Type.STANDARD
+import com.github.strindberg.emacsj.paste.PasteType.HISTORY
+import com.github.strindberg.emacsj.paste.PasteType.PREFIX
+import com.github.strindberg.emacsj.paste.PasteType.STANDARD
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -16,7 +16,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import org.intellij.lang.annotations.Language
 
-enum class Type { STANDARD, PREFIX, HISTORY }
+enum class PasteType { STANDARD, PREFIX, HISTORY }
 
 @Language("devkit-action-id")
 internal const val ACTION_PASTE = "com.github.strindberg.emacsj.actions.paste.paste"
@@ -33,7 +33,7 @@ private val pasteActionIds = setOf(ACTION_PASTE, ACTION_PREFIX_PASTE, ACTION_HIS
 
 private const val CLIPBOARD_HISTORY_SIZE = 64
 
-class PasteHandler(val type: Type) : EditorWriteActionHandler() {
+internal class PasteHandler(private val type: PasteType) : EditorWriteActionHandler() {
 
     companion object {
         private var clipboardHistory = emptyList<Transferable>()

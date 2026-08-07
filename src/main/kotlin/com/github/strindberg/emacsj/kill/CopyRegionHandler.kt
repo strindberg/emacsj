@@ -25,7 +25,7 @@ private const val HIGHLIGHT_MILLIS = 500L
 
 internal const val THROTTLE_MILLIS = 200L
 
-class CopyRegionHandler : EditorActionHandler() {
+internal class CopyRegionHandler : EditorActionHandler() {
 
     companion object {
         @VisibleForTesting

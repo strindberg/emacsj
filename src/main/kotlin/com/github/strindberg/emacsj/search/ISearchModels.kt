@@ -35,7 +35,7 @@ internal data class Match(val start: Int, val end: Int)
 internal data class EditorBreadcrumb(
     val title: String,
     val text: String,
-    val direction: Direction,
+    val direction: SearchDirection,
     val state: ISearchState,
     val caseType: CaseType,
     val searchType: SearchType,
@@ -46,12 +46,12 @@ internal enum class ISearchState { SEARCH, FAILED, EDIT }
 
 internal data class SearchResult(val isFound: Boolean, val offset: Int?, val isWrapped: Boolean)
 
-enum class Direction {
+enum class SearchDirection {
     FORWARD,
     BACKWARD,
     ;
 
-    val reverse: Direction
+    val reverse: SearchDirection
         get() =
             when (this) {
                 FORWARD -> BACKWARD

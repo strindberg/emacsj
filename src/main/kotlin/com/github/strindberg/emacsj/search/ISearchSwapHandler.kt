@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_SWAP = "com.github.strindberg.emacsj.actions.search.isearchswap"
 
-class ISearchSwapHandler : EditorActionHandler() {
+internal class ISearchSwapHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.takeIf { it.isActive() }?.swapSearchStopAndThenCancel()

@@ -10,7 +10,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_CANCEL_REPEAT = "com.github.strindberg.emacsj.actions.universal.cancelrepeat"
 
-class CancelRepeatHandler : EditorActionHandler() {
+internal class CancelRepeatHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         EmacsJService.instance.setRepeating(false)

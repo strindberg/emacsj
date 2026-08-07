@@ -17,7 +17,7 @@ internal const val ACTION_KILL_LINE = "com.github.strindberg.emacsj.actions.kill
 @Language("devkit-action-id")
 internal const val ACTION_KILL_WHOLE_LINE = "com.github.strindberg.emacsj.actions.kill.wholeline"
 
-class KillLineHandler(val type: KillType) : EditorWriteActionHandler.ForEachCaret() {
+internal class KillLineHandler(private val type: KillType) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         when (type) {

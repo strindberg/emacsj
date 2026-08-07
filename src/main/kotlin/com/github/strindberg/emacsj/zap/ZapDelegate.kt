@@ -17,15 +17,12 @@ import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.util.EditorUtil
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.VisibleForTesting
 
-class ZapDelegate(override val editor: Editor, val type: ZapType) : UIDelegate {
-
-    private var isDisposed = false
+internal class ZapDelegate(editor: Editor, private val type: ZapType) : UIDelegate(editor) {
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
+    override val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
         title = when (type) {
             FORWARD_TO -> "Zap to char: "
             FORWARD_UP_TO -> "Zap up to char: "
@@ -91,18 +88,8 @@ class ZapDelegate(override val editor: Editor, val type: ZapType) : UIDelegate {
         hide()
     }
 
-    internal fun hide() {
-        Disposer.dispose(this)
-    }
-
-    override fun dispose() {
-        if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
-            isDisposed = true
-
-            ui.cancelUI()
-
-            ZapHandler.delegate = null
-        }
+    override fun clearDelegate() {
+        ZapHandler.delegate = null
     }
 
     private fun nextCharacter(text: CharSequence, startOffset: Int, character: Char, times: Int): Int? {

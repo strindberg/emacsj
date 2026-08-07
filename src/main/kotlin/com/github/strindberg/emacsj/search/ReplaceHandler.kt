@@ -15,7 +15,7 @@ internal const val ACTION_REPLACE_REGEXP = "com.github.strindberg.emacsj.actions
 @Language("devkit-action-id")
 internal const val ACTION_REPLACE_TEXT = "com.github.strindberg.emacsj.actions.search.replacetext"
 
-class ReplaceHandler(private val type: SearchType) : EditorActionHandler() {
+internal class ReplaceHandler(private val type: SearchType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         if (delegate == null) {

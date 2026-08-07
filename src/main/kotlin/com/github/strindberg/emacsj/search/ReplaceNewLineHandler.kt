@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_REPLACE_NEWLINE = "com.github.strindberg.emacsj.actions.search.replacenewline"
 
-class ReplaceNewLineHandler : EditorActionHandler() {
+internal class ReplaceNewLineHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ReplaceHandler.delegate?.addNewLine()

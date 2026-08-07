@@ -12,7 +12,7 @@ internal const val ACTION_ISEARCH_PASTE_HISTORY = "com.github.strindberg.emacsj.
 
 private val isearchPasteActionIds = setOf(ACTION_ISEARCH_PASTE, ACTION_ISEARCH_PASTE_HISTORY)
 
-class ISearchPasteHistoryHandler : EditorActionHandler() {
+internal class ISearchPasteHistoryHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         if (EmacsJService.instance.lastActionId() in isearchPasteActionIds) {

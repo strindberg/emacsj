@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_TOGGLE_REGEXP = "com.github.strindberg.emacsj.actions.search.isearchtoggleregexp"
 
-class ISearchToggleRegexpHandler : EditorActionHandler() {
+internal class ISearchToggleRegexpHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.toggleRegexpSearch()

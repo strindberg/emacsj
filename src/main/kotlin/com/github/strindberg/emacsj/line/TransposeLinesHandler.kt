@@ -13,12 +13,13 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_TRANSPOSE_LINES = "com.github.strindberg.emacsj.actions.line.transposelines"
 
-class TransposeLinesHandler : EditorWriteActionHandler() {
+internal class TransposeLinesHandler : EditorWriteActionHandler() {
 
-    override fun executeWriteAction(editor: Editor, editorCaret: Caret?, dataContext: DataContext) {
-        val caret = editor.caretModel.primaryCaret
+    override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
+        // Transposing lines always acts on the primary caret
+        val primary = editor.caretModel.primaryCaret
         val document = editor.document
-        val currentLineNumber = document.getLineNumber(caret.offset)
+        val currentLineNumber = document.getLineNumber(primary.offset)
 
         val lastArgument = EmacsJService.instance.universalArgument()
         val replaceLineNumber =
@@ -31,6 +32,8 @@ class TransposeLinesHandler : EditorWriteActionHandler() {
             }
 
         if (replaceLineNumber >= 0) {
+            editor.caretModel.removeSecondaryCarets()
+
             val replaceLineStart = document.getLineStartOffset(replaceLineNumber)
             val replaceLineEnd = document.getLineEndOffset(replaceLineNumber)
             val currentLineStart = document.getLineStartOffset(currentLineNumber)

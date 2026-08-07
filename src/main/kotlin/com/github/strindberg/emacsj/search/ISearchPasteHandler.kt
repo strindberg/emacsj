@@ -10,7 +10,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_PASTE = "com.github.strindberg.emacsj.actions.search.isearchpaste"
 
-class ISearchPasteHandler : EditorActionHandler() {
+internal class ISearchPasteHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.paste(ClipboardUtil.getTextInClipboard().orEmpty())

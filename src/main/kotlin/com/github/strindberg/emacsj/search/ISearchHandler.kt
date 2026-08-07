@@ -23,7 +23,7 @@ internal const val ACTION_ISEARCH_REGEXP_FORWARD = "com.github.strindberg.emacsj
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacsj.actions.search.isearchregexpbackward"
 
-class ISearchHandler(private val direction: Direction, private val type: SearchType) : EditorActionHandler() {
+internal class ISearchHandler(private val direction: SearchDirection, private val type: SearchType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val current = delegate

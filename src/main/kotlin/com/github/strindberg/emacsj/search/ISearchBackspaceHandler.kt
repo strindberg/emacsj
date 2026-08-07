@@ -12,7 +12,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_BACKSPACE = "com.github.strindberg.emacsj.actions.search.isearchbackspace"
 
-class ISearchBackspaceHandler : EditorActionHandler() {
+internal class ISearchBackspaceHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.let { delegate ->

@@ -10,7 +10,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_APPEND_NEXT_KILL = "com.github.strindberg.emacsj.actions.kill.append"
 
-class AppendNextKillHandler : EditorActionHandler() {
+internal class AppendNextKillHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         HintManager.getInstance().showInformationHint(editor, "If the next command is a kill, it will append")

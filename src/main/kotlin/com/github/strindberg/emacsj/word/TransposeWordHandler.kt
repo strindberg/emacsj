@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import org.intellij.lang.annotations.Language
 
-enum class Direction { FORWARD, BACKWARD }
+enum class WordDirection { FORWARD, BACKWARD }
 
 @Language("devkit-action-id")
 internal const val ACTION_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.actions.word.transposewords"
@@ -17,7 +17,7 @@ internal const val ACTION_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.action
 @Language("devkit-action-id")
 internal const val ACTION_REVERSE_TRANSPOSE_WORDS = "com.github.strindberg.emacsj.actions.word.transposewordsreverse"
 
-class TransposeWordHandler(private val direction: Direction) : EditorWriteActionHandler.ForEachCaret() {
+internal class TransposeWordHandler(private val direction: WordDirection) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val hasSelection = caret.hasSelection() // This value is false after modification if using sticky selection
@@ -30,7 +30,7 @@ class TransposeWordHandler(private val direction: Direction) : EditorWriteAction
                     text = editor.text,
                     offset = caret.offset,
                     isCamel = editor.isCamel,
-                    isForward = direction == Direction.FORWARD,
+                    isForward = direction == WordDirection.FORWARD,
                 )
             }
         val (originalStart, originalEnd) = originalRange
@@ -45,7 +45,7 @@ class TransposeWordHandler(private val direction: Direction) : EditorWriteAction
                         isForward = true,
                     )
                 }
-            } else if (direction == Direction.FORWARD) {
+            } else if (direction == WordDirection.FORWARD) {
                 nextWordBoundaries(editor.text, originalEnd, editor.isCamel)
             } else {
                 previousWordBoundaries(editor.text, originalStart, editor.isCamel)

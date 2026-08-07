@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_MARK = "com.github.strindberg.emacsj.actions.search.isearchmark"
 
-class ISearchMarkHandler : EditorActionHandler() {
+internal class ISearchMarkHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.takeIf { it.isActive() }?.markSearchStopAndThenCancel()
