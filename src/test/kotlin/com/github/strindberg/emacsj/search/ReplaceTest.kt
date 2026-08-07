@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_START
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.VisualPosition
+import com.intellij.ui.JBColor
 
 private const val FILE = "replacefile.txt"
 
@@ -742,6 +743,42 @@ class ReplaceTest : EmacsJTestCase() {
             assertNull(ReplaceHandler.delegate)
         } finally {
             factory.releaseEditor(editor)
+        }
+    }
+
+    fun `test Malformed search regexp matches nothing`() {
+        listOf("(", "[a", """a\""").forEach { malformed ->
+            myFixture.configureByText(FILE, "<caret>aaa bbb")
+            myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
+
+            setText(malformed)
+            pressEnter()
+            setText("x")
+            pressEnter()
+
+            assertEquals("Replaced 0 occurrences.", ReplaceHandler.delegate!!.ui.title)
+            assertEquals("aaa bbb", myFixture.editor.document.text)
+
+            ReplaceHandler.delegate?.hide()
+        }
+    }
+
+    fun `test Malformed replacement reports a failed replacement`() {
+        listOf("""\2""", """\9""", "$", "\$x", """y\""").forEach { malformed ->
+            myFixture.configureByText(FILE, "<caret>aaa bbb")
+            myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
+
+            setText("(a)")
+            pressEnter()
+            setText(malformed)
+            pressEnter()
+            typeChar('y')
+
+            assertEquals("Replacement failed. ", ReplaceHandler.delegate!!.ui.title)
+            assertEquals(JBColor.RED, ReplaceHandler.delegate!!.ui.textColor)
+            assertEquals("aaa bbb", myFixture.editor.document.text)
+
+            ReplaceHandler.delegate?.hide()
         }
     }
 
