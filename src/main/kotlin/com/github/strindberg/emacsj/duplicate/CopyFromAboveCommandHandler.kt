@@ -13,7 +13,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_COPY_ABOVE_COMMAND = "com.github.strindberg.emacsj.actions.duplicate.copyfromabovecommand"
 
-class CopyFromAboveCommandHandler : EditorWriteActionHandler.ForEachCaret() {
+internal class CopyFromAboveCommandHandler : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val document = editor.document

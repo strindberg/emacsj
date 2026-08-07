@@ -54,7 +54,7 @@ internal val universalActionIds = setOf(
     ACTION_UNIVERSAL_ARGUMENT0,
 )
 
-class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
+internal class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 
     companion object {
         internal var delegate: UniversalArgumentDelegate? = null

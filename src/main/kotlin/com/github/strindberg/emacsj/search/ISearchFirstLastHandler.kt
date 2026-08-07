@@ -14,7 +14,7 @@ internal const val ACTION_ISEARCH_FIRST = "com.github.strindberg.emacsj.actions.
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_LAST = "com.github.strindberg.emacsj.actions.search.isearchlastmatch"
 
-class ISearchFirstLastHandler(private val type: FirstLastType) : EditorActionHandler() {
+internal class ISearchFirstLastHandler(private val type: FirstLastType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.takeIf { it.isActive() }?.let { delegate ->

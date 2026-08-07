@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_TOGGLE_CASE = "com.github.strindberg.emacsj.actions.search.isearchtogglecase"
 
-class ISearchToggleCaseHandler : EditorActionHandler() {
+internal class ISearchToggleCaseHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.toggleCaseSensitive()

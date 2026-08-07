@@ -1,8 +1,8 @@
 package com.github.strindberg.emacsj.duplicate
 
-import com.github.strindberg.emacsj.duplicate.Type.COMMENT
-import com.github.strindberg.emacsj.duplicate.Type.DUPLICATE
-import com.github.strindberg.emacsj.duplicate.Type.DWIM
+import com.github.strindberg.emacsj.duplicate.DuplicateType.COMMENT
+import com.github.strindberg.emacsj.duplicate.DuplicateType.DUPLICATE
+import com.github.strindberg.emacsj.duplicate.DuplicateType.DWIM
 import com.github.strindberg.emacsj.word.substring
 import com.intellij.codeInsight.generation.CommentByBlockCommentHandler
 import com.intellij.codeInsight.generation.CommentByLineCommentHandler
@@ -17,7 +17,7 @@ import com.intellij.util.DocumentUtil.isAtLineEnd
 import com.intellij.util.DocumentUtil.isAtLineStart
 import org.intellij.lang.annotations.Language
 
-enum class Type { DUPLICATE, COMMENT, DWIM }
+enum class DuplicateType { DUPLICATE, COMMENT, DWIM }
 
 @Language("devkit-action-id")
 internal const val ACTION_COMMENT = "com.github.strindberg.emacsj.actions.duplicate.commentdwim"
@@ -28,7 +28,7 @@ internal const val ACTION_DUPLICATE = "com.github.strindberg.emacsj.actions.dupl
 @Language("devkit-action-id")
 internal const val ACTION_DUPLICATE_COMMENT = "com.github.strindberg.emacsj.actions.duplicate.duplicateandcomment"
 
-class DuplicateAndCommentHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret() {
+internal class DuplicateAndCommentHandler(private val type: DuplicateType) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val document = editor.document

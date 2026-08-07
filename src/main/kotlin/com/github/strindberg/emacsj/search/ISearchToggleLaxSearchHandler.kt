@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_TOGGLE_LAX_SEARCH = "com.github.strindberg.emacsj.actions.search.isearchtogglelaxsearch"
 
-class ISearchToggleLaxSearchHandler : EditorActionHandler() {
+internal class ISearchToggleLaxSearchHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.toggleLax()

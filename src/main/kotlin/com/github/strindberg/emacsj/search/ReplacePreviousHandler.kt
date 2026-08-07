@@ -12,7 +12,7 @@ internal const val ACTION_REPLACE_PREVIOUS = "com.github.strindberg.emacsj.actio
 @Language("devkit-action-id")
 internal const val ACTION_REPLACE_NEXT = "com.github.strindberg.emacsj.actions.search.replacenext"
 
-class ReplacePreviousHandler(private val isForward: Boolean) : EditorActionHandler() {
+internal class ReplacePreviousHandler(private val isForward: Boolean) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ReplaceHandler.delegate?.let { delegate ->

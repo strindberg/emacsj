@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_GOTO_LINE = "com.github.strindberg.emacsj.actions.movement.gotoline"
 
-class GotoLineHandler : EditorActionHandler() {
+internal class GotoLineHandler : EditorActionHandler() {
 
     companion object {
         internal var delegate: GotoLineDelegate? = null

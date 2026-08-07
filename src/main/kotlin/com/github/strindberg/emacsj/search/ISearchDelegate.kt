@@ -11,11 +11,11 @@ import com.github.strindberg.emacsj.preferences.EmacsJSettings
 import com.github.strindberg.emacsj.search.CaseType.INSENSITIVE
 import com.github.strindberg.emacsj.search.CaseType.SENSITIVE
 import com.github.strindberg.emacsj.search.CaseType.UNSPECIFIED
-import com.github.strindberg.emacsj.search.Direction.BACKWARD
-import com.github.strindberg.emacsj.search.Direction.FORWARD
 import com.github.strindberg.emacsj.search.ISearchState.EDIT
 import com.github.strindberg.emacsj.search.ISearchState.FAILED
 import com.github.strindberg.emacsj.search.ISearchState.SEARCH
+import com.github.strindberg.emacsj.search.SearchDirection.BACKWARD
+import com.github.strindberg.emacsj.search.SearchDirection.FORWARD
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.search.SearchType.TEXT
 import com.github.strindberg.emacsj.search.StartType.FIRST_SEARCH
@@ -43,13 +43,12 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
-import com.intellij.openapi.util.Disposer
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
 private enum class StartType { WRAPAROUND, FIRST_SEARCH, REPEATED_SEARCH }
 
-internal class ISearchDelegate(override val editor: Editor, var searchType: SearchType, var direction: Direction) : UIDelegate {
+internal class ISearchDelegate(editor: Editor, var searchType: SearchType, var direction: SearchDirection) : UIDelegate(editor) {
 
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
@@ -60,7 +59,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
     private val identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
+    override val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
 
     @VisibleForTesting
     internal var state: ISearchState = SEARCH
@@ -71,7 +70,8 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
     private var isInhibitCancel = false
 
-    private var isDisposed = false
+    override val isCancelInhibited: Boolean
+        get() = isInhibitCancel
 
     /** The longest search string that matched, so that a failing search can call out only what was added after it. */
     private var foundText: String = ""
@@ -138,32 +138,22 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
     internal fun isActive() = state == SEARCH || state == FAILED
 
-    internal fun hide() {
-        if (!isInhibitCancel) {
-            Disposer.dispose(this)
+    override fun release() {
+        if (!editor.isDisposed) {
+            editor.markupModel.removeAllHighlighters()
+
+            editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
+
+            editor.caretModel.runForEachCaret {
+                it.clearData()
+            }
         }
+
+        ISearchHandler.searchConcluded(text, searchType)
     }
 
-    override fun dispose() {
-        if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
-            isDisposed = true
-
-            if (!editor.isDisposed) {
-                editor.markupModel.removeAllHighlighters()
-
-                editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
-
-                editor.caretModel.runForEachCaret {
-                    it.clearData()
-                }
-            }
-
-            ISearchHandler.searchConcluded(text, searchType) // This line needs to run before the line below since it reads UI text.
-
-            ui.cancelUI()
-
-            ISearchHandler.delegate = null
-        }
+    override fun clearDelegate() {
+        ISearchHandler.delegate = null
     }
 
     internal fun startEditedSearch() {
@@ -256,7 +246,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
     }
 
     internal fun searchAllCarets(
-        searchDirection: Direction,
+        searchDirection: SearchDirection,
         newText: String,
         keepStart: Boolean = true,
         forceWraparound: Boolean = false,
@@ -394,7 +384,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
         searchAllCarets(direction, selectedText)
     }
 
-    private fun findFirstLast(findDirection: Direction, switchDirection: Boolean) {
+    private fun findFirstLast(findDirection: SearchDirection, switchDirection: Boolean) {
         removeAllHighlighters()
 
         searchAllCarets(searchDirection = findDirection, newText = "", forceWraparound = true)
@@ -591,7 +581,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
     private fun defaultSensitive() = searchType == REGEXP || caseSensitive(text)
 
-    private fun moveAndUpdate(caret: Caret, match: Match, direction: Direction, found: Boolean) {
+    private fun moveAndUpdate(caret: Caret, match: Match, direction: SearchDirection, found: Boolean) {
         if (caret.isValid) { // Caret might have been disposed after multi-caret search
             caret.moveToOffset(if (direction == FORWARD) match.end else match.start)
             caret.search = caret.search.copy(match = match)

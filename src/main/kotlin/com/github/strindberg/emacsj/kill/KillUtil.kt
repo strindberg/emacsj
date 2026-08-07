@@ -26,7 +26,9 @@ object KillUtil {
 
     private fun cutOrCopy(type: Type, editor: Editor, textStartOffset: Int, textEndOffset: Int, prepend: Boolean) {
         editor.selectionModel.removeSelection()
-        (editor as? EditorEx)?.isStickySelection = false
+        if (editor is EditorEx) {
+            editor.isStickySelection = false
+        }
 
         if (textStartOffset != textEndOffset) {
             val copyPasteManager = CopyPasteManagerEx.getInstanceEx()

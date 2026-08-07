@@ -13,7 +13,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_DELETE_LINES = "com.github.strindberg.emacsj.actions.space.deletelines"
 
-class DeleteLinesHandler : EditorWriteActionHandler.ForEachCaret() {
+internal class DeleteLinesHandler : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val document = editor.document

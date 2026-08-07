@@ -15,7 +15,7 @@ enum class Position { TOP, MIDDLE, BOTTOM }
 @Language("devkit-action-id")
 internal const val ACTION_RECENTER = "com.github.strindberg.emacsj.actions.view.recenter"
 
-class RecenterHandler : EditorActionHandler() {
+internal class RecenterHandler : EditorActionHandler() {
 
     private var lastPosition = MIDDLE
 

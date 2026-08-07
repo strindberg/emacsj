@@ -10,7 +10,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_CUT = "com.github.strindberg.emacsj.actions.kill.cut"
 
-class CutRegionHandler : EditorWriteActionHandler() {
+internal class CutRegionHandler : EditorWriteActionHandler() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val primary = caret ?: editor.caretModel.primaryCaret

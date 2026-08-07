@@ -9,7 +9,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_DELETE_CHAR = "com.github.strindberg.emacsj.actions.search.isearchdeletechar"
 
-class ISearchDeleteCharHandler : EditorActionHandler() {
+internal class ISearchDeleteCharHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.takeIf { it.isActive() }?.deleteChar()

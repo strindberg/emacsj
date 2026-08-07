@@ -27,7 +27,7 @@ internal val zapActionIds = setOf(
     ACTION_ZAP_BACKWARD_UP_TO,
 )
 
-class ZapHandler(private val type: ZapType) : EditorActionHandler() {
+internal class ZapHandler(private val type: ZapType) : EditorActionHandler() {
 
     companion object {
         internal var delegate: ZapDelegate? = null

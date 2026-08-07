@@ -10,15 +10,17 @@ import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
 import com.intellij.openapi.editor.ex.util.EditorUtil
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.VisibleForTesting
 
-class GotoLineDelegate(override val editor: Editor) : UIDelegate {
-
-    private var isDisposed = false
+internal class GotoLineDelegate(editor: Editor) : UIDelegate(editor) {
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler).apply {
+    override val ui = CommonUI(
+        editor = editor,
+        isWriteable = true,
+        cancelCallback = ::hide,
+        keyEventHandler = ::keyEventHandler
+    ).apply {
         title = "Go to line[:column] : "
     }
 
@@ -74,17 +76,7 @@ class GotoLineDelegate(override val editor: Editor) : UIDelegate {
         }
     }
 
-    internal fun hide() {
-        Disposer.dispose(this)
-    }
-
-    override fun dispose() {
-        if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
-            isDisposed = true
-
-            ui.cancelUI()
-
-            GotoLineHandler.delegate = null
-        }
+    override fun clearDelegate() {
+        GotoLineHandler.delegate = null
     }
 }

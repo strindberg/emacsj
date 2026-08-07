@@ -25,7 +25,7 @@ internal const val ACTION_XREF_PUSH = "com.github.strindberg.emacsj.actions.xref
 @Language("devkit-action-id")
 internal const val ACTION_XREF_FORWARD = "com.github.strindberg.emacsj.actions.xref.xrefforward"
 
-class XRefHandler(private val type: XRefType) : EditorActionHandler() {
+internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
     companion object {
 

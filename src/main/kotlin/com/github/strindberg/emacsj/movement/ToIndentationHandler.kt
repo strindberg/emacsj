@@ -10,7 +10,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_TO_INDENTATION = "com.github.strindberg.emacsj.actions.movement.toindentation"
 
-class ToIndentationHandler : EditorActionHandler.ForEachCaret() {
+internal class ToIndentationHandler : EditorActionHandler.ForEachCaret() {
 
     override fun doExecute(editor: Editor, caret: Caret, dataContext: DataContext?) {
         val document = editor.document

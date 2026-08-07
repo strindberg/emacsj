@@ -12,6 +12,8 @@ EmacsJ is an IntelliJ IDEA plugin that adds Emacs-style editing commands (increm
 ./gradlew buildPlugin          # Build the distributable plugin zip
 ./gradlew check                # Tests + ktlint + detekt + kover verify (what CI runs)
 ./gradlew test                 # Run tests only
+./gradlew detektMain           # detekt with type resolution, main sources
+./gradlew detektTest           # detekt with type resolution, test sources
 ./gradlew formatKotlin         # Apply ktlint formatting
 ./gradlew runIde               # Sandbox IDE on the default platform (platformVersion in gradle.properties)
 ./gradlew runIde53             # Sandbox against IDEA 2025.3.6.1
@@ -27,6 +29,8 @@ Run a single test class or method:
 
 Linting and static analysis use **ktlint** and **detekt** (config: `detekt2.yml`). Both run as part of `check`. Code coverage uses **kover**.
 
+**`detektMain` and `detektTest` must be green after a change.** `check` only runs the plain `detekt` task; these two additionally analyze with type resolution and report things it does not — unused imports left behind by a refactoring, for instance. Run them explicitly, since a green `check` does not imply they pass.
+
 The default sandbox runs with `-Dide.plugins.snapshot.on.unload.fail=true`: when the plugin fails to unload dynamically, the IDE writes a heap snapshot naming whatever still holds the plugin classloader.
 
 `instrumentCode` / `instrumentTestCode` occasionally fail with `1 >= 1` after classes are added or removed. It is stale incremental state, cleared by rerunning that task with `--rerun`.
@@ -36,6 +40,7 @@ The default sandbox runs with `-Dide.plugins.snapshot.on.unload.fail=true`: when
 Beyond what ktlint and detekt enforce:
 
 - **Private methods come after all non-private ones.** A class reads as its public surface first, with the helpers it happens to be built from below. This applies to test classes too: private helpers such as `pressEscape` or `setText` belong at the bottom, after every test method.
+- **Comments and KDoc are written in American English** — "behavior", "canceled", "localized", "center". This matches the IntelliJ Platform API the code sits on (`isCanceled`, `EditorColorsScheme`).
 
 ## Architecture
 
@@ -113,7 +118,7 @@ myFixture.checkResult("foo <caret>bar")
 
 ### Test seams
 
-Two pieces of production state exist so tests can be deterministic, rather than to switch behaviour off:
+Two pieces of production state exist so tests can be deterministic, rather than to switch behavior off:
 
 - `CommonHighlighter.delayMillis` — the debounce before a search highlights. `ISearchTest` and `ReplaceTest` set it to 0 in `setUp` and restore it, otherwise the suite pays the delay on every keystroke; they wait on `CommonHighlighter.isIdle`.
 - `CopyRegionHandler.clock` — the key-repeat throttle reads it, so `AppendKillTest` can move time explicitly and test the throttle instead of disabling it.

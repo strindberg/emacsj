@@ -32,21 +32,14 @@ import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
-import com.intellij.openapi.util.Disposer
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
 
-internal class ReplaceDelegate(
-    override val editor: Editor,
-    val type: SearchType,
-    val selection: IntRange? = null,
-    lastSearch: Replace? = null,
-) : UIDelegate {
-
-    private var isDisposed = false
+internal class ReplaceDelegate(editor: Editor, val type: SearchType, private val selection: IntRange? = null, lastSearch: Replace? = null) :
+    UIDelegate(editor) {
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
+    override val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
 
     internal var text: String
         get() = ui.text
@@ -84,6 +77,9 @@ internal class ReplaceDelegate(
 
     private var isInhibitCancel = false
 
+    override val isCancelInhibited: Boolean
+        get() = isInhibitCancel
+
     private var isReplaced = false
 
     init {
@@ -109,24 +105,16 @@ internal class ReplaceDelegate(
         ui.show()
     }
 
-    internal fun hide() {
-        if (!isInhibitCancel) {
-            Disposer.dispose(this)
-        }
-    }
-
-    override fun dispose() {
-        if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
-            isDisposed = true
-
+    override fun release() {
+        if (!editor.isDisposed) {
             editor.markupModel.removeAllHighlighters()
 
             editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
-
-            ui.cancelUI()
-
-            ReplaceHandler.delegate = null
         }
+    }
+
+    override fun clearDelegate() {
+        ReplaceHandler.delegate = null
     }
 
     internal fun addNewLine() {

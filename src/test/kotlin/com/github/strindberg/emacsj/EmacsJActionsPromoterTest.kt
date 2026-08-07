@@ -6,11 +6,11 @@ import com.github.strindberg.emacsj.actions.search.ISearchTextForwardAction
 import com.github.strindberg.emacsj.actions.search.ReplaceNewLineAction
 import com.github.strindberg.emacsj.actions.universal.CancelRepeatAction
 import com.github.strindberg.emacsj.actions.zap.ZapToCharAction
-import com.github.strindberg.emacsj.search.Direction
 import com.github.strindberg.emacsj.search.ISearchDelegate
 import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.search.ReplaceDelegate
 import com.github.strindberg.emacsj.search.ReplaceHandler
+import com.github.strindberg.emacsj.search.SearchDirection
 import com.github.strindberg.emacsj.search.SearchType
 import com.github.strindberg.emacsj.ui.EmacsJActionsPromoter
 import com.intellij.openapi.actionSystem.DataContext
@@ -21,7 +21,7 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
 
     fun `test Promoter sorts ISearch actions first when ISearch is active`() {
         myFixture.configureByText(FILE, "")
-        ISearchHandler.delegate = ISearchDelegate(myFixture.editor, SearchType.TEXT, Direction.FORWARD)
+        ISearchHandler.delegate = ISearchDelegate(myFixture.editor, SearchType.TEXT, SearchDirection.FORWARD)
 
         val isearch1 = ISearchTextForwardAction()
         val isearch2 = ISearchRegexpForwardAction()

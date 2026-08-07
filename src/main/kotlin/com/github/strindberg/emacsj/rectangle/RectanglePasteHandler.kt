@@ -14,7 +14,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_PASTE_RECTANGLE = "com.github.strindberg.emacsj.actions.rectangle.rectanglepaste"
 
-class RectanglePasteHandler : EditorWriteActionHandler() {
+internal class RectanglePasteHandler : EditorWriteActionHandler() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val primary = caret ?: editor.caretModel.primaryCaret

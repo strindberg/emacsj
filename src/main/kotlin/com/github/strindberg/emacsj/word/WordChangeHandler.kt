@@ -43,7 +43,7 @@ internal const val ACTION_DELETE_NEXT_WORD = "com.github.strindberg.emacsj.actio
 @Language("devkit-action-id")
 internal const val ACTION_DELETE_PREVIOUS_WORD = "com.github.strindberg.emacsj.actions.word.deletepreviousword"
 
-class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler.ForEachCaret() {
+internal class WordChangeHandler(private val type: ChangeType) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val (start, end) =

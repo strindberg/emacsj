@@ -1,7 +1,7 @@
 package com.github.strindberg.emacsj.mark
 
 import com.github.strindberg.emacsj.EmacsJService
-import com.github.strindberg.emacsj.mark.Type.POP
+import com.github.strindberg.emacsj.mark.MarkType.POP
 import com.github.strindberg.emacsj.search.prependElement
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
@@ -15,7 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.lang.annotations.Language
 
-enum class Type { PUSH, POP }
+enum class MarkType { PUSH, POP }
 
 @Language("devkit-action-id")
 internal const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark.pushmark"
@@ -23,27 +23,23 @@ internal const val ACTION_PUSH_MARK = "com.github.strindberg.emacsj.actions.mark
 @Language("devkit-action-id")
 internal const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.popmark"
 
-class MarkHandler(val type: Type) : EditorActionHandler() {
+internal class MarkHandler(private val type: MarkType) : EditorActionHandler() {
 
     companion object {
 
         private val places = mutableMapOf<String, LimitedStack<PlaceInfo>>()
 
         internal fun pushPlaceInfo(editor: Editor) {
-            if (editor is EditorEx) {
-                editor.virtualFile?.let { virtualFile ->
-                    placeInfo(editor, virtualFile)?.let { placeInfo ->
-                        places.getOrPut(virtualFile.signature()) { LimitedStack() }.push(placeInfo)
-                    }
+            editor.virtualFile?.let { virtualFile ->
+                placeInfo(editor, virtualFile)?.let { placeInfo ->
+                    places.getOrPut(virtualFile.signature()) { LimitedStack() }.push(placeInfo)
                 }
             }
         }
 
         internal fun peek(editor: Editor): PlaceInfo? =
-            (editor as? EditorEx)?.let {
-                editor.virtualFile?.let { virtualFile ->
-                    places[virtualFile.signature()]?.peek()
-                }
+            editor.virtualFile?.let { virtualFile ->
+                places[virtualFile.signature()]?.peek()
             }
 
         internal fun placeInfo(editor: Editor, virtualFile: VirtualFile): PlaceInfo? =
@@ -57,7 +53,7 @@ class MarkHandler(val type: Type) : EditorActionHandler() {
                 )
             }
 
-        internal fun gotoPlaceInfo(editor: EditorEx, info: PlaceInfo) {
+        internal fun gotoPlaceInfo(editor: Editor, info: PlaceInfo) {
             editor.project?.manager?.let { manager ->
                 manager.openFile(info.file, focusEditor = true)
                 manager.setSelectedEditor(info.file, info.editorTypeId)

@@ -1,8 +1,8 @@
 package com.github.strindberg.emacsj.space
 
 import com.github.strindberg.emacsj.EmacsJService
-import com.github.strindberg.emacsj.space.Type.DELETE
-import com.github.strindberg.emacsj.space.Type.ONE_SPACE
+import com.github.strindberg.emacsj.space.SpaceType.DELETE
+import com.github.strindberg.emacsj.space.SpaceType.ONE_SPACE
 import com.github.strindberg.emacsj.word.text
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
@@ -10,7 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import org.intellij.lang.annotations.Language
 
-enum class Type { DELETE, ONE_SPACE }
+enum class SpaceType { DELETE, ONE_SPACE }
 
 @Language("devkit-action-id")
 internal const val ACTION_DELETE_SPACE = "com.github.strindberg.emacsj.actions.space.deletespace"
@@ -18,7 +18,7 @@ internal const val ACTION_DELETE_SPACE = "com.github.strindberg.emacsj.actions.s
 @Language("devkit-action-id")
 internal const val ACTION_ONE_SPACE = "com.github.strindberg.emacsj.actions.space.onespace"
 
-class DeleteSpaceHandler(val type: Type) : EditorWriteActionHandler.ForEachCaret() {
+internal class DeleteSpaceHandler(private val type: SpaceType) : EditorWriteActionHandler.ForEachCaret() {
 
     override fun executeWriteAction(editor: Editor, caret: Caret, dataContext: DataContext) {
         val start = previousNonWhiteSpace(editor.text, caret.offset)

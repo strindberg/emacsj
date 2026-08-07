@@ -124,4 +124,28 @@ class TransposeLinesTest : EmacsJTestCase() {
             """.trimIndent()
         )
     }
+
+    fun `test Transpose lines reduces multiple carets to one and uses the primary caret`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                foo
+                bar<caret>
+                baz<caret>
+                baf
+            """.trimIndent()
+        )
+
+        myFixture.performEditorAction(ACTION_TRANSPOSE_LINES)
+
+        assertEquals(1, myFixture.editor.caretModel.caretCount)
+        myFixture.checkResult(
+            """
+                foo
+                baz
+                bar
+                <caret>baf
+            """.trimIndent()
+        )
+    }
 }

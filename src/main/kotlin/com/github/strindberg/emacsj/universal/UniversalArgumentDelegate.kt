@@ -33,7 +33,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedActionHandler
 import com.intellij.openapi.editor.ex.util.EditorUtil
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.VisibleForTesting
 
 internal val singleActions = setOf(
@@ -57,17 +56,19 @@ internal val singleActions = setOf(
     ACTION_COPY_ABOVE_COMMAND,
 )
 
-const val BATCH_SIZE = 100
+private const val BATCH_SIZE = 100
 
-class UniversalArgumentDelegate(override val editor: Editor, private var numeric: Int?, val caret: Caret?, val dataContext: DataContext) :
-    UIDelegate {
-
-    private var isDisposed = false
+internal class UniversalArgumentDelegate(
+    editor: Editor,
+    private var numeric: Int?,
+    private val caret: Caret?,
+    private val dataContext: DataContext,
+) : UIDelegate(editor) {
 
     private var counter = 4
 
     @VisibleForTesting
-    internal val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
+    override val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
         title = "Argument: "
         text = getTimes().toString()
     }
@@ -124,18 +125,8 @@ class UniversalArgumentDelegate(override val editor: Editor, private var numeric
 
     internal fun getTimes(): Int = numeric ?: counter
 
-    internal fun hide() {
-        Disposer.dispose(this)
-    }
-
-    override fun dispose() {
-        if (!isDisposed) { // ui.cancelUI() below re-enters through the popup's cancel callback.
-            isDisposed = true
-
-            ui.cancelUI()
-
-            UniversalArgumentHandler.delegate = null
-        }
+    override fun clearDelegate() {
+        UniversalArgumentHandler.delegate = null
     }
 
     private fun repeatCommand(times: Int, action: () -> Unit) {

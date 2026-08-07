@@ -12,7 +12,7 @@ internal const val ACTION_ISEARCH_REPLACE_TEXT = "com.github.strindberg.emacsj.a
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_REPLACE_REGEXP = "com.github.strindberg.emacsj.actions.search.isearchreplaceregexp"
 
-class ISearchReplaceHandler(private val type: SearchType) : EditorActionHandler() {
+internal class ISearchReplaceHandler(private val type: SearchType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.takeIf { it.isActive() }?.let { searchDelegate ->

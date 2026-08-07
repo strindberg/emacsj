@@ -1,9 +1,9 @@
 package com.github.strindberg.emacsj.search
 
-import com.github.strindberg.emacsj.search.Type.CHARACTER
-import com.github.strindberg.emacsj.search.Type.LINE
-import com.github.strindberg.emacsj.search.Type.NEW_LINE
-import com.github.strindberg.emacsj.search.Type.WORD
+import com.github.strindberg.emacsj.search.ExpandType.CHARACTER
+import com.github.strindberg.emacsj.search.ExpandType.LINE
+import com.github.strindberg.emacsj.search.ExpandType.NEW_LINE
+import com.github.strindberg.emacsj.search.ExpandType.WORD
 import com.github.strindberg.emacsj.word.currentWordEnd
 import com.github.strindberg.emacsj.word.isCamel
 import com.github.strindberg.emacsj.word.substring
@@ -15,7 +15,7 @@ import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.util.DocumentUtil
 import org.intellij.lang.annotations.Language
 
-enum class Type { WORD, LINE, CHARACTER, NEW_LINE }
+enum class ExpandType { WORD, LINE, CHARACTER, NEW_LINE }
 
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_WORD = "com.github.strindberg.emacsj.actions.search.isearchword"
@@ -29,7 +29,7 @@ internal const val ACTION_ISEARCH_CHAR = "com.github.strindberg.emacsj.actions.s
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_NEWLINE = "com.github.strindberg.emacsj.actions.search.isearchnewline"
 
-class ISearchExpandHandler(val type: Type) : EditorActionHandler() {
+internal class ISearchExpandHandler(private val type: ExpandType) : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.takeIf { it.isActive() }?.let { delegate ->

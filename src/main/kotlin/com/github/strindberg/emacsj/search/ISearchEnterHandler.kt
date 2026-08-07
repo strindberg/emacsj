@@ -12,7 +12,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_ENTER = "com.github.strindberg.emacsj.actions.search.isearchenter"
 
-class ISearchEnterHandler : EditorActionHandler() {
+internal class ISearchEnterHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.let { delegate ->
