@@ -229,7 +229,7 @@ internal class ReplaceDelegate(
                             } catch (e: FindManager.MalformedReplacementStringException) {
                                 handleReplacementError(e)
                             }
-                            ui.cancelUI()
+                            hide()
                         }
                         '!' -> {
                             try {
@@ -260,14 +260,14 @@ internal class ReplaceDelegate(
                             }
                         }
                         else -> {
-                            ui.cancelUI()
+                            hide()
                         }
                     }
                 }
             }
             ReplaceState.REPLACE_DONE, ReplaceState.REPLACE_FAILED -> {
                 if (e.id == KeyEvent.KEY_PRESSED) {
-                    ui.cancelUI()
+                    hide()
                 }
             }
         }
