@@ -4,6 +4,8 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ENTER
 import java.util.UUID
 import com.github.strindberg.emacsj.search.ReplaceHandler.Companion.addPrevious
+import com.github.strindberg.emacsj.search.ReplaceState.GET_REPLACE_ARG
+import com.github.strindberg.emacsj.search.ReplaceState.GET_SEARCH_ARG
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.ui.UIDelegate
@@ -74,7 +76,7 @@ internal class ReplaceDelegate(
 
     private val identifierAttributes: TextAttributes
 
-    private var state: ReplaceState = ReplaceState.GET_SEARCH_ARG
+    private var state: ReplaceState = GET_SEARCH_ARG
         set(state) {
             field = state
             ui.title = getReplaceTitle()
@@ -128,15 +130,15 @@ internal class ReplaceDelegate(
     }
 
     internal fun addNewLine() {
-        if (state in listOf(ReplaceState.GET_SEARCH_ARG, ReplaceState.GET_REPLACE_ARG)) {
+        if (state == GET_SEARCH_ARG || state == GET_REPLACE_ARG) {
             text += "\n"
         }
     }
 
     internal fun setTextFromPrevious(previous: Replace) {
-        if (state == ReplaceState.GET_SEARCH_ARG) {
+        if (state == GET_SEARCH_ARG) {
             text = previous.search
-        } else if (state == ReplaceState.GET_REPLACE_ARG) {
+        } else if (state == GET_REPLACE_ARG) {
             text = previous.replace
         }
     }
@@ -144,7 +146,7 @@ internal class ReplaceDelegate(
     @Suppress("LongMethod", "CyclomaticComplexMethod")
     private fun keyEventHandler(e: KeyEvent) {
         when (state) {
-            ReplaceState.GET_SEARCH_ARG -> {
+            GET_SEARCH_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED && e.modifiersEx == 0) {
                     editor.markupModel.removeAllHighlighters()
                     val matchResult = Regex("(^.*) -> (.*)$", RegexOption.DOT_MATCHES_ALL).matchEntire(ui.text)?.destructured
@@ -166,7 +168,7 @@ internal class ReplaceDelegate(
                     )
                 }
             }
-            ReplaceState.GET_REPLACE_ARG -> {
+            GET_REPLACE_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED) {
                     replaceArg = ui.text
                     startSearch()
@@ -273,7 +275,7 @@ internal class ReplaceDelegate(
 
     internal fun setReplaceState() {
         searchArg = ui.text
-        state = ReplaceState.GET_REPLACE_ARG
+        state = GET_REPLACE_ARG
         ui.text = ""
         ReplaceHandler.resetPos()
     }
@@ -341,8 +343,8 @@ internal class ReplaceDelegate(
 
     private fun getReplaceTitle() =
         when (state) {
-            ReplaceState.GET_SEARCH_ARG -> if (type == REGEXP) "Query replace regexp: " else "Query replace: "
-            ReplaceState.GET_REPLACE_ARG, ReplaceState.SEARCHING, ReplaceState.EDIT_REPLACE_ARG -> "Replace $searchArg with: "
+            GET_SEARCH_ARG -> if (type == REGEXP) "Query replace regexp: " else "Query replace: "
+            GET_REPLACE_ARG, ReplaceState.SEARCHING, ReplaceState.EDIT_REPLACE_ARG -> "Replace $searchArg with: "
             ReplaceState.SEARCH_FOUND -> "Replace? "
             ReplaceState.REPLACE_DONE -> if (replaced == 1) "Replaced 1 occurrence." else "Replaced $replaced occurrences."
             ReplaceState.REPLACE_FAILED -> "Replacement failed. "

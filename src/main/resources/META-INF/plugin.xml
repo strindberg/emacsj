@@ -28,7 +28,7 @@
     <applicationListeners>
         <listener class="com.github.strindberg.emacsj.EmacsJCommandListener"
                   topic="com.intellij.openapi.command.CommandListener"/>
-        <listener class="com.github.strindberg.emacsj.ui.EmacsJCancelListener"
+        <listener class="com.github.strindberg.emacsj.EmacsJActionListener"
                   topic="com.intellij.openapi.actionSystem.ex.AnActionListener"/>
     </applicationListeners>
 

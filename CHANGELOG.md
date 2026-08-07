@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- XRef handling now works regardless of the IDE's language setting.
+- XRef history now works regardless of the IDE's language setting.a
 
 ## [1.5.7] - 2026-07-31
 

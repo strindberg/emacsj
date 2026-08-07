@@ -1,9 +1,9 @@
-package com.github.strindberg.emacsj.ui
+package com.github.strindberg.emacsj
 
-import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.actions.search.ISearchAction
 import com.github.strindberg.emacsj.actions.universal.UniversalArgumentAction
 import com.github.strindberg.emacsj.search.ISearchHandler
+import com.github.strindberg.emacsj.ui.EmacsJTypedActionService
 import com.github.strindberg.emacsj.universal.UniversalArgumentDelegate
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.github.strindberg.emacsj.xref.XRefHandler
@@ -16,7 +16,7 @@ import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 
-internal class EmacsJCancelListener : AnActionListener {
+internal class EmacsJActionListener : AnActionListener {
 
     private var universalArgumentDelegate: UniversalArgumentDelegate? = null
 

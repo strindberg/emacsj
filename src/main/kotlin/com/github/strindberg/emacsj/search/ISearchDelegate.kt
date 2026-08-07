@@ -66,7 +66,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
     private val breadcrumbs = mutableListOf<EditorBreadcrumb>()
 
-    private val rangeHighlighters = mutableListOf<RangeHighlighter>()
+    private val primaryHighlighters = mutableListOf<RangeHighlighter>()
 
     private var isInhibitCancel = false
 
@@ -125,7 +125,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
         ui.title = titleText()
     }
 
-    internal fun isActive() = state in listOf(SEARCH, FAILED)
+    internal fun isActive() = state == SEARCH || state == FAILED
 
     internal fun hide() {
         if (!isInhibitCancel) {
@@ -411,7 +411,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
         if (isNewText) {
             CommonHighlighter.cancel(editor)
         } else {
-            rangeHighlighters.forEach {
+            primaryHighlighters.forEach {
                 editor.markupModel.removeHighlighter(it)
             }
         }
@@ -419,7 +419,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
     private fun removeAllHighlighters() {
         CommonHighlighter.cancel(editor)
-        rangeHighlighters.forEach {
+        primaryHighlighters.forEach {
             editor.markupModel.removeHighlighter(it)
         }
     }
@@ -537,7 +537,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
             caret.moveToOffset(if (direction == FORWARD) match.end else match.start)
             caret.search = caret.search.copy(match = match)
             if (found) {
-                addHighlight(match)
+                addPrimaryHighlight(match)
             }
 
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
@@ -545,8 +545,8 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
         }
     }
 
-    private fun addHighlight(match: Match) {
-        rangeHighlighters.add(
+    private fun addPrimaryHighlight(match: Match) {
+        primaryHighlighters.add(
             editor.markupModel.addRangeHighlighter(
                 EMACSJ_PRIMARY,
                 match.start,
