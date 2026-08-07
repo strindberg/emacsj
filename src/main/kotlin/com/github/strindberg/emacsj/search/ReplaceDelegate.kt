@@ -321,18 +321,43 @@ internal class ReplaceDelegate(
         undoGroupId = UUID.randomUUID().toString()
     }
 
-    private fun fixBackReferences(replaceArgument: String): String {
-        var argument = replaceArgument
-        val matches = Regex("""(\\\\[0-9]+|\\\\&)""").findAll(argument).map { result ->
-            argument = argument.replaceRange(result.range, "A".repeat(result.range.last - result.range.first))
-            Pair(result.range, result.value)
+    /**
+     * Rewrites Emacs-style back references into the form [FindModel] expects: `\1`..`\9` become `$1`..`$9` and `\&`
+     * becomes `$0`.
+     *
+     * Escapes are consumed left to right as whole tokens, which is what keeps `\\1` (a literal backslash followed by
+     * a digit) apart from `\\\1` (a literal backslash followed by a back reference).
+     */
+    private fun fixBackReferences(replaceArgument: String): String =
+        buildString {
+            var index = 0
+            while (index < replaceArgument.length) {
+                val current = replaceArgument[index]
+                val next = replaceArgument.getOrNull(index + 1)
+                when {
+                    current != '\\' || next == null -> {
+                        append(current)
+                        index++
+                    }
+                    next == '\\' -> {
+                        append("""\\""")
+                        index += 2
+                    }
+                    next.isDigit() -> {
+                        append('$').append(next)
+                        index += 2
+                    }
+                    next == '&' -> {
+                        append("\$0")
+                        index += 2
+                    }
+                    else -> {
+                        append(current)
+                        index++
+                    }
+                }
+            }
         }
-        argument = argument.replace(Regex("""\\([0-9])"""), """\$$1""").replace(Regex("""\\&"""), """\$0""")
-        matches.forEach { (range, content) ->
-            argument = argument.replaceRange(range.first, range.last, content)
-        }
-        return argument
-    }
 
     private fun handleReplacementError(e: FindManager.MalformedReplacementStringException) {
         thisLogger().warn(e.message)
