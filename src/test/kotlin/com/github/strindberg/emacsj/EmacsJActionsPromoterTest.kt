@@ -21,7 +21,12 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
 
     fun `test Promoter sorts ISearch actions first when ISearch is active`() {
         myFixture.configureByText(FILE, "")
-        ISearchHandler.delegate = ISearchDelegate(myFixture.editor, SearchType.TEXT, SearchDirection.FORWARD)
+        ISearchHandler.delegate = ISearchDelegate(
+            editor = myFixture.editor,
+            project = project,
+            searchType = SearchType.TEXT,
+            direction = SearchDirection.FORWARD
+        )
 
         val isearch1 = ISearchTextForwardAction()
         val isearch2 = ISearchRegexpForwardAction()
@@ -39,7 +44,13 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
 
     fun `test Promoter sorts Replace actions first when Replace is active`() {
         myFixture.configureByText(FILE, "")
-        ReplaceHandler.delegate = ReplaceDelegate(editor = myFixture.editor, type = SearchType.TEXT, selection = null, lastSearch = null)
+        ReplaceHandler.delegate = ReplaceDelegate(
+            editor = myFixture.editor,
+            project = project,
+            type = SearchType.TEXT,
+            selection = null,
+            lastSearch = null
+        )
 
         val replace = ReplaceNewLineAction()
         val isearch = ISearchTextForwardAction()

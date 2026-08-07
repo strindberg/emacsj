@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.ide.CopyPasteManagerEx
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.PlatformTestUtil
@@ -2385,6 +2387,23 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_DELETE_CHAR)
         myFixture.checkResult("fo bar <caret>foo")
         assertEquals(Pair(2, 2), searchCount)
+    }
+
+    fun `test Search is disabled in an editor without a project`() {
+        val factory = EditorFactory.getInstance()
+        val editor = factory.createEditor(factory.createDocument("foo bar baz"))
+        try {
+            assertNull(editor.project)
+            val handler = ISearchHandler(direction = SearchDirection.FORWARD, type = SearchType.TEXT)
+
+            assertFalse(handler.isEnabled(editor, editor.caretModel.primaryCaret, DataContext.EMPTY_CONTEXT))
+
+            // FindManager is a project service, so starting a search here would fail on the first typed character.
+            handler.execute(editor, null, DataContext.EMPTY_CONTEXT)
+            assertNull(ISearchHandler.delegate)
+        } finally {
+            factory.releaseEditor(editor)
+        }
     }
 
     /**

@@ -17,16 +17,22 @@ internal const val ACTION_REPLACE_TEXT = "com.github.strindberg.emacsj.actions.s
 
 internal class ReplaceHandler(private val type: SearchType) : EditorActionHandler() {
 
+    // Query replace cannot run in a project-less editor.
+    override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean = editor.project != null
+
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         if (delegate == null) {
-            MarkHandler.pushPlaceInfo(editor)
-            delegate = ReplaceDelegate(
-                editor = editor,
-                type = type,
-                selection = with(editor.selectionModel) { if (hasSelection()) selectionStart..selectionEnd else null },
-                lastSearch = getLast(type)
-            ).apply {
-                show()
+            editor.project?.let { project ->
+                MarkHandler.pushPlaceInfo(editor)
+                delegate = ReplaceDelegate(
+                    editor = editor,
+                    project = project,
+                    type = type,
+                    selection = with(editor.selectionModel) { if (hasSelection()) selectionStart..selectionEnd else null },
+                    lastSearch = getLast(type)
+                ).apply {
+                    show()
+                }
             }
         }
     }

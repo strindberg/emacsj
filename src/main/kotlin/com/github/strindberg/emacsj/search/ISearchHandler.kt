@@ -25,6 +25,9 @@ internal const val ACTION_ISEARCH_REGEXP_BACKWARD = "com.github.strindberg.emacs
 
 internal class ISearchHandler(private val direction: SearchDirection, private val type: SearchType) : EditorActionHandler() {
 
+    // Incremental search cannot run in a project-less editor.
+    override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean = editor.project != null
+
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val current = delegate
         if (current != null) {
@@ -43,8 +46,10 @@ internal class ISearchHandler(private val direction: SearchDirection, private va
                 current.startEditedSearch()
             }
         } else {
-            MarkHandler.pushPlaceInfo(editor)
-            delegate = ISearchDelegate(editor, type, direction)
+            editor.project?.let { project ->
+                MarkHandler.pushPlaceInfo(editor)
+                delegate = ISearchDelegate(editor = editor, project = project, searchType = type, direction = direction)
+            }
         }
     }
 
