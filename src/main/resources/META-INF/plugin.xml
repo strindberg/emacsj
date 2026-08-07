@@ -61,6 +61,10 @@
                 class="com.github.strindberg.emacsj.actions.search.ISearchPasteAction">
             <keyboard-shortcut first-keystroke="control Y" keymap="Emacs"/>
         </action>
+        <action id="com.github.strindberg.emacsj.actions.search.isearchpastehistory"
+                class="com.github.strindberg.emacsj.actions.search.ISearchPasteHistoryAction">
+            <keyboard-shortcut first-keystroke="alt Y" keymap="Emacs"/>
+        </action>
         <action id="com.github.strindberg.emacsj.actions.search.isearchword"
                 class="com.github.strindberg.emacsj.actions.search.ISearchWordAction">
             <keyboard-shortcut first-keystroke="control W" keymap="Emacs"/>

@@ -241,6 +241,9 @@
     <action id="com.github.strindberg.emacsj.actions.search.isearchpaste">
         <keyboard-shortcut first-keystroke="control Y"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.search.isearchpastehistory">
+        <keyboard-shortcut first-keystroke="meta Y"/>
+    </action>
     <action id="com.github.strindberg.emacsj.actions.search.isearchword">
         <keyboard-shortcut first-keystroke="control W"/>
     </action>

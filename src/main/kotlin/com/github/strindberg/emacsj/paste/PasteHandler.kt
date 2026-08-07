@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj.paste
 
-import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.mark.MarkHandler
@@ -13,7 +12,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorCopyPasteHelper
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
-import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import org.intellij.lang.annotations.Language
@@ -33,6 +31,8 @@ private val LAST_PASTED_REGIONS = Key.create<List<TextRange>>("PasteHandler.LAST
 
 private val pasteActionIds = setOf(ACTION_PASTE, ACTION_PREFIX_PASTE, ACTION_HISTORY_PASTE)
 
+private const val CLIPBOARD_HISTORY_SIZE = 64
+
 class PasteHandler(val type: Type) : EditorWriteActionHandler() {
 
     companion object {
@@ -46,7 +46,7 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
         when (type) {
             STANDARD, PREFIX -> {
-                clipboardHistory = filteredContents().take(64)
+                clipboardHistory = clipboardHistory().take(CLIPBOARD_HISTORY_SIZE)
                 clipboardHistoryPos = 0
 
                 if (EmacsJService.instance.isLastStrictUniversal()) {
@@ -87,14 +87,6 @@ class PasteHandler(val type: Type) : EditorWriteActionHandler() {
             }
         }
     }
-
-    private fun filteredContents(): List<Transferable> =
-        CopyPasteManager.getInstance().allContents
-            .filter {
-                it.isDataFlavorSupported(DataFlavor.stringFlavor) &&
-                    (it.getTransferData(DataFlavor.stringFlavor) as String).isNotBlank()
-            }
-            .distinctBy { it.getTransferData(DataFlavor.stringFlavor) as String }
 
     private fun nextHistoryClipboard(steps: Int): Transferable? =
         clipboardHistory.takeUnless { it.isEmpty() }?.let { history ->
