@@ -37,11 +37,8 @@ object CommonHighlighter {
         @VisibleForTesting get() = scheduledSearches.all { it.isDone }
 
     internal fun cancel(editor: Editor) {
-        val iterator = progressIndicators.iterator()
-        while (iterator.hasNext()) {
-            iterator.next().cancel()
-            iterator.remove()
-        }
+        progressIndicators.forEach { it.cancel() }
+        progressIndicators.clear()
         editor.markupModel.removeAllHighlighters()
     }
 

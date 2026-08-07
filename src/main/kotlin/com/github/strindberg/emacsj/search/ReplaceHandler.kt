@@ -73,8 +73,8 @@ class ReplaceHandler(private val type: SearchType) : EditorActionHandler() {
 
         internal fun getLast(type: SearchType): Replace? =
             when (type) {
-                REGEXP -> if (lastRegexpSearches.isNotEmpty()) lastRegexpSearches[0] else null
-                TEXT -> if (lastStringSearches.isNotEmpty()) lastStringSearches[0] else null
+                REGEXP -> lastRegexpSearches.firstOrNull()
+                TEXT -> lastStringSearches.firstOrNull()
             }
     }
 }
