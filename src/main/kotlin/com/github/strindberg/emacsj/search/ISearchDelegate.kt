@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_G
 import java.util.regex.Pattern
+import com.github.strindberg.emacsj.paste.clipboardHistoryTexts
 import com.github.strindberg.emacsj.preferences.EmacsJSettings
 import com.github.strindberg.emacsj.search.CaseType.INSENSITIVE
 import com.github.strindberg.emacsj.search.CaseType.SENSITIVE
@@ -74,6 +75,13 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
     /** The longest search string that matched, so that a failing search can call out only what was added after it. */
     private var foundText: String = ""
+
+    /** What the most recent paste added, so that walking the clipboard history can take it back out again. */
+    private var pastedText: String = ""
+
+    private var clipboardHistory: List<String> = emptyList()
+
+    private var clipboardHistoryPos = 0
 
     @VisibleForTesting
     internal var caseType: CaseType = UNSPECIFIED
@@ -186,7 +194,40 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
         isInhibitCancel = false
     }
 
+    internal fun paste(clipboard: String) {
+        clipboardHistory = clipboardHistoryTexts()
+        clipboardHistoryPos = 0
+        pastedText = clipboard
+
+        addToSearch(clipboard)
+    }
+
+    internal fun pasteNextInHistory() {
+        // Typing into the search string reaches neither listener -- the raw typed handler consumes it before it can
+        // become an action or a command -- so the caller's "was the last action a paste" check cannot see it. The
+        // paste is therefore invalidated here, by whatever else changed the search string.
+        if (clipboardHistory.isEmpty() || pastedText.isEmpty()) {
+            return
+        }
+
+        clipboardHistoryPos = (clipboardHistoryPos + 1) % clipboardHistory.size
+        val next = clipboardHistory[clipboardHistoryPos]
+
+        text = text.dropLast(pastedText.length)
+        pastedText = next
+
+        addToSearch(next)
+    }
+
+    private fun addToSearch(newText: String) {
+        when (state) {
+            EDIT -> text += newText
+            SEARCH, FAILED -> searchAllCarets(searchDirection = direction, newText = newText, forceFirstSearch = true)
+        }
+    }
+
     internal fun deleteChar() {
+        pastedText = ""
         if (text.isNotEmpty()) {
             text = text.take(text.length - 1)
             searchAllCarets(direction, "", forceFirstSearch = true)
@@ -300,6 +341,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
     }
 
     internal fun handleChar(charTyped: String) {
+        pastedText = ""
         when (state) {
             EDIT -> text += charTyped
             SEARCH, FAILED -> searchAllCarets(

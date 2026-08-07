@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
+import com.intellij.ide.CopyPasteManagerEx
 import com.intellij.openapi.editor.VisualPosition
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.PlatformTestUtil
@@ -19,54 +20,6 @@ private const val HIGHLIGHT_TIMEOUT_SECONDS = 10
 
 @Suppress("LargeClass", "ReplaceSafeCallChainWithRun")
 class ISearchTest : EmacsJTestCase() {
-
-    fun `test Failing search marks only the characters added since the last match`() {
-        myFixture.configureByText(FILE, "<caret>foo bar")
-        performEditorAction(ACTION_ISEARCH_FORWARD)
-        type("foo")
-        assertEquals("foo", markup())
-
-        type("b")
-
-        assertEquals(markupOf(found = "foo", notFound = "b"), markup())
-        assertEquals("foob", ISearchHandler.delegate?.text)
-    }
-
-    fun `test Further failing characters extend the marked part`() {
-        myFixture.configureByText(FILE, "<caret>foo bar")
-        performEditorAction(ACTION_ISEARCH_FORWARD)
-        type("foo")
-        type("b")
-
-        type("z")
-
-        assertEquals(markupOf(found = "foo", notFound = "bz"), markup())
-    }
-
-    fun `test Backspacing back to a matching search clears the marking`() {
-        myFixture.configureByText(FILE, "<caret>foo bar")
-        performEditorAction(ACTION_ISEARCH_FORWARD)
-        type("foo")
-        type("bz")
-
-        performEditorAction(ACTION_ISEARCH_BACKSPACE)
-        assertEquals(markupOf(found = "foo", notFound = "b"), markup())
-
-        performEditorAction(ACTION_ISEARCH_BACKSPACE)
-
-        assertEquals("foo", markup())
-    }
-
-    fun `test Marked search text is escaped`() {
-        myFixture.configureByText(FILE, "<caret>a<b & c")
-        performEditorAction(ACTION_ISEARCH_FORWARD)
-        type("a<")
-
-        type("Z")
-
-        assertEquals(markupOf(found = "a&lt;", notFound = "Z"), markup())
-        assertEquals("a<Z", ISearchHandler.delegate?.text)
-    }
 
     /** Match count as shown in the search UI, once debounced highlighting has reported it. */
     private val searchCount: Pair<Int, Int>?
@@ -1056,6 +1009,109 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_BACKSPACE)
         myFixture.checkResult("foo b<caret>ar foo")
         assertEquals("b", ISearchHandler.delegate?.text)
+    }
+
+    fun `test Paste history replaces the pasted text with the next clipboard item`() {
+        resetClipboard("older", "bar")
+        myFixture.configureByText(FILE, "<caret>foo bar older")
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        performEditorAction(ACTION_ISEARCH_PASTE)
+        assertEquals("bar", ISearchHandler.delegate?.text)
+
+        performEditorAction(ACTION_ISEARCH_PASTE_HISTORY)
+
+        assertEquals("older", ISearchHandler.delegate?.text)
+        myFixture.checkResult("foo bar older<caret>")
+    }
+
+    fun `test Paste history keeps whatever was typed before the paste`() {
+        resetClipboard("older", "bar")
+        myFixture.configureByText(FILE, "<caret>foo bar foo older")
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo ")
+        performEditorAction(ACTION_ISEARCH_PASTE)
+        assertEquals("foo bar", ISearchHandler.delegate?.text)
+
+        performEditorAction(ACTION_ISEARCH_PASTE_HISTORY)
+
+        assertEquals("foo older", ISearchHandler.delegate?.text)
+    }
+
+    fun `test Paste history cycles back round to the first item`() {
+        resetClipboard("older", "bar")
+        myFixture.configureByText(FILE, "<caret>foo bar older")
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        performEditorAction(ACTION_ISEARCH_PASTE)
+        performEditorAction(ACTION_ISEARCH_PASTE_HISTORY)
+        assertEquals("older", ISearchHandler.delegate?.text)
+
+        performEditorAction(ACTION_ISEARCH_PASTE_HISTORY)
+
+        assertEquals("bar", ISearchHandler.delegate?.text)
+    }
+
+    fun `test Paste history does nothing when the previous action was not a paste`() {
+        resetClipboard("older", "bar")
+        myFixture.configureByText(FILE, "<caret>foo bar older")
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        performEditorAction(ACTION_ISEARCH_PASTE)
+        type("z")
+
+        performEditorAction(ACTION_ISEARCH_PASTE_HISTORY)
+
+        assertEquals("barz", ISearchHandler.delegate?.text)
+    }
+
+    fun `test Failing search marks only the characters added since the last match`() {
+        myFixture.configureByText(FILE, "<caret>foo bar")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+        assertEquals("foo", markup())
+
+        type("b")
+
+        assertEquals(markupOf(found = "foo", notFound = "b"), markup())
+        assertEquals("foob", ISearchHandler.delegate?.text)
+    }
+
+    fun `test Further failing characters extend the marked part`() {
+        myFixture.configureByText(FILE, "<caret>foo bar")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+        type("b")
+
+        type("z")
+
+        assertEquals(markupOf(found = "foo", notFound = "bz"), markup())
+    }
+
+    fun `test Backspacing back to a matching search clears the marking`() {
+        myFixture.configureByText(FILE, "<caret>foo bar")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+        type("bz")
+
+        performEditorAction(ACTION_ISEARCH_BACKSPACE)
+        assertEquals(markupOf(found = "foo", notFound = "b"), markup())
+
+        performEditorAction(ACTION_ISEARCH_BACKSPACE)
+
+        assertEquals("foo", markup())
+    }
+
+    fun `test Marked search text is escaped`() {
+        myFixture.configureByText(FILE, "<caret>a<b & c")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("a<")
+
+        type("Z")
+
+        assertEquals(markupOf(found = "a&lt;", notFound = "Z"), markup())
+        assertEquals("a<Z", ISearchHandler.delegate?.text)
     }
 
     fun `test Text iSearch key binding works during regexp search`() {
@@ -2365,6 +2421,13 @@ class ISearchTest : EmacsJTestCase() {
 
     private fun pressEnter() {
         performEditorAction(ACTION_ISEARCH_ENTER)
+    }
+
+    /** Clipboard history is application-scoped, so it has to be pinned for a test that walks through it. */
+    private fun resetClipboard(vararg items: String) {
+        val manager = CopyPasteManagerEx.getInstanceEx()
+        manager.allContents.forEach { manager.removeContent(it) }
+        items.forEach { manager.setContents(StringSelection(it)) }
     }
 
     private fun markup() = ISearchHandler.delegate?.ui?.markup

@@ -5,7 +5,8 @@
 ## [Unreleased]
 
 ### Added
-- When using Isearch, search field now marks non-matching part of the search string in red.
+- When using Isearch, search field marks non-matching part of the search string in red.
+- When using Isearch, the kill ring can be cycled with `alt-y/command-y` after pasting to search text.
 
 ### Fixed
 
