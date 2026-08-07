@@ -289,6 +289,38 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("baaaa<caret>t")
     }
 
+    fun `test Escaped backslash before a back reference keeps both`() {
+        // "\\" is a literal backslash and the "\1" that follows it is still a back reference, so the replacement
+        // should produce a backslash followed by the first group.
+        myFixture.configureByText(FILE, "<caret>baaat")
+        myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
+
+        setText("""(.)aaa(.)""")
+        pressEnter()
+
+        setText("""\\\1""")
+        pressEnter()
+
+        typeChar('y')
+
+        myFixture.checkResult("""\b<caret>""")
+    }
+
+    fun `test Escaped backslash before a whole match reference keeps both`() {
+        myFixture.configureByText(FILE, "<caret>baaat")
+        myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
+
+        setText("""aaa""")
+        pressEnter()
+
+        setText("""\\\&""")
+        pressEnter()
+
+        typeChar('y')
+
+        myFixture.checkResult("""b\aaa<caret>t""")
+    }
+
     fun `test Double escape stops back reference to whole match in regexp replace`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
