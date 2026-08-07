@@ -235,15 +235,18 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
 
         removeHighlighters(isNewText)
 
+        val (isRegexp, searchString) = getSearchModelArguments()
+
         val result = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
-            searchAndUpdate(caret, keepStart, startType)
+            searchAndUpdate(caret, keepStart, startType, isRegexp, searchString)
         }.let { results ->
             if (editor.caretModel.caretCount == 1) results[0] else SearchResult(results.any { it.isFound }, null, false)
         }
 
         state = if (result.isFound) SEARCH else FAILED
 
-        findAllAndHighlight(result.offset, isNewText)
+        findAllAndHighlight(offset = result.offset, highlight = isNewText, isRegexp = isRegexp, searchString = searchString)
+
         updateUI(result)
     }
 
@@ -424,8 +427,14 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
         }
     }
 
-    private fun searchAndUpdate(caret: Caret, keepStart: Boolean, startType: StartType): SearchResult {
-        val result = findString(searchStart(caret.search, keepStart, startType))
+    private fun searchAndUpdate(
+        caret: Caret,
+        keepStart: Boolean,
+        startType: StartType,
+        isRegexp: Boolean,
+        searchString: String,
+    ): SearchResult {
+        val result = findString(searchStart(caret.search, keepStart, startType), isRegexp, searchString)
 
         if (result.isStringFound) {
             moveAndUpdate(caret = caret, match = Match(result.startOffset, result.endOffset), direction = direction, found = true)
@@ -484,8 +493,7 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
             } ?: 0
         }
 
-    private fun findAllAndHighlight(offset: Int?, highlight: Boolean) {
-        val (isRegexp, searchString) = getSearchModelArguments()
+    private fun findAllAndHighlight(offset: Int?, highlight: Boolean, isRegexp: Boolean, searchString: String) {
         CommonHighlighter.findAllAndHighlight(
             editor = editor,
             searchArg = searchString,
@@ -498,19 +506,18 @@ internal class ISearchDelegate(override val editor: Editor, var searchType: Sear
         )
     }
 
-    private fun findString(offset: Int): FindResult {
-        val (isRegexp, searchString) = getSearchModelArguments()
-        return FindManager.getInstance(editor.project).findString(
-            editor.text,
-            offset,
-            FindModel().apply {
-                stringToFind = searchString
-                isForward = direction == FORWARD
-                isCaseSensitive = caseSensitive()
-                isRegularExpressions = isRegexp
-            }
-        )
-    }
+    private fun findString(offset: Int, isRegexp: Boolean, searchString: String): FindResult = FindManager.getInstance(
+        editor.project
+    ).findString(
+        editor.text,
+        offset,
+        FindModel().apply {
+            stringToFind = searchString
+            isForward = direction == FORWARD
+            isCaseSensitive = caseSensitive()
+            isRegularExpressions = isRegexp
+        }
+    )
 
     private fun getSearchModelArguments(): Pair<Boolean, String> =
         if (searchType == TEXT && ISearchHandler.isLax) {
