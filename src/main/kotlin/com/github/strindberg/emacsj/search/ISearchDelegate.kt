@@ -155,6 +155,20 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         ISearchHandler.searchConcluded(text, searchType)
     }
 
+    internal fun handleEnter() {
+        when (state) {
+            EDIT -> startEditedSearch()
+            SEARCH, FAILED -> hide()
+        }
+    }
+
+    internal fun handleBackspace() {
+        when (state) {
+            EDIT -> text = text.dropLast(1)
+            SEARCH, FAILED -> popBreadcrumb()
+        }
+    }
+
     override fun clearDelegate() {
         ISearchHandler.delegate = null
     }
@@ -210,13 +224,6 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         pastedText = next
 
         addToSearch(next)
-    }
-
-    private fun addToSearch(newText: String) {
-        when (state) {
-            EDIT -> text += newText
-            SEARCH, FAILED -> searchAllCarets(searchDirection = direction, newText = newText, forceFirstSearch = true)
-        }
     }
 
     internal fun deleteChar() {
@@ -307,6 +314,17 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         hide()
     }
 
+    internal fun handleChar(charTyped: String) {
+        pastedText = ""
+        when (state) {
+            EDIT -> text += charTyped
+            SEARCH, FAILED -> searchAllCarets(
+                searchDirection = direction,
+                newText = charTyped
+            )
+        }
+    }
+
     private fun keyEventHandler(e: KeyEvent) {
         // ESC or ctrl-g pressed
         if (e.id == KeyEvent.KEY_PRESSED &&
@@ -334,14 +352,10 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         }
     }
 
-    internal fun handleChar(charTyped: String) {
-        pastedText = ""
+    private fun addToSearch(newText: String) {
         when (state) {
-            EDIT -> text += charTyped
-            SEARCH, FAILED -> searchAllCarets(
-                searchDirection = direction,
-                newText = charTyped
-            )
+            EDIT -> text += newText
+            SEARCH, FAILED -> searchAllCarets(searchDirection = direction, newText = newText, forceFirstSearch = true)
         }
     }
 
@@ -437,7 +451,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         }
     }
 
-    internal fun popBreadcrumb() {
+    private fun popBreadcrumb() {
         breadcrumbs.removeLastOrNull()?.let { breadcrumb ->
             removeHighlighters(breadcrumb.text != ui.text || breadcrumb.caseType != caseType || breadcrumb.searchType != searchType)
 
