@@ -2511,6 +2511,22 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(3, secondaryHighlightCount())
     }
 
+    fun `test Paste history does nothing after a character has been deleted`() {
+        resetClipboard("older", "bar")
+        myFixture.configureByText(FILE, "<caret>foo bar older")
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        performEditorAction(ACTION_ISEARCH_PASTE)
+        assertEquals("bar", ISearchHandler.delegate?.text)
+
+        performEditorAction(ACTION_ISEARCH_DELETE_CHAR)
+        assertEquals("ba", ISearchHandler.delegate?.text)
+
+        // Deleting ended the walk, so there is no longer a pasted tail to swap for the next clipboard entry.
+        performEditorAction(ACTION_ISEARCH_PASTE_HISTORY)
+        assertEquals("ba", ISearchHandler.delegate?.text)
+    }
+
     /**
      * Search actions settle before returning. Highlighting is debounced, and a breadcrumb records the match count
      * as it stands when the next action starts, so firing actions faster than the debounce would snapshot counts
