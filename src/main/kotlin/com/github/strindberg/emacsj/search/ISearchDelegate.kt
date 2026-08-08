@@ -66,7 +66,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
     @VisibleForTesting
     internal var state: ISearchState = SEARCH
 
-    private val breadcrumbs = mutableListOf<EditorBreadcrumb>()
+    private val breadcrumbs = ISearchBreadcrumbUtil(editor)
 
     private val primaryHighlighters = mutableListOf<RangeHighlighter>()
 
@@ -129,12 +129,6 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         ui.show()
     }
 
-    internal fun initTitleText() {
-        ui.title = titleText()
-    }
-
-    internal fun isActive() = state == SEARCH || state == FAILED
-
     override fun release() {
         if (!editor.isDisposed) {
             editor.markupModel.removeAllHighlighters()
@@ -149,6 +143,22 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         ISearchHandler.searchConcluded(text, searchType)
     }
 
+    override fun clearDelegate() {
+        ISearchHandler.delegate = null
+    }
+
+    internal fun initTitleText() {
+        ui.title = titleText()
+    }
+
+    internal fun isActive() = state == SEARCH || state == FAILED
+
+    internal fun startEditedSearch() {
+        state = SEARCH
+        ui.makeReadonly(text, false)
+        searchAllCarets(searchDirection = direction, newText = text.also { text = "" })
+    }
+
     internal fun handleEnter() {
         when (state) {
             EDIT -> startEditedSearch()
@@ -161,16 +171,6 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             EDIT -> text = text.dropLast(1)
             SEARCH, FAILED -> popBreadcrumb()
         }
-    }
-
-    override fun clearDelegate() {
-        ISearchHandler.delegate = null
-    }
-
-    internal fun startEditedSearch() {
-        state = SEARCH
-        ui.makeReadonly(text, false)
-        searchAllCarets(searchDirection = direction, newText = text.also { text = "" })
     }
 
     internal fun findFirst() {
@@ -235,43 +235,18 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         renewState(null)
     }
 
-    internal fun searchAllCarets(
-        searchDirection: SearchDirection,
-        newText: String,
-        keepStart: Boolean = true,
-        forceWraparound: Boolean = false,
-        forceFirstSearch: Boolean = false,
-        saveBreadcrumb: Boolean = true,
-    ) {
-        if (saveBreadcrumb) {
-            pushBreadcrumb()
-        }
+    /** Searches in [searchDirection] for the current search string with [newText] added to it. */
+    internal fun search(searchDirection: SearchDirection, newText: String = "") {
+        searchAllCarets(searchDirection = searchDirection, newText = newText)
+    }
 
-        val isNewText = newText.isNotEmpty() || forceFirstSearch
-        val startType = startType(isNewText || searchDirection != direction, forceWraparound)
-
-        direction = searchDirection
-        text += newText
-
-        if (startType == WRAPAROUND) {
-            editor.caretModel.removeSecondaryCarets()
-        }
-
-        if (isNewText) clearAllHighlights() else clearCurrentMatchHighlights()
-
-        val (isRegexp, searchString) = getSearchModelArguments()
-
-        val result = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
-            searchAndUpdate(caret, keepStart, startType, isRegexp, searchString)
-        }.let { results ->
-            if (editor.caretModel.caretCount == 1) results[0] else SearchResult(results.any { it.isFound }, null, false)
-        }
-
-        state = if (result.isFound) SEARCH else FAILED
-
-        refreshHighlightsAndCount(offset = result.offset, highlight = isNewText)
-
-        updateUI(result)
+    /**
+     * Extends the search string with [newText] lifted from the document at the current match. Text arriving that way is
+     * already behind a *backward* search's start, so such a search resumes from the end of the current match rather
+     * than from where the search began.
+     */
+    internal fun expandSearch(newText: String) {
+        searchAllCarets(searchDirection = direction, newText = newText, keepStart = false)
     }
 
     internal fun swapSearchStopAndThenCancel() {
@@ -318,6 +293,45 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             clearAllHighlights()
             if (e.keyCode == VK_ENTER && e.modifiersEx == 0) startEditedSearch() else refreshHighlights()
         }
+    }
+
+    private fun searchAllCarets(
+        searchDirection: SearchDirection,
+        newText: String,
+        keepStart: Boolean = true,
+        forceWraparound: Boolean = false,
+        forceFirstSearch: Boolean = false,
+        saveBreadcrumb: Boolean = true,
+    ) {
+        if (saveBreadcrumb) {
+            pushBreadcrumb()
+        }
+
+        val isNewText = newText.isNotEmpty() || forceFirstSearch
+        val startType = startType(isNewText || searchDirection != direction, forceWraparound)
+
+        direction = searchDirection
+        text += newText
+
+        if (startType == WRAPAROUND) {
+            editor.caretModel.removeSecondaryCarets()
+        }
+
+        if (isNewText) clearAllHighlights() else clearCurrentMatchHighlights()
+
+        val (isRegexp, searchString) = getSearchModelArguments()
+
+        val result = editor.caretModel.allCarets.apply { if (direction == FORWARD) reverse() }.map { caret ->
+            searchAndUpdate(caret, keepStart, startType, isRegexp, searchString)
+        }.let { results ->
+            if (editor.caretModel.caretCount == 1) results[0] else SearchResult(results.any { it.isFound }, null, false)
+        }
+
+        state = if (result.isFound) SEARCH else FAILED
+
+        refreshHighlightsAndCount(offset = result.offset, highlight = isNewText)
+
+        updateUI(result)
     }
 
     private fun addToSearch(newText: String) {
@@ -392,28 +406,21 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         ).joinToString(" ") + ": "
 
     private fun pushBreadcrumb() {
-        if (breadcrumbs.lastOrNull()?.text != text || breadcrumbs.lastOrNull()?.direction != direction ||
-            editor.caretModel.allCarets.any { it.search.match != it.breadcrumbs.lastOrNull() }
-        ) {
-            editor.caretModel.runForEachCaret {
-                it.breadcrumbs.add(it.search.match)
-            }
-            breadcrumbs.add(
-                EditorBreadcrumb(
-                    title = ui.title,
-                    text = ui.text,
-                    direction = direction,
-                    state = state,
-                    caseType = caseType,
-                    searchType = searchType,
-                    count = ui.count
-                )
+        breadcrumbs.push(
+            EditorBreadcrumb(
+                title = ui.title,
+                text = ui.text,
+                direction = direction,
+                state = state,
+                caseType = caseType,
+                searchType = searchType,
+                count = ui.count
             )
-        }
+        )
     }
 
     private fun popBreadcrumb() {
-        breadcrumbs.removeLastOrNull()?.let { breadcrumb ->
+        breadcrumbs.pop()?.let { breadcrumb ->
             val searchChanged =
                 breadcrumb.text != ui.text || breadcrumb.caseType != caseType || breadcrumb.searchType != searchType
             if (searchChanged) clearAllHighlights() else clearCurrentMatchHighlights()
@@ -425,7 +432,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             updateCount(breadcrumb.count)
 
             editor.caretModel.runForEachCaret { caret ->
-                caret.breadcrumbs.removeLastOrNull()?.let { latest ->
+                breadcrumbs.popMatch(caret)?.let { latest ->
                     moveAndUpdate(caret = caret, match = latest, direction = breadcrumb.direction, found = breadcrumb.state == SEARCH)
                 }
             }
