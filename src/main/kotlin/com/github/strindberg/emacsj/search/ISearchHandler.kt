@@ -32,13 +32,13 @@ internal class ISearchHandler(private val direction: SearchDirection, private va
             if (current.isActive()) {
                 if (current.text.isEmpty()) {
                     if (current.direction == direction) {
-                        current.searchAllCarets(searchDirection = direction, newText = getPrevious(current.searchType))
+                        current.search(searchDirection = direction, newText = getPrevious(current.searchType))
                     } else {
                         current.direction = direction
                         current.initTitleText()
                     }
                 } else {
-                    current.searchAllCarets(searchDirection = direction, newText = "")
+                    current.search(searchDirection = direction)
                 }
             } else {
                 current.startEditedSearch()

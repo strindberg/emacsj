@@ -39,7 +39,7 @@ internal class ISearchExpandHandler(private val type: ExpandType) : EditorAction
                 CHARACTER -> getChar(editor, editor.caretModel.currentCaret.search.match.end)
                 NEW_LINE -> "\n"
             }
-            delegate.searchAllCarets(searchDirection = delegate.direction, newText = newText, keepStart = false)
+            delegate.expandSearch(newText)
         }
     }
 
