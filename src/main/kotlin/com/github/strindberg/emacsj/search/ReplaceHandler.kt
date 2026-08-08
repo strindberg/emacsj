@@ -1,8 +1,6 @@
 package com.github.strindberg.emacsj.search
 
 import com.github.strindberg.emacsj.mark.MarkHandler
-import com.github.strindberg.emacsj.search.SearchType.REGEXP
-import com.github.strindberg.emacsj.search.SearchType.TEXT
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -39,48 +37,22 @@ internal class ReplaceHandler(private val type: SearchType) : EditorActionHandle
 
     companion object {
 
-        private var lastStringSearches = emptyList<Replace>()
-
-        private var lastRegexpSearches = emptyList<Replace>()
-
-        private var savedPos = -1
+        private val searches = SearchHistory<Replace>()
 
         internal var delegate: ReplaceDelegate? = null
 
         internal fun resetPos() {
-            savedPos = -1
+            searches.rewind()
         }
 
         internal fun addPrevious(search: String, replacement: String, type: SearchType) {
-            when (type) {
-                REGEXP -> lastRegexpSearches = prependElement(Replace(search, replacement), lastRegexpSearches)
-                TEXT -> lastStringSearches = prependElement(Replace(search, replacement), lastStringSearches)
-            }
-            resetPos()
+            searches.add(type, Replace(search, replacement))
         }
 
-        internal fun getPrevious(type: SearchType): Replace {
-            val list = when (type) {
-                REGEXP -> lastRegexpSearches
-                TEXT -> lastStringSearches
-            }
-            savedPos = list.previousPos(savedPos)
-            return if (savedPos > -1) list[savedPos] else Replace.EMPTY
-        }
+        internal fun getPrevious(type: SearchType): Replace = searches.previous(type) ?: Replace.EMPTY
 
-        internal fun getNext(type: SearchType): Replace {
-            val list = when (type) {
-                REGEXP -> lastRegexpSearches
-                TEXT -> lastStringSearches
-            }
-            savedPos = list.nextPos(savedPos)
-            return if (savedPos > -1) list[savedPos] else Replace.EMPTY
-        }
+        internal fun getNext(type: SearchType): Replace = searches.next(type) ?: Replace.EMPTY
 
-        internal fun getLast(type: SearchType): Replace? =
-            when (type) {
-                REGEXP -> lastRegexpSearches.firstOrNull()
-                TEXT -> lastStringSearches.firstOrNull()
-            }
+        internal fun getLast(type: SearchType): Replace? = searches.latest(type)
     }
 }

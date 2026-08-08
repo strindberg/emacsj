@@ -2,7 +2,7 @@ package com.github.strindberg.emacsj.mark
 
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.mark.MarkType.POP
-import com.github.strindberg.emacsj.search.prependElement
+import com.github.strindberg.emacsj.search.History
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Caret
@@ -107,59 +107,25 @@ class PlaceInfo(
 }
 
 class UndoRedoStack<T> {
-    private var undoStack = emptyList<T>()
-    private var redoStack = emptyList<T>()
+
+    private val undoStack = History<T>()
+    private val redoStack = History<T>()
 
     /**
-     * Push a new position onto the undo stack and clear the redo stack.
+     * Records a new position, which discards anything that was redoable.
      */
     fun push(position: T) {
-        undoStack = prependElement(position, undoStack)
-        redoStack = emptyList()
+        undoStack.push(position)
+        redoStack.clear()
     }
 
     /**
-     * Undo the last cursor movement.
-     * Stores the current position in the redo stack,
-     * and returns the previous position from the undo stack.
+     * Steps back one position: [current] becomes redoable, and the position before it is returned.
      */
-    fun undo(current: T): T? {
-        if (undoStack.isEmpty()) return null
-
-        val previous = undoStack.first()
-        undoStack = undoStack.drop(1)
-
-        redoStack = prependElement(current, redoStack)
-
-        return previous
-    }
+    fun undo(current: T): T? = undoStack.pop()?.also { redoStack.push(current) }
 
     /**
-     * Redo the last undone cursor movement.
-     * Stores the current position in the undo stack,
-     * and returns the redone position from the redo stack.
+     * Steps forward one position: [current] becomes undoable, and the position after it is returned.
      */
-    fun redo(current: T): T? {
-        if (redoStack.isEmpty()) return null
-
-        val next = redoStack.first()
-        redoStack = redoStack.drop(1)
-
-        undoStack = prependElement(current, undoStack)
-
-        return next
-    }
-}
-
-class LimitedStack<T> {
-
-    private var elements = emptyList<T>()
-
-    fun push(element: T) {
-        elements = prependElement(element, elements)
-    }
-
-    fun pop(): T? = elements.firstOrNull()?.apply { elements = elements.drop(1) }
-
-    fun peek(): T? = elements.firstOrNull()
+    fun redo(current: T): T? = redoStack.pop()?.also { undoStack.push(current) }
 }
