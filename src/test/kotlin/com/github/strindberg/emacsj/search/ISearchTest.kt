@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
+import java.awt.event.KeyEvent.VK_SHIFT
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.ide.CopyPasteManagerEx
@@ -1574,6 +1575,8 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_FORWARD)
         type("o e")
         myFixture.checkResult("foo bar ye<caret>s sir")
+
+        ISearchHandler.isLax = false
     }
 
     fun `test Isearch with lax search works 2`() {
@@ -1583,6 +1586,8 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_FORWARD)
         type("o e i")
         myFixture.checkResult("foo bar yes si<caret>r")
+
+        ISearchHandler.isLax = false
     }
 
     fun `test Search can be toggled from lax to non-lax`() {
@@ -1598,6 +1603,8 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_TOGGLE_LAX_SEARCH)
         performEditorAction(ACTION_ISEARCH_FORWARD)
         myFixture.checkResult("foo bar foo bar<caret> foo bar")
+
+        ISearchHandler.isLax = false
     }
 
     fun `test Search can be toggled from non-lax to lax`() {
@@ -2461,6 +2468,49 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo <caret>bar baz")
     }
 
+    fun `test Editing the search string keeps the case sensitivity of the search`() {
+        myFixture.configureByText(FILE, "<caret>foo FOO foo")
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+        performEditorAction(ACTION_ISEARCH_TOGGLE_CASE)
+        assertEquals(2, secondaryHighlightCount())
+
+        // Editing highlights through the same rules as searching, so the case sensitivity just asked for still holds.
+        performEditorAction(ACTION_ISEARCH_EDIT)
+        pressKeyAndSettle()
+        assertEquals(2, secondaryHighlightCount())
+    }
+
+    fun `test Editing the search string keeps lax whitespace matching`() {
+        myFixture.configureByText(FILE, "<caret>foo  bar and foo bar")
+        ISearchHandler.isLax = true
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo bar")
+        assertEquals(2, secondaryHighlightCount())
+
+        performEditorAction(ACTION_ISEARCH_EDIT)
+        pressKeyAndSettle()
+        assertEquals(2, secondaryHighlightCount())
+
+        ISearchHandler.isLax = false
+    }
+
+    fun `test Repeating a search keeps the highlights of every match`() {
+        myFixture.configureByText(FILE, "<caret>foo foo foo")
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+        assertEquals(3, secondaryHighlightCount())
+
+        // Repeating leaves the search string alone, so the whole-file highlights are kept rather than cleared and
+        // recomputed -- only the marker on the current match moves.
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        myFixture.checkResult("foo foo<caret> foo")
+        assertEquals(3, secondaryHighlightCount())
+    }
+
     /**
      * Search actions settle before returning. Highlighting is debounced, and a breadcrumb records the match count
      * as it stands when the next action starts, so firing actions faster than the debounce would snapshot counts
@@ -2519,6 +2569,16 @@ class ISearchTest : EmacsJTestCase() {
         val popup = ISearchHandler.delegate!!.ui.popup
         popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
         popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
+    }
+
+    /** Secondary highlights are the ones the debounced whole-file search paints; primary marks the current match. */
+    private fun secondaryHighlightCount(): Int =
+        myFixture.editor.markupModel.allHighlighters.count { it.textAttributesKey == EMACSJ_SECONDARY }
+
+    /** Any key release other than Enter is what makes an edited search string re-highlight. */
+    private fun pressKeyAndSettle() {
+        pressKey(ISearchHandler.delegate?.ui, VK_SHIFT)
+        waitForHighlighting()
     }
 
     private fun setText(newText: String) {
