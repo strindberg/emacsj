@@ -277,7 +277,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             editor.caretModel.removeSecondaryCarets()
         }
 
-        removeHighlighters(isNewText)
+        if (isNewText) clearAllHighlights() else clearCurrentMatchHighlights()
 
         val (isRegexp, searchString) = getSearchModelArguments()
 
@@ -289,7 +289,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
         state = if (result.isFound) SEARCH else FAILED
 
-        findAllAndHighlight(offset = result.offset, highlight = isNewText, isRegexp = isRegexp, searchString = searchString)
+        refreshHighlightsAndCount(offset = result.offset, highlight = isNewText)
 
         updateUI(result)
     }
@@ -334,21 +334,9 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             editor.caretModel.runForEachCaret { caret -> if (caret.isValid) caret.moveToOffset(caret.search.origin) }
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
-        if (state == EDIT) {
-            if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED && e.modifiersEx == 0) {
-                editor.markupModel.removeAllHighlighters()
-                startEditedSearch()
-            } else if (e.id == KeyEvent.KEY_RELEASED) {
-                editor.markupModel.removeAllHighlighters()
-                CommonHighlighter.findAllAndHighlight(
-                    editor = editor,
-                    project = project,
-                    searchArg = ui.text,
-                    useRegexp = searchType == REGEXP,
-                    useCase = searchType == REGEXP || caseSensitive(ui.text),
-                    range = null
-                )
-            }
+        if (state == EDIT && e.id == KeyEvent.KEY_RELEASED) {
+            clearAllHighlights()
+            if (e.keyCode == VK_ENTER && e.modifiersEx == 0) startEditedSearch() else refreshHighlights()
         }
     }
 
@@ -382,16 +370,9 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
         message?.let { ui.flashText(it) }
 
-        removeAllHighlighters()
+        clearAllHighlights()
 
-        val (isRegexp, searchString) = getSearchModelArguments()
-        CommonHighlighter.findAllAndHighlight(
-            editor = editor,
-            project = project,
-            searchArg = searchString,
-            useRegexp = isRegexp,
-            useCase = caseSensitive()
-        )
+        refreshHighlights()
     }
 
     private fun searchSelected() {
@@ -409,7 +390,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
     }
 
     private fun findFirstLast(findDirection: SearchDirection, switchDirection: Boolean) {
-        removeAllHighlighters()
+        clearAllHighlights()
 
         searchAllCarets(searchDirection = findDirection, newText = "", forceWraparound = true)
 
@@ -453,7 +434,9 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
     private fun popBreadcrumb() {
         breadcrumbs.removeLastOrNull()?.let { breadcrumb ->
-            removeHighlighters(breadcrumb.text != ui.text || breadcrumb.caseType != caseType || breadcrumb.searchType != searchType)
+            val searchChanged =
+                breadcrumb.text != ui.text || breadcrumb.caseType != caseType || breadcrumb.searchType != searchType
+            if (searchChanged) clearAllHighlights() else clearCurrentMatchHighlights()
 
             state = breadcrumb.state
             caseType = breadcrumb.caseType
@@ -466,32 +449,25 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
                     moveAndUpdate(caret = caret, match = latest, direction = breadcrumb.direction, found = breadcrumb.state == SEARCH)
                 }
             }
-            val (isRegexp, searchString) = getSearchModelArguments()
-            CommonHighlighter.findAllAndHighlight(
-                editor = editor,
-                project = project,
-                searchArg = searchString,
-                useRegexp = isRegexp,
-                useCase = caseSensitive(),
-            )
+            refreshHighlights()
         }
     }
 
-    private fun removeHighlighters(isNewText: Boolean) {
-        if (isNewText) {
-            CommonHighlighter.cancel(editor)
-        } else {
-            primaryHighlighters.forEach {
-                editor.markupModel.removeHighlighter(it)
-            }
-        }
-    }
-
-    private fun removeAllHighlighters() {
+    /**
+     * Cancels any search still running and clears every highlight. [CommonHighlighter.cancel] empties the editor's
+     * whole markup model, which is the same one the current-match markers live in, so they go too.
+     */
+    private fun clearAllHighlights() {
         CommonHighlighter.cancel(editor)
+        primaryHighlighters.clear()
+    }
+
+    /** Clears the markers on the current match, leaving the whole-file highlights of an unchanged search in place. */
+    private fun clearCurrentMatchHighlights() {
         primaryHighlighters.forEach {
             editor.markupModel.removeHighlighter(it)
         }
+        primaryHighlighters.clear()
     }
 
     private fun searchAndUpdate(
@@ -565,18 +541,23 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             }
         }
 
-    private fun findAllAndHighlight(offset: Int?, highlight: Boolean, isRegexp: Boolean, searchString: String) {
+    private fun refreshHighlights(highlight: Boolean = true, callback: (List<FindResult>) -> Unit = {}) {
+        val (isRegexp, searchString) = getSearchModelArguments()
         CommonHighlighter.findAllAndHighlight(
             editor = editor,
             project = project,
             searchArg = searchString,
             useRegexp = isRegexp,
             useCase = caseSensitive(),
-            callback = { matches ->
-                updateCount(Pair(matches.withIndex().find { it.value.startOffset == offset }?.let { it.index + 1 }, matches.size))
-            },
+            callback = callback,
             highlight = highlight
         )
+    }
+
+    private fun refreshHighlightsAndCount(offset: Int?, highlight: Boolean) {
+        refreshHighlights(highlight) { matches ->
+            updateCount(Pair(matches.withIndex().find { it.value.startOffset == offset }?.let { it.index + 1 }, matches.size))
+        }
     }
 
     // A malformed regexp needs no handling here: FindManager reports a not-found result rather than throwing.
