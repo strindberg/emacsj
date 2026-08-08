@@ -2,8 +2,6 @@ package com.github.strindberg.emacsj.search
 
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.preferences.EmacsJSettings
-import com.github.strindberg.emacsj.search.SearchType.REGEXP
-import com.github.strindberg.emacsj.search.SearchType.TEXT
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -58,12 +56,7 @@ internal class ISearchHandler(private val direction: SearchDirection, private va
         internal var delegate: ISearchDelegate? = null
 
         @VisibleForTesting
-        internal var lastStringSearches = emptyList<String>()
-
-        @VisibleForTesting
-        internal var lastRegexpSearches = emptyList<String>()
-
-        private var savedPos = -1
+        internal val searches = SearchHistory<String>()
 
         private var isLaxInitialized = false
 
@@ -100,31 +93,11 @@ internal class ISearchHandler(private val direction: SearchDirection, private va
             }
 
         internal fun searchConcluded(text: String, type: SearchType) {
-            savedPos = -1
-            if (text.isNotEmpty()) {
-                when (type) {
-                    REGEXP -> lastRegexpSearches = prependElement(text, lastRegexpSearches)
-                    TEXT -> lastStringSearches = prependElement(text, lastStringSearches)
-                }
-            }
+            if (text.isEmpty()) searches.rewind() else searches.add(type, text)
         }
 
-        internal fun getPrevious(type: SearchType): String {
-            val list = when (type) {
-                REGEXP -> lastRegexpSearches
-                TEXT -> lastStringSearches
-            }
-            savedPos = list.previousPos(savedPos)
-            return if (savedPos > -1) list[savedPos] else ""
-        }
+        internal fun getPrevious(type: SearchType): String = searches.previous(type).orEmpty()
 
-        internal fun getNext(type: SearchType): String {
-            val list = when (type) {
-                REGEXP -> lastRegexpSearches
-                TEXT -> lastStringSearches
-            }
-            savedPos = list.nextPos(savedPos)
-            return if (savedPos > -1) list[savedPos] else ""
-        }
+        internal fun getNext(type: SearchType): String = searches.next(type).orEmpty()
     }
 }

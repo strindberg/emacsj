@@ -12,15 +12,39 @@ internal val EMACSJ_SECONDARY = TextAttributesKey.createTextAttributesKey("EMACS
 
 internal fun caseSensitive(text: String): Boolean = text.any { isUpperCase(it) && toUpperCase(it) != toLowerCase(it) }
 
-internal fun <T> prependElement(element: T, list: List<T>) =
-    (listOf(element) + list).distinct().take(64) // Remove duplicates, keep most recent
-
-internal fun List<*>.nextPos(oldPos: Int) = maxOf(oldPos - 1, -1)
-
-internal fun List<*>.previousPos(oldPos: Int) = minOf(oldPos + 1, lastIndex)
-
 // Sticky selection must be toggled off first to allow new start position.
 internal fun EditorEx.startStickySelection() {
     isStickySelection = false
     isStickySelection = true
 }
+
+private const val DEFAULT_LIMIT = 64
+
+/**
+ * A most-recently-used history: [push] moves an element to the front, deduplicates, and the size never grows past [limit].
+ */
+internal class History<T>(private val limit: Int = DEFAULT_LIMIT) {
+
+    private val elements = ArrayList<T>()
+
+    val size: Int get() = elements.size
+
+    fun getOrNull(index: Int): T? = elements.getOrNull(index)
+
+    // This method is not a traditional stack push since it deduplicates already pushed elements.
+    fun push(element: T) {
+        val updated = (listOf(element) + elements).distinct().take(limit)
+        elements.clear()
+        elements.addAll(updated)
+    }
+
+    fun pop(): T? = elements.removeFirstOrNull()
+
+    fun peek(): T? = elements.firstOrNull()
+
+    fun clear() {
+        elements.clear()
+    }
+}
+
+enum class SearchType { TEXT, REGEXP }

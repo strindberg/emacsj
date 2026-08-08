@@ -71,7 +71,7 @@ class ISearchTest : EmacsJTestCase() {
 
     fun `test Empty text search doesn't crash`() {
         myFixture.configureByText(FILE, "<caret>foo")
-        ISearchHandler.lastStringSearches = emptyList()
+        ISearchHandler.searches.clear(SearchType.TEXT)
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -83,7 +83,7 @@ class ISearchTest : EmacsJTestCase() {
 
     fun `test Empty regexp search doesn't crash`() {
         myFixture.configureByText(FILE, "<caret>foo")
-        ISearchHandler.lastRegexpSearches = emptyList()
+        ISearchHandler.searches.clear(SearchType.REGEXP)
 
         performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
         performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -95,7 +95,7 @@ class ISearchTest : EmacsJTestCase() {
 
     fun `test Empty reverse search doesn't crash`() {
         myFixture.configureByText(FILE, "foo<caret>")
-        ISearchHandler.lastStringSearches = emptyList()
+        ISearchHandler.searches.clear(SearchType.TEXT)
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -2404,6 +2404,40 @@ class ISearchTest : EmacsJTestCase() {
         } finally {
             factory.releaseEditor(editor)
         }
+    }
+
+    fun `test Changing search type starts the walk through previous searches again`() {
+        myFixture.configureByText(FILE, "<caret>aaa bbb xxx yyy")
+        ISearchHandler.searches.clear(SearchType.TEXT)
+        ISearchHandler.searches.clear(SearchType.REGEXP)
+
+        listOf(
+            ACTION_ISEARCH_FORWARD to "aaa",
+            ACTION_ISEARCH_FORWARD to "bbb",
+            ACTION_ISEARCH_REGEXP_FORWARD to "xxx",
+            ACTION_ISEARCH_REGEXP_FORWARD to "yyy"
+        ).forEach { (action, searched) ->
+            performEditorAction(action)
+            type(searched)
+            pressEnter()
+        }
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        assertEquals("bbb", ISearchHandler.delegate?.text)
+        performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        assertEquals("aaa", ISearchHandler.delegate?.text)
+
+        // Two steps into the text history, switching to regexp offers the most recent regexp search. Carrying the
+        // position across would land two steps into the regexp history instead.
+        performEditorAction(ACTION_ISEARCH_TOGGLE_REGEXP)
+        performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        assertEquals("yyy", ISearchHandler.delegate?.text)
+
+        // Switching back does the same in the other direction rather than resuming where the text walk stopped.
+        performEditorAction(ACTION_ISEARCH_TOGGLE_REGEXP)
+        performEditorAction(ACTION_ISEARCH_PREVIOUS)
+        assertEquals("bbb", ISearchHandler.delegate?.text)
     }
 
     fun `test Half-typed regexp does not break a backward search`() {
