@@ -61,13 +61,13 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
         private fun pushPlaceInfo(editor: Editor, project: Project, virtualFile: VirtualFile) {
             MarkHandler.placeInfo(editor, virtualFile)?.let {
-                places.getOrPut(project.name) { UndoRedoStack() }.push(it)
+                places.getOrPut(project.signature()) { UndoRedoStack() }.push(it)
             }
         }
 
         private fun getPlaceUsingHistory(editor: Editor, operation: (UndoRedoStack<PlaceInfo>, PlaceInfo) -> PlaceInfo?): PlaceInfo? =
             editor.project?.let { project ->
-                places[project.name]?.let { stack ->
+                places[project.signature()]?.let { stack ->
                     editor.virtualFile?.let { currentFile ->
                         MarkHandler.placeInfo(editor, currentFile)?.let { currentPlace ->
                             operation(stack, currentPlace)
@@ -91,3 +91,6 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
         }
     }
 }
+
+// Not perfect, but quite certain to be unique
+private fun Project.signature(): String = name + hashCode()
