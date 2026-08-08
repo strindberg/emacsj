@@ -4,6 +4,7 @@ import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.mark.MarkType.POP
 import com.github.strindberg.emacsj.search.prependElement
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
@@ -27,25 +28,23 @@ internal class MarkHandler(private val type: MarkType) : EditorActionHandler() {
 
     companion object {
 
-        private val places = mutableMapOf<String, LimitedStack<PlaceInfo>>()
-
         internal fun pushPlaceInfo(editor: Editor) {
             editor.virtualFile?.let { virtualFile ->
-                placeInfo(editor, virtualFile)?.let { placeInfo ->
-                    places.getOrPut(virtualFile.signature()) { LimitedStack() }.push(placeInfo)
+                virtualFile.placeInfo(editor)?.let { placeInfo ->
+                    editor.places()?.push(virtualFile, placeInfo)
                 }
             }
         }
 
         internal fun peek(editor: Editor): PlaceInfo? =
             editor.virtualFile?.let { virtualFile ->
-                places[virtualFile.signature()]?.peek()
+                editor.places()?.peek(virtualFile)
             }
 
-        internal fun placeInfo(editor: Editor, virtualFile: VirtualFile): PlaceInfo? =
-            editor.project?.manager?.getSelectedEditorWithProvider(virtualFile)?.let { editorWithProvider ->
+        internal fun VirtualFile.placeInfo(editor: Editor): PlaceInfo? =
+            editor.project?.manager?.getSelectedEditorWithProvider(this)?.let { editorWithProvider ->
                 PlaceInfo(
-                    file = virtualFile,
+                    file = this,
                     state = editorWithProvider.fileEditor.getState(FileEditorStateLevel.UNDO),
                     editorTypeId = editorWithProvider.provider.editorTypeId,
                     caretPosition = editor.caretModel.primaryCaret.offset,
@@ -53,33 +52,33 @@ internal class MarkHandler(private val type: MarkType) : EditorActionHandler() {
                 )
             }
 
-        internal fun gotoPlaceInfo(editor: Editor, info: PlaceInfo) {
+        internal fun PlaceInfo.restore(editor: Editor) {
             editor.project?.manager?.let { manager ->
-                manager.openFile(info.file, focusEditor = true)
-                manager.setSelectedEditor(info.file, info.editorTypeId)
-                manager.getSelectedEditorWithProvider(info.file)?.takeIf {
-                    it.provider.editorTypeId == info.editorTypeId
+                manager.openFile(file, focusEditor = true)
+                manager.setSelectedEditor(file, editorTypeId)
+                manager.getSelectedEditorWithProvider(file)?.takeIf {
+                    it.provider.editorTypeId == editorTypeId
                 }?.let {
-                    it.fileEditor.setState(info.state)
-                    editor.scrollingModel.scrollVertically(info.scrollOffset)
+                    it.fileEditor.setState(state)
+                    editor.scrollingModel.scrollVertically(scrollOffset)
                 }
             }
         }
+
+        private fun Editor.places(): MarkPlaces? = project?.service<MarkPlaces>()
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         if (editor is EditorEx) {
             editor.virtualFile?.let { virtualFile ->
                 if (type == POP || EmacsJService.instance.isLastStrictUniversal()) {
-                    places[virtualFile.signature()]?.pop()?.let { place ->
-                        gotoPlaceInfo(editor, place)
-                    }
+                    editor.places()?.pop(virtualFile)?.restore(editor)
                 } else {
                     val isPreviousSticky = editor.isStickySelection
                     editor.isStickySelection = false
-                    placeInfo(editor, virtualFile)?.let { placeInfo ->
+                    virtualFile.placeInfo(editor)?.let { placeInfo ->
                         if (placeInfo != peek(editor) || !isPreviousSticky) {
-                            places.getOrPut(virtualFile.signature()) { LimitedStack() }.push(placeInfo)
+                            editor.places()?.push(virtualFile, placeInfo)
                             editor.isStickySelection = true
                         }
                     }
@@ -88,8 +87,6 @@ internal class MarkHandler(private val type: MarkType) : EditorActionHandler() {
         }
     }
 }
-
-private fun VirtualFile.signature(): String = fileSystem.protocol + path
 
 internal val Project.manager: FileEditorManagerEx?
     get() = FileEditorManagerEx.getInstanceExIfCreated(this)

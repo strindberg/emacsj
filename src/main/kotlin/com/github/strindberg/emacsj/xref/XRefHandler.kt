@@ -1,10 +1,12 @@
 package com.github.strindberg.emacsj.xref
 
-import com.github.strindberg.emacsj.mark.MarkHandler
+import com.github.strindberg.emacsj.mark.MarkHandler.Companion.placeInfo
+import com.github.strindberg.emacsj.mark.MarkHandler.Companion.restore
 import com.github.strindberg.emacsj.mark.PlaceInfo
 import com.github.strindberg.emacsj.mark.UndoRedoStack
 import com.github.strindberg.emacsj.mark.manager
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
@@ -35,8 +37,6 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
             "GotoTypeDeclaration",
         )
 
-        private val places = mutableMapOf<String, UndoRedoStack<PlaceInfo>>()
-
         internal fun pushPlace(project: Project) {
             project.manager?.let { manager ->
                 manager.selectedFiles.getOrNull(0)?.let { virtualFile ->
@@ -48,10 +48,10 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
         }
 
         private fun getPlaceForBackAction(editor: Editor): PlaceInfo? =
-            getPlaceUsingHistory(editor) { stack, current -> stack.undo(current) }
+            getPlaceUsingHistory(editor) { current -> undo(current) }
 
         private fun getPlaceForForwardAction(editor: Editor): PlaceInfo? =
-            getPlaceUsingHistory(editor) { stack, current -> stack.redo(current) }
+            getPlaceUsingHistory(editor) { current -> redo(current) }
 
         private fun pushPlace(editor: EditorEx) {
             editor.project?.let { project ->
@@ -60,37 +60,26 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
         }
 
         private fun pushPlaceInfo(editor: Editor, project: Project, virtualFile: VirtualFile) {
-            MarkHandler.placeInfo(editor, virtualFile)?.let {
-                places.getOrPut(project.signature()) { UndoRedoStack() }.push(it)
+            virtualFile.placeInfo(editor)?.let { placeInfo ->
+                project.xrefStack().push(placeInfo)
             }
         }
 
-        private fun getPlaceUsingHistory(editor: Editor, operation: (UndoRedoStack<PlaceInfo>, PlaceInfo) -> PlaceInfo?): PlaceInfo? =
-            editor.project?.let { project ->
-                places[project.signature()]?.let { stack ->
-                    editor.virtualFile?.let { currentFile ->
-                        MarkHandler.placeInfo(editor, currentFile)?.let { currentPlace ->
-                            operation(stack, currentPlace)
-                        }
-                    }
-                }
+        private fun getPlaceUsingHistory(editor: Editor, operation: UndoRedoStack<PlaceInfo>.(PlaceInfo) -> PlaceInfo?): PlaceInfo? =
+            editor.virtualFile?.placeInfo(editor)?.let { currentPlace ->
+                editor.project?.run { xrefStack().operation(currentPlace) }
             }
+
+        private fun Project.xrefStack() = service<XRefPlaces>().stack
     }
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         if (editor is EditorEx) {
             when (type) {
-                XRefType.BACK -> getPlaceForBackAction(editor)?.let { place ->
-                    MarkHandler.gotoPlaceInfo(editor, place)
-                }
-                XRefType.FORWARD -> getPlaceForForwardAction(editor)?.let { place ->
-                    MarkHandler.gotoPlaceInfo(editor, place)
-                }
+                XRefType.BACK -> getPlaceForBackAction(editor)?.restore(editor)
+                XRefType.FORWARD -> getPlaceForForwardAction(editor)?.restore(editor)
                 XRefType.PUSH -> pushPlace(editor)
             }
         }
     }
 }
-
-// Not perfect, but quite certain to be unique
-private fun Project.signature(): String = name + hashCode()
