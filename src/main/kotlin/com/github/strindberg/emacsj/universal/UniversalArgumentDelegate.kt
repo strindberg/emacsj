@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.universal
 
+import java.util.UUID
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.duplicate.ACTION_COPY_ABOVE_COMMAND
 import com.github.strindberg.emacsj.line.ACTION_TRANSPOSE_LINES
@@ -27,6 +28,7 @@ import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_UP_TO
 import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -132,22 +134,24 @@ internal class UniversalArgumentDelegate(
     private fun repeatCommand(times: Int, action: () -> Unit) {
         hide()
 
+        val groupId = UUID.randomUUID().toString()
+
         EmacsJService.instance.setRepeating(true)
         repeat(times / BATCH_SIZE) {
-            doRepeat(BATCH_SIZE, action)
+            doRepeat(BATCH_SIZE, groupId, action)
         }
-        doRepeat(times % BATCH_SIZE, action)
+        doRepeat(times % BATCH_SIZE, groupId, action)
         ApplicationManager.getApplication().invokeLater { EmacsJService.instance.setRepeating(false) }
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private fun doRepeat(times: Int, action: () -> Unit) {
+    private fun doRepeat(times: Int, groupId: String, action: () -> Unit) {
         if (times > 0) {
             ApplicationManager.getApplication().invokeLater {
                 repeat(times) {
                     if (EmacsJService.instance.isRepeating()) {
                         try {
-                            action()
+                            runAsCommand(groupId, action)
                         } catch (e: Exception) {
                             EmacsJService.instance.setRepeating(false)
                             thisLogger().warn(e)
@@ -156,5 +160,9 @@ internal class UniversalArgumentDelegate(
                 }
             }
         }
+    }
+
+    private fun runAsCommand(groupId: String, action: () -> Unit) {
+        CommandProcessor.getInstance().executeCommand(editor.project, action, null, groupId)
     }
 }
