@@ -30,6 +30,7 @@ import com.intellij.openapi.editor.event.CaretListener
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
@@ -44,6 +45,11 @@ internal class ReplaceDelegate(
 
     @VisibleForTesting
     override val ui = CommonUI(editor = editor, isWriteable = true, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
+
+    private var isInhibitCancel = false
+
+    override val isCancelInhibited: Boolean
+        get() = isInhibitCancel
 
     internal var text: String
         get() = ui.text
@@ -71,6 +77,8 @@ internal class ReplaceDelegate(
 
     private val replacements = ArrayDeque<Replaced>()
 
+    private val highlighters = mutableListOf<RangeHighlighter>()
+
     private val identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
 
     private var state: ReplaceState = GET_SEARCH_ARG
@@ -78,11 +86,6 @@ internal class ReplaceDelegate(
             field = state
             ui.title = getReplaceTitle()
         }
-
-    private var isInhibitCancel = false
-
-    override val isCancelInhibited: Boolean
-        get() = isInhibitCancel
 
     private var isReplaced = false
 
@@ -110,7 +113,7 @@ internal class ReplaceDelegate(
 
     override fun release() {
         if (!editor.isDisposed) {
-            editor.markupModel.removeAllHighlighters()
+            clearHighlights()
 
             editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
         }
@@ -139,7 +142,7 @@ internal class ReplaceDelegate(
         when (state) {
             GET_SEARCH_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED && e.modifiersEx == 0) {
-                    editor.markupModel.removeAllHighlighters()
+                    clearHighlights()
                     val matchResult = Regex("(^.*) -> (.*)$", RegexOption.DOT_MATCHES_ALL).matchEntire(ui.text)?.destructured
                     if (matchResult != null) {
                         searchArg = matchResult.component1()
@@ -149,14 +152,17 @@ internal class ReplaceDelegate(
                         setReplaceState()
                     }
                 } else if (e.id == KeyEvent.KEY_RELEASED) {
-                    editor.markupModel.removeAllHighlighters()
+                    clearHighlights()
                     CommonHighlighter.findAllAndHighlight(
-                        editor = editor,
-                        project = project,
-                        searchArg = ui.text,
-                        useRegexp = type == REGEXP,
-                        useCase = type == REGEXP || caseSensitive(ui.text),
-                        range = selection
+                        SearchRequest(
+                            editor = editor,
+                            project = project,
+                            searchArg = ui.text,
+                            useRegexp = type == REGEXP,
+                            useCase = type == REGEXP || caseSensitive(ui.text),
+                            highlighters = highlighters,
+                            range = selection
+                        )
                     )
                 }
             }
@@ -354,8 +360,15 @@ internal class ReplaceDelegate(
     private fun handleReplacementError(e: FindManager.MalformedReplacementStringException) {
         thisLogger().warn(e)
         ui.textColor = JBColor.RED
-        editor.markupModel.removeAllHighlighters()
+        clearHighlights()
         state = ReplaceState.REPLACE_FAILED
+    }
+
+    /** Removes every highlight this session painted, and stops any search still on its way to painting more. */
+    private fun clearHighlights() {
+        CommonHighlighter.cancelPending()
+        highlighters.forEach { editor.markupModel.removeHighlighter(it) }
+        highlighters.clear()
     }
 
     private fun getReplaceTitle() =
@@ -433,23 +446,28 @@ internal class ReplaceDelegate(
     }
 
     private fun highlight(startOffset: Int, endOffset: Int) {
-        editor.markupModel.removeAllHighlighters()
+        clearHighlights()
 
-        editor.markupModel.addRangeHighlighter(
-            EMACSJ_PRIMARY,
-            startOffset,
-            endOffset,
-            HighlighterLayer.LAST + 2,
-            HighlighterTargetArea.EXACT_RANGE
+        highlighters.add(
+            editor.markupModel.addRangeHighlighter(
+                EMACSJ_PRIMARY,
+                startOffset,
+                endOffset,
+                HighlighterLayer.LAST + 2,
+                HighlighterTargetArea.EXACT_RANGE
+            )
         )
 
         CommonHighlighter.findAllAndHighlight(
-            editor = editor,
-            project = project,
-            searchArg = searchArg,
-            useRegexp = type == REGEXP,
-            useCase = replaceModel.isCaseSensitive,
-            range = selection
+            SearchRequest(
+                editor = editor,
+                project = project,
+                searchArg = searchArg,
+                useRegexp = type == REGEXP,
+                useCase = replaceModel.isCaseSensitive,
+                highlighters = highlighters,
+                range = selection
+            )
         )
     }
 }

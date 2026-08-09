@@ -51,6 +51,26 @@ private enum class StartType { WRAPAROUND, FIRST_SEARCH, REPEATED_SEARCH }
 internal class ISearchDelegate(editor: Editor, val project: Project, var searchType: SearchType, var direction: SearchDirection) :
     UIDelegate(editor) {
 
+    @VisibleForTesting
+    override val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
+
+    @VisibleForTesting
+    internal var state: ISearchState = SEARCH
+
+    @VisibleForTesting
+    internal var caseType: CaseType = UNSPECIFIED
+
+    private var isInhibitCancel = false
+
+    override val isCancelInhibited: Boolean
+        get() = isInhibitCancel
+
+    internal var text: String
+        get() = ui.text
+        set(newText) {
+            ui.text = newText
+        }
+
     private val caretListener = object : CaretListener {
         override fun caretAdded(e: CaretEvent) {
             hide()
@@ -59,34 +79,16 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
     private val identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
 
-    @VisibleForTesting
-    override val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide, keyEventHandler = ::keyEventHandler)
-
-    @VisibleForTesting
-    internal var state: ISearchState = SEARCH
-
     private val breadcrumbs = ISearchBreadcrumbUtil(editor)
 
     private val primaryHighlighters = mutableListOf<RangeHighlighter>()
 
-    private var isInhibitCancel = false
-
-    override val isCancelInhibited: Boolean
-        get() = isInhibitCancel
+    private val secondaryHighlighters = mutableListOf<RangeHighlighter>()
 
     /** The longest search string that matched, so that a failing search can call out only what was added after it. */
     private var foundText: String = ""
 
     private val killRingUtil = ISearchKillRingUtil()
-
-    @VisibleForTesting
-    internal var caseType: CaseType = UNSPECIFIED
-
-    internal var text: String
-        get() = ui.text
-        set(newText) {
-            ui.text = newText
-        }
 
     init {
         EditorUtil.disposeWithEditor(editor, this)
@@ -130,7 +132,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
     override fun release() {
         if (!editor.isDisposed) {
-            editor.markupModel.removeAllHighlighters()
+            clearAllHighlights()
 
             editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, identifierAttributes)
 
@@ -294,6 +296,48 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         }
     }
 
+    private fun addToSearch(newText: String) {
+        when (state) {
+            EDIT -> text += newText
+            SEARCH, FAILED -> searchAllCarets(searchDirection = direction, newText = newText, forceFirstSearch = true)
+        }
+    }
+
+    private fun searchSelected() {
+        val selectedText = editor.selectionModel.selectedText.orEmpty()
+        val origin = if (direction == FORWARD) editor.selectionModel.selectionStart else editor.selectionModel.selectionEnd
+
+        editor.caretModel.primaryCaret.search = CaretSearch(origin)
+
+        editor.selectionModel.removeSelection()
+        if (editor is EditorEx) {
+            editor.isStickySelection = false
+        }
+
+        searchAllCarets(direction, selectedText)
+    }
+
+    private fun findFirstLast(findDirection: SearchDirection, switchDirection: Boolean) {
+        clearAllHighlights()
+
+        searchAllCarets(searchDirection = findDirection, newText = "", forceWraparound = true)
+
+        if (switchDirection) {
+            searchAllCarets(searchDirection = findDirection.reverse, newText = "", saveBreadcrumb = false)
+        }
+    }
+
+    private fun renewState(message: String?) {
+        state = SEARCH
+        updateUI(title = titleText(), text = text, found = true)
+
+        message?.let { ui.flashText(it) }
+
+        clearAllHighlights()
+
+        refreshHighlights()
+    }
+
     private fun searchAllCarets(
         searchDirection: SearchDirection,
         newText: String,
@@ -333,77 +377,6 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         updateUI(result)
     }
 
-    private fun addToSearch(newText: String) {
-        when (state) {
-            EDIT -> text += newText
-            SEARCH, FAILED -> searchAllCarets(searchDirection = direction, newText = newText, forceFirstSearch = true)
-        }
-    }
-
-    private fun updateUI(result: SearchResult) {
-        updateUI(titleText(found = result.isFound, wrapped = result.isWrapped), text, result.isFound)
-    }
-
-    private fun updateUI(title: String, text: String, found: Boolean) {
-        ui.title = title
-        ui.textColor = JBColor.foreground()
-
-        if (found) {
-            foundText = text
-            ui.showText(text)
-        } else {
-            val matched = text.commonPrefixWith(foundText)
-            ui.showText(matched, text.substring(matched.length))
-        }
-    }
-
-    private fun renewState(message: String?) {
-        state = SEARCH
-        updateUI(title = titleText(), text = text, found = true)
-
-        message?.let { ui.flashText(it) }
-
-        clearAllHighlights()
-
-        refreshHighlights()
-    }
-
-    private fun searchSelected() {
-        val selectedText = editor.selectionModel.selectedText.orEmpty()
-        val origin = if (direction == FORWARD) editor.selectionModel.selectionStart else editor.selectionModel.selectionEnd
-
-        editor.caretModel.primaryCaret.search = CaretSearch(origin)
-
-        editor.selectionModel.removeSelection()
-        if (editor is EditorEx) {
-            editor.isStickySelection = false
-        }
-
-        searchAllCarets(direction, selectedText)
-    }
-
-    private fun findFirstLast(findDirection: SearchDirection, switchDirection: Boolean) {
-        clearAllHighlights()
-
-        searchAllCarets(searchDirection = findDirection, newText = "", forceWraparound = true)
-
-        if (switchDirection) {
-            searchAllCarets(searchDirection = findDirection.reverse, newText = "", saveBreadcrumb = false)
-        }
-    }
-
-    private fun updateCount(count: Pair<Int?, Int>?) {
-        ui.count = count?.let { Pair(count.first ?: 0, count.second) }
-    }
-
-    private fun titleText(found: Boolean = true, wrapped: Boolean = false): String =
-        listOfNotNull(
-            if (!found) "Failing" else null,
-            if (wrapped) "Wrapped" else null,
-            if (searchType == REGEXP) "Regexp Search" else "Search",
-            if (direction == BACKWARD) "Backward" else null
-        ).joinToString(" ") + ": "
-
     private fun pushBreadcrumb() {
         breadcrumbs.push(
             EditorBreadcrumb(
@@ -439,21 +412,61 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         }
     }
 
-    /**
-     * Cancels any search still running and clears every highlight. [CommonHighlighter.cancel] empties the editor's
-     * whole markup model, which is the same one the current-match markers live in, so they go too.
-     */
-    private fun clearAllHighlights() {
-        CommonHighlighter.cancel(editor)
-        primaryHighlighters.clear()
+    private fun startType(firstSearch: Boolean, forceWraparound: Boolean): StartType =
+        if (forceWraparound) {
+            WRAPAROUND
+        } else if (firstSearch) {
+            FIRST_SEARCH
+        } else if (state == FAILED) {
+            WRAPAROUND
+        } else {
+            REPEATED_SEARCH
+        }
+
+    private fun updateUI(result: SearchResult) {
+        updateUI(titleText(found = result.isFound, wrapped = result.isWrapped), text, result.isFound)
     }
 
-    /** Clears the markers on the current match, leaving the whole-file highlights of an unchanged search in place. */
-    private fun clearCurrentMatchHighlights() {
-        primaryHighlighters.forEach {
-            editor.markupModel.removeHighlighter(it)
+    private fun updateUI(title: String, text: String, found: Boolean) {
+        ui.title = title
+        ui.textColor = JBColor.foreground()
+
+        if (found) {
+            foundText = text
+            ui.showText(text)
+        } else {
+            val matched = text.commonPrefixWith(foundText)
+            ui.showText(matched, text.substring(matched.length))
         }
-        primaryHighlighters.clear()
+    }
+
+    private fun titleText(found: Boolean = true, wrapped: Boolean = false): String =
+        listOfNotNull(
+            if (!found) "Failing" else null,
+            if (wrapped) "Wrapped" else null,
+            if (searchType == REGEXP) "Regexp Search" else "Search",
+            if (direction == BACKWARD) "Backward" else null
+        ).joinToString(" ") + ": "
+
+    private fun updateCount(count: Pair<Int?, Int>?) {
+        ui.count = count?.let { Pair(count.first ?: 0, count.second) }
+    }
+
+    /** Removes every highlight this session painted, and stops any search still on its way to painting more. */
+    private fun clearAllHighlights() {
+        CommonHighlighter.cancelPending()
+        remove(primaryHighlighters)
+        remove(secondaryHighlighters)
+    }
+
+    /** Removes the markers on the current match only. The search is unchanged, so the secondary highlights stay. */
+    private fun clearCurrentMatchHighlights() {
+        remove(primaryHighlighters)
+    }
+
+    private fun remove(highlighters: MutableList<RangeHighlighter>) {
+        highlighters.forEach { editor.markupModel.removeHighlighter(it) }
+        highlighters.clear()
     }
 
     private fun searchAndUpdate(
@@ -471,17 +484,6 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
         return SearchResult(result.isStringFound, if (result.isStringFound) result.startOffset else null, startType == WRAPAROUND)
     }
-
-    private fun startType(firstSearch: Boolean, forceWraparound: Boolean): StartType =
-        if (forceWraparound) {
-            WRAPAROUND
-        } else if (firstSearch) {
-            FIRST_SEARCH
-        } else if (state == FAILED) {
-            WRAPAROUND
-        } else {
-            REPEATED_SEARCH
-        }
 
     private fun searchStart(search: CaretSearch, keepStart: Boolean, startType: StartType): Int =
         when (direction) {
@@ -527,23 +529,26 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             }
         }
 
-    private fun refreshHighlights(highlight: Boolean = true, callback: (List<FindResult>) -> Unit = {}) {
-        val (isRegexp, searchString) = getSearchModelArguments()
-        CommonHighlighter.findAllAndHighlight(
-            editor = editor,
-            project = project,
-            searchArg = searchString,
-            useRegexp = isRegexp,
-            useCase = caseSensitive(),
-            callback = callback,
-            highlight = highlight
-        )
-    }
-
     private fun refreshHighlightsAndCount(offset: Int?, highlight: Boolean) {
         refreshHighlights(highlight) { matches ->
             updateCount(Pair(matches.withIndex().find { it.value.startOffset == offset }?.let { it.index + 1 }, matches.size))
         }
+    }
+
+    private fun refreshHighlights(highlight: Boolean = true, callback: (List<FindResult>) -> Unit = {}) {
+        val (isRegexp, searchString) = getSearchModelArguments()
+        CommonHighlighter.findAllAndHighlight(
+            SearchRequest(
+                editor = editor,
+                project = project,
+                searchArg = searchString,
+                useRegexp = isRegexp,
+                useCase = caseSensitive(),
+                highlighters = secondaryHighlighters,
+                callback = callback,
+                highlight = highlight
+            )
+        )
     }
 
     // A malformed regexp needs no handling here: FindManager reports a not-found result rather than throwing.

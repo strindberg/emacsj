@@ -8,6 +8,9 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_START
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.VisualPosition
+import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.markup.HighlighterLayer
+import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.ui.JBColor
 
 private const val FILE = "replacefile.txt"
@@ -780,6 +783,31 @@ class ReplaceTest : EmacsJTestCase() {
 
             ReplaceHandler.delegate?.hide()
         }
+    }
+
+    fun `test A replace leaves highlights belonging to the rest of the IDE alone`() {
+        myFixture.configureByText(FILE, "<caret>foo bar foo")
+
+        val foreign = myFixture.editor.markupModel.addRangeHighlighter(
+            EditorColors.SEARCH_RESULT_ATTRIBUTES,
+            4,
+            7,
+            HighlighterLayer.LAST,
+            HighlighterTargetArea.EXACT_RANGE
+        )
+
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+        setText("foo")
+        pressEnter()
+        setText("baz")
+        pressEnter()
+        typeChar('y')
+        assertTrue("cleared while replacing", foreign.isValid)
+
+        typeChar('.')
+
+        assertTrue("cleared when the replace ended", foreign.isValid)
+        assertTrue(myFixture.editor.markupModel.allHighlighters.contains(foreign))
     }
 
     private fun setText(text: String) {

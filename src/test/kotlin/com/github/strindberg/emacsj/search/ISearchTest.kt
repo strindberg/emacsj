@@ -12,6 +12,9 @@ import com.intellij.ide.CopyPasteManagerEx
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.VisualPosition
+import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.markup.HighlighterLayer
+import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.ui.ColorUtil
@@ -2525,6 +2528,30 @@ class ISearchTest : EmacsJTestCase() {
         // Deleting ended the walk, so there is no longer a pasted tail to swap for the next clipboard entry.
         performEditorAction(ACTION_ISEARCH_PASTE_HISTORY)
         assertEquals("ba", ISearchHandler.delegate?.text)
+    }
+
+    fun `test A search leaves highlights belonging to the rest of the IDE alone`() {
+        myFixture.configureByText(FILE, "foo bar <caret>baz")
+
+        // Stands in for a highlight-usages mark, a console hyperlink or a diff highlight.
+        val foreign = myFixture.editor.markupModel.addRangeHighlighter(
+            EditorColors.SEARCH_RESULT_ATTRIBUTES,
+            0,
+            3,
+            HighlighterLayer.LAST,
+            HighlighterTargetArea.EXACT_RANGE
+        )
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("bar")
+        assertTrue("cleared while searching", foreign.isValid)
+
+        pressEnter()
+
+        assertTrue("cleared when the search ended", foreign.isValid)
+        assertTrue(myFixture.editor.markupModel.allHighlighters.contains(foreign))
+        // The session still cleans up after itself rather than leaking its own highlights.
+        assertEquals(0, secondaryHighlightCount())
     }
 
     /**

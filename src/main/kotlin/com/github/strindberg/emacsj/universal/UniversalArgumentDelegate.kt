@@ -67,13 +67,13 @@ internal class UniversalArgumentDelegate(
     private val dataContext: DataContext,
 ) : UIDelegate(editor) {
 
-    private var counter = 4
-
     @VisibleForTesting
     override val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
         title = "Argument: "
         text = getTimes().toString()
     }
+
+    private var counter = 4
 
     init {
         EditorUtil.disposeWithEditor(editor, this)
