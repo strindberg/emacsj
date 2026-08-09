@@ -15,6 +15,7 @@ import com.intellij.openapi.actionSystem.AnActionResult
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 
 internal class EmacsJActionListener : AnActionListener {
 
@@ -25,25 +26,30 @@ internal class EmacsJActionListener : AnActionListener {
         ApplicationManager.getApplication().service<EmacsJTypedActionService>()
     }
 
+    @Suppress("TooGenericExceptionCaught")
     override fun beforeActionPerformed(action: AnAction, event: AnActionEvent) {
         EmacsJService.instance.setPerformingAction(true)
 
-        if (ActionManager.getInstance().getId(action) in XRefHandler.xRefActionIds) {
-            event.project?.let { XRefHandler.pushPlace(it) }
-        }
+        try {
+            if (ActionManager.getInstance().getId(action) in XRefHandler.xRefActionIds) {
+                event.project?.let { XRefHandler.pushPlace(it) }
+            }
 
-        ISearchHandler.delegate?.let { delegate ->
-            if (action !is ISearchAction) {
-                delegate.hide()
+            ISearchHandler.delegate?.let { delegate ->
+                if (action !is ISearchAction) {
+                    delegate.hide()
+                }
             }
-        }
-        UniversalArgumentHandler.delegate?.let { delegate ->
-            if (action !is UniversalArgumentAction) {
-                universalArgumentDelegate = delegate
-                delegate.hide()
+            UniversalArgumentHandler.delegate?.let { delegate ->
+                if (action !is UniversalArgumentAction) {
+                    universalArgumentDelegate = delegate
+                    delegate.hide()
+                }
             }
+            ZapHandler.delegate?.hide()
+        } catch (e: Exception) {
+            thisLogger().error(e)
         }
-        ZapHandler.delegate?.hide()
     }
 
     override fun afterActionPerformed(action: AnAction, event: AnActionEvent, result: AnActionResult) {
