@@ -5,10 +5,16 @@ import java.lang.Character.toLowerCase
 import java.lang.Character.toUpperCase
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.editor.markup.TextAttributes
 
 internal val EMACSJ_PRIMARY = TextAttributesKey.createTextAttributesKey("EMACSJ_PRIMARY")
 
 internal val EMACSJ_SECONDARY = TextAttributesKey.createTextAttributesKey("EMACSJ_SECONDARY")
+
+/**
+ * Attributes that contribute nothing, used to hide the identifier-under-caret highlight while a search is running.
+ */
+internal val NO_ATTRIBUTES = TextAttributes()
 
 internal fun caseSensitive(text: String): Boolean = text.any { isUpperCase(it) && toUpperCase(it) != toLowerCase(it) }
 
