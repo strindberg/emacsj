@@ -30,8 +30,6 @@ import com.intellij.openapi.editor.event.CaretListener
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
-import com.intellij.openapi.editor.markup.TextAttributes
-import com.intellij.openapi.editor.markup.TextAttributes.ERASE_MARKER
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
@@ -73,7 +71,7 @@ internal class ReplaceDelegate(
 
     private val replacements = ArrayDeque<Replaced>()
 
-    private val identifierAttributes: TextAttributes
+    private val identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
 
     private var state: ReplaceState = GET_SEARCH_ARG
         set(state) {
@@ -103,8 +101,7 @@ internal class ReplaceDelegate(
         editor.caretModel.removeSecondaryCarets()
         editor.caretModel.addCaretListener(caretListener, this)
 
-        identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
-        editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, ERASE_MARKER)
+        editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, NO_ATTRIBUTES)
     }
 
     internal fun show() {

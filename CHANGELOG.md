@@ -11,6 +11,7 @@
 ### Fixed
 
 - XRef history now works regardless of the IDE's language setting.
+- Strange coloring artifacts on identifiers when using Isearch fixed. 
 
 ## [1.5.7] - 2026-07-31
 
