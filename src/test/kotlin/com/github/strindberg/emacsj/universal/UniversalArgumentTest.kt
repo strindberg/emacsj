@@ -3,8 +3,11 @@ package com.github.strindberg.emacsj.universal
 import java.awt.event.KeyEvent.VK_ESCAPE
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.EmacsJTestCase
+import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_BACKSPACE
+import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_DELETE
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
+import com.intellij.openapi.actionSystem.IdeActions.ACTION_UNDO
 import com.intellij.testFramework.PlatformTestUtil
 
 private const val FILE = "universalfile.txt"
@@ -152,6 +155,37 @@ class UniversalArgumentTest : EmacsJTestCase() {
                 |abc<caret>def
             """.trimMargin()
         )
+    }
+
+    fun `test Universal argument before backspace deletes four characters`() {
+        myFixture.configureByText(FILE, "abcdefgh<caret>ijkl")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+
+        checkResult("abcd<caret>ijkl")
+    }
+
+    fun `test Universal argument before delete deletes four characters`() {
+        myFixture.configureByText(FILE, "abcdefgh<caret>ijkl")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_EDITOR_DELETE)
+
+        checkResult("abcdefgh<caret>")
+    }
+
+    fun `test A repeated deletion is undone in one step`() {
+        myFixture.configureByText(FILE, "abcdefgh<caret>ijkl")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_EDITOR_BACKSPACE)
+        checkResult("abcd<caret>ijkl")
+
+        // The repetitions share one command group id, so they collapse into the single step the first press began.
+        myFixture.performEditorAction(ACTION_UNDO)
+        runPendingRepeats()
+        assertEquals("abcdefghijkl", myFixture.editor.document.text)
     }
 
     /** Repeats of more than one are queued rather than run inline, so let them finish before asserting. */
