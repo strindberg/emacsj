@@ -24,10 +24,10 @@ class EmacsJSettingsComponent {
         JBLabel("If enabled, whitespace is replaced with this regexp in Isearch. Default is '.*?'. Emacs default is '[ 	]+'.")
 
     private val description2 =
-        JBLabel("Lax Isearch can be toggled with key binding 'Toggle Lax-Whitespace Searching'")
+        JBLabel("Lax Isearch can be toggled with key binding 'Toggle Lax-Whitespace Searching'.")
 
     private val selectionSearchDescription =
-        JBLabel("If enabled, Isearch uses the selected region as search argument if a selection is active when Isearch is invoked")
+        JBLabel("If enabled, Isearch uses the selected region as search argument if a selection is active when Isearch is invoked.")
 
     init {
         description1.font = description1.font.deriveFont(Font.ITALIC)
