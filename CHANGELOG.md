@@ -5,13 +5,14 @@
 ## [Unreleased]
 
 ### Added
-- When using Isearch, search field marks non-matching part of the search string in red.
-- When using Isearch, the kill ring can be cycled with `alt-y/command-y` after pasting to search text.
+- When using Isearch, the search field now marks non-matching part of the search string in red.
+- When using Isearch, the kill ring can now be cycled with `alt-y/command-y` after pasting to search text.
 
 ### Fixed
 
 - XRef history now works regardless of the IDE's language setting.
-- Strange coloring artifacts on identifiers when using Isearch fixed. 
+- Strange coloring artifacts on identifiers when using Isearch fixed.
+- Existing highlighters are restored wen exiting Isearch or Search/Replace.
 
 ## [1.5.7] - 2026-07-31
 

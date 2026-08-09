@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
@@ -21,15 +22,20 @@ internal const val HIGHLIGHT_DELAY_MILLIS = 50L
 
 private const val HIGHLIGHT_CHUNK_SIZE = 100
 
-private data class SearchRequest(
+/**
+ * One search to run and highlight. [highlighters] is the caller's own list: every highlight painted is appended to
+ * it, so the caller can later remove exactly what it added instead of clearing the editor's markup model.
+ */
+internal data class SearchRequest(
     val editor: Editor,
     val project: Project,
     val searchArg: String,
     val useRegexp: Boolean,
     val useCase: Boolean,
-    val range: IntRange?,
-    val callback: (List<FindResult>) -> Unit,
-    val highlight: Boolean,
+    val highlighters: MutableList<RangeHighlighter>,
+    val range: IntRange? = null,
+    val callback: (List<FindResult>) -> Unit = {},
+    val highlight: Boolean = true,
 )
 
 object CommonHighlighter {
@@ -48,27 +54,15 @@ object CommonHighlighter {
     internal val isIdle: Boolean
         @VisibleForTesting get() = scheduledSearches.all { it.isDone }
 
-    internal fun cancel(editor: Editor) {
+    internal fun cancelPending() {
         progressIndicators.forEach { it.cancel() }
         progressIndicators.clear()
-
-        editor.markupModel.removeAllHighlighters()
     }
 
-    internal fun findAllAndHighlight(
-        editor: Editor,
-        project: Project,
-        searchArg: String,
-        useRegexp: Boolean,
-        useCase: Boolean,
-        range: IntRange? = null,
-        callback: (List<FindResult>) -> Unit = {},
-        highlight: Boolean = true,
-    ) {
+    internal fun findAllAndHighlight(request: SearchRequest) {
         // A new search supersedes any still-pending one. Without this, two searches scheduled inside the debounce
         // window run concurrently on the pool and can report back out of order, leaving a stale match count.
-        progressIndicators.forEach { it.cancel() }
-        progressIndicators.clear()
+        cancelPending()
 
         val indicator = ProgressIndicatorBase()
         progressIndicators.add(indicator)
@@ -79,19 +73,7 @@ object CommonHighlighter {
                     ProgressManager.getInstance().runProcess(
                         {
                             ApplicationManager.getApplication().runReadAction {
-                                doFindAllAndHighlight(
-                                    SearchRequest(
-                                        editor = editor,
-                                        project = project,
-                                        searchArg = searchArg,
-                                        useRegexp = useRegexp,
-                                        useCase = useCase,
-                                        range = range,
-                                        callback = callback,
-                                        highlight = highlight
-                                    ),
-                                    indicator
-                                )
+                                doFindAllAndHighlight(request, indicator)
                             }
                         },
                         indicator
@@ -126,19 +108,27 @@ object CommonHighlighter {
                 }
 
                 if (highlight) {
-                    addSecondaryHighlights(editor, matches, indicator)
+                    addSecondaryHighlights(editor, matches, indicator, highlighters)
                 }
             }
             onEdt(editor, indicator) { callback(matches) }
         }
     }
 
-    private fun addSecondaryHighlights(editor: Editor, matches: List<FindResult>, indicator: ProgressIndicator) {
+    private fun addSecondaryHighlights(
+        editor: Editor,
+        matches: List<FindResult>,
+        indicator: ProgressIndicator,
+        highlighters: MutableList<RangeHighlighter>,
+    ) {
         matches.chunked(HIGHLIGHT_CHUNK_SIZE).forEach { chunk ->
             ProgressManager.checkCanceled()
+            // Chunks land on the EDT one at a time, so the caller's list grows as they arrive. A chunk queued
+            // before the search was cancelled is skipped by onEdt, which is what keeps the list in step with what
+            // is actually painted.
             onEdt(editor, indicator) {
                 chunk.forEach { match ->
-                    addHighlight(editor, match)
+                    addHighlight(editor, match)?.let { highlighters.add(it) }
                 }
             }
         }
@@ -157,8 +147,10 @@ object CommonHighlighter {
         }
     }
 
-    private fun addHighlight(editor: Editor, match: FindResult) {
-        if (!match.isEmpty) {
+    private fun addHighlight(editor: Editor, match: FindResult): RangeHighlighter? =
+        if (match.isEmpty) {
+            null
+        } else {
             editor.markupModel.addRangeHighlighter(
                 EMACSJ_SECONDARY,
                 match.startOffset,
@@ -167,5 +159,4 @@ object CommonHighlighter {
                 HighlighterTargetArea.EXACT_RANGE
             )
         }
-    }
 }
