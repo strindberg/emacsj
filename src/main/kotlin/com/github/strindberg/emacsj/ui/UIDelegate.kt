@@ -26,7 +26,7 @@ internal abstract class UIDelegate(val editor: Editor) : Disposable {
 
     private var isDisposed = false
 
-    abstract val ui: CommonUI
+    abstract val ui: PopupUI
 
     protected open val isCancelInhibited: Boolean
         get() = false

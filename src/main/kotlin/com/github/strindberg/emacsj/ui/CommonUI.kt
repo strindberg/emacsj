@@ -1,21 +1,16 @@
 package com.github.strindberg.emacsj.ui
 
 import java.awt.Color
-import java.awt.Container
 import java.awt.Dimension
 import java.awt.Font
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import java.awt.Point
 import java.awt.Rectangle
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
 import java.awt.event.KeyEvent
 import java.util.concurrent.TimeUnit
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
-import javax.swing.SwingUtilities
 import com.intellij.codeInsight.hint.HintUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
@@ -40,7 +35,7 @@ internal class CommonUI(
     private var isWriteable: Boolean,
     private val cancelCallback: () -> Unit,
     private val keyEventHandler: (KeyEvent) -> Unit = { },
-) {
+) : PopupUI {
 
     private val standardFont =
         UIUtil.getLabelFont().deriveFont(
@@ -170,19 +165,16 @@ internal class CommonUI(
         popup.show(popupPoint())
     }
 
-    internal fun cancelUI() {
+    override fun cancelUI() {
         flashGeneration++ // Drop any pending flash so it cannot write to a closed popup.
         popup.cancel()
         panel.cancel()
     }
 
     internal val anchor: JScrollPane
-        get() = SwingUtilities.getAncestorOfClass(JScrollPane::class.java, editor.contentComponent) as JScrollPane
+        get() = editor.popupAnchor
 
-    internal fun popupPoint(): RelativePoint =
-        anchor.let { scroll ->
-            RelativePoint(scroll, Point(0, scroll.height - panel.preferredSize.height))
-        }
+    internal fun popupPoint(): RelativePoint = popupPointIn(anchor, panel.preferredSize.height)
 
     internal fun setPopupBounds(rectangle: Rectangle) {
         popup.setBounds(rectangle)
@@ -281,33 +273,15 @@ internal class CommonUI(
     }
 }
 
-private class UIPanel(private val commonUI: CommonUI, private val editor: Editor, private val baseFont: Font) : JPanel(GridBagLayout()) {
+private class UIPanel(private val commonUI: CommonUI, editor: Editor, private val baseFont: Font) : JPanel(GridBagLayout()) {
 
-    private val resizeListener = object : ComponentAdapter() {
-        override fun componentResized(e: ComponentEvent?) {
-            commonUI.setPopupBounds(getNewBounds())
-        }
-    }
-
-    private val moveListener = object : ComponentAdapter() {
-        override fun componentMoved(e: ComponentEvent?) {
-            commonUI.setPopupBounds(getNewBounds())
-        }
-    }
-
-    private val ancestor: Container? = editor.component.topLevelAncestor
-
-    init {
-        editor.component.addComponentListener(resizeListener)
-        ancestor?.addComponentListener(moveListener)
-    }
+    private val boundsListener = PopupBoundsListener(editor) { commonUI.setPopupBounds(getNewBounds()) }
 
     override fun getPreferredSize(): Dimension = Dimension(commonUI.anchor.width, (baseFont.size * 2.5).toInt())
 
     fun getNewBounds(): Rectangle = Rectangle(commonUI.popupPoint().screenPoint, preferredSize)
 
     fun cancel() {
-        editor.component.removeComponentListener(resizeListener)
-        ancestor?.removeComponentListener(moveListener)
+        boundsListener.detach()
     }
 }

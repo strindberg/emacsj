@@ -3,6 +3,7 @@ package com.github.strindberg.emacsj
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import com.github.strindberg.emacsj.movement.GotoLineHandler
+import com.github.strindberg.emacsj.paste.PasteHandler
 import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.search.ReplaceHandler
 import com.github.strindberg.emacsj.ui.CommonUI
@@ -40,6 +41,7 @@ abstract class EmacsJTestCase : BasePlatformTestCase() {
             UniversalArgumentHandler.delegate?.hide()
             ZapHandler.delegate?.hide()
             GotoLineHandler.delegate?.hide()
+            PasteHandler.killRingDelegate?.hide()
 
             EmacsJService.instance.setRepeating(false)
 

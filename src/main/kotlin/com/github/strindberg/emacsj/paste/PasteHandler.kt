@@ -41,6 +41,8 @@ internal class PasteHandler(private val type: PasteType) : EditorWriteActionHand
         private var clipboardHistoryPos = 0
 
         private var pasteType = STANDARD
+
+        internal var killRingDelegate: KillRingDelegate? = null
     }
 
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
@@ -60,14 +62,23 @@ internal class PasteHandler(private val type: PasteType) : EditorWriteActionHand
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
             HISTORY -> {
-                editor.getUserData(LAST_PASTED_REGIONS)?.let { regions ->
-                    if (EmacsJService.instance.lastActionId() in pasteActionIds) {
-                        regions.sortedByDescending { it.startOffset }.forEach { region ->
-                            editor.document.deleteString(region.startOffset, region.endOffset)
-                        }
-                        editor.pasteAndMove()
+                val regions = editor.getUserData(LAST_PASTED_REGIONS)
+                if (regions != null && EmacsJService.instance.lastActionId() in pasteActionIds) {
+                    regions.sortedByDescending { it.startOffset }.forEach { region ->
+                        editor.document.deleteString(region.startOffset, region.endOffset)
                     }
+                    editor.pasteAndMove()
+                } else {
+                    showKillRing(editor)
                 }
+            }
+        }
+    }
+
+    private fun showKillRing(editor: Editor) {
+        if (killRingDelegate == null) {
+            clipboardHistoryTexts().take(CLIPBOARD_HISTORY_SIZE).takeIf { it.isNotEmpty() }?.let { entries ->
+                killRingDelegate = KillRingDelegate(editor, entries)
             }
         }
     }
