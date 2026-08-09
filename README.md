@@ -65,13 +65,12 @@ The EmacsJ plugin enables the following commands.
 ### Isearch
 
 Incremental search. Each letter typed is added to the search, and the nearest match is highlighted, as well as all other visible matches.
-The place of the current match among all matches is displayed together with the total number of matches. Keep adding letters to narrow
-the search.
+The place of the current match among all matches is displayed together with the total number of matches. Keep adding letters to narrow the
+search.
 
-While searching, pressing the search key again jumps to the next match, if available. Once the matches are exhausted at the end of
-the file, the search bar indicates that no more matches can be found. Pressing the search key again at this stage restarts the search at
-the beginning of the file (or the end if reverse search is active). The direction of the search can be changed at any time with the
-corresponding key.
+While searching, pressing the search key again jumps to the next match, if available. Once the matches are exhausted at the end of the file,
+the search bar indicates that no more matches can be found. Pressing the search key again at this stage restarts the search at the beginning
+of the file (or the end if reverse search is active). The direction of the search can be changed at any time with the corresponding key.
 
 The way Isearch interprets white space in the search string can be configured (see
 [below](#isearch-configuration--lax-mode-and-selection-search)) between literal and lax interpretation and also changed during search.
@@ -94,8 +93,8 @@ type are offered. The search history does not distinguish between forward and ba
 through with `alt-p` and `alt-n` when Isearch is active. Note that if a search is aborted with `ESCAPE` or `ctrl-g`, the history of that
 search is not saved.
 
-Except for the keys below, any command key will abort search and execute the command. This makes Isearch handy as a navigation tool
-as well: search for the word where you want to end up and keep on navigating with no extra key press required.
+Except for the keys below, any command key will abort search and execute the command. This makes Isearch handy as a navigation tool as well:
+search for the word where you want to end up and keep on navigating with no extra key press required.
 
 While searching, the following commands are available:
 
@@ -109,7 +108,7 @@ While searching, the following commands are available:
   searches so that a new search starts with the mode from the last search. The default mode can
   be [changed](#isearch-configuration--lax-mode-and-selection-search) under Settings.
 - `ctrl-y`: Paste from clipboard to search text.
-- `alt-y`: Cycle kill ring, i.e. paste previous items from clipboard to search text, after initial paste.
+- `alt-y`: Cycle kill ring, i.e. paste previous items from clipboard to search text, after initial paste (`ctrl-y`).
 - `alt-e`: enable editing of the search string. Searching (with the new search string) is resumed when pressing `ENTER`.
 - `ctrl-w`: add the word at point in the editor to the search string.
 - `ctrl-alt-e`: add the rest of the current editor line to the search string.
@@ -126,52 +125,53 @@ While searching, the following commands are available:
 - `ctrl-l`: recenter. Scroll to put the current match at the center of the screen without interrupting the search. Repeated use behaves
   as [Recenter Caret](#recenterreposition).
 
-Text from the clipboard can be pasted while searching: the contents of the clipboard will be added to the current search string.
+Text from the clipboard can be pasted while searching: the contents of the clipboard will be added to the current search string. After
+pasting to the search text, previous items from the clipboard can be cycled with `alt-y`.
 
-Note that the keybindings above are only active while using Isearch, i.e. they do not clash with other commands having the same key
-binding outside Isearch. The keybindings `ESCAPE`, `ctrl-g` and `ctrl-l` are non-configurable.
+Note that the keybindings above are only active while using Isearch, i.e. they do not clash with other commands having the same key binding
+outside Isearch. The keybindings `ESCAPE`, `ctrl-g` and `ctrl-l` are non-configurable.
 
-Isearch text uses smart case: the search will be performed without case sensitivity if the whole search string consists of lower
-case characters but switch to case-sensitive search if the search string contains one or more capital letters. This can be changed
-by toggling between case-sensitive and case-insensitive search with `alt-c` (see above). Regexp search is always case-sensitive.
+Isearch text uses smart case: the search will be performed without case sensitivity if the whole search string consists of lower case
+characters but switch to case-sensitive search if the search string contains one or more capital letters. This can be changed by toggling
+between case-sensitive and case-insensitive search with `alt-c` (see above). Regexp search is always case-sensitive.
 
 *Isearch* works with multiple carets.
 
 #### Isearch configuration – lax mode and selection search
 
-When lax mode is enabled in Settings, Isearch will replace every space in the search string with the supplied regular expression. This
-makes it possible to search for string parts that are not adjacent. The default regular expression is '.*?' which means that a space will be
+When lax mode is enabled in Settings, Isearch will replace every space in the search string with the supplied regular expression. This makes
+it possible to search for string parts that are not adjacent. The default regular expression is '.*?' which means that a space will be
 replaced with the shortest possible text that makes the whole search string match. The lax mode can be toggled during search as described
 above. Lax search only works with text search, not regexp search.
 
 The default mode (lax or strict) can be changed, as well as the regular expression used to replace space in Isearch, under Settings →
 Editor → EmacsJ.
 
-When selection search is enabled in Settings, Isearch will use the selected text as search argument if a selection is active when Isearch
-is invoked. The drawback to this is that if enabled, Isearch cannot be used to expand an existing selection. Choose which alternative you
-find the most convenient. The default is not to use selection.
+When selection search is enabled in Settings, Isearch will use the selected text as search argument if a selection is active when Isearch is
+invoked. The drawback to this is that if enabled, Isearch cannot be used to expand an existing selection. Choose which alternative you find
+the most convenient. The default is not to use selection.
 
 ![Isearch settings](images/settings.png "Isearch Settings")
 
 #### Isearch configuration - colors
 
-To change the colors used by Isearch to mark matches, go to Settings → Editor → Color Schemes → EmacsJ. The colors chosen for primary
-and secondary matches are used by both Isearch and Search/replace (below).
+To change the colors used by Isearch to mark matches, go to Settings → Editor → Color Schemes → EmacsJ. The colors chosen for primary and
+secondary matches are used by both Isearch and Search/replace (below).
 
 ![configuring colors](images/colors.png "Configuring Colors")
 
 ### Search/replace (query-replace)
 
-Search/replace (query-replace) asks for a text or regexp to search for, and the replacement to be used. When replacement starts, each
-match found triggers a request for confirmation.
+Search/replace (query-replace) asks for a text or regexp to search for, and the replacement to be used. When replacement starts, each match
+found triggers a request for confirmation.
 
 There are two variants:
 
-- Search and Replace Text(`alt-s`). Both arguments are interpreted as literal text.
-- Search and Replace Regexp(`shift-alt-s`). Both arguments are interpreted as regular expressions.
+- Search and Replace Text (`alt-s`). Both arguments are interpreted as literal text.
+- Search and Replace Regexp (`shift-alt-s`). Both arguments are interpreted as regular expressions.
 
-Once the replacement text has been given, search is performed from the location of the caret, and at each match one can choose whether
-to perform the change or not. The search stops at the end of the file.
+Once the replacement text has been given, search is performed from the location of the caret, and at each match one can choose whether to
+perform the change or not. The search stops at the end of the file.
 
 When Search/replace is invoked, the last Search/replace command (if any) is suggested in the search bar. Pressing ENTER accepts the
 suggestion and initiates the search.
@@ -180,8 +180,8 @@ If a selection is active when Search/replace is started (i.e. a region is select
 region.
 
 When using regexp search, back references to captured groups (parts of the search string delimited by parenthesis) in the matched string can
-be used in the replace-string either in java style (`%1, %2, ...`) or with backslash (`\1, \2, ...`). The whole match can be referenced
-by `$0` or `\&`. To replace with a literal string which could be interpreted as a back reference, use double backslash, such as `\\1`
+be used in the replace-string either in java style (`%1, %2, ...`) or with backslash (`\1, \2, ...`). The whole match can be referenced by
+`$0` or `\&`. To replace with a literal string which could be interpreted as a back reference, use double backslash, such as `\\1`
 or `\\&`.
 
 When specifying the search text or the replace-text, the following keys are active:
@@ -206,10 +206,10 @@ While replacing, the following keys are active:
 Note that the keybindings above are only active while using Search/replace, i.e. they do not clash with other commands having the same key
 binding outside Search/replace. The keybindings `y`, `SPACE`, `,`, `n`, `!`, `e`, `u`, `^`, `.` and `ctrl-l` are non-configurable.
 
-Search/replace text uses smart case such that the search will be performed without case sensitivity if the whole search string and the
-whole replacement string consist of lower case characters, but switch to case-sensitive search if the search string or replace string
-contains one or more capital letters. If you need to search and replace two lower case strings and not match upper case letters, use regexp
-search/ replace, which is always case-sensitive.
+Search/replace text uses smart case such that the search will be performed without case sensitivity if the whole search string and the whole
+replacement string consist of lower case characters, but switch to case-sensitive search if the search string or replace string contains one
+or more capital letters. If you need to search and replace two lower case strings and not match upper case letters, use regexp search/
+replace, which is always case-sensitive.
 
 Colors used by Search/replace can be configured as described under Isearch [above](#isearch-configuration---colors).
 
@@ -244,10 +244,10 @@ Commands:
 
 ### Word Movement
 
-EmacsJ's word movement commands are similar to the default IntelliJ word movements but with a slight difference in how word boundaries
-and non-word characters are handled. In standard IntelliJ, *Kill to Word End* will delete characters up to the next non-word character,
-whereas the corresponding command *Delete Next Word* in EmacsJ will delete past non-word characters and to the end of the following
-proper word. The same goes for word movements such as *Next Word* and *Previous Word*.
+EmacsJ's word movement commands are similar to the default IntelliJ word movements but with a slight difference in how word boundaries and
+non-word characters are handled. In standard IntelliJ, *Kill to Word End* will delete characters up to the next non-word character, whereas
+the corresponding command *Delete Next Word* in EmacsJ will delete past non-word characters and to the end of the following proper word. The
+same goes for word movements such as *Next Word* and *Previous Word*.
 
 These commands honor the IDE's setting "Use camel case".
 
@@ -255,8 +255,8 @@ The commands *Delete Next Word* and *Delete Previous Word* respect the *Append N
 
 Commands:
 
-- Move Caret to Next Word (`alt-f`). Move the caret to the end of the current word (where the current word is defined as everything up
-  to the next end of word characters).
+- Move Caret to Next Word (`alt-f`). Move the caret to the end of the current word (where the current word is defined as everything up to
+  the next end of word characters).
 - Move Caret to Previous Word (`alt-b`). Move the caret to the start of the current word (where the current word is defined as everything
   back to the next end of word characters, read backwards).
 - Delete Next Word (`alt-d`). Delete characters to the end of the current word (defined as above).
@@ -266,8 +266,8 @@ The *Word Movement* commands work with multiple carets.
 
 ### Modify Word
 
-The modify-word commands use word boundaries in the same way as the word movement commands defined [above](#word-movement).
-They will modify the characters in the current or previous word or -- if selection is active -- modify the current selection.
+The modify-word commands use word boundaries in the same way as the word movement commands defined [above](#word-movement). They will modify
+the characters in the current or previous word or -- if selection is active -- modify the current selection.
 
 The commands modifying the following word also move the caret to the end of this word. The commands modifying the previous word do not move
 the caret.
@@ -324,14 +324,14 @@ The *Delete Whitespace* commands work with multiple carets.
 
 ### Delete Blank Lines
 
-The command *Delete Blank Lines* deletes lines that are either empty or only containing whitespace. If the caret is currently
-on a non-blank line, all subsequent blank lines are deleted. If the current line is blank and the surrounding lines are non-blank, the
-current line is deleted. If the current line is blank and forms part of a consecutive number of blank lines, the blank lines are reduced to
-a single blank line.
+The command *Delete Blank Lines* deletes lines that are either empty or only containing whitespace. If the caret is currently on a non-blank
+line, all subsequent blank lines are deleted. If the current line is blank and the surrounding lines are non-blank, the current line is
+deleted. If the current line is blank and forms part of a consecutive number of blank lines, the blank lines are reduced to a single blank
+line.
 
 Commands:
 
-- Delete Blank Lines(`ctrl-x ctrl-o`).
+- Delete Blank Lines (`ctrl-x ctrl-o`).
 
 The *Delete Blank Lines* command works with multiple carets.
 
@@ -367,8 +367,8 @@ commands, first select a region and then use the proper command. No characters o
 
 Note that unlike Emacs, IntelliJ cannot visibly display the selected rectangle *as a rectangle*, but the commands work as described.
 
-The *Rectangle: Paste* command does not require an active selection but will paste multiple lines starting at the same column as the
-current caret on each line.
+The *Rectangle: Paste* command does not require an active selection but will paste multiple lines starting at the same column as the current
+caret on each line.
 
 Commands:
 
@@ -388,16 +388,20 @@ The paste commands enable the use of a paste history (kill ring) where a pasted 
 repeatedly pressing *Paste: Previous Item in Clipboard History* after use of *Paste: Leave Caret After Pasted Region* or *Paste: Leave Caret
 at Point*, the pasted text is replaced by the next item in the list of previously killed texts.
 
-*Paste: Leave Caret at Point* is triggered when using *Paste: Leave Caret After Pasted Region* after [Universal
-Argument](#universal-argument). It can also be invoked explicitly with a dedicated key binding, but by default it is not bound to any key.
+If *Paste: Previous Item in Clipboard History* is invoked on its own, i.e. without a previous paste command, a list containing the contents
+of the items in the kill ring is displayed. The selected item can be pasted by pressing `ENTER`.
 
-The paste commands respect numeric *Universal argument*, and will paste the kill ring element chosen with the argument, counted from
-the end. In other words, pressing `ctrl-alt-2`and then `ctrl-y` will paste the penultimate item in the kill ring. Paste after non-numeric
+*Paste: Leave Caret at Point* is triggered when using *Paste: Leave Caret After Pasted Region*
+after [Universal Argument](#universal-argument). It can also be invoked explicitly with a dedicated key binding, but by default it is not
+bound to any key.
+
+The paste commands respect numeric *Universal argument*, and will paste the kill ring element chosen with the argument, counted from the
+end. In other words, pressing `ctrl-alt-2`and then `ctrl-y` will paste the penultimate item in the kill ring. Paste after non-numeric
 *Universal argument* (i.e. `ctrl-u`) invokes *Paste: Leave Caret at Point* as described above.
 
 All paste commands push the opposite end of the pasted region as a mark to the [mark ring](#mark-ring) (without starting a selection). In
-other words, when using *Paste: Leave Caret After Pasted Region*, a mark is pushed at the beginning of the pasted region, and vice versa
-for *Paste: Leave Caret at Point*.
+other words, when using *Paste: Leave Caret After Pasted Region*, a mark is pushed at the beginning of the pasted region, and vice versa for
+*Paste: Leave Caret at Point*.
 
 The items offered when using *Paste: Previous Item in Clipboard History* are filtered for duplicates and blank entries.
 
@@ -405,24 +409,25 @@ Commands:
 
 - Paste: Leave Caret After Pasted Region (`ctrl-y`). This command works as standard IntelliJ *Paste*, but it sets up the paste history so
   that further invocations of *Paste: Previous Item in Clipboard History* can suggest previously killed/copied texts.
-- Paste: Leave Caret at Point. Works as *Paste: Leave Caret After Pasted Region* but leaves the caret at the current point and not at
-  the end of the pasted text. Triggered when used after *Universal Argument*.
-- Paste: Previous Item in Clipboard History (`alt-y`). Cycle through the history of killed text, replacing the previously pasted text.
+- Paste: Leave Caret at Point. Works as *Paste: Leave Caret After Pasted Region* but leaves the caret at the current point and not at the
+  end of the pasted text. Triggered when used after *Universal Argument*.
+- Paste: Previous Item in Clipboard History (`alt-y`). Cycle through the history of killed text, replacing the previously pasted text. If
+  invokedd on its own, it displays a list of items in the kill ring.
 
 The *Paste* commands work with multiple carets.
 
 ### Mark Ring
 
-EmacsJ maintains a mark history (mark ring) if the plugin's *Set/Push Mark for Selection* command is used. This makes it possible to
-pop previous marks and go back to these previous locations. A separate mark history is maintained for each file where it is used. The
-history only contains unique positions: a new mark replaces any earlier item at the same position in the file.
+EmacsJ maintains a mark history (mark ring) if the plugin's *Set/Push Mark for Selection* command is used. This makes it possible to pop
+previous marks and go back to these previous locations. A separate mark history is maintained for each file where it is used. The history
+only contains unique positions: a new mark replaces any earlier item at the same position in the file.
 
 Besides maintaining a mark history, another difference between EmacsJ's command and the standard IntelliJ set-mark command is that the
 former always starts a new selection, whereas IntelliJ's command toggles selection. In other words, if a selection is already active, using
 the EmacsJ command starts a new selection at the current point, instead of only turning off the selection.
 
-Adding to the mark history without starting a new selection can be achieved by hitting the *Set/Push Mark for Selection* command
-twice in the same position.
+Adding to the mark history without starting a new selection can be achieved by hitting the *Set/Push Mark for Selection* command twice in
+the same position.
 
 *Pop Mark* is triggered when using *Push Mark* after [Universal Argument](#universal-argument). It can also be invoked explicitly with a
 dedicated key binding, but by default it is not bound to any key.
@@ -468,8 +473,8 @@ variants of this command: kill the text including or not including the given cha
 
 If the given character is not found, no text is removed.
 
-If the previous command was *Universal argument*, the zap commands delete to (or up to) the Nth occurrence of the given
-character, with N as the universal argument. If the number of found occurrences is too low, no text is removed.
+If the previous command was *Universal argument*, the zap commands delete to (or up to) the Nth occurrence of the given character, with N as
+the universal argument. If the number of found occurrences is too low, no text is removed.
 
 All these commands respect the *Append Next Kill* command (see [below](#kill-commands-and-append-next-kill)).
 
@@ -488,8 +493,8 @@ When using any of the (IntelliJ standard) commands *Go to Declaration* or *Go to
 from which the jump is made, creating a stack of previous positions. This stack can be popped with the command *XRef Go Back*, and one can
 thus easily go back to previous positions.
 
-After *XRef Go Back*, the command *XRef Go Forward* can be invoked to return to the point where *XRef Go Back* was invoked.
-This is supported by a forward/redo stack that can be traversed in multiple levels.
+After *XRef Go Back*, the command *XRef Go Forward* can be invoked to return to the point where *XRef Go Back* was invoked. This is
+supported by a forward/redo stack that can be traversed in multiple levels.
 
 The command *XRef Push Mark* pushes the current position onto the XRef (backward/undo) stack and clears the forward/redo stack. This command
 does not have a default key binding.
@@ -500,8 +505,8 @@ Commands:
 - XRef Go Forward (`ctrl-alt-COMMA`). Go forward to the point where a previous XRef Go Back was invoked.
 - XRef Push Mark. Push the current position onto the XRef (backward) stack.
 
-Note that unlike all other key bindings in the *EmacsJ (macOS)* keymap where the *command* key is used instead of *option*, the binding
-for XRef Go Back does not use `command-COMMA` but `option-COMMA`. This is chosen to not override the standard macOS binding `command-COMMA`
+Note that unlike all other key bindings in the *EmacsJ (macOS)* keymap where the *command* key is used instead of *option*, the binding for
+XRef Go Back does not use `command-COMMA` but `option-COMMA`. This is chosen to not override the standard macOS binding `command-COMMA`
 for Preferences.
 
 ### Kill commands and Append Next Kill
@@ -510,9 +515,9 @@ Kill commands refer to cutting or copying text and adding the text to the clipbo
 unless the killed text is adjacent to the previously killed text, in which case the text is appended or prepended to the previous kill ring
 item. These kill ring items can be cycled through with the paste history command, documented [above](#paste-kill-ring).
 
-*Kill Line* works like the standard IntelliJ command *Cut up to Line End*: it kills (and copies) the rest of the current line. If
-there is only whitespace between caret and end of the line, the newline character is also killed. This EmacsJ command expands the standard
-IntelliJ command such that the newline character is also killed if the caret is positioned on the very first position of the line.
+*Kill Line* works like the standard IntelliJ command *Cut up to Line End*: it kills (and copies) the rest of the current line. If there is
+only whitespace between caret and end of the line, the newline character is also killed. This EmacsJ command expands the standard IntelliJ
+command such that the newline character is also killed if the caret is positioned on the very first position of the line.
 
 *Kill Whole Line* kills (and copies) the whole current line (before and after the caret), including the newline character. It places the
 caret at the start of the following line.
@@ -520,8 +525,8 @@ caret at the start of the following line.
 *Kill Ring Copy* and *Kill Ring Cut* kill the current selection with copy or cut. If no selection is active, these commands copy/cut the
 whole current line, including the newline character.
 
-The command *Append Next Kill* will set up a waiting state. If the next command is a cut or copy, the killed text is joined (appended
-or prepended) with the previous kill ring item. All the commands documented in this section respect the *Append Next Kill* command.
+The command *Append Next Kill* will set up a waiting state. If the next command is a cut or copy, the killed text is joined (appended or
+prepended) with the previous kill ring item. All the commands documented in this section respect the *Append Next Kill* command.
 Furthermore, the delete word commands &mdash; *Delete Previous Word* and *Delete Next Word* &mdash; (See [Word Movement](#word-movement)),
 as well as the zap commands &mdash; *Zap To Character*, *Zap Up To Character*, *Zap Back To Character* and *Zap Back Up To Character*
 &mdash; (See [Zap to Character](#zap-to-character)), also respect *Append Next Kill*.
@@ -538,10 +543,10 @@ Commands:
 - Kill Line (`ctrl-k`). Kill and copy the rest of the current line, including the final newline character if the caret is on the first
   position of the line or there is only whitespace between caret and line end.
 - Kill Whole Line (`ctrl-alt-k`). Kill and copy the whole current line, including the final newline character.
-- Kill Ring Copy (`alt-w`). Kill and copy the active selection. If no selection is active, the whole line including the newline
-  character is used as selection.
-- Kill Ring Cut (`ctrl-w`). Kill and cut the active selection. If no selection is active, the whole line including the newline character
-  is used as selection.
+- Kill Ring Copy (`alt-w`). Kill and copy the active selection. If no selection is active, the whole line including the newline character is
+  used as selection.
+- Kill Ring Cut (`ctrl-w`). Kill and cut the active selection. If no selection is active, the whole line including the newline character is
+  used as selection.
 - Append Next Kill (`ctrl-alt-w`). If the next action is a kill command (or delete previous/next word), the killed text will be appended or
   prepended to the current clipboard entity.
 
@@ -549,9 +554,9 @@ The *Kill* commands work with multiple carets.
 
 ### Transpose Lines
 
-*Transpose Lines* interchanges the line at point with the preceding line. If a numeric argument is set by *Universal Argument*, the
-command will interchange the current line with the Nth preceding line, with N being the universal argument. If the Universal argument
-is 0, the current line is interchanged with the line where the mark is currently set.
+*Transpose Lines* interchanges the line at point with the preceding line. If a numeric argument is set by *Universal Argument*, the command
+will interchange the current line with the Nth preceding line, with N being the universal argument. If the Universal argument is 0, the
+current line is interchanged with the line where the mark is currently set.
 
 Commands:
 
