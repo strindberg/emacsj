@@ -6,6 +6,7 @@ import java.awt.event.InputMethodEvent
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ui.UIUtil
@@ -41,12 +42,18 @@ internal abstract class UIDelegate(val editor: Editor) : Disposable {
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     final override fun dispose() {
         if (!isDisposed) {
             isDisposed = true
 
-            release()
-            ui.cancelUI()
+            try {
+                release()
+                ui.cancelUI()
+            } catch (e: Exception) {
+                thisLogger().error(e)
+            }
+
             clearDelegate()
         }
     }
