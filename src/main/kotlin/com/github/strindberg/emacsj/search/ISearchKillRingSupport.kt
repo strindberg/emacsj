@@ -2,7 +2,7 @@ package com.github.strindberg.emacsj.search
 
 import com.github.strindberg.emacsj.paste.clipboardHistoryTexts
 
-internal class ISearchKillRingUtil {
+internal class ISearchKillRingSupport {
 
     private var history: List<String> = emptyList()
 

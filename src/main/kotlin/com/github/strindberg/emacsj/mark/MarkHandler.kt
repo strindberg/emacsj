@@ -2,7 +2,6 @@ package com.github.strindberg.emacsj.mark
 
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.mark.MarkType.POP
-import com.github.strindberg.emacsj.search.History
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Caret
@@ -91,7 +90,7 @@ internal class MarkHandler(private val type: MarkType) : EditorActionHandler() {
 internal val Project.manager: FileEditorManagerEx?
     get() = FileEditorManagerEx.getInstanceExIfCreated(this)
 
-class PlaceInfo(
+internal class PlaceInfo(
     val file: VirtualFile,
     val state: FileEditorState,
     val editorTypeId: String,
@@ -104,28 +103,4 @@ class PlaceInfo(
         } == true
 
     override fun hashCode(): Int = 31 * file.hashCode() + caretPosition.hashCode()
-}
-
-class UndoRedoStack<T> {
-
-    private val undoStack = History<T>()
-    private val redoStack = History<T>()
-
-    /**
-     * Records a new position, which discards anything that was redoable.
-     */
-    fun push(position: T) {
-        undoStack.push(position)
-        redoStack.clear()
-    }
-
-    /**
-     * Steps back one position: [current] becomes redoable, and the position before it is returned.
-     */
-    fun undo(current: T): T? = undoStack.pop()?.also { redoStack.push(current) }
-
-    /**
-     * Steps forward one position: [current] becomes undoable, and the position after it is returned.
-     */
-    fun redo(current: T): T? = redoStack.pop()?.also { undoStack.push(current) }
 }

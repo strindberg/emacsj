@@ -79,7 +79,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
     private val identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
 
-    private val breadcrumbs = ISearchBreadcrumbUtil(editor)
+    private val breadcrumbs = ISearchBreadcrumbSupport(editor)
 
     private val primaryHighlighters = mutableListOf<RangeHighlighter>()
 
@@ -88,7 +88,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
     /** The longest search string that matched, so that a failing search can call out only what was added after it. */
     private var foundText: String = ""
 
-    private val killRingUtil = ISearchKillRingUtil()
+    private val killRingUtil = ISearchKillRingSupport()
 
     init {
         EditorUtil.disposeWithEditor(editor, this)

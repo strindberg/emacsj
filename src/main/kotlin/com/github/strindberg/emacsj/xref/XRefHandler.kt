@@ -3,8 +3,8 @@ package com.github.strindberg.emacsj.xref
 import com.github.strindberg.emacsj.mark.MarkHandler.Companion.placeInfo
 import com.github.strindberg.emacsj.mark.MarkHandler.Companion.restore
 import com.github.strindberg.emacsj.mark.PlaceInfo
-import com.github.strindberg.emacsj.mark.UndoRedoStack
 import com.github.strindberg.emacsj.mark.manager
+import com.github.strindberg.emacsj.search.History
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.components.service
 import com.intellij.openapi.editor.Caret
@@ -37,37 +37,35 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
             "GotoTypeDeclaration",
         )
 
-        internal fun pushPlace(project: Project) {
-            project.manager?.let { manager ->
+        internal fun Project.pushPlace() {
+            manager?.let { manager ->
                 manager.selectedFiles.getOrNull(0)?.let { virtualFile ->
-                    (manager.getSelectedEditor(virtualFile) as? TextEditor)?.let { fileEditor ->
-                        pushPlaceInfo(fileEditor.editor, project, virtualFile)
-                    }
+                    (manager.getSelectedEditor(virtualFile) as? TextEditor)?.run { editor.pushPlaceInfo(this@pushPlace, virtualFile) }
                 }
             }
         }
 
-        private fun getPlaceForBackAction(editor: Editor): PlaceInfo? =
-            getPlaceUsingHistory(editor) { current -> undo(current) }
+        private fun Editor.getPlaceForBackAction(): PlaceInfo? =
+            getPlaceUsingHistory { current -> undo(current) }
 
-        private fun getPlaceForForwardAction(editor: Editor): PlaceInfo? =
-            getPlaceUsingHistory(editor) { current -> redo(current) }
+        private fun Editor.getPlaceForForwardAction(): PlaceInfo? =
+            getPlaceUsingHistory { current -> redo(current) }
 
-        private fun pushPlace(editor: EditorEx) {
-            editor.project?.let { project ->
-                pushPlaceInfo(editor, project, editor.virtualFile)
+        private fun Editor.pushPlace() {
+            project?.let { project ->
+                pushPlaceInfo(project, virtualFile)
             }
         }
 
-        private fun pushPlaceInfo(editor: Editor, project: Project, virtualFile: VirtualFile) {
-            virtualFile.placeInfo(editor)?.let { placeInfo ->
+        private fun Editor.pushPlaceInfo(project: Project, virtualFile: VirtualFile) {
+            virtualFile.placeInfo(this)?.let { placeInfo ->
                 project.xrefStack().push(placeInfo)
             }
         }
 
-        private fun getPlaceUsingHistory(editor: Editor, operation: UndoRedoStack<PlaceInfo>.(PlaceInfo) -> PlaceInfo?): PlaceInfo? =
-            editor.virtualFile?.placeInfo(editor)?.let { currentPlace ->
-                editor.project?.run { xrefStack().operation(currentPlace) }
+        private fun Editor.getPlaceUsingHistory(operation: UndoRedoStack<PlaceInfo>.(PlaceInfo) -> PlaceInfo?): PlaceInfo? =
+            virtualFile?.placeInfo(this)?.let { currentPlace ->
+                project?.run { xrefStack().operation(currentPlace) }
             }
 
         private fun Project.xrefStack() = service<XRefPlaces>().stack
@@ -76,10 +74,34 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         if (editor is EditorEx) {
             when (type) {
-                XRefType.BACK -> getPlaceForBackAction(editor)?.restore(editor)
-                XRefType.FORWARD -> getPlaceForForwardAction(editor)?.restore(editor)
-                XRefType.PUSH -> pushPlace(editor)
+                XRefType.BACK -> editor.getPlaceForBackAction()?.restore(editor)
+                XRefType.FORWARD -> editor.getPlaceForForwardAction()?.restore(editor)
+                XRefType.PUSH -> editor.pushPlace()
             }
         }
     }
+}
+
+class UndoRedoStack<T> {
+
+    private val undoStack = History<T>()
+    private val redoStack = History<T>()
+
+    /**
+     * Records a new position, which discards anything that was redoable.
+     */
+    fun push(position: T) {
+        undoStack.push(position)
+        redoStack.clear()
+    }
+
+    /**
+     * Steps back one position: [current] becomes redoable, and the position before it is returned.
+     */
+    fun undo(current: T): T? = undoStack.pop()?.also { redoStack.push(current) }
+
+    /**
+     * Steps forward one position: [current] becomes undoable, and the position after it is returned.
+     */
+    fun redo(current: T): T? = redoStack.pop()?.also { undoStack.push(current) }
 }

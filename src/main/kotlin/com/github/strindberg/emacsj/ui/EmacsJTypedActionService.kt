@@ -3,7 +3,6 @@ package com.github.strindberg.emacsj.ui
 import com.github.strindberg.emacsj.search.ISearchHandler
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.github.strindberg.emacsj.zap.ZapHandler
-import com.intellij.codeInsight.template.impl.editorActions.TypedActionHandlerBase
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
@@ -24,8 +23,7 @@ internal class EmacsJTypedActionService : Disposable {
 
     init {
         TypedAction.getInstance().apply {
-            originalHandler = rawHandler
-            setupRawHandler(object : TypedActionHandlerBase(rawHandler) {
+            originalHandler = setupRawHandler(object : WrappedTypedActionHandler(rawHandler) {
                 @Suppress("ReturnCount")
                 override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
                     ISearchHandler.delegate?.let { delegate ->
@@ -37,12 +35,10 @@ internal class EmacsJTypedActionService : Disposable {
                         return
                     }
                     UniversalArgumentHandler.delegate?.let { delegate ->
-                        myOriginalHandler?.let { originalHandler ->
-                            delegate.handleChar(originalHandler, charTyped)
-                        }
+                        delegate.handleChar(originalHandler, charTyped)
                         return
                     }
-                    myOriginalHandler?.execute(editor, charTyped, dataContext)
+                    originalHandler.execute(editor, charTyped, dataContext)
                 }
             })
         }
@@ -52,3 +48,5 @@ internal class EmacsJTypedActionService : Disposable {
         TypedAction.getInstance().setupRawHandler(originalHandler)
     }
 }
+
+private abstract class WrappedTypedActionHandler(val originalHandler: TypedActionHandler) : TypedActionHandler

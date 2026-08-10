@@ -1,7 +1,6 @@
 package com.github.strindberg.emacsj.xref
 
 import com.github.strindberg.emacsj.mark.PlaceInfo
-import com.github.strindberg.emacsj.mark.UndoRedoStack
 import com.intellij.openapi.components.Service
 
 /**
