@@ -101,7 +101,7 @@ The plugin is expected to unload without an IDE restart, which constrains anythi
 
 Tests are **JUnit 3**: `BasePlatformTestCase` extends `junit.framework.TestCase`, so there are no annotations and methods are discovered by name. The backticked names work because they still begin with `test`.
 
-Fixture tests extend **`EmacsJTestCase`**, not `BasePlatformTestCase` directly. Its `tearDown` hides every delegate, clears the repeat flag and pushes two empty entries onto the action history — all application-scoped state that would otherwise leak into the next test class. It also offers `pressKey(ui, keyCode)` for driving a delegate's popup. Three pure-logic classes (`WordUtilsTest`, `UndoRedoStackTest`, `EmacsJLexerTest`) extend `TestCase` directly.
+Fixture tests extend **`EmacsJTestCase`**, not `BasePlatformTestCase` directly. Its `tearDown` hides every delegate, clears the repeat flag and pushes two empty entries onto the action history — all application-scoped state that would otherwise leak into the next test class. It also offers `pressKey(ui, keyCode)` for driving a delegate's popup. Four pure-logic classes (`WordUtilsTest`, `UndoRedoStackTest`, `EmacsJLexerTest`, `EllipsizeTest`) extend `TestCase` directly.
 
 The typical pattern:
 

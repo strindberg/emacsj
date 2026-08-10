@@ -7,6 +7,7 @@ import com.github.strindberg.emacsj.ui.EmacsJTypedActionService
 import com.github.strindberg.emacsj.universal.UniversalArgumentDelegate
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
 import com.github.strindberg.emacsj.xref.XRefHandler
+import com.github.strindberg.emacsj.xref.XRefHandler.Companion.pushPlace
 import com.github.strindberg.emacsj.zap.ZapHandler
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
@@ -32,7 +33,7 @@ internal class EmacsJActionListener : AnActionListener {
 
         try {
             if (ActionManager.getInstance().getId(action) in XRefHandler.xRefActionIds) {
-                event.project?.let { XRefHandler.pushPlace(it) }
+                event.project?.pushPlace()
             }
 
             ISearchHandler.delegate?.let { delegate ->

@@ -1,4 +1,4 @@
-package com.github.strindberg.emacsj.mark
+package com.github.strindberg.emacsj.xref
 
 import junit.framework.TestCase
 

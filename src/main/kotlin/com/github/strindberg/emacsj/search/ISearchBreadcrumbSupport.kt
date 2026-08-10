@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.Editor
  * one [Match] per caret. The per-caret half lives in caret user data rather than in a list here, so keeping both
  * behind this class is what stops them being pushed or popped independently.
  */
-internal class ISearchBreadcrumbUtil(private val editor: Editor) {
+internal class ISearchBreadcrumbSupport(private val editor: Editor) {
 
     private val crumbs = mutableListOf<EditorBreadcrumb>()
 
