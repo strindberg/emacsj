@@ -1,10 +1,13 @@
 package com.github.strindberg.emacsj.xref
 
-import junit.framework.TestCase
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 
-class UndoRedoStackTest : TestCase() {
+class UndoRedoStackTest {
 
-    fun `test Basic undo test`() {
+    @Test
+    fun `Basic undo test`() {
         val stack = UndoRedoStack<String>()
 
         stack.push("A")
@@ -15,7 +18,8 @@ class UndoRedoStackTest : TestCase() {
         assertNull(stack.undo("C"))
     }
 
-    fun `test Push, undo, redo, undo`() {
+    @Test
+    fun `Push, undo, redo, undo`() {
         val stack = UndoRedoStack<String>()
 
         stack.push("A")
@@ -24,7 +28,8 @@ class UndoRedoStackTest : TestCase() {
         assertEquals("A", stack.undo("B")) // undo again from B → A
     }
 
-    fun `test Redo returns previous state after undo`() {
+    @Test
+    fun `Redo returns previous state after undo`() {
         val stack = UndoRedoStack<String>()
 
         stack.push("A")
@@ -33,14 +38,16 @@ class UndoRedoStackTest : TestCase() {
         assertEquals("C", stack.redo("B")) // redo to C
     }
 
-    fun `test Empty stack behavior`() {
+    @Test
+    fun `Empty stack behavior`() {
         val stack = UndoRedoStack<String>()
 
         assertNull(stack.undo("A"))
         assertNull(stack.redo("A"))
     }
 
-    fun `test Redo is cleared after push`() {
+    @Test
+    fun `Redo is cleared after push`() {
         val stack = UndoRedoStack<String>()
 
         stack.push("A")
@@ -59,7 +66,8 @@ class UndoRedoStackTest : TestCase() {
         assertNull(stack.redo("C"))
     }
 
-    fun `test Multiple undo redo chain`() {
+    @Test
+    fun `Multiple undo redo chain`() {
         val stack = UndoRedoStack<String>()
 
         stack.push("1")
