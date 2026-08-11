@@ -1,266 +1,81 @@
 package com.github.strindberg.emacsj.word
 
-import junit.framework.TestCase
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
-class WordUtilsTest : TestCase() {
+private const val CASE_NAME = "offset {1} of [{0}] is [{2}]"
 
-    fun `test Boundaries 00`() {
-        val text = "ab dc"
-        assertEquals(
-            "ab",
-            currentWordBoundaries(text = text, offset = 0, isCamel = false, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
+/** The word the caret sits in, for each combination of camel-case and direction. */
+class WordUtilsTest {
+
+    @ParameterizedTest(name = CASE_NAME)
+    @MethodSource("forwardCases")
+    fun `Boundaries forward`(text: String, offset: Int, expected: String) {
+        assertEquals(expected, wordAt(text, offset, isCamel = false, isForward = true))
     }
 
-    fun `test Boundaries 01`() {
-        val text = "ab dc"
-        assertEquals(
-            "ab",
-            currentWordBoundaries(text = text, offset = 1, isCamel = false, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
+    @ParameterizedTest(name = CASE_NAME)
+    @MethodSource("backwardCases")
+    fun `Boundaries backward`(text: String, offset: Int, expected: String) {
+        assertEquals(expected, wordAt(text, offset, isCamel = false, isForward = false))
     }
 
-    fun `test Boundaries 02`() {
-        val text = "ab dc"
-        assertEquals(
-            "ab",
-            currentWordBoundaries(text = text, offset = 2, isCamel = false, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
+    @ParameterizedTest(name = CASE_NAME)
+    @MethodSource("camelForwardCases")
+    fun `Camel boundaries forward`(text: String, offset: Int, expected: String) {
+        assertEquals(expected, wordAt(text, offset, isCamel = true, isForward = true))
     }
 
-    fun `test Boundaries 04`() {
-        val text = "ab dc"
-        assertEquals(
-            "dc",
-            currentWordBoundaries(text = text, offset = 4, isCamel = false, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
+    @ParameterizedTest(name = CASE_NAME)
+    @MethodSource("camelBackwardCases")
+    fun `Camel boundaries backward`(text: String, offset: Int, expected: String) {
+        assertEquals(expected, wordAt(text, offset, isCamel = true, isForward = false))
     }
 
-    fun `test Boundaries 05`() {
-        val text = "ab dc"
-        assertEquals(
-            "dc",
-            currentWordBoundaries(text = text, offset = 5, isCamel = false, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
+    fun forwardCases() = listOf(
+        Arguments.of("ab dc", 0, "ab"),
+        Arguments.of("ab dc", 1, "ab"),
+        Arguments.of("ab dc", 2, "ab"),
+        Arguments.of("ab dc", 3, "ab"),
+        Arguments.of("ab dc", 4, "dc"),
+        Arguments.of("ab dc", 5, "dc"),
+        Arguments.of(" ab dc", 0, " ab"),
+        Arguments.of(" ab dc", 1, " ab")
+    )
 
-    fun `test Boundaries 06`() {
-        val text = " ab dc"
-        assertEquals(
-            " ab",
-            currentWordBoundaries(text = text, offset = 0, isCamel = false, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
+    fun backwardCases() = listOf(
+        Arguments.of("ab dc", 0, "ab"),
+        Arguments.of("ab dc", 1, "ab"),
+        Arguments.of("ab dc", 2, "dc"),
+        Arguments.of("ab dc", 3, "dc"),
+        Arguments.of("ab dc", 4, "dc"),
+        Arguments.of("ab dc", 5, "dc"),
+        Arguments.of("ab dc ", 5, "dc "),
+        Arguments.of("ab dc ", 6, "dc ")
+    )
 
-    fun `test Boundaries 07`() {
-        val text = " ab dc"
-        assertEquals(
-            " ab",
-            currentWordBoundaries(text = text, offset = 1, isCamel = false, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
+    fun camelForwardCases() = listOf(
+        Arguments.of("AbDc", 0, "Ab"),
+        Arguments.of("AbDc", 1, "Ab"),
+        Arguments.of("AbDc", 2, "Ab"),
+        Arguments.of("AbDc", 3, "Dc"),
+        Arguments.of("AbDc", 4, "Dc"),
+        Arguments.of(" AbDc", 0, " Ab"),
+        Arguments.of(" AbDc", 1, " Ab")
+    )
 
-    fun `test Reverse Boundaries 00`() {
-        val text = "ab dc"
-        assertEquals(
-            "ab",
-            currentWordBoundaries(text = text, offset = 0, isCamel = false, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
+    fun camelBackwardCases() = listOf(
+        Arguments.of("AbDc", 0, "Ab"),
+        Arguments.of("AbDc", 1, "Ab"),
+        Arguments.of("AbDc", 2, "Dc"),
+        Arguments.of("AbDc", 4, "Dc"),
+        Arguments.of("AbDc ", 4, "Dc "),
+        Arguments.of("AbDc ", 5, "Dc ")
+    )
 
-    fun `test Reverse Boundaries 01`() {
-        val text = "ab dc"
-        assertEquals(
-            "ab",
-            currentWordBoundaries(text = text, offset = 1, isCamel = false, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Reverse Boundaries 02`() {
-        val text = "ab dc"
-        assertEquals(
-            "dc",
-            currentWordBoundaries(text = text, offset = 2, isCamel = false, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Reverse Boundaries 04`() {
-        val text = "ab dc"
-        assertEquals(
-            "dc",
-            currentWordBoundaries(text = text, offset = 4, isCamel = false, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Reverse Boundaries 05`() {
-        val text = "ab dc"
-        assertEquals(
-            "dc",
-            currentWordBoundaries(text = text, offset = 5, isCamel = false, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Reverse Boundaries 06`() {
-        val text = "ab dc "
-        assertEquals(
-            "dc ",
-            currentWordBoundaries(text = text, offset = 5, isCamel = false, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Reverse Boundaries 07`() {
-        val text = "ab dc "
-        assertEquals(
-            "dc ",
-            currentWordBoundaries(text = text, offset = 6, isCamel = false, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Boundaries 00`() {
-        val text = "AbDc"
-        assertEquals(
-            "Ab",
-            currentWordBoundaries(text = text, offset = 0, isCamel = true, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Boundaries 01`() {
-        val text = "AbDc"
-        assertEquals(
-            "Ab",
-            currentWordBoundaries(text = text, offset = 1, isCamel = true, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Boundaries 02`() {
-        val text = "AbDc"
-        assertEquals(
-            "Ab",
-            currentWordBoundaries(text = text, offset = 2, isCamel = true, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Boundaries 04`() {
-        val text = "AbDc"
-        assertEquals(
-            "Dc",
-            currentWordBoundaries(text = text, offset = 4, isCamel = true, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Boundaries 05`() {
-        val text = " AbDc"
-        assertEquals(
-            " Ab",
-            currentWordBoundaries(text = text, offset = 0, isCamel = true, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Boundaries 06`() {
-        val text = " AbDc"
-        assertEquals(
-            " Ab",
-            currentWordBoundaries(text = text, offset = 1, isCamel = true, isForward = true).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Reverse Boundaries 00`() {
-        val text = "AbDc"
-        assertEquals(
-            "Ab",
-            currentWordBoundaries(text = text, offset = 0, isCamel = true, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Reverse Boundaries 01`() {
-        val text = "AbDc"
-        assertEquals(
-            "Ab",
-            currentWordBoundaries(text = text, offset = 1, isCamel = true, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Reverse Boundaries 02`() {
-        val text = "AbDc"
-        assertEquals(
-            "Dc",
-            currentWordBoundaries(text = text, offset = 2, isCamel = true, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Reverse Boundaries 04`() {
-        val text = "AbDc"
-        assertEquals(
-            "Dc",
-            currentWordBoundaries(text = text, offset = 4, isCamel = true, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Reverse Boundaries 05`() {
-        val text = "AbDc "
-        assertEquals(
-            "Dc ",
-            currentWordBoundaries(text = text, offset = 4, isCamel = true, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
-
-    fun `test Camel Reverse Boundaries 06`() {
-        val text = "AbDc "
-        assertEquals(
-            "Dc ",
-            currentWordBoundaries(text = text, offset = 5, isCamel = true, isForward = false).let { (start, end) ->
-                text.substring(start, end)
-            }
-        )
-    }
+    private fun wordAt(text: String, offset: Int, isCamel: Boolean, isForward: Boolean): String =
+        currentWordBoundaries(text = text, offset = offset, isCamel = isCamel, isForward = isForward)
+            .let { (start, end) -> text.substring(start, end) }
 }

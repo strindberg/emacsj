@@ -1,11 +1,14 @@
 package com.github.strindberg.emacsj.preferences
 
 import com.intellij.testFramework.LexerTestCase
-import junit.framework.TestCase
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class EmacsJLexerTest : TestCase() {
+class EmacsJLexerTest {
 
-    fun `test Text without the search word yields only text tokens`() {
+    @Test
+    fun `Text without the search word yields only text tokens`() {
         assertEquals(
             """
                 |text ('foo')
@@ -17,7 +20,8 @@ class EmacsJLexerTest : TestCase() {
         )
     }
 
-    fun `test The first occurrence of the search word is primary`() {
+    @Test
+    fun `The first occurrence of the search word is primary`() {
         assertEquals(
             """
                 |text ('foo')
@@ -31,7 +35,8 @@ class EmacsJLexerTest : TestCase() {
         )
     }
 
-    fun `test Later occurrences of the search word are secondary`() {
+    @Test
+    fun `Later occurrences of the search word are secondary`() {
         assertEquals(
             """
                 |primary ('result')
@@ -45,7 +50,8 @@ class EmacsJLexerTest : TestCase() {
         )
     }
 
-    fun `test Tokens cover the whole buffer without gaps or overlaps`() {
+    @Test
+    fun `Tokens cover the whole buffer without gaps or overlaps`() {
         val text = "Other results are indicated as a secondary result."
 
         val tokens = LexerTestCase.printTokens(text, 0, EmacsJLexer())
@@ -53,7 +59,8 @@ class EmacsJLexerTest : TestCase() {
         assertEquals(text, Regex("\\('(.*)'\\)").findAll(tokens).joinToString("") { it.groupValues[1] })
     }
 
-    fun `test A word merely starting with the search word has its stem matched`() {
+    @Test
+    fun `A word merely starting with the search word has its stem matched`() {
         // Consequence of the prefix test in getNextEnd: "results" is split into "result" plus "s". This shows up in
         // the settings page preview, which contains the word "results".
         assertEquals(
@@ -66,14 +73,16 @@ class EmacsJLexerTest : TestCase() {
         )
     }
 
-    fun `test The settings page preview has exactly one primary match`() {
+    @Test
+    fun `The settings page preview has exactly one primary match`() {
         val tokens = LexerTestCase.printTokens(EmacsJColorSettingsPage().demoText, 0, EmacsJLexer()).lines()
 
         assertEquals(1, tokens.count { it.startsWith("primary ") })
-        assertTrue("Preview should also show a secondary match", tokens.any { it.startsWith("secondary ") })
+        assertTrue(tokens.any { it.startsWith("secondary ") }, "Preview should also show a secondary match")
     }
 
-    fun `test Asking for the token type repeatedly gives the same answer`() {
+    @Test
+    fun `Asking for the token type repeatedly gives the same answer`() {
         val text = "result and result"
         val lexer = EmacsJLexer()
 
@@ -84,7 +93,8 @@ class EmacsJLexerTest : TestCase() {
         assertEquals(PRIMARY_TOKEN_TYPE, lexer.tokenType)
     }
 
-    fun `test Restarting a lexer marks the first match as primary again`() {
+    @Test
+    fun `Restarting a lexer marks the first match as primary again`() {
         val text = "result and result"
         val lexer = EmacsJLexer()
 

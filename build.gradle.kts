@@ -24,7 +24,15 @@ repositories {
 }
 
 dependencies {
+    testImplementation(platform(libs.junit5.bom))
+    testImplementation(libs.junit5.jupiter)
+
+    // The existing suite is JUnit 3 (BasePlatformTestCase extends junit.framework.TestCase). The vintage engine is
+    // what keeps it running on the JUnit Platform, so classes can be moved to Jupiter one at a time rather than in
+    // a single sweep.
     testImplementation(libs.junit)
+    testRuntimeOnly(libs.junit5.vintage.engine)
+    testRuntimeOnly(libs.junit5.platform.launcher)
 
     intellijPlatform {
         create(IntelliJPlatformType.IntellijIdeaCommunity, providers.gradleProperty("platformVersion")) {}
@@ -99,6 +107,10 @@ intellijPlatform {
 }
 
 tasks {
+    test {
+        useJUnitPlatform()
+    }
+
     runIde {
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf(
