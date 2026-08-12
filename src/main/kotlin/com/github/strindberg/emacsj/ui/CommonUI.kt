@@ -7,12 +7,12 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
-import java.util.concurrent.TimeUnit
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
+import com.github.strindberg.emacsj.EmacsJScope
 import com.intellij.codeInsight.hint.HintUtil
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.SpellCheckingEditorCustomizationProvider
 import com.intellij.openapi.editor.ex.EditorEx
@@ -24,8 +24,12 @@ import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.ui.LanguageTextField
 import com.intellij.ui.awt.RelativePoint
-import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.ui.UIUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 
 private const val FLASH_MILLIS = 1500L
@@ -56,7 +60,7 @@ internal class CommonUI(
 
     private val countLabel = newLabel(false)
 
-    private var flashGeneration = 0
+    private var flash: Job? = null
 
     // What the read-only label stands for. The label itself may hold markup, so it cannot be read back as the value.
     private var readonlyText: String = ""
@@ -142,19 +146,12 @@ internal class CommonUI(
 
     internal fun flashText(message: String, finalText: String = "") {
         countLabel.text = message
-        // Only the newest flash may clear the label.
-        val generation = ++flashGeneration
-        AppExecutorUtil.getAppScheduledExecutorService().schedule(
-            {
-                ApplicationManager.getApplication().invokeLater {
-                    if (generation == flashGeneration) {
-                        countLabel.text = finalText
-                    }
-                }
-            },
-            FLASH_MILLIS,
-            TimeUnit.MILLISECONDS
-        )
+        // Only the newest flash may clear the label, which cancelling the previous one is enough to arrange.
+        flash?.cancel()
+        flash = EmacsJScope.instance.scope.launch {
+            delay(FLASH_MILLIS)
+            withContext(Dispatchers.EDT) { countLabel.text = finalText }
+        }
     }
 
     internal fun selectText() {
@@ -166,7 +163,7 @@ internal class CommonUI(
     }
 
     override fun cancelUI() {
-        flashGeneration++ // Drop any pending flash so it cannot write to a closed popup.
+        flash?.cancel() // Drop any pending flash so it cannot write to a closed popup.
         popup.cancel()
         panel.cancel()
     }

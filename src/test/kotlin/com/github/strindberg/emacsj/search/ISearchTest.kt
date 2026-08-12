@@ -44,12 +44,12 @@ class ISearchTest : EmacsJTestCase() {
 
     @BeforeEach
     fun speedUpHighlighting() {
-        CommonHighlighter.delayMillis = 0
+        CommonHighlighter.instance.delayMillis = 0
     }
 
     @AfterEach
     fun restoreHighlightingDelay() {
-        CommonHighlighter.delayMillis = HIGHLIGHT_DELAY_MILLIS
+        CommonHighlighter.instance.delayMillis = HIGHLIGHT_DELAY_MILLIS
     }
 
     @Test
@@ -2743,7 +2743,7 @@ class ISearchTest : EmacsJTestCase() {
     private fun waitForHighlighting() {
         PlatformTestUtil.waitWithEventsDispatching(
             "Highlighting did not finish",
-            { CommonHighlighter.isIdle },
+            { CommonHighlighter.instance.isIdle },
             HIGHLIGHT_TIMEOUT_SECONDS
         )
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()

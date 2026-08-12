@@ -1,20 +1,25 @@
 package com.github.strindberg.emacsj.search
 
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.milliseconds
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
 import com.intellij.find.FindResult
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.readAction
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
-import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.util.ProgressIndicatorBase
 import com.intellij.openapi.project.Project
-import com.intellij.util.concurrency.AppExecutorUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 
 internal const val HIGHLIGHT_DELAY_MILLIS = 50L
@@ -32,112 +37,85 @@ internal data class SearchRequest(
     val highlight: Boolean = true,
 )
 
-object CommonHighlighter {
+/** Runs a search off the EDT and paints its matches on it. */
+@Service
+internal class CommonHighlighter(private val scope: CoroutineScope) {
 
     /**
-     * Debounce applied before a scheduled search runs. Overridable purely so that tests need not wait it out on
-     * every keystroke; nothing in production changes it.
+     * Debounce applied before a search runs. Overridable purely so that tests need not wait it out on every
+     * keystroke; nothing in production changes it.
      */
     @VisibleForTesting
     internal var delayMillis = HIGHLIGHT_DELAY_MILLIS
 
-    // At most one search is ever in flight: every new one supersedes the last
-    private var indicator: ProgressIndicator? = null
-
-    private var scheduledSearch: ScheduledFuture<*>? = null
+    // At most one search is ever in flight: every new one supersedes the last. Painting happens inside the job, so
+    // the job being active is what "this search still matters" means -- cancelling it stops the painting too.
+    private var search: Job? = null
 
     internal val isIdle: Boolean
-        @VisibleForTesting get() = scheduledSearch?.isDone != false
+        @VisibleForTesting get() = search?.isActive != true
 
     internal fun findAllAndHighlight(request: SearchRequest) {
-        // A new search supersedes any still-pending one. Without this, two searches scheduled inside the debounce
-        // window run concurrently on the pool and can report back out of order, leaving a stale match count.
         cancelPending()
 
-        val searchIndicator = ProgressIndicatorBase().apply { indicator = this }
-        scheduledSearch = AppExecutorUtil.getAppScheduledExecutorService().schedule(
-            {
-                ProgressManager.getInstance().runProcess(
-                    {
-                        ApplicationManager.getApplication().runReadAction { doFindAllAndHighlight(request, searchIndicator) }
-                    },
-                    searchIndicator
-                )
-            },
-            delayMillis,
-            TimeUnit.MILLISECONDS
-        )
+        search = scope.launch {
+            delay(delayMillis.milliseconds)
+
+            // An edit after the scan, e.g. a replace shortening the text, moves every offset, and painting matches could be out of range.
+            val (stamp, matches) = readAction {
+                Pair(request.editor.document.modificationStamp, findAll(request))
+            }
+
+            if (request.highlight) {
+                // A chunk at a time. Painting every match in one go blocks the editor for as long as it takes,
+                // which in a large file is long enough that the next keystroke has to wait.
+                matches.chunked(HIGHLIGHT_CHUNK_SIZE).forEach { chunk ->
+                    onEdt(request, stamp) { chunk.forEach { addHighlight(request.editor, it) } }
+                }
+            }
+            onEdt(request, stamp) { request.callback(matches) }
+        }
     }
 
     internal fun cancelPending() {
-        // Canceling the indicator only turns a search that is already running into a no-op; canceling the future
-        // stops one that is still inside the debounce window from running at all.
-        indicator?.cancel()
-        indicator = null
-        scheduledSearch?.cancel(false)
-        scheduledSearch = null
+        search?.cancel()
+        search = null
     }
 
-    private fun doFindAllAndHighlight(request: SearchRequest, indicator: ProgressIndicator) {
+    private fun findAll(request: SearchRequest): List<FindResult> =
         with(request) {
-            // Matches are offsets into the document as it was when the scan ran. An edit in between -- e.g. replace
-            // shortening the text -- invalidates every one of them, and painting them would be out of range.
-            val stamp = editor.document.modificationStamp
-            val matches = mutableListOf<FindResult>()
-            if (searchArg.isNotEmpty()) {
-                val findManager = FindManager.getInstance(project)
-                val findModel = FindModel().apply {
-                    stringToFind = searchArg
-                    isCaseSensitive = useCase
-                    isRegularExpressions = useRegexp
-                }
-                val documentText = editor.text
-                val text = documentText.substring(0, minOf(range?.last ?: documentText.length, documentText.length))
-                var offset = range?.start ?: 0
+            buildList {
+                if (searchArg.isNotEmpty()) {
+                    val findManager = FindManager.getInstance(project)
+                    val findModel = FindModel().apply {
+                        stringToFind = searchArg
+                        isCaseSensitive = useCase
+                        isRegularExpressions = useRegexp
+                    }
+                    val documentText = editor.text
+                    val text = documentText.substring(0, minOf(range?.last ?: documentText.length, documentText.length))
+                    var offset = range?.start ?: 0
 
-                while (offset < text.length) {
-                    ProgressManager.checkCanceled()
-                    val result = findManager.findString(text, offset, findModel)
-                    if (!result.isStringFound) break
-                    matches.add(result)
-                    offset = maxOf(result.endOffset, offset + 1) // regexp match can be length zero
-                }
-
-                if (highlight) {
-                    addSecondaryHighlights(editor, matches, indicator, stamp)
-                }
-            }
-            onEdt(editor, indicator, stamp) { callback(matches) }
-        }
-    }
-
-    private fun addSecondaryHighlights(
-        editor: Editor,
-        matches: List<FindResult>,
-        indicator: ProgressIndicator,
-        stamp: Long,
-    ) {
-        matches.chunked(HIGHLIGHT_CHUNK_SIZE).forEach { chunk ->
-            ProgressManager.checkCanceled()
-            // Chunks land on the EDT one at a time, so the caller's list grows as they arrive. A chunk queued before the search was
-            // canceled is skipped by onEdt, which is what keeps the list in step with what is actually painted.
-            onEdt(editor, indicator, stamp) {
-                chunk.forEach { match ->
-                    addHighlight(editor, match)
+                    while (offset < text.length) {
+                        // Cancellation of a read action is only a request, so without this the scan runs to the end regardless,
+                        // holding the read lock against every EDT write -- the next keystroke among them.
+                        ProgressManager.checkCanceled()
+                        val result = findManager.findString(text, offset, findModel)
+                        if (!result.isStringFound) break
+                        add(result)
+                        offset = maxOf(result.endOffset, offset + 1) // regexp match can be length zero
+                    }
                 }
             }
         }
-    }
 
     /**
-     * Runs [action] on the EDT, re-checking cancellation there. A checkCanceled() on the background thread only
-     * proves the search was live when the task was queued: cancel() can still run on the EDT in between, clearing
-     * the highlighters, after which the queued task would paint stale matches back in. [stamp] does the same for
-     * the document: an edit between scanning and painting leaves the matches pointing at text that has moved.
+     * Runs [action] on the EDT as part of this search, so that cancelling the search cancels the painting as well.
+     * [stamp] is what says the matches still describe the document; the editor may also be gone by now.
      */
-    private fun onEdt(editor: Editor, indicator: ProgressIndicator, stamp: Long, action: () -> Unit) {
-        ApplicationManager.getApplication().invokeLater {
-            if (!editor.isDisposed && !indicator.isCanceled && editor.document.modificationStamp == stamp) {
+    private suspend fun onEdt(request: SearchRequest, stamp: Long, action: () -> Unit) {
+        withContext(Dispatchers.EDT) {
+            if (!request.editor.isDisposed && request.editor.document.modificationStamp == stamp) {
                 action()
             }
         }
@@ -153,5 +131,10 @@ object CommonHighlighter {
                 HighlighterTargetArea.EXACT_RANGE
             )
         }
+    }
+
+    companion object {
+        internal val instance: CommonHighlighter
+            get() = ApplicationManager.getApplication().getService(CommonHighlighter::class.java)
     }
 }

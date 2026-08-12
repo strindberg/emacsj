@@ -27,12 +27,12 @@ class ReplaceTest : EmacsJTestCase() {
 
     @BeforeEach
     fun speedUpHighlighting() {
-        CommonHighlighter.delayMillis = 0
+        CommonHighlighter.instance.delayMillis = 0
     }
 
     @AfterEach
     fun restoreHighlightingDelay() {
-        CommonHighlighter.delayMillis = HIGHLIGHT_DELAY_MILLIS
+        CommonHighlighter.instance.delayMillis = HIGHLIGHT_DELAY_MILLIS
     }
 
     @Test

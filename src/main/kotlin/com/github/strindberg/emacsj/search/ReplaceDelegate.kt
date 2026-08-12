@@ -150,7 +150,7 @@ internal class ReplaceDelegate(
                     }
                 } else if (e.id == KeyEvent.KEY_RELEASED) {
                     clearHighlights()
-                    CommonHighlighter.findAllAndHighlight(
+                    CommonHighlighter.instance.findAllAndHighlight(
                         SearchRequest(
                             editor = editor,
                             project = project,
@@ -365,7 +365,7 @@ internal class ReplaceDelegate(
 
     /** Removes every highlight this session painted, and stops any search still on its way to painting more. */
     private fun clearHighlights() {
-        CommonHighlighter.cancelPending()
+        CommonHighlighter.instance.cancelPending()
         editor.removeHighlights(EMACSJ_PRIMARY, EMACSJ_SECONDARY)
     }
 
@@ -454,7 +454,7 @@ internal class ReplaceDelegate(
             HighlighterTargetArea.EXACT_RANGE
         )
 
-        CommonHighlighter.findAllAndHighlight(
+        CommonHighlighter.instance.findAllAndHighlight(
             SearchRequest(
                 editor = editor,
                 project = project,
