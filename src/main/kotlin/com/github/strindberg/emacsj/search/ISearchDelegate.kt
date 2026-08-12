@@ -37,7 +37,6 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
-import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
@@ -78,14 +77,10 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
     private val breadcrumbs = ISearchBreadcrumbSupport(editor)
 
-    private val primaryHighlighters = mutableListOf<RangeHighlighter>()
-
-    private val secondaryHighlighters = mutableListOf<RangeHighlighter>()
-
     /** The longest search string that matched, so that a failing search can call out only what was added after it. */
     private var foundText: String = ""
 
-    private val killRingUtil = ISearchKillRingSupport()
+    private val killRing = ISearchKillRingSupport()
 
     init {
         EditorUtil.disposeWithEditor(editor, this)
@@ -182,12 +177,12 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
     }
 
     internal fun paste(clipboard: String) {
-        killRingUtil.start(clipboard)
+        killRing.start(clipboard)
         addToSearch(clipboard)
     }
 
     internal fun pasteNextInHistory() {
-        killRingUtil.next()?.let { (replacedLength, inserted) ->
+        killRing.next()?.let { (replacedLength, inserted) ->
             text = text.dropLast(replacedLength)
             addToSearch(inserted)
         }
@@ -257,7 +252,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
     /** Only ever reached while the search is running; the popup's editor handles typing once text is edited. */
     internal fun handleChar(charTyped: String) {
-        killRingUtil.invalidate()
+        killRing.invalidate()
         searchAllCarets(searchDirection = direction, newText = charTyped)
     }
 
@@ -433,18 +428,12 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
     /** Removes every highlight this session painted, and stops any search still on its way to painting more. */
     private fun clearAllHighlights() {
         CommonHighlighter.cancelPending()
-        remove(primaryHighlighters)
-        remove(secondaryHighlighters)
+        editor.removeHighlights(EMACSJ_PRIMARY, EMACSJ_SECONDARY)
     }
 
     /** Removes the markers on the current match only. The search is unchanged, so the secondary highlights stay. */
     private fun clearCurrentMatchHighlights() {
-        remove(primaryHighlighters)
-    }
-
-    private fun remove(highlighters: MutableList<RangeHighlighter>) {
-        highlighters.forEach { editor.markupModel.removeHighlighter(it) }
-        highlighters.clear()
+        editor.removeHighlights(EMACSJ_PRIMARY)
     }
 
     private fun searchAndUpdate(
@@ -522,7 +511,6 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
                 searchArg = searchString,
                 useRegexp = isRegexp,
                 useCase = caseSensitive(),
-                highlighters = secondaryHighlighters,
                 callback = callback,
                 highlight = highlight
             )
@@ -577,14 +565,12 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
     }
 
     private fun addPrimaryHighlight(match: Match) {
-        primaryHighlighters.add(
-            editor.markupModel.addRangeHighlighter(
-                EMACSJ_PRIMARY,
-                match.start,
-                match.end,
-                HighlighterLayer.LAST + 2,
-                HighlighterTargetArea.EXACT_RANGE
-            )
+        editor.markupModel.addRangeHighlighter(
+            EMACSJ_PRIMARY,
+            match.start,
+            match.end,
+            HighlighterLayer.LAST + 2,
+            HighlighterTargetArea.EXACT_RANGE
         )
     }
 }

@@ -2549,6 +2549,7 @@ class ISearchTest : EmacsJTestCase() {
         pressEnter()
 
         assertTrue("cleared when the search ended", foreign.isValid)
+        // The same object, not a copy: whoever painted it still holds this reference and must be able to remove it.
         assertTrue(myFixture.editor.markupModel.allHighlighters.contains(foreign))
         // The session still cleans up after itself rather than leaking its own highlights.
         assertEquals(0, secondaryHighlightCount())
