@@ -98,7 +98,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         IdeEventQueue.getInstance().addDispatcher(
             { e ->
                 val delegate = ISearchHandler.delegate
-                if (delegate.isActive(e)) {
+                if (delegate.isActive(e) && delegate.isActive()) {
                     e.constructInput()?.let { delegate.handleChar(it) }
                     e.consume()
                     true
@@ -167,11 +167,9 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         }
     }
 
+    /** Only ever reached while the search is running; the popup's editor handles backspace once text is edited. */
     internal fun handleBackspace() {
-        when (state) {
-            EDIT -> text = text.dropLast(1)
-            SEARCH, FAILED -> popBreadcrumb()
-        }
+        popBreadcrumb()
     }
 
     internal fun findFirst() {
@@ -192,8 +190,11 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
     internal fun edit() {
         state = EDIT
         isInhibitCancel = true
-        ui.makeWriteable(text)
-        isInhibitCancel = false
+        try {
+            ui.makeWriteable(text)
+        } finally {
+            isInhibitCancel = false
+        }
     }
 
     internal fun paste(clipboard: String) {
@@ -270,15 +271,10 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         hide()
     }
 
+    /** Only ever reached while the search is running; the popup's editor handles typing once text is edited. */
     internal fun handleChar(charTyped: String) {
         killRingUtil.invalidate()
-        when (state) {
-            EDIT -> text += charTyped
-            SEARCH, FAILED -> searchAllCarets(
-                searchDirection = direction,
-                newText = charTyped
-            )
-        }
+        searchAllCarets(searchDirection = direction, newText = charTyped)
     }
 
     private fun keyEventHandler(e: KeyEvent) {
@@ -296,11 +292,9 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         }
     }
 
+    /** Only ever reached while the search is running; the popup's editor handles pasting once text is edited. */
     private fun addToSearch(newText: String) {
-        when (state) {
-            EDIT -> text += newText
-            SEARCH, FAILED -> searchAllCarets(searchDirection = direction, newText = newText, forceFirstSearch = true)
-        }
+        searchAllCarets(searchDirection = direction, newText = newText, forceFirstSearch = true)
     }
 
     private fun searchSelected() {

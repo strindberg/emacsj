@@ -12,6 +12,9 @@ internal const val ACTION_ISEARCH_PASTE = "com.github.strindberg.emacsj.actions.
 
 internal class ISearchPasteHandler : EditorActionHandler() {
 
+    override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean =
+        ISearchHandler.delegate?.isActive() == true
+
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.paste(ClipboardUtil.getTextInClipboard().orEmpty())
     }

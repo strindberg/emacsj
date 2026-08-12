@@ -11,6 +11,9 @@ internal const val ACTION_ISEARCH_BACKSPACE = "com.github.strindberg.emacsj.acti
 
 internal class ISearchBackspaceHandler : EditorActionHandler() {
 
+    override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean =
+        ISearchHandler.delegate?.isActive() == true
+
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.handleBackspace()
     }

@@ -218,8 +218,11 @@ internal class ReplaceDelegate(
                         'e' -> {
                             state = ReplaceState.EDIT_REPLACE_ARG
                             isInhibitCancel = true
-                            ui.makeWriteable(replaceArg)
-                            isInhibitCancel = false
+                            try {
+                                ui.makeWriteable(replaceArg)
+                            } finally {
+                                isInhibitCancel = false
+                            }
                         }
                         '.' -> {
                             try {
@@ -346,7 +349,7 @@ internal class ReplaceDelegate(
                         index += 2
                     }
                     next == '&' -> {
-                        append("\$0")
+                        append($$"$0")
                         index += 2
                     }
                     else -> {
