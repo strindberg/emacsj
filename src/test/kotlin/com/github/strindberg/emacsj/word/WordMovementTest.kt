@@ -1,63 +1,73 @@
 package com.github.strindberg.emacsj.word
 
 import com.github.strindberg.emacsj.EmacsJTestCase
+import org.junit.jupiter.api.Test
 
 private const val FILE = "wordmovementfile.txt"
 
 class WordMovementTest : EmacsJTestCase() {
 
-    fun `test Next word 00`() {
+    @Test
+    fun `Next word 00`() {
         myFixture.configureByText(FILE, "foo<caret>")
         myFixture.performEditorAction(ACTION_NEXT_WORD)
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `test Next word 01`() {
+    @Test
+    fun `Next word 01`() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_NEXT_WORD)
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `test Next word 02`() {
+    @Test
+    fun `Next word 02`() {
         myFixture.configureByText(FILE, "f<caret>oo")
         myFixture.performEditorAction(ACTION_NEXT_WORD)
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `test Next word 03`() {
+    @Test
+    fun `Next word 03`() {
         myFixture.configureByText(FILE, "<caret> foo")
         myFixture.performEditorAction(ACTION_NEXT_WORD)
         myFixture.checkResult(" foo<caret>")
     }
 
-    fun `test Next word 04`() {
+    @Test
+    fun `Next word 04`() {
         myFixture.configureByText(FILE, "<caret>+ (foo")
         myFixture.performEditorAction(ACTION_NEXT_WORD)
         myFixture.checkResult("+ (foo<caret>")
     }
 
-    fun `test Next word 05`() {
+    @Test
+    fun `Next word 05`() {
         myFixture.configureByText(FILE, "<caret>fooBar")
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_NEXT_WORD)
         myFixture.checkResult("foo<caret>Bar")
     }
 
-    fun `test Next word 06`() {
+    @Test
+    fun `Next word 06`() {
         myFixture.configureByText(FILE, "<caret> fooBar")
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_NEXT_WORD)
         myFixture.checkResult(" foo<caret>Bar")
     }
 
-    fun `test Next word 07`() {
+    @Test
+    fun `Next word 07`() {
         myFixture.configureByText(FILE, "<caret>)<fooBar")
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_NEXT_WORD)
         myFixture.checkResult(")<foo<caret>Bar")
     }
 
-    fun `test Next word 08`() {
+    @Test
+    fun `Next word 08`() {
         myFixture.configureByText(FILE, "foo<caret>BarBaz")
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_NEXT_WORD)
@@ -66,58 +76,67 @@ class WordMovementTest : EmacsJTestCase() {
         myFixture.checkResult("fooBarBaz<caret>")
     }
 
-    fun `test Previous word 00`() {
+    @Test
+    fun `Previous word 00`() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
         myFixture.checkResult("<caret>foo")
     }
 
-    fun `test Previous word 01`() {
+    @Test
+    fun `Previous word 01`() {
         myFixture.configureByText(FILE, "foo<caret>")
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
         myFixture.checkResult("<caret>foo")
     }
 
-    fun `test Previous word 02`() {
+    @Test
+    fun `Previous word 02`() {
         myFixture.configureByText(FILE, "f<caret>oo")
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
         myFixture.checkResult("<caret>foo")
     }
 
-    fun `test Previous word 03`() {
+    @Test
+    fun `Previous word 03`() {
         myFixture.configureByText(FILE, "foo <caret>")
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
         myFixture.checkResult("<caret>foo ")
     }
 
-    fun `test Previous word 04`() {
+    @Test
+    fun `Previous word 04`() {
         myFixture.configureByText(FILE, "foo) ()<caret>")
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
         myFixture.checkResult("<caret>foo) ()")
     }
 
-    fun `test Previous word 05`() {
+    @Test
+    fun `Previous word 05`() {
         myFixture.configureByText(FILE, "fooBar<caret>")
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
         myFixture.checkResult("foo<caret>Bar")
     }
 
-    fun `test Previous word 06`() {
+    @Test
+    fun `Previous word 06`() {
         myFixture.configureByText(FILE, "fooBar <caret>")
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
         myFixture.checkResult("foo<caret>Bar ")
     }
 
-    fun `test Previous word 07`() {
+    @Test
+    fun `Previous word 07`() {
         myFixture.configureByText(FILE, "fooBar$(<caret>")
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
         myFixture.checkResult("foo<caret>Bar$(")
     }
 
-    fun `test Previous word 08`() {
+    @Test
+    fun `Previous word 08`() {
         myFixture.configureByText(FILE, "fooBar<caret>Baz")
         myFixture.editor.settings.isCamelWords = true
         myFixture.performEditorAction(ACTION_PREVIOUS_WORD)
@@ -126,7 +145,8 @@ class WordMovementTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>fooBarBaz")
     }
 
-    fun `test Move to next word works with multiple carets`() {
+    @Test
+    fun `Move to next word works with multiple carets`() {
         myFixture.configureByText(
             FILE,
             """
@@ -145,7 +165,8 @@ class WordMovementTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Move to previous word works with multiple carets`() {
+    @Test
+    fun `Move to previous word works with multiple carets`() {
         myFixture.configureByText(
             FILE,
             """

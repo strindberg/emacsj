@@ -6,6 +6,9 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_UP
 import com.intellij.openapi.editor.CaretState
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.testFramework.EditorTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 private const val FILE = "repositionfile.txt"
 
@@ -20,7 +23,8 @@ class RepositionTest : EmacsJTestCase() {
     private val caretLine: Int
         get() = myFixture.editor.caretModel.logicalPosition.line
 
-    fun `test Repeated reposition cycles through middle, top and bottom`() {
+    @Test
+    fun `Repeated reposition cycles through middle, top and bottom`() {
         configure()
 
         myFixture.performEditorAction(ACTION_REPOSITION)
@@ -30,11 +34,12 @@ class RepositionTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_REPOSITION)
         val bottom = caretLine
 
-        assertTrue("Second reposition should move the caret above the middle", top < middle)
-        assertTrue("Third reposition should move the caret below the middle", bottom > middle)
+        assertTrue(top < middle, "Second reposition should move the caret above the middle")
+        assertTrue(bottom > middle, "Third reposition should move the caret below the middle")
     }
 
-    fun `test Reposition cycle returns to middle on the fourth invocation`() {
+    @Test
+    fun `Reposition cycle returns to middle on the fourth invocation`() {
         configure()
 
         myFixture.performEditorAction(ACTION_REPOSITION)
@@ -44,7 +49,8 @@ class RepositionTest : EmacsJTestCase() {
         assertEquals(middle, caretLine)
     }
 
-    fun `test An intervening command restarts the cycle at middle`() {
+    @Test
+    fun `An intervening command restarts the cycle at middle`() {
         configure()
 
         myFixture.performEditorAction(ACTION_REPOSITION)
@@ -61,7 +67,8 @@ class RepositionTest : EmacsJTestCase() {
         assertEquals(middle, caretLine)
     }
 
-    fun `test Reposition moves the caret without scrolling the view`() {
+    @Test
+    fun `Reposition moves the caret without scrolling the view`() {
         configure()
         val scrollBefore = myFixture.editor.scrollingModel.verticalScrollOffset
 
@@ -70,22 +77,24 @@ class RepositionTest : EmacsJTestCase() {
         assertEquals(scrollBefore, myFixture.editor.scrollingModel.verticalScrollOffset)
     }
 
-    fun `test Caret stays within the visible area at each step of the cycle`() {
+    @Test
+    fun `Caret stays within the visible area at each step of the cycle`() {
         configure()
 
         repeat(4) {
             myFixture.performEditorAction(ACTION_REPOSITION)
             val caretY = myFixture.editor.visualPositionToXY(myFixture.editor.caretModel.primaryCaret.visualPosition).y
             val relativeY = caretY - myFixture.editor.scrollingModel.verticalScrollOffset
-            assertTrue("Caret above the viewport: $relativeY", relativeY >= 0)
+            assertTrue(relativeY >= 0, "Caret above the viewport: $relativeY")
             assertTrue(
-                "Caret below the viewport: $relativeY",
-                relativeY <= myFixture.editor.scrollingModel.visibleArea.height
+                relativeY <= myFixture.editor.scrollingModel.visibleArea.height,
+                "Caret below the viewport: $relativeY"
             )
         }
     }
 
-    fun `test Reposition reduces multiple carets to one`() {
+    @Test
+    fun `Reposition reduces multiple carets to one`() {
         myFixture.configureByText(FILE, (1..LINE_COUNT).joinToString("\n") { "line $it" })
         EditorTestUtil.setEditorVisibleSize(myFixture.editor, 80, VISIBLE_LINES)
         myFixture.editor.caretModel.caretsAndSelections = [

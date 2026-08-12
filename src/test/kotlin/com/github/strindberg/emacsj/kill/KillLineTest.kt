@@ -3,12 +3,15 @@ package com.github.strindberg.emacsj.kill
 import java.awt.datatransfer.DataFlavor
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.ide.CopyPasteManager
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val FILE = "killlinefile.txt"
 
 class KillLineTest : EmacsJTestCase() {
 
-    fun `test Line is killed to line end`() {
+    @Test
+    fun `Line is killed to line end`() {
         myFixture.configureByText(
             FILE,
             """
@@ -28,7 +31,8 @@ class KillLineTest : EmacsJTestCase() {
         assertEquals("zoo", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Line is killed including new line when caret at line start`() {
+    @Test
+    fun `Line is killed including new line when caret at line start`() {
         myFixture.configureByText(
             FILE,
             """
@@ -47,7 +51,8 @@ class KillLineTest : EmacsJTestCase() {
         assertEquals("zoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Line is killed including new line when only whitespace after caret`() {
+    @Test
+    fun `Line is killed including new line when only whitespace after caret`() {
         myFixture.configureByText(
             FILE,
             """
@@ -66,7 +71,8 @@ class KillLineTest : EmacsJTestCase() {
         assertEquals("    \n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test End of document is properly handled`() {
+    @Test
+    fun `End of document is properly handled`() {
         myFixture.configureByText(
             FILE,
             """
@@ -87,7 +93,8 @@ class KillLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Whole line is killed`() {
+    @Test
+    fun `Whole line is killed`() {
         myFixture.configureByText(
             FILE,
             """
@@ -108,7 +115,8 @@ class KillLineTest : EmacsJTestCase() {
         assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test End of document is properly handled by kill whole line`() {
+    @Test
+    fun `End of document is properly handled by kill whole line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -129,7 +137,8 @@ class KillLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Rest of last line is killed when the document has no trailing new line`() {
+    @Test
+    fun `Rest of last line is killed when the document has no trailing new line`() {
         myFixture.configureByText(FILE, "zed\nbaz<caret>zoo")
 
         myFixture.performEditorAction(ACTION_KILL_LINE)
@@ -138,7 +147,8 @@ class KillLineTest : EmacsJTestCase() {
         assertEquals("zoo", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Whole last line is killed when the document has no trailing new line`() {
+    @Test
+    fun `Whole last line is killed when the document has no trailing new line`() {
         myFixture.configureByText(FILE, "zed\n<caret>bazzoo")
 
         myFixture.performEditorAction(ACTION_KILL_LINE)
@@ -147,7 +157,8 @@ class KillLineTest : EmacsJTestCase() {
         assertEquals("bazzoo", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Kill rest of line works with multiple carets`() {
+    @Test
+    fun `Kill rest of line works with multiple carets`() {
         myFixture.configureByText(
             FILE,
             """
@@ -168,7 +179,8 @@ class KillLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Kill whole line with multiple carets removes every line and merges the carets`() {
+    @Test
+    fun `Kill whole line with multiple carets removes every line and merges the carets`() {
         myFixture.configureByText(
             FILE,
             """

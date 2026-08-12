@@ -6,12 +6,14 @@ import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT2
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT3
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT5
+import org.junit.jupiter.api.Test
 
 private const val FILE = "zapfile.txt"
 
 class ZapTest : EmacsJTestCase() {
 
-    fun `test Zap up to works`() {
+    @Test
+    fun `Zap up to works`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_UP_TO)
@@ -20,7 +22,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar <caret>l baz")
     }
 
-    fun `test Zap up to does not remove anything when no match is found`() {
+    @Test
+    fun `Zap up to does not remove anything when no match is found`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_UP_TO)
@@ -29,7 +32,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar <caret>fool baz")
     }
 
-    fun `test Zap up to works when matching next char`() {
+    @Test
+    fun `Zap up to works when matching next char`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_UP_TO)
@@ -38,7 +42,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar <caret>fool baz")
     }
 
-    fun `test Zap up to works at buffer end`() {
+    @Test
+    fun `Zap up to works at buffer end`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_UP_TO)
@@ -47,7 +52,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar <caret>z")
     }
 
-    fun `test Zap to works`() {
+    @Test
+    fun `Zap to works`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
@@ -56,7 +62,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar <caret> baz")
     }
 
-    fun `test Zap to does not remove anything when no match is found`() {
+    @Test
+    fun `Zap to does not remove anything when no match is found`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
@@ -65,7 +72,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar <caret>fool baz")
     }
 
-    fun `test Zap to works when matching next char`() {
+    @Test
+    fun `Zap to works when matching next char`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
@@ -74,7 +82,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar <caret>ool baz")
     }
 
-    fun `test Zap to works at buffer end`() {
+    @Test
+    fun `Zap to works at buffer end`() {
         myFixture.configureByText(FILE, "bar <caret>fool baz")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
@@ -83,7 +92,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar <caret>")
     }
 
-    fun `test Zap back up to works`() {
+    @Test
+    fun `Zap back up to works`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_UP_TO)
@@ -92,7 +102,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar f<caret> baz")
     }
 
-    fun `test Zap back up to does not remove anything when no match is found`() {
+    @Test
+    fun `Zap back up to does not remove anything when no match is found`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_UP_TO)
@@ -101,7 +112,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar fool<caret> baz")
     }
 
-    fun `test Zap back up to works when matching previous char`() {
+    @Test
+    fun `Zap back up to works when matching previous char`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_UP_TO)
@@ -110,7 +122,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar fool<caret> baz")
     }
 
-    fun `test Zap back up to works at buffer start`() {
+    @Test
+    fun `Zap back up to works at buffer start`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_UP_TO)
@@ -119,7 +132,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("b<caret> baz")
     }
 
-    fun `test Zap back to works`() {
+    @Test
+    fun `Zap back to works`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
@@ -128,7 +142,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar <caret> baz")
     }
 
-    fun `test Zap back to does not remove anything when no match is found`() {
+    @Test
+    fun `Zap back to does not remove anything when no match is found`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
@@ -137,7 +152,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar fool<caret> baz")
     }
 
-    fun `test Zap back to works when matching previous char`() {
+    @Test
+    fun `Zap back to works when matching previous char`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
@@ -146,7 +162,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("bar foo<caret> baz")
     }
 
-    fun `test Zap back to works at buffer start`() {
+    @Test
+    fun `Zap back to works at buffer start`() {
         myFixture.configureByText(FILE, "bar fool<caret> baz")
 
         myFixture.performEditorAction(ACTION_ZAP_BACKWARD_TO)
@@ -155,7 +172,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("<caret> baz")
     }
 
-    fun `test Zap with capital letter only matches capital letters`() {
+    @Test
+    fun `Zap with capital letter only matches capital letters`() {
         myFixture.configureByText(FILE, "<caret>bar foo Foo")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
@@ -164,7 +182,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>oo")
     }
 
-    fun `test Zap with lower-case letter matches capital letters`() {
+    @Test
+    fun `Zap with lower-case letter matches capital letters`() {
         myFixture.configureByText(FILE, "<caret>bar Foo foo")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)
@@ -173,7 +192,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>oo foo")
     }
 
-    fun `test Zap with universal argument removes 4 occurrences`() {
+    @Test
+    fun `Zap with universal argument removes 4 occurrences`() {
         myFixture.configureByText(FILE, "<caret>) ) ) ) )")
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
@@ -183,7 +203,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("<caret> )")
     }
 
-    fun `test Zap with numeric universal argument removes 5 occurrences`() {
+    @Test
+    fun `Zap with numeric universal argument removes 5 occurrences`() {
         myFixture.configureByText(FILE, "<caret>) ) ) ) )")
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
@@ -193,7 +214,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>")
     }
 
-    fun `test Zap with universal argument higher than existing occurrences removes no text`() {
+    @Test
+    fun `Zap with universal argument higher than existing occurrences removes no text`() {
         myFixture.configureByText(FILE, "<caret>) ) ) ) )")
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
@@ -204,7 +226,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>) ) ) ) )")
     }
 
-    fun `test Zap up to backwards with universal argument removes 3 occurrences`() {
+    @Test
+    fun `Zap up to backwards with universal argument removes 3 occurrences`() {
         myFixture.configureByText(FILE, ") ) ) ) )<caret>")
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
@@ -214,7 +237,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult(") )<caret>")
     }
 
-    fun `test Zap backwards with numeric universal argument removes 3 occurrences`() {
+    @Test
+    fun `Zap backwards with numeric universal argument removes 3 occurrences`() {
         myFixture.configureByText(FILE, ") ) ) ) )<caret>")
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
@@ -224,7 +248,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult(") ) <caret>")
     }
 
-    fun `test Zap backwards with numeric universal argument higher than existing occurrences removes no text`() {
+    @Test
+    fun `Zap backwards with numeric universal argument higher than existing occurrences removes no text`() {
         myFixture.configureByText(FILE, ") ) ) ) )<caret>")
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT3)
@@ -235,7 +260,8 @@ class ZapTest : EmacsJTestCase() {
         myFixture.checkResult(") ) ) ) )<caret>")
     }
 
-    fun `test Universal argument applies to every caret`() {
+    @Test
+    fun `Universal argument applies to every caret`() {
         myFixture.configureByText(
             FILE,
             """
@@ -256,7 +282,8 @@ class ZapTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Zap forward works with multiple carets`() {
+    @Test
+    fun `Zap forward works with multiple carets`() {
         myFixture.configureByText(
             FILE,
             """
@@ -276,7 +303,8 @@ class ZapTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Zap backward works with multiple carets`() {
+    @Test
+    fun `Zap backward works with multiple carets`() {
         myFixture.configureByText(
             FILE,
             """
@@ -296,7 +324,8 @@ class ZapTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Pressing escape aborts`() {
+    @Test
+    fun `Pressing escape aborts`() {
         myFixture.configureByText(FILE, "<caret>bar Foo foo")
 
         myFixture.performEditorAction(ACTION_ZAP_FORWARD_TO)

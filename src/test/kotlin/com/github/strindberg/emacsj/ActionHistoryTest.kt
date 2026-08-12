@@ -2,6 +2,10 @@ package com.github.strindberg.emacsj
 
 import com.github.strindberg.emacsj.view.ACTION_RECENTER
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNotSame
+import org.junit.jupiter.api.Test
 
 private const val FILE = "actionhistoryfile.txt"
 
@@ -9,7 +13,8 @@ private const val SENTINEL = "sentinel"
 
 class ActionHistoryTest : EmacsJTestCase() {
 
-    fun `test An action is recorded once, by id`() {
+    @Test
+    fun `An action is recorded once, by id`() {
         myFixture.configureByText(FILE, "<caret>foo")
         EmacsJService.instance.addAction(SENTINEL)
 
@@ -21,7 +26,8 @@ class ActionHistoryTest : EmacsJTestCase() {
         assertEquals(SENTINEL, EmacsJService.instance.lastActionIds().previous)
     }
 
-    fun `test A platform action is recorded by its id`() {
+    @Test
+    fun `A platform action is recorded by its id`() {
         myFixture.configureByText(FILE, "<caret>foo\nbar")
 
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_DOWN)
@@ -29,7 +35,8 @@ class ActionHistoryTest : EmacsJTestCase() {
         assertEquals(ACTION_EDITOR_MOVE_CARET_DOWN, EmacsJService.instance.lastActionId())
     }
 
-    fun `test Typing is recorded, but never as an action id`() {
+    @Test
+    fun `Typing is recorded, but never as an action id`() {
         myFixture.configureByText(FILE, "<caret>foo")
         EmacsJService.instance.addAction(ACTION_RECENTER)
 

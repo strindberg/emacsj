@@ -14,12 +14,16 @@ import com.github.strindberg.emacsj.search.SearchDirection
 import com.github.strindberg.emacsj.search.SearchType
 import com.github.strindberg.emacsj.ui.EmacsJActionsPromoter
 import com.intellij.openapi.actionSystem.DataContext
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 private const val FILE = "promoterfile.txt"
 
 class EmacsJActionsPromoterTest : EmacsJTestCase() {
 
-    fun `test Promoter sorts ISearch actions first when ISearch is active`() {
+    @Test
+    fun `Promoter sorts ISearch actions first when ISearch is active`() {
         myFixture.configureByText(FILE, "")
         ISearchHandler.delegate = ISearchDelegate(
             editor = myFixture.editor,
@@ -42,7 +46,8 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
         }
     }
 
-    fun `test Promoter sorts Replace actions first when Replace is active`() {
+    @Test
+    fun `Promoter sorts Replace actions first when Replace is active`() {
         myFixture.configureByText(FILE, "")
         ReplaceHandler.delegate = ReplaceDelegate(
             editor = myFixture.editor,
@@ -64,7 +69,8 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
         }
     }
 
-    fun `test Promoter sorts Repeat actions first when repeating`() {
+    @Test
+    fun `Promoter sorts Repeat actions first when repeating`() {
         myFixture.configureByText(FILE, "")
         EmacsJService.instance.setRepeating(true)
 
@@ -80,7 +86,8 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
         }
     }
 
-    fun `test Promoter sorts EmacsJ actions last when no ui is active`() {
+    @Test
+    fun `Promoter sorts EmacsJ actions last when no ui is active`() {
         myFixture.configureByText(FILE, "")
 
         val cancel = CancelRepeatAction()

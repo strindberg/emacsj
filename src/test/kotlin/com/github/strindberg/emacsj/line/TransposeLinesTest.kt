@@ -5,12 +5,15 @@ import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT0
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT2
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val FILE = "transposelinesfile.txt"
 
 class TransposeLinesTest : EmacsJTestCase() {
 
-    fun `test Transpose lines works as intended`() {
+    @Test
+    fun `Transpose lines works as intended`() {
         myFixture.configureByText(
             FILE,
             """
@@ -31,7 +34,8 @@ class TransposeLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Transpose lines on first line does nothing`() {
+    @Test
+    fun `Transpose lines on first line does nothing`() {
         myFixture.configureByText(
             FILE,
             """
@@ -50,7 +54,8 @@ class TransposeLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Transpose lines on last line creates new line`() {
+    @Test
+    fun `Transpose lines on last line creates new line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -72,7 +77,8 @@ class TransposeLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Transpose lines with numeric prefix works as intended`() {
+    @Test
+    fun `Transpose lines with numeric prefix works as intended`() {
         myFixture.configureByText(
             FILE,
             """
@@ -95,7 +101,8 @@ class TransposeLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Transpose lines with prefix 0 works as intended`() {
+    @Test
+    fun `Transpose lines with prefix 0 works as intended`() {
         myFixture.configureByText(
             FILE,
             """
@@ -125,7 +132,8 @@ class TransposeLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Transpose lines reduces multiple carets to one and uses the primary caret`() {
+    @Test
+    fun `Transpose lines reduces multiple carets to one and uses the primary caret`() {
         myFixture.configureByText(
             FILE,
             """

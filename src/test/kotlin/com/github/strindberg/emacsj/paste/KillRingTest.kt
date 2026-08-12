@@ -14,12 +14,19 @@ import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.ide.CopyPasteManagerEx
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_COPY
 import com.intellij.openapi.ide.CopyPasteManager
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 private const val FILE = "killringfile.txt"
 
 class KillRingTest : EmacsJTestCase() {
 
-    fun `test Paste history without a preceding paste opens the kill ring`() {
+    @Test
+    fun `Paste history without a preceding paste opens the kill ring`() {
         resetClipboard("older", "newer")
         myFixture.configureByText(FILE, "<caret>")
 
@@ -30,7 +37,8 @@ class KillRingTest : EmacsJTestCase() {
         assertEquals(0, PasteHandler.killRingDelegate?.selectedIndex)
     }
 
-    fun `test Enter pastes the selected entry and closes the popup`() {
+    @Test
+    fun `Enter pastes the selected entry and closes the popup`() {
         resetClipboard("older", "newer")
         myFixture.configureByText(FILE, "<caret>")
 
@@ -43,7 +51,8 @@ class KillRingTest : EmacsJTestCase() {
         myFixture.checkResult("older<caret>")
     }
 
-    fun `test Escape closes the popup without pasting`() {
+    @Test
+    fun `Escape closes the popup without pasting`() {
         resetClipboard("older", "newer")
         myFixture.configureByText(FILE, "<caret>")
 
@@ -54,7 +63,8 @@ class KillRingTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>")
     }
 
-    fun `test Ctrl-G closes the popup without pasting`() {
+    @Test
+    fun `Ctrl-G closes the popup without pasting`() {
         resetClipboard("older", "newer")
         myFixture.configureByText(FILE, "<caret>")
 
@@ -65,7 +75,8 @@ class KillRingTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>")
     }
 
-    fun `test The whole entry is pasted even though the list shows one line`() {
+    @Test
+    fun `The whole entry is pasted even though the list shows one line`() {
         resetClipboard("has\nseveral\nlines")
         myFixture.configureByText(FILE, "<caret>")
 
@@ -78,7 +89,8 @@ class KillRingTest : EmacsJTestCase() {
         myFixture.checkResult("has\nseveral\nlines<caret>")
     }
 
-    fun `test A paste followed by paste history still cycles instead of opening the ring`() {
+    @Test
+    fun `A paste followed by paste history still cycles instead of opening the ring`() {
         resetClipboard("older", "newer")
         myFixture.configureByText(FILE, "<caret>")
 
@@ -89,7 +101,8 @@ class KillRingTest : EmacsJTestCase() {
         myFixture.checkResult("older<caret>")
     }
 
-    fun `test A line copied whole is pasted at the caret, not as its own line`() {
+    @Test
+    fun `A line copied whole is pasted at the caret, not as its own line`() {
         (CopyPasteManager.getInstance() as CopyPasteManagerEx).let { m -> m.allContents.forEach { m.removeContent(it) } }
         myFixture.configureByText(FILE, "alpha\nbe<caret>ta\ngamma")
         myFixture.performEditorAction(ACTION_EDITOR_COPY)
@@ -103,7 +116,8 @@ class KillRingTest : EmacsJTestCase() {
         myFixture.checkResult("Xbeta\n<caret>Y")
     }
 
-    fun `test Only the keys that finish the choice are claimed`() {
+    @Test
+    fun `Only the keys that finish the choice are claimed`() {
         resetClipboard("older", "newer")
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_HISTORY_PASTE)

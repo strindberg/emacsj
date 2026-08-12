@@ -2,12 +2,14 @@ package com.github.strindberg.emacsj.movement
 
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
+import org.junit.jupiter.api.Test
 
 private const val FILE = "movementfile.txt"
 
 class TextMovementTest : EmacsJTestCase() {
 
-    fun `test Text start sets mark`() {
+    @Test
+    fun `Text start sets mark`() {
         myFixture.configureByText(FILE, "foo<caret>bar")
 
         myFixture.performEditorAction(ACTION_TEXT_START)
@@ -17,7 +19,8 @@ class TextMovementTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `test Text end sets mark`() {
+    @Test
+    fun `Text end sets mark`() {
         myFixture.configureByText(FILE, "foo<caret>bar")
 
         myFixture.performEditorAction(ACTION_TEXT_END)
@@ -27,7 +30,8 @@ class TextMovementTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `test Text start - no mark is pushed if selection is active`() {
+    @Test
+    fun `Text start - no mark is pushed if selection is active`() {
         myFixture.configureByText(FILE, "foo<selection>baz</selection><caret>bar")
 
         myFixture.performEditorAction(ACTION_TEXT_START)
@@ -37,7 +41,8 @@ class TextMovementTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>foobazbar")
     }
 
-    fun `test Text end - no mark is pushed if selection is active`() {
+    @Test
+    fun `Text end - no mark is pushed if selection is active`() {
         myFixture.configureByText(FILE, "foo<selection>baz</selection><caret>bar")
 
         myFixture.performEditorAction(ACTION_TEXT_END)

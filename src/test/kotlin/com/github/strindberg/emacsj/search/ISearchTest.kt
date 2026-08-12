@@ -19,6 +19,14 @@ import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 private const val FILE = "isearchfile.txt"
 
@@ -34,20 +42,18 @@ class ISearchTest : EmacsJTestCase() {
             return ISearchHandler.delegate?.ui?.count
         }
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun speedUpHighlighting() {
         CommonHighlighter.delayMillis = 0
     }
 
-    override fun tearDown() {
-        try {
-            CommonHighlighter.delayMillis = HIGHLIGHT_DELAY_MILLIS
-        } finally {
-            super.tearDown()
-        }
+    @AfterEach
+    fun restoreHighlightingDelay() {
+        CommonHighlighter.delayMillis = HIGHLIGHT_DELAY_MILLIS
     }
 
-    fun `test Adding a caret cancels the search`() {
+    @Test
+    fun `Adding a caret cancels the search`() {
         myFixture.configureByText(FILE, "<caret>foo\nbar")
         performEditorAction(ACTION_ISEARCH_FORWARD)
         type("o")
@@ -58,7 +64,8 @@ class ISearchTest : EmacsJTestCase() {
         assertNull(ISearchHandler.delegate)
     }
 
-    fun `test Simple search works`() {
+    @Test
+    fun `Simple search works`() {
         myFixture.configureByText(FILE, "<caret>foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -73,7 +80,8 @@ class ISearchTest : EmacsJTestCase() {
         assertNull(searchCount)
     }
 
-    fun `test Empty text search doesn't crash`() {
+    @Test
+    fun `Empty text search doesn't crash`() {
         myFixture.configureByText(FILE, "<caret>foo")
         ISearchHandler.searches.clear(SearchType.TEXT)
 
@@ -85,7 +93,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>foo")
     }
 
-    fun `test Empty regexp search doesn't crash`() {
+    @Test
+    fun `Empty regexp search doesn't crash`() {
         myFixture.configureByText(FILE, "<caret>foo")
         ISearchHandler.searches.clear(SearchType.REGEXP)
 
@@ -97,7 +106,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>foo")
     }
 
-    fun `test Empty reverse search doesn't crash`() {
+    @Test
+    fun `Empty reverse search doesn't crash`() {
         myFixture.configureByText(FILE, "foo<caret>")
         ISearchHandler.searches.clear(SearchType.TEXT)
 
@@ -109,7 +119,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `test Simple search works 2`() {
+    @Test
+    fun `Simple search works 2`() {
         myFixture.configureByText(FILE, "<caret>foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -123,7 +134,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("o", ISearchHandler.delegate?.text)
     }
 
-    fun `test Finding second match works`() {
+    @Test
+    fun `Finding second match works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -141,7 +153,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Search - adding letters after finding matches works`() {
+    @Test
+    fun `Search - adding letters after finding matches works`() {
         myFixture.configureByText(FILE, "<caret>foop bar foop baz")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -158,7 +171,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Search can be reversed after failed search`() {
+    @Test
+    fun `Search can be reversed after failed search`() {
         myFixture.configureByText(FILE, "fool <caret>foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -173,7 +187,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 1), searchCount)
     }
 
-    fun `test Reverse search - adding letters after finding matches works`() {
+    @Test
+    fun `Reverse search - adding letters after finding matches works`() {
         myFixture.configureByText(FILE, "foop bar foop baz foop<caret> foop")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -190,7 +205,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 4), searchCount)
     }
 
-    fun `test Reverse search - adding letters after finding matches works 2`() {
+    @Test
+    fun `Reverse search - adding letters after finding matches works 2`() {
         myFixture.configureByText(FILE, "foop bar foop baz foo<caret>p")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -207,7 +223,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 3), searchCount)
     }
 
-    fun `test Wrap-around search works`() {
+    @Test
+    fun `Wrap-around search works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -237,7 +254,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Wrap-around reverse search works`() {
+    @Test
+    fun `Wrap-around reverse search works`() {
         myFixture.configureByText(FILE, "foo bar foo<caret>")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -260,7 +278,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Wrap-around search works 2`() {
+    @Test
+    fun `Wrap-around search works 2`() {
         myFixture.configureByText(
             FILE,
             """
@@ -299,7 +318,8 @@ class ISearchTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Using previous search works after finishing with enter`() {
+    @Test
+    fun `Using previous search works after finishing with enter`() {
         myFixture.configureByText(FILE, "<caret>foo foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -321,7 +341,8 @@ class ISearchTest : EmacsJTestCase() {
         assertNull(searchCount)
     }
 
-    fun `test Previous search is not triggered if changing direction with empty search`() {
+    @Test
+    fun `Previous search is not triggered if changing direction with empty search`() {
         myFixture.configureByText(FILE, "<caret>foo foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -337,7 +358,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Escape returns to original start`() {
+    @Test
+    fun `Escape returns to original start`() {
         myFixture.configureByText(FILE, "foo<caret> bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -354,7 +376,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret> bar foo")
     }
 
-    fun `test Isearch text can be edited`() {
+    @Test
+    fun `Isearch text can be edited`() {
         myFixture.configureByText(FILE, "<caret>foo fooz foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -372,7 +395,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 1), searchCount)
     }
 
-    fun `test Previous searches can be re-used`() {
+    @Test
+    fun `Previous searches can be re-used`() {
         myFixture.configureByText(FILE, "<caret>foo foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -396,7 +420,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Text can be added to previous search`() {
+    @Test
+    fun `Text can be added to previous search`() {
         myFixture.configureByText(FILE, "<caret>foo fooz foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -417,7 +442,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 1), searchCount)
     }
 
-    fun `test Text can be removed from previous search`() {
+    @Test
+    fun `Text can be removed from previous search`() {
         myFixture.configureByText(FILE, "<caret>foo fooz foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -460,7 +486,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 1), searchCount)
     }
 
-    fun `test Previous searches can be navigated with previous and next`() {
+    @Test
+    fun `Previous searches can be navigated with previous and next`() {
         myFixture.configureByText(FILE, "<caret>foo fooz foobar fooz")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -489,7 +516,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo fooz foobar fooz<caret>")
     }
 
-    fun `test Previous searches are offered in most recently used order`() {
+    @Test
+    fun `Previous searches are offered in most recently used order`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz baz")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -552,7 +580,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret> bar baz baz")
     }
 
-    fun `test Pressing escape during previous search selection does not save text as previous search`() {
+    @Test
+    fun `Pressing escape during previous search selection does not save text as previous search`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz baz")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -574,7 +603,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search current char works`() {
+    @Test
+    fun `Search current char works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -589,7 +619,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Search current char works at end of document`() {
+    @Test
+    fun `Search current char works at end of document`() {
         myFixture.configureByText(FILE, "foo bar foo<caret>")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -598,7 +629,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search current word works`() {
+    @Test
+    fun `Search current word works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -612,7 +644,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search current word works several times`() {
+    @Test
+    fun `Search current word works several times`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -642,7 +675,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search current word works several times 2`() {
+    @Test
+    fun `Search current word works several times 2`() {
         myFixture.configureByText(FILE, "<caret>foo.bar(foo)bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -663,7 +697,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("foo.bar(foo)bar", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search current word works with late second invocation`() {
+    @Test
+    fun `Search current word works with late second invocation`() {
         myFixture.configureByText(FILE, "<caret>foo.bar foo.bar bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -690,7 +725,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search current word shortcut with reverse search works`() {
+    @Test
+    fun `Search current word shortcut with reverse search works`() {
         myFixture.configureByText(FILE, "foo bar <caret>foo")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -710,7 +746,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo bar <caret>foo")
     }
 
-    fun `test Search current word with reverse search works several times`() {
+    @Test
+    fun `Search current word with reverse search works several times`() {
         myFixture.configureByText(FILE, "foo bar <caret>foo bar")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -739,7 +776,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search current word with camel case works as expected`() {
+    @Test
+    fun `Search current word with camel case works as expected`() {
         myFixture.configureByText(FILE, "<caret>fooBarFoo")
         myFixture.editor.settings.isCamelWords = true
 
@@ -761,7 +799,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Combination of typed letters and current word search works as expected`() {
+    @Test
+    fun `Combination of typed letters and current word search works as expected`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -775,7 +814,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("fo", ISearchHandler.delegate?.text)
     }
 
-    fun `test Combination of typed letters and current word reverse search works as expected`() {
+    @Test
+    fun `Combination of typed letters and current word reverse search works as expected`() {
         myFixture.configureByText(FILE, "bar foo bar <caret>foo")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -810,7 +850,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search current line works`() {
+    @Test
+    fun `Search current line works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -846,7 +887,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Backspace works as expected`() {
+    @Test
+    fun `Backspace works as expected`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -868,7 +910,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Backspace works as expected after failed search`() {
+    @Test
+    fun `Backspace works as expected after failed search`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -903,7 +946,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(ISearchState.SEARCH, ISearchHandler.delegate?.state)
     }
 
-    fun `test Changing direction works 1`() {
+    @Test
+    fun `Changing direction works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -924,7 +968,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 3), searchCount)
     }
 
-    fun `test Changing direction works 2`() {
+    @Test
+    fun `Changing direction works 2`() {
         myFixture.configureByText(FILE, "foo bar foo<caret>")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -944,7 +989,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Regexp search works`() {
+    @Test
+    fun `Regexp search works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -954,7 +1000,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Regexp backward search works`() {
+    @Test
+    fun `Regexp backward search works`() {
         myFixture.configureByText(FILE, "foo bar foo<caret>")
 
         performEditorAction(ACTION_ISEARCH_REGEXP_BACKWARD)
@@ -964,7 +1011,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Changing direction in regexp search works`() {
+    @Test
+    fun `Changing direction in regexp search works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -985,7 +1033,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Pasting from clipboard works`() {
+    @Test
+    fun `Pasting from clipboard works`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -999,7 +1048,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Pasting from clipboard works 2`() {
+    @Test
+    fun `Pasting from clipboard works 2`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
         CopyPasteManager.getInstance().setContents(StringSelection("ar"))
 
@@ -1017,7 +1067,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("b", ISearchHandler.delegate?.text)
     }
 
-    fun `test Paste history replaces the pasted text with the next clipboard item`() {
+    @Test
+    fun `Paste history replaces the pasted text with the next clipboard item`() {
         resetClipboard("older", "bar")
         myFixture.configureByText(FILE, "<caret>foo bar older")
 
@@ -1031,7 +1082,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo bar older<caret>")
     }
 
-    fun `test Paste history keeps whatever was typed before the paste`() {
+    @Test
+    fun `Paste history keeps whatever was typed before the paste`() {
         resetClipboard("older", "bar")
         myFixture.configureByText(FILE, "<caret>foo bar foo older")
 
@@ -1045,7 +1097,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("foo older", ISearchHandler.delegate?.text)
     }
 
-    fun `test Paste history cycles back round to the first item`() {
+    @Test
+    fun `Paste history cycles back round to the first item`() {
         resetClipboard("older", "bar")
         myFixture.configureByText(FILE, "<caret>foo bar older")
 
@@ -1059,7 +1112,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("bar", ISearchHandler.delegate?.text)
     }
 
-    fun `test Paste history does nothing when the previous action was not a paste`() {
+    @Test
+    fun `Paste history does nothing when the previous action was not a paste`() {
         resetClipboard("older", "bar")
         myFixture.configureByText(FILE, "<caret>foo bar older")
 
@@ -1072,7 +1126,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("barz", ISearchHandler.delegate?.text)
     }
 
-    fun `test Failing search marks only the characters added since the last match`() {
+    @Test
+    fun `Failing search marks only the characters added since the last match`() {
         myFixture.configureByText(FILE, "<caret>foo bar")
         performEditorAction(ACTION_ISEARCH_FORWARD)
         type("foo")
@@ -1084,7 +1139,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("foob", ISearchHandler.delegate?.text)
     }
 
-    fun `test Further failing characters extend the marked part`() {
+    @Test
+    fun `Further failing characters extend the marked part`() {
         myFixture.configureByText(FILE, "<caret>foo bar")
         performEditorAction(ACTION_ISEARCH_FORWARD)
         type("foo")
@@ -1095,7 +1151,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(markupOf(found = "foo", notFound = "bz"), markup())
     }
 
-    fun `test Backspacing back to a matching search clears the marking`() {
+    @Test
+    fun `Backspacing back to a matching search clears the marking`() {
         myFixture.configureByText(FILE, "<caret>foo bar")
         performEditorAction(ACTION_ISEARCH_FORWARD)
         type("foo")
@@ -1109,7 +1166,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("foo", markup())
     }
 
-    fun `test Marked search text is escaped`() {
+    @Test
+    fun `Marked search text is escaped`() {
         myFixture.configureByText(FILE, "<caret>a<b & c")
         performEditorAction(ACTION_ISEARCH_FORWARD)
         type("a<")
@@ -1120,7 +1178,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("a<Z", ISearchHandler.delegate?.text)
     }
 
-    fun `test Text iSearch key binding works during regexp search`() {
+    @Test
+    fun `Text iSearch key binding works during regexp search`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -1132,7 +1191,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("o{2}", ISearchHandler.delegate?.text)
     }
 
-    fun `test Breadcrumb works as expected when changing direction`() {
+    @Test
+    fun `Breadcrumb works as expected when changing direction`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1177,7 +1237,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("", ISearchHandler.delegate?.text)
     }
 
-    fun `test Breadcrumb works as expected when changing direction 2`() {
+    @Test
+    fun `Breadcrumb works as expected when changing direction 2`() {
         myFixture.configureByText(FILE, "<caret>foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1194,7 +1255,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
 
-    fun `test Simple reverse search works`() {
+    @Test
+    fun `Simple reverse search works`() {
         myFixture.configureByText(FILE, "foo foo<caret>")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -1204,7 +1266,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Simple reverse search works 2`() {
+    @Test
+    fun `Simple reverse search works 2`() {
         myFixture.configureByText(FILE, "foo foo<caret> ")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -1213,7 +1276,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search starts at prompt`() {
+    @Test
+    fun `Search starts at prompt`() {
         myFixture.configureByText(FILE, "foo<caret>foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1227,7 +1291,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Reverse search starts at prompt`() {
+    @Test
+    fun `Reverse search starts at prompt`() {
         myFixture.configureByText(FILE, "foo<caret>foo")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -1241,7 +1306,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Change direction happens at prompt`() {
+    @Test
+    fun `Change direction happens at prompt`() {
         myFixture.configureByText(FILE, "<caret>foofoo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1255,7 +1321,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Simple reverse search works when not at end of document`() {
+    @Test
+    fun `Simple reverse search works when not at end of document`() {
         myFixture.configureByText(FILE, "foo<caret> bar")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -1264,7 +1331,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("oo", ISearchHandler.delegate?.text)
     }
 
-    fun `test Search with new line works`() {
+    @Test
+    fun `Search with new line works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1290,7 +1358,8 @@ class ISearchTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Multiple reverse searches work`() {
+    @Test
+    fun `Multiple reverse searches work`() {
         myFixture.configureByText(FILE, "foo bar foo<caret>")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -1309,7 +1378,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Multiple caret search works over same texts`() {
+    @Test
+    fun `Multiple caret search works over same texts`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1340,7 +1410,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(0, 2), searchCount)
     }
 
-    fun `test Multiple caret search works over different texts`() {
+    @Test
+    fun `Multiple caret search works over different texts`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1362,7 +1433,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(0, 2), searchCount)
     }
 
-    fun `test Multiple caret search can be reversed after failed search`() {
+    @Test
+    fun `Multiple caret search can be reversed after failed search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1395,7 +1467,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 1), searchCount)
     }
 
-    fun `test Multiple caret search works over overlapping texts`() {
+    @Test
+    fun `Multiple caret search works over overlapping texts`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1437,7 +1510,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(0, 3), searchCount)
     }
 
-    fun `test Reverse multiple caret search works over overlapping texts`() {
+    @Test
+    fun `Reverse multiple caret search works over overlapping texts`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1479,7 +1553,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(0, 3), searchCount)
     }
 
-    fun `test Mark is set when search starts`() {
+    @Test
+    fun `Mark is set when search starts`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1511,7 +1586,8 @@ class ISearchTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Swap at stop works`() {
+    @Test
+    fun `Swap at stop works`() {
         myFixture.configureByText(FILE, "<caret>foo foo bar baz")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1521,7 +1597,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>foo foo bar baz")
     }
 
-    fun `test Swap at stop after failed search works`() {
+    @Test
+    fun `Swap at stop after failed search works`() {
         myFixture.configureByText(FILE, "<caret>foo foo bar baz")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1531,7 +1608,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>foo foo bar baz")
     }
 
-    fun `test Swap at stop after backward search works`() {
+    @Test
+    fun `Swap at stop after backward search works`() {
         myFixture.configureByText(FILE, "foo foo bar <caret>baz")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -1541,7 +1619,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo foo<caret> bar baz")
     }
 
-    fun `test Mark at stop works`() {
+    @Test
+    fun `Mark at stop works`() {
         myFixture.configureByText(FILE, "<caret>foo foo bar baz")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1551,7 +1630,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("<selection>foo</selection><caret> foo bar baz")
     }
 
-    fun `test Mark at stop after failed search works`() {
+    @Test
+    fun `Mark at stop after failed search works`() {
         myFixture.configureByText(FILE, "<caret>foo foo bar baz")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1561,7 +1641,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("<selection>foo<caret></selection> foo bar baz")
     }
 
-    fun `test Mark at stop after backward search works`() {
+    @Test
+    fun `Mark at stop after backward search works`() {
         myFixture.configureByText(FILE, "foo foo bar <caret>baz")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -1571,7 +1652,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo <selection><caret>foo</selection> bar baz")
     }
 
-    fun `test Isearch with lax search works 1`() {
+    @Test
+    fun `Isearch with lax search works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar yes sir")
         ISearchHandler.isLax = true
 
@@ -1582,7 +1664,8 @@ class ISearchTest : EmacsJTestCase() {
         ISearchHandler.isLax = false
     }
 
-    fun `test Isearch with lax search works 2`() {
+    @Test
+    fun `Isearch with lax search works 2`() {
         myFixture.configureByText(FILE, "<caret>foo bar yes sir")
         ISearchHandler.isLax = true
 
@@ -1593,7 +1676,8 @@ class ISearchTest : EmacsJTestCase() {
         ISearchHandler.isLax = false
     }
 
-    fun `test Search can be toggled from lax to non-lax`() {
+    @Test
+    fun `Search can be toggled from lax to non-lax`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo bar foo bar")
         ISearchHandler.isLax = true
 
@@ -1610,7 +1694,8 @@ class ISearchTest : EmacsJTestCase() {
         ISearchHandler.isLax = false
     }
 
-    fun `test Search can be toggled from non-lax to lax`() {
+    @Test
+    fun `Search can be toggled from non-lax to lax`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo bar foo bar")
         ISearchHandler.isLax = false
 
@@ -1623,7 +1708,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo bar foo bar<caret> foo bar")
     }
 
-    fun `test Search can be toggled from undefined case to case sensitive`() {
+    @Test
+    fun `Search can be toggled from undefined case to case sensitive`() {
         myFixture.configureByText(FILE, "<caret>foo Foo foo bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1636,7 +1722,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo Foo foo<caret> bar")
     }
 
-    fun `test Search can be toggled from case sensitive to case insensitive`() {
+    @Test
+    fun `Search can be toggled from case sensitive to case insensitive`() {
         myFixture.configureByText(FILE, "<caret>foo Foo foo Foo bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1654,7 +1741,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo Foo foo Foo<caret> bar")
     }
 
-    fun `test Search can be toggled from undefined case to case insensitive`() {
+    @Test
+    fun `Search can be toggled from undefined case to case insensitive`() {
         myFixture.configureByText(FILE, "<caret>foo Foo foo Foo bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1667,7 +1755,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo Foo foo<caret> Foo bar")
     }
 
-    fun `test Search can be toggled from case insensitive to case sensitive`() {
+    @Test
+    fun `Search can be toggled from case insensitive to case sensitive`() {
         myFixture.configureByText(FILE, "<caret>foo Foo foo foo Foo bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1685,7 +1774,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo Foo foo foo Foo<caret> bar")
     }
 
-    fun `test Case sensitivity state is remembered in breadcrumbs`() {
+    @Test
+    fun `Case sensitivity state is remembered in breadcrumbs`() {
         myFixture.configureByText(FILE, "<caret>foo Foo foo foo Foo bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1711,7 +1801,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo Foo foo<caret> foo Foo bar")
     }
 
-    fun `test Search can be toggled from text to regexp`() {
+    @Test
+    fun `Search can be toggled from text to regexp`() {
         myFixture.configureByText(FILE, "<caret>foo foo+ foo bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1728,7 +1819,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo foo+ foo<caret> bar")
     }
 
-    fun `test Search can be toggled from regexp to text`() {
+    @Test
+    fun `Search can be toggled from regexp to text`() {
         myFixture.configureByText(FILE, "<caret>foo fo[o] bar")
 
         performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -1745,7 +1837,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo fo[o]<caret> bar")
     }
 
-    fun `test Search type is remembered in breadcrumbs`() {
+    @Test
+    fun `Search type is remembered in breadcrumbs`() {
         myFixture.configureByText(FILE, "<caret>foo foo+ foo bar")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -1767,7 +1860,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret> foo+ foo bar")
     }
 
-    fun `test First match can be reached when searching forward`() {
+    @Test
+    fun `First match can be reached when searching forward`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1808,7 +1902,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 3), searchCount)
     }
 
-    fun `test First match when already on first match is handled in forward search`() {
+    @Test
+    fun `First match when already on first match is handled in forward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1839,7 +1934,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 3), searchCount)
     }
 
-    fun `test First match when no match is handled in forward search`() {
+    @Test
+    fun `First match when no match is handled in forward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1871,7 +1967,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(0, 0), searchCount)
     }
 
-    fun `test First match when search has failed is handled in forward search`() {
+    @Test
+    fun `First match when search has failed is handled in forward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1903,7 +2000,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 3), searchCount)
     }
 
-    fun `test First match can be reached when searching backward`() {
+    @Test
+    fun `First match can be reached when searching backward`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1944,7 +2042,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 3), searchCount)
     }
 
-    fun `test First match when already on first match is handled in backward search`() {
+    @Test
+    fun `First match when already on first match is handled in backward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -1975,7 +2074,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 3), searchCount)
     }
 
-    fun `test First match when no match is handled in backward search`() {
+    @Test
+    fun `First match when no match is handled in backward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2007,7 +2107,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(0, 0), searchCount)
     }
 
-    fun `test First match when search has failed is handled in backward search`() {
+    @Test
+    fun `First match when search has failed is handled in backward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2039,7 +2140,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 3), searchCount)
     }
 
-    fun `test Last match can be reached when searching backward`() {
+    @Test
+    fun `Last match can be reached when searching backward`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2080,7 +2182,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 3), searchCount)
     }
 
-    fun `test Last match when already on last match is handled in backward search`() {
+    @Test
+    fun `Last match when already on last match is handled in backward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2111,7 +2214,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(3, 3), searchCount)
     }
 
-    fun `test Last match when no match is handled in backward search`() {
+    @Test
+    fun `Last match when no match is handled in backward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2143,7 +2247,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(0, 0), searchCount)
     }
 
-    fun `test Last match when search has failed is handled in backward search`() {
+    @Test
+    fun `Last match when search has failed is handled in backward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2175,7 +2280,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(3, 3), searchCount)
     }
 
-    fun `test Last match can be reached when searching forward`() {
+    @Test
+    fun `Last match can be reached when searching forward`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2216,7 +2322,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 3), searchCount)
     }
 
-    fun `test Last match when already on last match is handled in forward search`() {
+    @Test
+    fun `Last match when already on last match is handled in forward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2247,7 +2354,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(3, 3), searchCount)
     }
 
-    fun `test Last match when no match is handled in forward search`() {
+    @Test
+    fun `Last match when no match is handled in forward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2279,7 +2387,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(0, 0), searchCount)
     }
 
-    fun `test Last match when search has failed is handled in forward search`() {
+    @Test
+    fun `Last match when search has failed is handled in forward search`() {
         myFixture.configureByText(
             FILE,
             """
@@ -2311,7 +2420,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(3, 3), searchCount)
     }
 
-    fun `test Forward selection search works`() {
+    @Test
+    fun `Forward selection search works`() {
         myFixture.configureByText(FILE, "<selection>foo<caret></selection> bar foo")
         ISearchHandler.isSelectionISearch = true
 
@@ -2326,7 +2436,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Forward selection search works 2`() {
+    @Test
+    fun `Forward selection search works 2`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection> bar foo")
         ISearchHandler.isSelectionISearch = true
 
@@ -2341,7 +2452,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Backward selection search works`() {
+    @Test
+    fun `Backward selection search works`() {
         myFixture.configureByText(FILE, "foo bar <selection><caret>foo</selection>")
         ISearchHandler.isSelectionISearch = true
 
@@ -2356,7 +2468,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Backward selection search works 2`() {
+    @Test
+    fun `Backward selection search works 2`() {
         myFixture.configureByText(FILE, "foo bar <selection>foo<caret></selection>")
         ISearchHandler.isSelectionISearch = true
 
@@ -2371,7 +2484,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Delete char in forward search works`() {
+    @Test
+    fun `Delete char in forward search works`() {
         myFixture.configureByText(FILE, "<caret>foo bar fo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -2385,7 +2499,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(1, 2), searchCount)
     }
 
-    fun `test Delete char in backward search works`() {
+    @Test
+    fun `Delete char in backward search works`() {
         myFixture.configureByText(FILE, "fo bar foo<caret>")
 
         performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -2399,7 +2514,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 2), searchCount)
     }
 
-    fun `test Search is disabled in an editor without a project`() {
+    @Test
+    fun `Search is disabled in an editor without a project`() {
         val factory = EditorFactory.getInstance()
         val editor = factory.createEditor(factory.createDocument("foo bar baz"))
         try {
@@ -2416,7 +2532,8 @@ class ISearchTest : EmacsJTestCase() {
         }
     }
 
-    fun `test Changing search type starts the walk through previous searches again`() {
+    @Test
+    fun `Changing search type starts the walk through previous searches again`() {
         myFixture.configureByText(FILE, "<caret>aaa bbb xxx yyy")
         ISearchHandler.searches.clear(SearchType.TEXT)
         ISearchHandler.searches.clear(SearchType.REGEXP)
@@ -2450,7 +2567,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("bbb", ISearchHandler.delegate?.text)
     }
 
-    fun `test Half-typed regexp does not break a backward search`() {
+    @Test
+    fun `Half-typed regexp does not break a backward search`() {
         // ISearchDelegate.matchEnd() compiles the search string itself, but only on the backward first-search path, and only once a
         // match has moved the caret away from where the search started.
         myFixture.configureByText(FILE, "foo bar <caret>baz")
@@ -2471,7 +2589,8 @@ class ISearchTest : EmacsJTestCase() {
         myFixture.checkResult("foo <caret>bar baz")
     }
 
-    fun `test Editing the search string keeps the case sensitivity of the search`() {
+    @Test
+    fun `Editing the search string keeps the case sensitivity of the search`() {
         myFixture.configureByText(FILE, "<caret>foo FOO foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -2485,7 +2604,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(2, secondaryHighlightCount())
     }
 
-    fun `test Editing the search string keeps lax whitespace matching`() {
+    @Test
+    fun `Editing the search string keeps lax whitespace matching`() {
         myFixture.configureByText(FILE, "<caret>foo  bar and foo bar")
         ISearchHandler.isLax = true
 
@@ -2500,7 +2620,8 @@ class ISearchTest : EmacsJTestCase() {
         ISearchHandler.isLax = false
     }
 
-    fun `test Repeating a search keeps the highlights of every match`() {
+    @Test
+    fun `Repeating a search keeps the highlights of every match`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -2514,7 +2635,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(3, secondaryHighlightCount())
     }
 
-    fun `test Paste history does nothing after a character has been deleted`() {
+    @Test
+    fun `Paste history does nothing after a character has been deleted`() {
         resetClipboard("older", "bar")
         myFixture.configureByText(FILE, "<caret>foo bar older")
 
@@ -2530,7 +2652,8 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("ba", ISearchHandler.delegate?.text)
     }
 
-    fun `test A search leaves highlights belonging to the rest of the IDE alone`() {
+    @Test
+    fun `A search leaves highlights belonging to the rest of the IDE alone`() {
         myFixture.configureByText(FILE, "foo bar <caret>baz")
 
         // Stands in for a highlight-usages mark, a console hyperlink or a diff highlight.
@@ -2544,11 +2667,11 @@ class ISearchTest : EmacsJTestCase() {
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
         type("bar")
-        assertTrue("cleared while searching", foreign.isValid)
+        assertTrue(foreign.isValid, "cleared while searching")
 
         pressEnter()
 
-        assertTrue("cleared when the search ended", foreign.isValid)
+        assertTrue(foreign.isValid, "cleared when the search ended")
         // The same object, not a copy: whoever painted it still holds this reference and must be able to remove it.
         assertTrue(myFixture.editor.markupModel.allHighlighters.contains(foreign))
         // The session still cleans up after itself rather than leaking its own highlights.
@@ -2560,7 +2683,8 @@ class ISearchTest : EmacsJTestCase() {
      * as it stands when the next action starts, so firing actions faster than the debounce would snapshot counts
      * that have not arrived yet -- something a user typing at the keyboard never does.
      */
-    fun `test Isearch keystroke handlers step aside while the search string is edited`() {
+    @Test
+    fun `Isearch keystroke handlers step aside while the search string is edited`() {
         myFixture.configureByText(FILE, "<caret>foo fooz foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -2583,7 +2707,8 @@ class ISearchTest : EmacsJTestCase() {
         assertFalse(pasteHistory.isEnabled(myFixture.editor, caret, DataContext.EMPTY_CONTEXT))
     }
 
-    fun `test Typing no longer appends to the search string once it is being edited`() {
+    @Test
+    fun `Typing no longer appends to the search string once it is being edited`() {
         myFixture.configureByText(FILE, "<caret>foo fooz foo")
 
         performEditorAction(ACTION_ISEARCH_FORWARD)

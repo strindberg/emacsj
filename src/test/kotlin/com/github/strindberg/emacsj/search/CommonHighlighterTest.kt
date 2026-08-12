@@ -2,6 +2,10 @@ package com.github.strindberg.emacsj.search
 
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.command.WriteCommandAction
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 private const val SCAN_STARTUP_MILLIS = 20L
 
@@ -9,21 +13,19 @@ class CommonHighlighterTest : EmacsJTestCase() {
 
     private var savedDelay = HIGHLIGHT_DELAY_MILLIS
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun speedUpHighlighting() {
         savedDelay = CommonHighlighter.delayMillis
         CommonHighlighter.delayMillis = 0
     }
 
-    override fun tearDown() {
-        try {
-            CommonHighlighter.delayMillis = savedDelay
-        } finally {
-            super.tearDown()
-        }
+    @AfterEach
+    fun restoreHighlightingDelay() {
+        CommonHighlighter.delayMillis = savedDelay
     }
 
-    fun `test Canceling a search stops the scan rather than letting it run to the end`() {
+    @Test
+    fun `Canceling a search stops the scan rather than letting it run to the end`() {
         // Large enough that one scan takes appreciably longer than anything else in the test.
         myFixture.configureByText("big.txt", "foo bar baz qux ".repeat(60_000))
         val document = myFixture.editor.document
@@ -44,8 +46,8 @@ class CommonHighlighterTest : EmacsJTestCase() {
         }
 
         assertTrue(
-            "editor waited ${waitedForLock}ms after canceling, against a full scan of ${fullScan}ms",
-            waitedForLock < fullScan / 2
+            waitedForLock < fullScan / 2,
+            "editor waited ${waitedForLock}ms after canceling, against a full scan of ${fullScan}ms"
         )
     }
 
@@ -64,7 +66,7 @@ class CommonHighlighterTest : EmacsJTestCase() {
         while (!CommonHighlighter.isIdle && System.currentTimeMillis() < deadline) {
             Thread.sleep(1)
         }
-        assertTrue("search did not finish", CommonHighlighter.isIdle)
+        assertTrue(CommonHighlighter.isIdle, "search did not finish")
     }
 
     private fun time(action: () -> Unit): Long {

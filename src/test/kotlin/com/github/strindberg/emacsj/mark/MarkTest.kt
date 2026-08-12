@@ -5,12 +5,14 @@ import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_LINE_END
+import org.junit.jupiter.api.Test
 
 private const val FILE = "markfile.txt"
 
 class MarkTest : EmacsJTestCase() {
 
-    fun `test Set mark and pop mark works 1`() {
+    @Test
+    fun `Set mark and pop mark works 1`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -22,7 +24,8 @@ class MarkTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>foo bar baz")
     }
 
-    fun `test Set mark and pop mark works 2`() {
+    @Test
+    fun `Set mark and pop mark works 2`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -35,7 +38,8 @@ class MarkTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>foo bar baz")
     }
 
-    fun `test Pressing mark twice pushes mark without starting selection`() {
+    @Test
+    fun `Pressing mark twice pushes mark without starting selection`() {
         myFixture.configureByText(FILE, "<caret>foo bar baz")
 
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -48,7 +52,8 @@ class MarkTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>foo bar baz")
     }
 
-    fun `test Exchange mark and point works`() {
+    @Test
+    fun `Exchange mark and point works`() {
         myFixture.configureByText(FILE, "A<caret>foo bar bazB")
 
         myFixture.performEditorAction(ACTION_PUSH_MARK)
@@ -65,7 +70,8 @@ class MarkTest : EmacsJTestCase() {
         myFixture.checkResult("<selection>Afoo bar baz</selection><caret>B")
     }
 
-    fun `test Exchange mark and point reactivates selection`() {
+    @Test
+    fun `Exchange mark and point reactivates selection`() {
         myFixture.configureByText(
             FILE,
             """

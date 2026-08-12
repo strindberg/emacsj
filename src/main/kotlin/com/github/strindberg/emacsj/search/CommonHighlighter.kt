@@ -80,6 +80,9 @@ object CommonHighlighter {
 
     private fun doFindAllAndHighlight(request: SearchRequest, indicator: ProgressIndicator) {
         with(request) {
+            // Matches are offsets into the document as it was when the scan ran. An edit in between -- e.g. replace
+            // shortening the text -- invalidates every one of them, and painting them would be out of range.
+            val stamp = editor.document.modificationStamp
             val matches = mutableListOf<FindResult>()
             if (searchArg.isNotEmpty()) {
                 val findManager = FindManager.getInstance(project)
@@ -101,10 +104,10 @@ object CommonHighlighter {
                 }
 
                 if (highlight) {
-                    addSecondaryHighlights(editor, matches, indicator)
+                    addSecondaryHighlights(editor, matches, indicator, stamp)
                 }
             }
-            onEdt(editor, indicator) { callback(matches) }
+            onEdt(editor, indicator, stamp) { callback(matches) }
         }
     }
 
@@ -112,13 +115,13 @@ object CommonHighlighter {
         editor: Editor,
         matches: List<FindResult>,
         indicator: ProgressIndicator,
+        stamp: Long,
     ) {
         matches.chunked(HIGHLIGHT_CHUNK_SIZE).forEach { chunk ->
             ProgressManager.checkCanceled()
-            // Chunks land on the EDT one at a time, so the caller's list grows as they arrive. A chunk queued
-            // before the search was cancelled is skipped by onEdt, which is what keeps the list in step with what
-            // is actually painted.
-            onEdt(editor, indicator) {
+            // Chunks land on the EDT one at a time, so the caller's list grows as they arrive. A chunk queued before the search was
+            // canceled is skipped by onEdt, which is what keeps the list in step with what is actually painted.
+            onEdt(editor, indicator, stamp) {
                 chunk.forEach { match ->
                     addHighlight(editor, match)
                 }
@@ -129,11 +132,12 @@ object CommonHighlighter {
     /**
      * Runs [action] on the EDT, re-checking cancellation there. A checkCanceled() on the background thread only
      * proves the search was live when the task was queued: cancel() can still run on the EDT in between, clearing
-     * the highlighters, after which the queued task would paint stale matches back in.
+     * the highlighters, after which the queued task would paint stale matches back in. [stamp] does the same for
+     * the document: an edit between scanning and painting leaves the matches pointing at text that has moved.
      */
-    private fun onEdt(editor: Editor, indicator: ProgressIndicator, action: () -> Unit) {
+    private fun onEdt(editor: Editor, indicator: ProgressIndicator, stamp: Long, action: () -> Unit) {
         ApplicationManager.getApplication().invokeLater {
-            if (!editor.isDisposed && !indicator.isCanceled) {
+            if (!editor.isDisposed && !indicator.isCanceled && editor.document.modificationStamp == stamp) {
                 action()
             }
         }

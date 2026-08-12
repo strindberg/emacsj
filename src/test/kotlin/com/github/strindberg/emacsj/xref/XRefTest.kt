@@ -3,12 +3,16 @@ package com.github.strindberg.emacsj.xref
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_GOTO_DECLARATION
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 private const val FILE = "MyClass.kt"
 
 class XRefTest : EmacsJTestCase() {
 
-    fun `test XRef redo after back works`() {
+    @Test
+    fun `XRef redo after back works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -71,7 +75,8 @@ class XRefTest : EmacsJTestCase() {
         )
     }
 
-    fun `test XRef push clears redo stack`() {
+    @Test
+    fun `XRef push clears redo stack`() {
         myFixture.configureByText(
             FILE,
             """
@@ -104,7 +109,8 @@ class XRefTest : EmacsJTestCase() {
         assertEquals(beforeOffset, afterOffset)
     }
 
-    fun `test XRef multiple jump chain`() {
+    @Test
+    fun `XRef multiple jump chain`() {
         myFixture.configureByText(
             FILE,
             """
@@ -156,7 +162,8 @@ class XRefTest : EmacsJTestCase() {
         assertEquals(expectedOffset, pos4)
     }
 
-    fun `test XRef forward and back are safe at boundaries`() {
+    @Test
+    fun `XRef forward and back are safe at boundaries`() {
         myFixture.configureByText(
             FILE,
             """

@@ -4,12 +4,17 @@ import java.awt.event.KeyEvent.VK_ENTER
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.openapi.editor.VisualPosition
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 
 private const val FILE = "gotofile.txt"
 
 class GotoLineTest : EmacsJTestCase() {
 
-    fun `test Goto Line works`() {
+    @Test
+    fun `Goto Line works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -41,7 +46,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Goto Line and column works`() {
+    @Test
+    fun `Goto Line and column works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -64,7 +70,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Goto Line strips whitespace from arguments`() {
+    @Test
+    fun `Goto Line strips whitespace from arguments`() {
         myFixture.configureByText(
             FILE,
             """
@@ -87,7 +94,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Goto Line with argument 0 moves to first line`() {
+    @Test
+    fun `Goto Line with argument 0 moves to first line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -110,7 +118,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Goto Line with argument -10 moves to first line`() {
+    @Test
+    fun `Goto Line with argument -10 moves to first line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -133,7 +142,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Goto Line with large argument moves to last line`() {
+    @Test
+    fun `Goto Line with large argument moves to last line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -156,7 +166,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Goto Line and column with negative column argument moves to first column`() {
+    @Test
+    fun `Goto Line and column with negative column argument moves to first column`() {
         myFixture.configureByText(
             FILE,
             """
@@ -179,7 +190,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Goto Line and column with large column argument moves to last column`() {
+    @Test
+    fun `Goto Line and column with large column argument moves to last column`() {
         myFixture.configureByText(
             FILE,
             """
@@ -202,7 +214,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Non-numeric line argument is ignored`() {
+    @Test
+    fun `Non-numeric line argument is ignored`() {
         myFixture.configureByText(
             FILE,
             """
@@ -225,7 +238,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Non-numeric column argument is ignored`() {
+    @Test
+    fun `Non-numeric column argument is ignored`() {
         myFixture.configureByText(
             FILE,
             """
@@ -248,7 +262,8 @@ class GotoLineTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Adding a caret cancels the goto line session`() {
+    @Test
+    fun `Adding a caret cancels the goto line session`() {
         myFixture.configureByText(FILE, "<caret>aaa\nbbb")
         myFixture.performEditorAction(ACTION_GOTO_LINE)
         assertNotNull(GotoLineHandler.delegate)
@@ -258,7 +273,8 @@ class GotoLineTest : EmacsJTestCase() {
         assertNull(GotoLineHandler.delegate)
     }
 
-    fun `test Goto line reduces multiple carets to one`() {
+    @Test
+    fun `Goto line reduces multiple carets to one`() {
         myFixture.configureByText(
             FILE,
             """

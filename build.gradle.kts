@@ -26,12 +26,9 @@ repositories {
 dependencies {
     testImplementation(platform(libs.junit5.bom))
     testImplementation(libs.junit5.jupiter)
-
-    // The existing suite is JUnit 3 (BasePlatformTestCase extends junit.framework.TestCase). The vintage engine is
-    // what keeps it running on the JUnit Platform, so classes can be moved to Jupiter one at a time rather than in
-    // a single sweep.
+    // com.intellij.testFramework.LexerTestCase extends junit.framework.TestCase, so JUnit 4 has to stay on the compile classpath.
     testImplementation(libs.junit)
-    testRuntimeOnly(libs.junit5.vintage.engine)
+
     testRuntimeOnly(libs.junit5.platform.launcher)
 
     intellijPlatform {
@@ -40,6 +37,8 @@ dependencies {
         bundledPlugins(listOf("com.intellij.java", "org.jetbrains.kotlin"))
 
         testFramework(TestFrameworkType.Platform)
+        // Supplies com.intellij.testFramework.junit5 (@RunInEdt and friends).
+        testFramework(TestFrameworkType.JUnit5)
     }
 }
 
