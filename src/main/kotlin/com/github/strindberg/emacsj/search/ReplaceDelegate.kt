@@ -30,7 +30,6 @@ import com.intellij.openapi.editor.event.CaretListener
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
-import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import org.jetbrains.annotations.VisibleForTesting
@@ -76,8 +75,6 @@ internal class ReplaceDelegate(
     private var replaced = 0
 
     private val replacements = ArrayDeque<Replaced>()
-
-    private val highlighters = mutableListOf<RangeHighlighter>()
 
     private val identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
 
@@ -160,7 +157,6 @@ internal class ReplaceDelegate(
                             searchArg = ui.text,
                             useRegexp = type == REGEXP,
                             useCase = type == REGEXP || caseSensitive(ui.text),
-                            highlighters = highlighters,
                             range = selection
                         )
                     )
@@ -370,8 +366,7 @@ internal class ReplaceDelegate(
     /** Removes every highlight this session painted, and stops any search still on its way to painting more. */
     private fun clearHighlights() {
         CommonHighlighter.cancelPending()
-        highlighters.forEach { editor.markupModel.removeHighlighter(it) }
-        highlighters.clear()
+        editor.removeHighlights(EMACSJ_PRIMARY, EMACSJ_SECONDARY)
     }
 
     private fun getReplaceTitle() =
@@ -451,14 +446,12 @@ internal class ReplaceDelegate(
     private fun highlight(startOffset: Int, endOffset: Int) {
         clearHighlights()
 
-        highlighters.add(
-            editor.markupModel.addRangeHighlighter(
-                EMACSJ_PRIMARY,
-                startOffset,
-                endOffset,
-                HighlighterLayer.LAST + 2,
-                HighlighterTargetArea.EXACT_RANGE
-            )
+        editor.markupModel.addRangeHighlighter(
+            EMACSJ_PRIMARY,
+            startOffset,
+            endOffset,
+            HighlighterLayer.LAST + 2,
+            HighlighterTargetArea.EXACT_RANGE
         )
 
         CommonHighlighter.findAllAndHighlight(
@@ -468,7 +461,6 @@ internal class ReplaceDelegate(
                 searchArg = searchArg,
                 useRegexp = type == REGEXP,
                 useCase = replaceModel.isCaseSensitive,
-                highlighters = highlighters,
                 range = selection
             )
         )

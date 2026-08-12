@@ -2,7 +2,6 @@ package com.github.strindberg.emacsj.search
 
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.editor.markup.RangeHighlighter
 
 private const val SCAN_STARTUP_MILLIS = 20L
 
@@ -57,7 +56,6 @@ class CommonHighlighterTest : EmacsJTestCase() {
             searchArg = "foo",
             useRegexp = false,
             useCase = false,
-            highlighters = mutableListOf<RangeHighlighter>(),
             highlight = false
         )
 

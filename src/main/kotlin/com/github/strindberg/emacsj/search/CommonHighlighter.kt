@@ -10,7 +10,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
-import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.util.ProgressIndicatorBase
@@ -22,17 +21,12 @@ internal const val HIGHLIGHT_DELAY_MILLIS = 50L
 
 private const val HIGHLIGHT_CHUNK_SIZE = 100
 
-/**
- * One search to run and highlight. [highlighters] is the caller's own list: every highlight painted is appended to
- * it, so the caller can later remove exactly what it added instead of clearing the editor's markup model.
- */
 internal data class SearchRequest(
     val editor: Editor,
     val project: Project,
     val searchArg: String,
     val useRegexp: Boolean,
     val useCase: Boolean,
-    val highlighters: MutableList<RangeHighlighter>,
     val range: IntRange? = null,
     val callback: (List<FindResult>) -> Unit = {},
     val highlight: Boolean = true,
@@ -55,15 +49,6 @@ object CommonHighlighter {
     internal val isIdle: Boolean
         @VisibleForTesting get() = scheduledSearch?.isDone != false
 
-    internal fun cancelPending() {
-        // Canceling the indicator only turns a search that is already running into a no-op; canceling the future
-        // stops one that is still inside the debounce window from running at all.
-        indicator?.cancel()
-        indicator = null
-        scheduledSearch?.cancel(false)
-        scheduledSearch = null
-    }
-
     internal fun findAllAndHighlight(request: SearchRequest) {
         // A new search supersedes any still-pending one. Without this, two searches scheduled inside the debounce
         // window run concurrently on the pool and can report back out of order, leaving a stale match count.
@@ -82,6 +67,15 @@ object CommonHighlighter {
             delayMillis,
             TimeUnit.MILLISECONDS
         )
+    }
+
+    internal fun cancelPending() {
+        // Canceling the indicator only turns a search that is already running into a no-op; canceling the future
+        // stops one that is still inside the debounce window from running at all.
+        indicator?.cancel()
+        indicator = null
+        scheduledSearch?.cancel(false)
+        scheduledSearch = null
     }
 
     private fun doFindAllAndHighlight(request: SearchRequest, indicator: ProgressIndicator) {
@@ -107,7 +101,7 @@ object CommonHighlighter {
                 }
 
                 if (highlight) {
-                    addSecondaryHighlights(editor, matches, indicator, highlighters)
+                    addSecondaryHighlights(editor, matches, indicator)
                 }
             }
             onEdt(editor, indicator) { callback(matches) }
@@ -118,7 +112,6 @@ object CommonHighlighter {
         editor: Editor,
         matches: List<FindResult>,
         indicator: ProgressIndicator,
-        highlighters: MutableList<RangeHighlighter>,
     ) {
         matches.chunked(HIGHLIGHT_CHUNK_SIZE).forEach { chunk ->
             ProgressManager.checkCanceled()
@@ -127,7 +120,7 @@ object CommonHighlighter {
             // is actually painted.
             onEdt(editor, indicator) {
                 chunk.forEach { match ->
-                    addHighlight(editor, match)?.let { highlighters.add(it) }
+                    addHighlight(editor, match)
                 }
             }
         }
@@ -146,10 +139,8 @@ object CommonHighlighter {
         }
     }
 
-    private fun addHighlight(editor: Editor, match: FindResult): RangeHighlighter? =
-        if (match.isEmpty) {
-            null
-        } else {
+    private fun addHighlight(editor: Editor, match: FindResult) {
+        if (!match.isEmpty) {
             editor.markupModel.addRangeHighlighter(
                 EMACSJ_SECONDARY,
                 match.startOffset,
@@ -158,4 +149,5 @@ object CommonHighlighter {
                 HighlighterTargetArea.EXACT_RANGE
             )
         }
+    }
 }

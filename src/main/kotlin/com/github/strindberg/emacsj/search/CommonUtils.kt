@@ -3,6 +3,7 @@ package com.github.strindberg.emacsj.search
 import java.lang.Character.isUpperCase
 import java.lang.Character.toLowerCase
 import java.lang.Character.toUpperCase
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -10,6 +11,12 @@ import com.intellij.openapi.editor.markup.TextAttributes
 internal val EMACSJ_PRIMARY = TextAttributesKey.createTextAttributesKey("EMACSJ_PRIMARY")
 
 internal val EMACSJ_SECONDARY = TextAttributesKey.createTextAttributesKey("EMACSJ_SECONDARY")
+
+internal fun Editor.removeHighlights(vararg keys: TextAttributesKey) {
+    markupModel.allHighlighters
+        .filter { it.textAttributesKey in keys }
+        .forEach { markupModel.removeHighlighter(it) }
+}
 
 /**
  * Attributes that contribute nothing, used to hide the identifier-under-caret highlight while a search is running.
