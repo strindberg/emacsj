@@ -5,15 +5,12 @@ import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.kill.KillUtil
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.ui.UIDelegate
-import com.github.strindberg.emacsj.ui.constructInput
-import com.github.strindberg.emacsj.ui.isActive
 import com.github.strindberg.emacsj.word.text
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.BACKWARD_UP_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_TO
 import com.github.strindberg.emacsj.zap.ZapType.FORWARD_UP_TO
 import com.intellij.codeInsight.hint.HintManager
-import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.util.EditorUtil
@@ -34,21 +31,8 @@ internal class ZapDelegate(editor: Editor, private val type: ZapType) : UIDelega
     init {
         EditorUtil.disposeWithEditor(editor, this)
 
-        // Handle dead keys, i.e. accents waiting for their main character. If this dispatcher is not used,
-        // typed accents show in the editor until the full character is composed.
-        IdeEventQueue.getInstance().addDispatcher(
-            { e ->
-                val delegate = ZapHandler.delegate
-                if (delegate.isActive(e)) {
-                    e.constructInput()?.let { delegate.doZap(it.first()) }
-                    e.consume()
-                    true
-                } else {
-                    false
-                }
-            },
-            this
-        )
+        // Dead keys: the accent must not reach the document while it waits for its character.
+        captureComposedInput { input -> doZap(input.first()) }
 
         ui.show()
     }

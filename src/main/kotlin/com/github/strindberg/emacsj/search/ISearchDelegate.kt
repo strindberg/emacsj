@@ -23,13 +23,10 @@ import com.github.strindberg.emacsj.search.StartType.REPEATED_SEARCH
 import com.github.strindberg.emacsj.search.StartType.WRAPAROUND
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.ui.UIDelegate
-import com.github.strindberg.emacsj.ui.constructInput
-import com.github.strindberg.emacsj.ui.isActive
 import com.github.strindberg.emacsj.word.text
 import com.intellij.find.FindManager
 import com.intellij.find.FindModel
 import com.intellij.find.FindResult
-import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
@@ -93,21 +90,8 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
     init {
         EditorUtil.disposeWithEditor(editor, this)
 
-        // Handle dead keys, i.e. accents waiting for their main character. If this dispatcher is not used,
-        // typed accents show in the editor until the full character is composed.
-        IdeEventQueue.getInstance().addDispatcher(
-            { e ->
-                val delegate = ISearchHandler.delegate
-                if (delegate.isActive(e) && delegate.isActive()) {
-                    e.constructInput()?.let { delegate.handleChar(it) }
-                    e.consume()
-                    true
-                } else {
-                    false
-                }
-            },
-            this
-        )
+        // Dead keys: the accent must not reach the document while it waits for its character.
+        captureComposedInput { input -> handleChar(input) }
 
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, NO_ATTRIBUTES)
 
