@@ -856,6 +856,86 @@ class ReplaceTest : EmacsJTestCase() {
         assertTrue(myFixture.editor.markupModel.allHighlighters.contains(foreign))
     }
 
+    @Test
+    fun `Comma replaces the match without moving to the next`() {
+        myFixture.configureByText(FILE, "<caret>foo foo")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("foo")
+        pressEnter()
+
+        setText("bar")
+        pressEnter()
+
+        typeChar(',')
+
+        // Replaced, but the session stays where it is. The caret is what distinguishes this from `y`, which
+        // replaces and moves on: `y` would leave it at the second occurrence.
+        myFixture.checkResult("bar<caret> foo")
+        assertNotNull(ReplaceHandler.delegate)
+    }
+
+    @Test
+    fun `Ctrl-L leaves the replace session untouched`() {
+        myFixture.configureByText(FILE, "<caret>foo foo")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("foo")
+        pressEnter()
+
+        setText("bar")
+        pressEnter()
+
+        typeChar('\u000c')
+
+        // The recentering itself cannot be asserted headlessly -- the fixture reports a zero-sized viewport -- but
+        // a missing action or a malformed AnActionEvent would surface here, and the session must survive either way.
+        assertEquals("foo foo", myFixture.editor.document.text)
+        assertNotNull(ReplaceHandler.delegate)
+
+        typeChar('y')
+
+        assertEquals("bar foo", myFixture.editor.document.text)
+    }
+
+    @Test
+    fun `An unrecognized key ends the replace session without replacing`() {
+        myFixture.configureByText(FILE, "<caret>foo foo")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("foo")
+        pressEnter()
+
+        setText("bar")
+        pressEnter()
+
+        typeChar('q')
+
+        assertNull(ReplaceHandler.delegate)
+        assertEquals("foo foo", myFixture.editor.document.text)
+    }
+
+    @Test
+    fun `A key press dismisses the popup once the last match has been replaced`() {
+        myFixture.configureByText(FILE, "<caret>foo")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("foo")
+        pressEnter()
+
+        setText("bar")
+        pressEnter()
+
+        typeChar('y')
+
+        // Nothing left to replace, so the popup stays up reporting what it did until a key dismisses it.
+        assertNotNull(ReplaceHandler.delegate)
+
+        pressKey(ReplaceHandler.delegate?.ui, KeyEvent.VK_A)
+
+        assertNull(ReplaceHandler.delegate)
+    }
+
     private fun setText(text: String) {
         ReplaceHandler.delegate!!.ui.text = text
     }
