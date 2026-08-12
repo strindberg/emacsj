@@ -427,7 +427,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
     /** Removes every highlight this session painted, and stops any search still on its way to painting more. */
     private fun clearAllHighlights() {
-        CommonHighlighter.cancelPending()
+        CommonHighlighter.instance.cancelPending()
         editor.removeHighlights(EMACSJ_PRIMARY, EMACSJ_SECONDARY)
     }
 
@@ -504,7 +504,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
     private fun refreshHighlights(highlight: Boolean = true, callback: (List<FindResult>) -> Unit = {}) {
         val (isRegexp, searchString) = getSearchModelArguments()
-        CommonHighlighter.findAllAndHighlight(
+        CommonHighlighter.instance.findAllAndHighlight(
             SearchRequest(
                 editor = editor,
                 project = project,

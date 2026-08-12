@@ -2,19 +2,22 @@ package com.github.strindberg.emacsj.kill
 
 import java.time.Clock
 import java.time.OffsetDateTime
-import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
+import com.github.strindberg.emacsj.EmacsJScope
 import com.github.strindberg.emacsj.search.EMACSJ_SECONDARY
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.util.DocumentUtil
-import com.intellij.util.concurrency.AppExecutorUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -58,11 +61,10 @@ internal class CopyRegionHandler : EditorActionHandler() {
                 HighlighterLayer.LAST + 1,
                 HighlighterTargetArea.EXACT_RANGE
             )
-            AppExecutorUtil.getAppScheduledExecutorService().schedule(
-                { ApplicationManager.getApplication().invokeLater { highlighter.dispose() } },
-                HIGHLIGHT_MILLIS,
-                TimeUnit.MILLISECONDS
-            )
+            EmacsJScope.instance.scope.launch {
+                delay(HIGHLIGHT_MILLIS)
+                withContext(Dispatchers.EDT) { highlighter.dispose() }
+            }
         }
         lastInvocation = OffsetDateTime.now(clock)
     }
