@@ -146,15 +146,18 @@ tasks {
     }
 }
 
-val runIde53 by intellijPlatformTesting.runIde.registering {
+intellijPlatformTesting.runIde.register("runIde53") {
+    type = IntelliJPlatformType.IntellijIdea
     version = "2025.3.6.1"
 }
 
-val runIde61 by intellijPlatformTesting.runIde.registering {
+intellijPlatformTesting.runIde.register("runIde61") {
+    type = IntelliJPlatformType.IntellijIdea
     version = "2026.1.4"
 }
 
-val runIde62 by intellijPlatformTesting.runIde.registering {
+intellijPlatformTesting.runIde.register("runIde62") {
+    type = IntelliJPlatformType.IntellijIdea
     version = "2026.2.0.1"
 }
 
