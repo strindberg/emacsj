@@ -2,10 +2,9 @@ package com.github.strindberg.emacsj.kill
 
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.StringSelection
-import java.time.Clock
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TestTimeSource
+import kotlin.time.TimeSource
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.movement.ACTION_TEXT_END
 import com.github.strindberg.emacsj.paste.ACTION_PASTE
@@ -22,40 +21,22 @@ import org.junit.jupiter.api.Test
 
 private const val FILE = "appendkillfile.txt"
 
-private const val THROTTLE_CLEARANCE_MILLIS = 1000L
+private val THROTTLE_CLEARANCE_DURATION = 1000L.milliseconds
 
-/**
- * Clock behind the copy throttle. Tests move it explicitly rather than switching the throttle off, so that the
- * throttling logic itself is exercised.
- */
-private object TestClock : Clock() {
-
-    private var current: Instant = Instant.EPOCH
-
-    override fun getZone(): ZoneId = ZoneOffset.UTC
-
-    override fun withZone(zone: ZoneId): Clock = this
-
-    override fun instant(): Instant = current
-
-    fun advance(millis: Long) {
-        current = current.plusMillis(millis)
-    }
-}
+private val testTimeSource = TestTimeSource()
 
 class AppendKillTest : EmacsJTestCase() {
 
     @BeforeEach
     fun installTestClock() {
-        // CopyRegionHandler is shared between tests, so its last-invocation stamp would throttle the first copy of
-        // the next test. Start every test well past the throttle window.
-        advanceClock(THROTTLE_CLEARANCE_MILLIS)
-        CopyRegionHandler.clock = TestClock
+        // CopyRegionHandler is shared between tests. Start every test well past the throttle window.
+        testTimeSource += THROTTLE_CLEARANCE_DURATION
+        CopyRegionHandler.timeSource = testTimeSource
     }
 
     @AfterEach
     fun restoreClock() {
-        CopyRegionHandler.clock = Clock.systemDefaultZone()
+        CopyRegionHandler.timeSource = TimeSource.Monotonic
     }
 
     @Test
@@ -129,7 +110,7 @@ class AppendKillTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_COPY)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_DOWN)
 
-        advanceClock(THROTTLE_MILLIS + 1)
+        testTimeSource += THROTTLE_DURATION + 1.milliseconds
         myFixture.performEditorAction(ACTION_COPY)
 
         assertEquals("bar", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
@@ -473,10 +454,5 @@ class AppendKillTest : EmacsJTestCase() {
             """.trimMargin()
         )
         assertEquals("bazzed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
-    }
-
-    /** Moves the clock the copy throttle reads. */
-    private fun advanceClock(millis: Long) {
-        TestClock.advance(millis)
     }
 }

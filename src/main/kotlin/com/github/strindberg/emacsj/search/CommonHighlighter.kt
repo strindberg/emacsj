@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 
-internal const val HIGHLIGHT_DELAY_MILLIS = 50L
+internal val HIGHLIGHT_DELAY = 50L.milliseconds
 
 private const val HIGHLIGHT_CHUNK_SIZE = 100
 
@@ -46,7 +46,7 @@ internal class CommonHighlighter(private val scope: CoroutineScope) {
      * keystroke; nothing in production changes it.
      */
     @VisibleForTesting
-    internal var delayMillis = HIGHLIGHT_DELAY_MILLIS
+    internal var delay = HIGHLIGHT_DELAY
 
     // At most one search is ever in flight: every new one supersedes the last. Painting happens inside the job, so
     // the job being active is what "this search still matters" means -- cancelling it stops the painting too.
@@ -59,7 +59,7 @@ internal class CommonHighlighter(private val scope: CoroutineScope) {
         cancelPending()
 
         search = scope.launch {
-            delay(delayMillis.milliseconds)
+            delay(delay)
 
             // An edit after the scan, e.g. a replace shortening the text, moves every offset, and painting matches could be out of range.
             val (stamp, matches) = readAction {
