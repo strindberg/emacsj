@@ -47,16 +47,21 @@ object CommonHighlighter {
     @VisibleForTesting
     internal var delayMillis = HIGHLIGHT_DELAY_MILLIS
 
-    private val progressIndicators = mutableListOf<ProgressIndicator>()
+    // At most one search is ever in flight: every new one supersedes the last
+    private var indicator: ProgressIndicator? = null
 
-    private val scheduledSearches = mutableListOf<ScheduledFuture<*>>()
+    private var scheduledSearch: ScheduledFuture<*>? = null
 
     internal val isIdle: Boolean
-        @VisibleForTesting get() = scheduledSearches.all { it.isDone }
+        @VisibleForTesting get() = scheduledSearch?.isDone != false
 
     internal fun cancelPending() {
-        progressIndicators.forEach { it.cancel() }
-        progressIndicators.clear()
+        // Canceling the indicator only turns a search that is already running into a no-op; canceling the future
+        // stops one that is still inside the debounce window from running at all.
+        indicator?.cancel()
+        indicator = null
+        scheduledSearch?.cancel(false)
+        scheduledSearch = null
     }
 
     internal fun findAllAndHighlight(request: SearchRequest) {
@@ -64,24 +69,18 @@ object CommonHighlighter {
         // window run concurrently on the pool and can report back out of order, leaving a stale match count.
         cancelPending()
 
-        val indicator = ProgressIndicatorBase()
-        progressIndicators.add(indicator)
-        scheduledSearches.removeAll { it.isDone }
-        scheduledSearches.add(
-            AppExecutorUtil.getAppScheduledExecutorService().schedule(
-                {
-                    ProgressManager.getInstance().runProcess(
-                        {
-                            ApplicationManager.getApplication().runReadAction {
-                                doFindAllAndHighlight(request, indicator)
-                            }
-                        },
-                        indicator
-                    )
-                },
-                delayMillis,
-                TimeUnit.MILLISECONDS
-            )
+        val searchIndicator = ProgressIndicatorBase().apply { indicator = this }
+        scheduledSearch = AppExecutorUtil.getAppScheduledExecutorService().schedule(
+            {
+                ProgressManager.getInstance().runProcess(
+                    {
+                        ApplicationManager.getApplication().runReadAction { doFindAllAndHighlight(request, searchIndicator) }
+                    },
+                    searchIndicator
+                )
+            },
+            delayMillis,
+            TimeUnit.MILLISECONDS
         )
     }
 
@@ -99,8 +98,8 @@ object CommonHighlighter {
                 val text = documentText.substring(0, minOf(range?.last ?: documentText.length, documentText.length))
                 var offset = range?.start ?: 0
 
-                ProgressManager.checkCanceled()
                 while (offset < text.length) {
+                    ProgressManager.checkCanceled()
                     val result = findManager.findString(text, offset, findModel)
                     if (!result.isStringFound) break
                     matches.add(result)
