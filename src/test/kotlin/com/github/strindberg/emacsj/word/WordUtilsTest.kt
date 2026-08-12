@@ -34,7 +34,7 @@ class WordUtilsTest {
         assertEquals(expected, wordAt(text, offset, isCamel = true, isForward = false))
     }
 
-    fun forwardCases() = listOf(
+    fun forwardCases() = [
         Arguments.of("ab dc", 0, "ab"),
         Arguments.of("ab dc", 1, "ab"),
         Arguments.of("ab dc", 2, "ab"),
@@ -43,9 +43,9 @@ class WordUtilsTest {
         Arguments.of("ab dc", 5, "dc"),
         Arguments.of(" ab dc", 0, " ab"),
         Arguments.of(" ab dc", 1, " ab")
-    )
+    ]
 
-    fun backwardCases() = listOf(
+    fun backwardCases() = [
         Arguments.of("ab dc", 0, "ab"),
         Arguments.of("ab dc", 1, "ab"),
         Arguments.of("ab dc", 2, "dc"),
@@ -54,9 +54,9 @@ class WordUtilsTest {
         Arguments.of("ab dc", 5, "dc"),
         Arguments.of("ab dc ", 5, "dc "),
         Arguments.of("ab dc ", 6, "dc ")
-    )
+    ]
 
-    fun camelForwardCases() = listOf(
+    fun camelForwardCases() = [
         Arguments.of("AbDc", 0, "Ab"),
         Arguments.of("AbDc", 1, "Ab"),
         Arguments.of("AbDc", 2, "Ab"),
@@ -64,16 +64,16 @@ class WordUtilsTest {
         Arguments.of("AbDc", 4, "Dc"),
         Arguments.of(" AbDc", 0, " Ab"),
         Arguments.of(" AbDc", 1, " Ab")
-    )
+    ]
 
-    fun camelBackwardCases() = listOf(
+    fun camelBackwardCases() = [
         Arguments.of("AbDc", 0, "Ab"),
         Arguments.of("AbDc", 1, "Ab"),
         Arguments.of("AbDc", 2, "Dc"),
         Arguments.of("AbDc", 4, "Dc"),
         Arguments.of("AbDc ", 4, "Dc "),
         Arguments.of("AbDc ", 5, "Dc ")
-    )
+    ]
 
     private fun wordAt(text: String, offset: Int, isCamel: Boolean, isForward: Boolean): String =
         currentWordBoundaries(text = text, offset = offset, isCamel = isCamel, isForward = isForward)

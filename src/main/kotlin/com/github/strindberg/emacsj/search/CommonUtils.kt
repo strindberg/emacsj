@@ -39,7 +39,7 @@ internal class History<T>(private val limit: Int = DEFAULT_LIMIT) {
 
     // This method is not a traditional stack push since it deduplicates already pushed elements.
     fun push(element: T) {
-        val updated = (listOf(element) + elements).distinct().take(limit)
+        val updated = ([element] + elements).distinct().take(limit)
         elements.clear()
         elements.addAll(updated)
     }

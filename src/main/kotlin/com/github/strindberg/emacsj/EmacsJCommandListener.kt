@@ -14,7 +14,7 @@ internal class EmacsJCommandListener : CommandListener {
         if (EmacsJService.instance.isPerformingAction()) return
 
         // Empty, "Undefined" or "Dummy" commands are present when running tests
-        if (!event.commandName.isNullOrBlank() && event.commandName !in listOf("Undefined", "Dummy")) {
+        if (!event.commandName.isNullOrBlank() && event.commandName !in ["Undefined", "Dummy"]) {
             EmacsJService.instance.addAction(event.commandName)
         }
     }

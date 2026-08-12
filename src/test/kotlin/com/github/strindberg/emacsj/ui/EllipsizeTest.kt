@@ -27,7 +27,7 @@ class EllipsizeTest {
         assertEquals("abcdefghij", ellipsize("abcdefghij", 0, metrics))
     }
 
-    fun widthCases() = listOf(
+    fun widthCases() = [
         // Text that fits is left alone.
         Arguments.of("abcde", 50, "abcde"),
         Arguments.of("abcde", 500, "abcde"),
@@ -38,5 +38,5 @@ class EllipsizeTest {
         Arguments.of("abcdefghij", 60, "abcde…"),
         // A width too small for anything gives just the ellipsis.
         Arguments.of("abcdefghij", 10, "…")
-    )
+    ]
 }
