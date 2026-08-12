@@ -1,10 +1,8 @@
 package com.github.strindberg.emacsj.ui
 
-import java.awt.AWTEvent
 import java.awt.Component
 import java.awt.event.InputMethodEvent
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
+import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
@@ -57,17 +55,36 @@ internal abstract class UIDelegate(val editor: Editor) : Disposable {
             clearDelegate()
         }
     }
-}
 
-@OptIn(ExperimentalContracts::class)
-internal fun UIDelegate?.isActive(e: AWTEvent): Boolean {
-    contract {
-        returns(true) implies (this@isActive != null && e is InputMethodEvent)
+    /**
+     * Routes composed input -- a dead key's accent together with the character it was waiting for -- to [handle]
+     * rather than to the editor, for as long as this delegate is up. Without it the bare accent lands in the
+     * document while the composition is still unfinished.
+     */
+    protected fun captureComposedInput(handle: (String) -> Unit) {
+        IdeEventQueue.getInstance().addDispatcher(
+            { event ->
+                val composed = (event as? InputMethodEvent)?.takeIf { isAimedAtEditor(it) }
+                if (composed == null) {
+                    false
+                } else {
+                    // Consumed even when nothing was committed yet: that is the half-finished accent being kept
+                    // out of the document.
+                    composed.committedText()?.let(handle)
+                    composed.consume()
+                    true
+                }
+            },
+            this
+        )
     }
-    return this != null && e is InputMethodEvent && UIUtil.isDescendingFrom(e.source as? Component, editor.contentComponent)
+
+    private fun isAimedAtEditor(event: InputMethodEvent): Boolean =
+        UIUtil.isDescendingFrom(event.source as? Component, editor.contentComponent)
 }
 
-internal fun InputMethodEvent.constructInput(): String? =
+/** The characters the input method has finished composing, if it has committed any yet. */
+private fun InputMethodEvent.committedText(): String? =
     text?.let { iter ->
         buildString {
             var c = iter.first()
