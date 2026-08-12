@@ -1,5 +1,6 @@
 package com.github.strindberg.emacsj.search
 
+import kotlin.time.Duration.Companion.milliseconds
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.PlatformTestUtil
@@ -15,17 +16,17 @@ private const val IDLE_TIMEOUT_SECONDS = 20
 
 class CommonHighlighterTest : EmacsJTestCase() {
 
-    private var savedDelay = HIGHLIGHT_DELAY_MILLIS
+    private var savedDelay = HIGHLIGHT_DELAY
 
     @BeforeEach
     fun speedUpHighlighting() {
-        savedDelay = CommonHighlighter.instance.delayMillis
-        CommonHighlighter.instance.delayMillis = 0
+        savedDelay = CommonHighlighter.instance.delay
+        CommonHighlighter.instance.delay = 0.milliseconds
     }
 
     @AfterEach
     fun restoreHighlightingDelay() {
-        CommonHighlighter.instance.delayMillis = savedDelay
+        CommonHighlighter.instance.delay = savedDelay
     }
 
     @Test

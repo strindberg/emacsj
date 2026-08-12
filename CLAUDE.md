@@ -128,7 +128,7 @@ myFixture.checkResult("foo <caret>bar")
 
 Four pieces of production state exist so tests can be deterministic, rather than to switch behavior off:
 
-- `CommonHighlighter.delayMillis` — the debounce before a search highlights. `ISearchTest` and `ReplaceTest` set it to 0 in `@BeforeEach` and restore it, otherwise the suite pays the delay on every keystroke; they wait on `CommonHighlighter.isIdle`.
+- `CommonHighlighter.delay` — the debounce before a search highlights. `ISearchTest` and `ReplaceTest` set it to 0 in `@BeforeEach` and restore it, otherwise the suite pays the delay on every keystroke; they wait on `CommonHighlighter.isIdle`.
 - `CopyRegionHandler.clock` — the key-repeat throttle reads it, so `AppendKillTest` can move time explicitly and test the throttle instead of disabling it.
 - `MarkPlaces.clear()` and `UndoRedoStack.clear()` — the mark ring and the xref history are project-scoped, but the light fixture hands the same project to every test in a class, so both carry over. `EmacsJTestCase` empties them in teardown. Without this, a test that assumes an empty history passes or fails depending on where it lands in Jupiter's method order.
 

@@ -1,9 +1,8 @@
 package com.github.strindberg.emacsj.kill
 
-import java.time.Clock
-import java.time.OffsetDateTime
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.toJavaDuration
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 import com.github.strindberg.emacsj.EmacsJScope
 import com.github.strindberg.emacsj.search.EMACSJ_SECONDARY
 import com.intellij.openapi.actionSystem.DataContext
@@ -24,18 +23,19 @@ import org.jetbrains.annotations.VisibleForTesting
 @Language("devkit-action-id")
 internal const val ACTION_COPY = "com.github.strindberg.emacsj.actions.kill.copy"
 
-private const val HIGHLIGHT_MILLIS = 500L
+private val HIGHLIGHT_DURATION = 500L.milliseconds
 
-internal const val THROTTLE_MILLIS = 200L
+internal val THROTTLE_DURATION = 200L.milliseconds
 
 internal class CopyRegionHandler : EditorActionHandler() {
 
     companion object {
+
         @VisibleForTesting
-        internal var clock: Clock = Clock.systemDefaultZone()
+        internal var timeSource: TimeSource = TimeSource.Monotonic
     }
 
-    private var lastInvocation = OffsetDateTime.MIN
+    private var lastInvocation: TimeMark? = null
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         val primary = caret ?: editor.caretModel.primaryCaret
@@ -62,14 +62,13 @@ internal class CopyRegionHandler : EditorActionHandler() {
                 HighlighterTargetArea.EXACT_RANGE
             )
             EmacsJScope.instance.scope.launch {
-                delay(HIGHLIGHT_MILLIS)
+                delay(HIGHLIGHT_DURATION)
                 withContext(Dispatchers.EDT) { highlighter.dispose() }
             }
         }
-        lastInvocation = OffsetDateTime.now(clock)
+        lastInvocation = timeSource.markNow()
     }
 
     // Avoid inadvertently running the command multiple times because of key repeat.
-    private fun notThrottled(): Boolean =
-        lastInvocation.isBefore(OffsetDateTime.now(clock).minus(THROTTLE_MILLIS.milliseconds.toJavaDuration()))
+    private fun notThrottled() = lastInvocation?.run { elapsedNow() >= THROTTLE_DURATION } != false
 }

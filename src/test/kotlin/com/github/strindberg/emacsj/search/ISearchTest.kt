@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent.CHAR_UNDEFINED
 import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_SHIFT
+import kotlin.time.Duration.Companion.milliseconds
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.intellij.ide.CopyPasteManagerEx
@@ -44,12 +45,12 @@ class ISearchTest : EmacsJTestCase() {
 
     @BeforeEach
     fun speedUpHighlighting() {
-        CommonHighlighter.instance.delayMillis = 0
+        CommonHighlighter.instance.delay = 0.milliseconds
     }
 
     @AfterEach
     fun restoreHighlightingDelay() {
-        CommonHighlighter.instance.delayMillis = HIGHLIGHT_DELAY_MILLIS
+        CommonHighlighter.instance.delay = HIGHLIGHT_DELAY
     }
 
     @Test

@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
+import kotlin.time.Duration.Companion.milliseconds
 import com.github.strindberg.emacsj.EmacsJScope
 import com.intellij.codeInsight.hint.HintUtil
 import com.intellij.openapi.application.EDT
@@ -32,7 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 
-private const val FLASH_MILLIS = 1500L
+private val FLASH_DURATION = 1500L.milliseconds
 
 internal class CommonUI(
     private val editor: Editor,
@@ -149,7 +150,7 @@ internal class CommonUI(
         // Only the newest flash may clear the label, which cancelling the previous one is enough to arrange.
         flash?.cancel()
         flash = EmacsJScope.instance.scope.launch {
-            delay(FLASH_MILLIS)
+            delay(FLASH_DURATION)
             withContext(Dispatchers.EDT) { countLabel.text = finalText }
         }
     }
