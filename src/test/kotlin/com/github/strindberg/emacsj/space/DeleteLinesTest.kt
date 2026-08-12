@@ -1,12 +1,14 @@
 package com.github.strindberg.emacsj.space
 
 import com.github.strindberg.emacsj.EmacsJTestCase
+import org.junit.jupiter.api.Test
 
 private const val FILE = "deletelinesfile.txt"
 
 class DeleteLinesTest : EmacsJTestCase() {
 
-    fun `test Do nothing on non-empty lines`() {
+    @Test
+    fun `Do nothing on non-empty lines`() {
         myFixture.configureByText(
             FILE,
             """
@@ -25,7 +27,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Do nothing on non-empty lines 2`() {
+    @Test
+    fun `Do nothing on non-empty lines 2`() {
         myFixture.configureByText(
             FILE,
             """
@@ -44,7 +47,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Delete all empty lines after non-empty line`() {
+    @Test
+    fun `Delete all empty lines after non-empty line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -65,7 +69,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Only empty lines are deleted, not all whitespace`() {
+    @Test
+    fun `Only empty lines are deleted, not all whitespace`() {
         myFixture.configureByText(
             FILE,
             """
@@ -84,7 +89,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Empty lines at document end are deleted`() {
+    @Test
+    fun `Empty lines at document end are deleted`() {
         myFixture.configureByText(
             FILE,
             """
@@ -98,7 +104,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         myFixture.checkResult("foo bar<caret>\n")
     }
 
-    fun `test Isolated blank line is deleted`() {
+    @Test
+    fun `Isolated blank line is deleted`() {
         myFixture.configureByText(
             FILE,
             """
@@ -116,7 +123,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Isolated blank line at document end is not deleted (mimic Emacs)`() {
+    @Test
+    fun `Isolated blank line at document end is not deleted (mimic Emacs)`() {
         myFixture.configureByText(
             FILE,
             """
@@ -133,7 +141,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Isolated blank line at document start is deleted`() {
+    @Test
+    fun `Isolated blank line at document start is deleted`() {
         myFixture.configureByText(
             FILE,
             """
@@ -149,7 +158,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Consecutive blank lines are reduced 1`() {
+    @Test
+    fun `Consecutive blank lines are reduced 1`() {
         myFixture.configureByText(
             FILE,
             """
@@ -170,7 +180,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Consecutive blank lines are reduced 2`() {
+    @Test
+    fun `Consecutive blank lines are reduced 2`() {
         myFixture.configureByText(
             FILE,
             """
@@ -191,7 +202,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Consecutive blank lines are reduced 3`() {
+    @Test
+    fun `Consecutive blank lines are reduced 3`() {
         myFixture.configureByText(
             FILE,
             """
@@ -212,7 +224,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Consecutive blank lines at document end are reduced`() {
+    @Test
+    fun `Consecutive blank lines at document end are reduced`() {
         myFixture.configureByText(
             FILE,
             """
@@ -231,7 +244,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Consecutive blank lines at document end are reduced 2`() {
+    @Test
+    fun `Consecutive blank lines at document end are reduced 2`() {
         myFixture.configureByText(
             FILE,
             """
@@ -250,7 +264,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Consecutive blank lines at document start are reduced`() {
+    @Test
+    fun `Consecutive blank lines at document start are reduced`() {
         myFixture.configureByText(
             FILE,
             """
@@ -269,7 +284,8 @@ class DeleteLinesTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Delete lines works with multiple carets`() {
+    @Test
+    fun `Delete lines works with multiple carets`() {
         myFixture.configureByText(
             FILE,
             """

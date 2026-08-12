@@ -5,12 +5,15 @@ import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.editor.CaretState
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.ide.CopyPasteManager
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val FILE = "rectanglefile.txt"
 
 class RectangleTest : EmacsJTestCase() {
 
-    fun `test copy works 01`() {
+    @Test
+    fun `copy works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
@@ -19,7 +22,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `test Copy works 02`() {
+    @Test
+    fun `Copy works 02`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection>")
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
@@ -28,7 +32,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>foo")
     }
 
-    fun `test Copy works 03`() {
+    @Test
+    fun `Copy works 03`() {
         myFixture.configureByText(
             FILE,
             """
@@ -58,7 +63,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Copy works 04`() {
+    @Test
+    fun `Copy works 04`() {
         myFixture.configureByText(
             FILE,
             """
@@ -84,7 +90,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Copy works 05`() {
+    @Test
+    fun `Copy works 05`() {
         myFixture.configureByText(
             FILE,
             """
@@ -110,7 +117,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Copy works 06`() {
+    @Test
+    fun `Copy works 06`() {
         myFixture.configureByText(
             FILE,
             """
@@ -139,7 +147,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Copy works 07`() {
+    @Test
+    fun `Copy works 07`() {
         myFixture.configureByText(
             FILE,
             """
@@ -168,7 +177,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Copy works 08`() {
+    @Test
+    fun `Copy works 08`() {
         myFixture.configureByText(
             FILE,
             """
@@ -197,7 +207,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Copy works 09`() {
+    @Test
+    fun `Copy works 09`() {
         myFixture.configureByText(
             FILE,
             """
@@ -226,7 +237,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Cut works 01`() {
+    @Test
+    fun `Cut works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
@@ -235,7 +247,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>")
     }
 
-    fun `test Cut works 02`() {
+    @Test
+    fun `Cut works 02`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection>")
 
         myFixture.performEditorAction(ACTION_CUT_RECTANGLE)
@@ -244,7 +257,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>")
     }
 
-    fun `test Cut works 03`() {
+    @Test
+    fun `Cut works 03`() {
         myFixture.configureByText(
             FILE,
             """
@@ -274,7 +288,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Cut works 04`() {
+    @Test
+    fun `Cut works 04`() {
         myFixture.configureByText(
             FILE,
             """
@@ -300,7 +315,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Cut works 05`() {
+    @Test
+    fun `Cut works 05`() {
         myFixture.configureByText(
             FILE,
             """
@@ -326,7 +342,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Cut works 06`() {
+    @Test
+    fun `Cut works 06`() {
         myFixture.configureByText(
             FILE,
             """
@@ -355,7 +372,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Cut works 07`() {
+    @Test
+    fun `Cut works 07`() {
         myFixture.configureByText(
             FILE,
             """
@@ -384,7 +402,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Cut works 08`() {
+    @Test
+    fun `Cut works 08`() {
         myFixture.configureByText(
             FILE,
             """
@@ -413,7 +432,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Cut works 09`() {
+    @Test
+    fun `Cut works 09`() {
         myFixture.configureByText(
             FILE,
             """
@@ -442,7 +462,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Open works 01`() {
+    @Test
+    fun `Open works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
@@ -450,7 +471,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>   foo")
     }
 
-    fun `test Open works 02`() {
+    @Test
+    fun `Open works 02`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection>")
 
         myFixture.performEditorAction(ACTION_OPEN_RECTANGLE)
@@ -458,7 +480,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>   foo")
     }
 
-    fun `test Open works 03`() {
+    @Test
+    fun `Open works 03`() {
         myFixture.configureByText(
             FILE,
             """
@@ -481,7 +504,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Open works 04`() {
+    @Test
+    fun `Open works 04`() {
         myFixture.configureByText(
             FILE,
             """
@@ -500,7 +524,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Open works 05`() {
+    @Test
+    fun `Open works 05`() {
         myFixture.configureByText(
             FILE,
             """
@@ -519,7 +544,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Open works 06`() {
+    @Test
+    fun `Open works 06`() {
         myFixture.configureByText(
             FILE,
             """
@@ -540,7 +566,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Open works 07`() {
+    @Test
+    fun `Open works 07`() {
         myFixture.configureByText(
             FILE,
             """
@@ -561,7 +588,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Open works 08`() {
+    @Test
+    fun `Open works 08`() {
         myFixture.configureByText(
             FILE,
             """
@@ -582,7 +610,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Open works 09`() {
+    @Test
+    fun `Open works 09`() {
         myFixture.configureByText(
             FILE,
             """
@@ -603,7 +632,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Clear works 01`() {
+    @Test
+    fun `Clear works 01`() {
         myFixture.configureByText(FILE, "<selection>foo</selection><caret>")
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
@@ -611,7 +641,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>   ")
     }
 
-    fun `test Clear works 02`() {
+    @Test
+    fun `Clear works 02`() {
         myFixture.configureByText(FILE, "<selection><caret>foo</selection>")
 
         myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
@@ -619,7 +650,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("<caret>   ")
     }
 
-    fun `test Clear works 03`() {
+    @Test
+    fun `Clear works 03`() {
         myFixture.configureByText(
             FILE,
             """
@@ -642,7 +674,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Clear works 04`() {
+    @Test
+    fun `Clear works 04`() {
         myFixture.configureByText(
             FILE,
             """
@@ -661,7 +694,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Clear works 05`() {
+    @Test
+    fun `Clear works 05`() {
         myFixture.configureByText(
             FILE,
             """
@@ -680,7 +714,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Clear works 06`() {
+    @Test
+    fun `Clear works 06`() {
         myFixture.configureByText(
             FILE,
             """
@@ -701,7 +736,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Clear works 07`() {
+    @Test
+    fun `Clear works 07`() {
         myFixture.configureByText(
             FILE,
             """
@@ -722,7 +758,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Clear works 08`() {
+    @Test
+    fun `Clear works 08`() {
         myFixture.configureByText(
             FILE,
             """
@@ -743,7 +780,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Clear works 09`() {
+    @Test
+    fun `Clear works 09`() {
         myFixture.configureByText(
             FILE,
             """
@@ -764,7 +802,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Keep works 01`() {
+    @Test
+    fun `Keep works 01`() {
         myFixture.configureByText(FILE, "bar<selection>foo</selection><caret>baz")
 
         myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
@@ -772,7 +811,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `test Keep works 02`() {
+    @Test
+    fun `Keep works 02`() {
         myFixture.configureByText(FILE, "bar<caret><selection>foo</selection>baz")
 
         myFixture.performEditorAction(ACTION_KEEP_RECTANGLE)
@@ -780,7 +820,8 @@ class RectangleTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret>")
     }
 
-    fun `test Keep works 03`() {
+    @Test
+    fun `Keep works 03`() {
         myFixture.configureByText(
             FILE,
             """
@@ -803,7 +844,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Keep works 04`() {
+    @Test
+    fun `Keep works 04`() {
         myFixture.configureByText(
             FILE,
             """
@@ -828,7 +870,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Keep works 05`() {
+    @Test
+    fun `Keep works 05`() {
         myFixture.configureByText(
             FILE,
             """
@@ -849,7 +892,8 @@ class RectangleTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Rectangle operation reduces multiple carets to one and uses the primary selection`() {
+    @Test
+    fun `Rectangle operation reduces multiple carets to one and uses the primary selection`() {
         myFixture.configureByText(
             FILE,
             """

@@ -12,25 +12,31 @@ import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.ui.JBColor
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 private const val FILE = "replacefile.txt"
 
 class ReplaceTest : EmacsJTestCase() {
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun speedUpHighlighting() {
         CommonHighlighter.delayMillis = 0
     }
 
-    override fun tearDown() {
-        try {
-            CommonHighlighter.delayMillis = HIGHLIGHT_DELAY_MILLIS
-        } finally {
-            super.tearDown()
-        }
+    @AfterEach
+    fun restoreHighlightingDelay() {
+        CommonHighlighter.delayMillis = HIGHLIGHT_DELAY_MILLIS
     }
 
-    fun `test Simple text replace works`() {
+    @Test
+    fun `Simple text replace works`() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -45,7 +51,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("bar<caret>")
     }
 
-    fun `test Yes and no while replacing works`() {
+    @Test
+    fun `Yes and no while replacing works`() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -62,7 +69,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult(""""label" () "label" () null<caret>""")
     }
 
-    fun `test Space and no while replacing works`() {
+    @Test
+    fun `Space and no while replacing works`() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -79,7 +87,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult(""""label" () "label" () null<caret>""")
     }
 
-    fun `test Different order of yes and no works`() {
+    @Test
+    fun `Different order of yes and no works`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -96,7 +105,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("bar foo bar<caret>")
     }
 
-    fun `test Replacement is only done within selection`() {
+    @Test
+    fun `Replacement is only done within selection`() {
         myFixture.configureByText(FILE, "<caret><selection>foo foo</selection> foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -112,7 +122,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("bar bar<caret> foo")
     }
 
-    fun `test Replacement is over after period`() {
+    @Test
+    fun `Replacement is over after period`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -128,7 +139,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("bar bar<caret> foo")
     }
 
-    fun `test Exclamation mark replaces everything and with correct case`() {
+    @Test
+    fun `Exclamation mark replaces everything and with correct case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -143,7 +155,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("bar Bar BAR<caret>")
     }
 
-    fun `test Upper case in replacement makes replacement dependent on case`() {
+    @Test
+    fun `Upper case in replacement makes replacement dependent on case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -158,7 +171,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("BAR<caret> Foo FOO")
     }
 
-    fun `test An upper case letter in source makes replacement dependent on case`() {
+    @Test
+    fun `An upper case letter in source makes replacement dependent on case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -173,7 +187,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("foo bar<caret> FOO")
     }
 
-    fun `test An upper case word can be transformed to lower case`() {
+    @Test
+    fun `An upper case word can be transformed to lower case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -188,7 +203,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("foo foo<caret> FOO")
     }
 
-    fun `test A lower case word can be transformed to upper case`() {
+    @Test
+    fun `A lower case word can be transformed to upper case`() {
         myFixture.configureByText(FILE, "<caret>foo Foo FOO")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -203,7 +219,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("Foo<caret> Foo FOO")
     }
 
-    fun `test Regexp replace with back references java style works`() {
+    @Test
+    fun `Regexp replace with back references java style works`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -218,7 +235,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("båt<caret>")
     }
 
-    fun `test Backslash before dollar stops back reference regexp replace`() {
+    @Test
+    fun `Backslash before dollar stops back reference regexp replace`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -233,7 +251,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("""$1å$2<caret>""")
     }
 
-    fun `test Regexp replace with back references traditional style works`() {
+    @Test
+    fun `Regexp replace with back references traditional style works`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -248,7 +267,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("båt<caret>")
     }
 
-    fun `test Double escape stops back reference regexp replace`() {
+    @Test
+    fun `Double escape stops back reference regexp replace`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -263,7 +283,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("""\1å\2<caret>""")
     }
 
-    fun `test Replace whole regexp match java style works`() {
+    @Test
+    fun `Replace whole regexp match java style works`() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -279,7 +300,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("baaaa<caret>t")
     }
 
-    fun `test Replace whole regexp match traditional style works`() {
+    @Test
+    fun `Replace whole regexp match traditional style works`() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -295,7 +317,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("baaaa<caret>t")
     }
 
-    fun `test Escaped backslash before a back reference keeps both`() {
+    @Test
+    fun `Escaped backslash before a back reference keeps both`() {
         // "\\" is a literal backslash and the "\1" that follows it is still a back reference, so the replacement
         // should produce a backslash followed by the first group.
         myFixture.configureByText(FILE, "<caret>baaat")
@@ -312,7 +335,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("""\b<caret>""")
     }
 
-    fun `test Escaped backslash before a whole match reference keeps both`() {
+    @Test
+    fun `Escaped backslash before a whole match reference keeps both`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -327,7 +351,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("""b\aaa<caret>t""")
     }
 
-    fun `test Double escape stops back reference to whole match in regexp replace`() {
+    @Test
+    fun `Double escape stops back reference to whole match in regexp replace`() {
         myFixture.configureByText(FILE, "<caret>baaat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -342,7 +367,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("""b\&\&<caret>t""")
     }
 
-    fun `test Replace whole regexp match traditional style and exclamation mark works`() {
+    @Test
+    fun `Replace whole regexp match traditional style and exclamation mark works`() {
         myFixture.configureByText(FILE, "<caret>baat")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -358,7 +384,8 @@ class ReplaceTest : EmacsJTestCase() {
         ReplaceHandler.delegate = null
     }
 
-    fun `test Regexp replace works with simple text replace`() {
+    @Test
+    fun `Regexp replace works with simple text replace`() {
         myFixture.configureByText(FILE, "<caret>aa")
         myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -373,7 +400,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("bb<caret>")
     }
 
-    fun `test Mark is set when replace starts`() {
+    @Test
+    fun `Mark is set when replace starts`() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -392,7 +420,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("""<caret>"label" () "label" () null""")
     }
 
-    fun `test Previous replace commands can be reused`() {
+    @Test
+    fun `Previous replace commands can be reused`() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -436,7 +465,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_START)
     }
 
-    fun `test Next item in replace history works as intended`() {
+    @Test
+    fun `Next item in replace history works as intended`() {
         myFixture.configureByText(FILE, "<caret>foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -479,7 +509,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("faaaaaaaa<caret>")
     }
 
-    fun `test Previous replace command can be accepted with ENTER`() {
+    @Test
+    fun `Previous replace command can be accepted with ENTER`() {
         myFixture.configureByText(FILE, "<caret>foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -500,7 +531,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("bar bar<caret>")
     }
 
-    fun `test New line character can be added to search string`() {
+    @Test
+    fun `New line character can be added to search string`() {
         myFixture.configureByText(
             FILE,
             """
@@ -526,7 +558,8 @@ class ReplaceTest : EmacsJTestCase() {
         )
     }
 
-    fun `test New line character can be added to replacement string`() {
+    @Test
+    fun `New line character can be added to replacement string`() {
         myFixture.configureByText(
             FILE,
             """
@@ -556,7 +589,8 @@ class ReplaceTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Undo replacing works`() {
+    @Test
+    fun `Undo replacing works`() {
         myFixture.configureByText(FILE, "<caret>null () null () null null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -581,7 +615,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("""null<caret> () null () null null""")
     }
 
-    fun `test Replacements can be visited`() {
+    @Test
+    fun `Replacements can be visited`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo foo")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -610,7 +645,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret> foo foo foo")
     }
 
-    fun `test Replacement can be edited`() {
+    @Test
+    fun `Replacement can be edited`() {
         myFixture.configureByText(FILE, "<caret>null () null () null")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
 
@@ -636,7 +672,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult(""""label" () other () other<caret>""")
     }
 
-    fun `test Invoking text replace while searching forward works`() {
+    @Test
+    fun `Invoking text replace while searching forward works`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
@@ -654,7 +691,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("bar foo<caret> foo")
     }
 
-    fun `test Invoking text replace while searching backward works`() {
+    @Test
+    fun `Invoking text replace while searching backward works`() {
         myFixture.configureByText(FILE, "foo foo foo<caret>")
 
         myFixture.performEditorAction(ACTION_ISEARCH_BACKWARD)
@@ -673,7 +711,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("foo bar foo<caret>")
     }
 
-    fun `test Invoking regexp replace while searching forward works`() {
+    @Test
+    fun `Invoking regexp replace while searching forward works`() {
         myFixture.configureByText(FILE, "<caret>foo foo foo")
 
         myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_FORWARD)
@@ -692,7 +731,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("baz baz foo<caret>")
     }
 
-    fun `test Invoking regexp replace while searching backward works`() {
+    @Test
+    fun `Invoking regexp replace while searching backward works`() {
         myFixture.configureByText(FILE, "foo foo foo<caret>")
 
         myFixture.performEditorAction(ACTION_ISEARCH_REGEXP_BACKWARD)
@@ -713,7 +753,8 @@ class ReplaceTest : EmacsJTestCase() {
         myFixture.checkResult("baz baz foo<caret>")
     }
 
-    fun `test Adding a caret cancels the replace session`() {
+    @Test
+    fun `Adding a caret cancels the replace session`() {
         myFixture.configureByText(FILE, "<caret>foo\nbar")
         myFixture.performEditorAction(ACTION_REPLACE_TEXT)
         assertNotNull(ReplaceHandler.delegate)
@@ -723,7 +764,8 @@ class ReplaceTest : EmacsJTestCase() {
         assertNull(ReplaceHandler.delegate)
     }
 
-    fun `test Replace reduces multiple carets to one`() {
+    @Test
+    fun `Replace reduces multiple carets to one`() {
         myFixture.configureByText(FILE, "fo<caret>o\nba<caret>r")
         assertEquals(2, myFixture.editor.caretModel.caretCount)
 
@@ -732,7 +774,8 @@ class ReplaceTest : EmacsJTestCase() {
         assertEquals(1, myFixture.editor.caretModel.caretCount)
     }
 
-    fun `test Replace is disabled in an editor without a project`() {
+    @Test
+    fun `Replace is disabled in an editor without a project`() {
         val factory = EditorFactory.getInstance()
         val editor = factory.createEditor(factory.createDocument("foo bar baz"))
         try {
@@ -749,7 +792,8 @@ class ReplaceTest : EmacsJTestCase() {
         }
     }
 
-    fun `test Malformed search regexp matches nothing`() {
+    @Test
+    fun `Malformed search regexp matches nothing`() {
         ["(", "[a", """a\"""].forEach { malformed ->
             myFixture.configureByText(FILE, "<caret>aaa bbb")
             myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
@@ -766,7 +810,8 @@ class ReplaceTest : EmacsJTestCase() {
         }
     }
 
-    fun `test Malformed replacement reports a failed replacement`() {
+    @Test
+    fun `Malformed replacement reports a failed replacement`() {
         ["""\2""", """\9""", "$", "\$x", """y\"""].forEach { malformed ->
             myFixture.configureByText(FILE, "<caret>aaa bbb")
             myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
@@ -785,7 +830,8 @@ class ReplaceTest : EmacsJTestCase() {
         }
     }
 
-    fun `test A replace leaves highlights belonging to the rest of the IDE alone`() {
+    @Test
+    fun `A replace leaves highlights belonging to the rest of the IDE alone`() {
         myFixture.configureByText(FILE, "<caret>foo bar foo")
 
         val foreign = myFixture.editor.markupModel.addRangeHighlighter(
@@ -802,11 +848,11 @@ class ReplaceTest : EmacsJTestCase() {
         setText("baz")
         pressEnter()
         typeChar('y')
-        assertTrue("cleared while replacing", foreign.isValid)
+        assertTrue(foreign.isValid, "cleared while replacing")
 
         typeChar('.')
 
-        assertTrue("cleared when the replace ended", foreign.isValid)
+        assertTrue(foreign.isValid, "cleared when the replace ended")
         assertTrue(myFixture.editor.markupModel.allHighlighters.contains(foreign))
     }
 

@@ -5,6 +5,9 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOW
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_UP
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.testFramework.EditorTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 private const val FILE = "recenterfile.txt"
 
@@ -23,16 +26,18 @@ class RecenterTest : EmacsJTestCase() {
     private val scrollOffset: Int
         get() = myFixture.editor.scrollingModel.verticalScrollOffset
 
-    fun `test Recenter scrolls the view`() {
+    @Test
+    fun `Recenter scrolls the view`() {
         configure()
         assertEquals(0, scrollOffset)
 
         myFixture.performEditorAction(ACTION_RECENTER)
 
-        assertTrue("Recenter should have scrolled the view", scrollOffset > 0)
+        assertTrue(scrollOffset > 0, "Recenter should have scrolled the view")
     }
 
-    fun `test Repeated recenter cycles through middle, top and bottom`() {
+    @Test
+    fun `Repeated recenter cycles through middle, top and bottom`() {
         configure()
 
         myFixture.performEditorAction(ACTION_RECENTER)
@@ -43,11 +48,12 @@ class RecenterTest : EmacsJTestCase() {
         val bottom = scrollOffset
 
         // Scrolling further down puts the caret higher on screen, so top > middle > bottom.
-        assertTrue("Second recenter should place the caret above the middle", top > middle)
-        assertTrue("Third recenter should place the caret below the middle", bottom < middle)
+        assertTrue(top > middle, "Second recenter should place the caret above the middle")
+        assertTrue(bottom < middle, "Third recenter should place the caret below the middle")
     }
 
-    fun `test Recenter cycle returns to middle on the fourth invocation`() {
+    @Test
+    fun `Recenter cycle returns to middle on the fourth invocation`() {
         configure()
 
         myFixture.performEditorAction(ACTION_RECENTER)
@@ -57,7 +63,8 @@ class RecenterTest : EmacsJTestCase() {
         assertEquals(middle, scrollOffset)
     }
 
-    fun `test Typing restarts the cycle at middle`() {
+    @Test
+    fun `Typing restarts the cycle at middle`() {
         configure()
 
         myFixture.performEditorAction(ACTION_RECENTER)
@@ -72,7 +79,8 @@ class RecenterTest : EmacsJTestCase() {
         assertEquals(middle, scrollOffset)
     }
 
-    fun `test An intervening command restarts the cycle at middle`() {
+    @Test
+    fun `An intervening command restarts the cycle at middle`() {
         configure()
 
         myFixture.performEditorAction(ACTION_RECENTER)
@@ -89,17 +97,18 @@ class RecenterTest : EmacsJTestCase() {
         assertEquals(middle, scrollOffset)
     }
 
-    fun `test Caret stays within the visible area after each step of the cycle`() {
+    @Test
+    fun `Caret stays within the visible area after each step of the cycle`() {
         configure()
 
         repeat(4) {
             myFixture.performEditorAction(ACTION_RECENTER)
             val caretY = myFixture.editor.visualPositionToXY(myFixture.editor.caretModel.primaryCaret.visualPosition).y
             val relativeY = caretY - scrollOffset
-            assertTrue("Caret above the viewport: $relativeY", relativeY >= 0)
+            assertTrue(relativeY >= 0, "Caret above the viewport: $relativeY")
             assertTrue(
-                "Caret below the viewport: $relativeY",
-                relativeY <= myFixture.editor.scrollingModel.visibleArea.height
+                relativeY <= myFixture.editor.scrollingModel.visibleArea.height,
+                "Caret below the viewport: $relativeY"
             )
         }
     }

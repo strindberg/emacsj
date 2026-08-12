@@ -15,6 +15,10 @@ import com.github.strindberg.emacsj.zap.ACTION_ZAP_BACKWARD_TO
 import com.github.strindberg.emacsj.zap.ACTION_ZAP_FORWARD_TO
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
 import com.intellij.openapi.ide.CopyPasteManager
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 private const val FILE = "appendkillfile.txt"
 
@@ -41,20 +45,21 @@ private object TestClock : Clock() {
 
 class AppendKillTest : EmacsJTestCase() {
 
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun installTestClock() {
         // CopyRegionHandler is shared between tests, so its last-invocation stamp would throttle the first copy of
         // the next test. Start every test well past the throttle window.
         advanceClock(THROTTLE_CLEARANCE_MILLIS)
         CopyRegionHandler.clock = TestClock
     }
 
-    override fun tearDown() {
+    @AfterEach
+    fun restoreClock() {
         CopyRegionHandler.clock = Clock.systemDefaultZone()
-        super.tearDown()
     }
 
-    fun `test Basic Copy works`() {
+    @Test
+    fun `Basic Copy works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -74,7 +79,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("baz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Basic Copy with empty selection copies whole line`() {
+    @Test
+    fun `Basic Copy with empty selection copies whole line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -94,7 +100,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test A whole-line copy repeated inside the throttle window is ignored`() {
+    @Test
+    fun `A whole-line copy repeated inside the throttle window is ignored`() {
         myFixture.configureByText(
             FILE,
             """
@@ -110,7 +117,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test A whole-line copy repeated after the throttle window copies the new line`() {
+    @Test
+    fun `A whole-line copy repeated after the throttle window copies the new line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -127,7 +135,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("bar", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test An explicit selection is copied even inside the throttle window`() {
+    @Test
+    fun `An explicit selection is copied even inside the throttle window`() {
         myFixture.configureByText(
             FILE,
             """
@@ -143,7 +152,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("quux", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Basic Cut works`() {
+    @Test
+    fun `Basic Cut works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -163,7 +173,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("baz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Basic Cut with empty selection cuts whole line`() {
+    @Test
+    fun `Basic Cut with empty selection cuts whole line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -182,7 +193,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("bazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Copy works`() {
+    @Test
+    fun `Append next kill before Copy works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -206,7 +218,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("zedbaz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Cut works`() {
+    @Test
+    fun `Append next kill before Cut works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -230,7 +243,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("zedbaz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Copy where caret is before selection prepends new text`() {
+    @Test
+    fun `Append next kill before Copy where caret is before selection prepends new text`() {
         myFixture.configureByText(
             FILE,
             """
@@ -254,7 +268,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("bazzed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Cut where caret is before selection prepends new text`() {
+    @Test
+    fun `Append next kill before Cut where caret is before selection prepends new text`() {
         myFixture.configureByText(
             FILE,
             """
@@ -278,7 +293,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("bazzed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill with empty selection is ignored`() {
+    @Test
+    fun `Append next kill with empty selection is ignored`() {
         myFixture.configureByText(
             FILE,
             """
@@ -295,7 +311,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("zed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Kill line works`() {
+    @Test
+    fun `Append next kill before Kill line works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -321,7 +338,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("zedzoo", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Kill whole line works`() {
+    @Test
+    fun `Append next kill before Kill whole line works`() {
         myFixture.configureByText(
             FILE,
             """
@@ -347,7 +365,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("zedbazzoo\n", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Delete next word works and word is appended`() {
+    @Test
+    fun `Append next kill before Delete next word works and word is appended`() {
         myFixture.configureByText(
             FILE,
             """
@@ -373,7 +392,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("zedbaz", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Delete previous word works and word is prepended`() {
+    @Test
+    fun `Append next kill before Delete previous word works and word is prepended`() {
         myFixture.configureByText(
             FILE,
             """
@@ -399,7 +419,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("bazzed", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Zap forward works and text is appended`() {
+    @Test
+    fun `Append next kill before Zap forward works and text is appended`() {
         myFixture.configureByText(
             FILE,
             """
@@ -426,7 +447,8 @@ class AppendKillTest : EmacsJTestCase() {
         assertEquals("zed zoop", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
     }
 
-    fun `test Append next kill before Zap backward works and text is prepended`() {
+    @Test
+    fun `Append next kill before Zap backward works and text is prepended`() {
         myFixture.configureByText(
             FILE,
             """

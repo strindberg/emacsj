@@ -99,9 +99,15 @@ The plugin is expected to unload without an IDE restart, which constrains anythi
 
 ## Testing
 
-Tests are **JUnit 3**: `BasePlatformTestCase` extends `junit.framework.TestCase`, so there are no annotations and methods are discovered by name. The backticked names work because they still begin with `test`.
+Tests are **JUnit 5 (Jupiter)**, on `useJUnitPlatform()`. Every test method needs `@Test`. Names are backticked prose and no longer carry the `test ` prefix that JUnit 3 discovery required. Assertions come from `org.junit.jupiter.api.Assertions` — note that Jupiter puts the message **last**, the reverse of JUnit 3.
 
-Fixture tests extend **`EmacsJTestCase`**, not `BasePlatformTestCase` directly. Its `tearDown` hides every delegate, clears the repeat flag and pushes two empty entries onto the action history — all application-scoped state that would otherwise leak into the next test class. It also offers `pressKey(ui, keyCode)` for driving a delegate's popup. Four pure-logic classes (`WordUtilsTest`, `UndoRedoStackTest`, `EmacsJLexerTest`, `EllipsizeTest`) extend `TestCase` directly.
+Fixture tests extend **`EmacsJTestCase`**, which no longer inherits from `BasePlatformTestCase`. It builds `myFixture` the way `BasePlatformTestCase` does — `IdeaTestFixtureFactory` → `createLightFixtureBuilder` → `createCodeInsightFixture` — so the test bodies are unchanged from the JUnit 3 era. Three things in it are load-bearing:
+
+- `@RunInEdt(writeIntent = true)`, which subclasses inherit (the annotation is `@Inherited`). Without `writeIntent` every test that edits a document fails with "Write-unsafe context!".
+- `@BeforeEach setUpFixture` / `@AfterEach tearDownFixture`. A subclass's own `@AfterEach` runs *before* the base's, which is what the old `finally { super.tearDown() }` gave.
+- The teardown hides every delegate, clears the repeat flag and pushes two empty entries onto the action history — application-scoped state that would otherwise leak into the next test class. It also offers `pressKey(ui, keyCode)` for driving a delegate's popup.
+
+`junit:junit` is still on the compile classpath, but not for the tests: `com.intellij.testFramework.LexerTestCase`, which `EmacsJLexerTest` uses, extends `junit.framework.TestCase`. The vintage engine is gone. Four pure-logic classes (`WordUtilsTest`, `UndoRedoStackTest`, `EmacsJLexerTest`, `EllipsizeTest`) have no fixture and extend nothing; `WordUtilsTest` and `EllipsizeTest` use `@ParameterizedTest` with `@MethodSource`, whose factory methods **must be public** — Kotlin mangles `internal` names and Jupiter's reflection lookup then fails.
 
 The typical pattern:
 
@@ -118,9 +124,10 @@ myFixture.checkResult("foo <caret>bar")
 
 ### Test seams
 
-Two pieces of production state exist so tests can be deterministic, rather than to switch behavior off:
+Four pieces of production state exist so tests can be deterministic, rather than to switch behavior off:
 
-- `CommonHighlighter.delayMillis` — the debounce before a search highlights. `ISearchTest` and `ReplaceTest` set it to 0 in `setUp` and restore it, otherwise the suite pays the delay on every keystroke; they wait on `CommonHighlighter.isIdle`.
+- `CommonHighlighter.delayMillis` — the debounce before a search highlights. `ISearchTest` and `ReplaceTest` set it to 0 in `@BeforeEach` and restore it, otherwise the suite pays the delay on every keystroke; they wait on `CommonHighlighter.isIdle`.
 - `CopyRegionHandler.clock` — the key-repeat throttle reads it, so `AppendKillTest` can move time explicitly and test the throttle instead of disabling it.
+- `MarkPlaces.clear()` and `UndoRedoStack.clear()` — the mark ring and the xref history are project-scoped, but the light fixture hands the same project to every test in a class, so both carry over. `EmacsJTestCase` empties them in teardown. Without this, a test that assumes an empty history passes or fails depending on where it lands in Jupiter's method order.
 
 Some things cannot be asserted headlessly. Popups are suppressed in unit-test mode, so anything depending on a popup being genuinely on screen (its position, whether it follows a window resize) needs `runIde`. Clipboard history is application-scoped and is polluted by other test classes, so a test that walks it must pin it first.

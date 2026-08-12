@@ -2,12 +2,14 @@ package com.github.strindberg.emacsj.duplicate
 
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.ide.highlighter.XmlFileType
+import org.junit.jupiter.api.Test
 
 private const val FILE = "duplicatefile.java"
 
 class DuplicateTest : EmacsJTestCase() {
 
-    fun `test Line is duplicated`() {
+    @Test
+    fun `Line is duplicated`() {
         myFixture.configureByText(
             FILE,
             """
@@ -29,7 +31,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Line is duplicated at end of buffer`() {
+    @Test
+    fun `Line is duplicated at end of buffer`() {
         myFixture.configureByText(
             FILE,
             """
@@ -50,7 +53,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Region is duplicated`() {
+    @Test
+    fun `Region is duplicated`() {
         myFixture.configureByText(
             FILE,
             """
@@ -75,7 +79,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Region is duplicated 2`() {
+    @Test
+    fun `Region is duplicated 2`() {
         myFixture.configureByText(
             FILE,
             """
@@ -97,7 +102,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Java line is duplicated and commented`() {
+    @Test
+    fun `Java line is duplicated and commented`() {
         myFixture.configureByText(
             FILE,
             """
@@ -119,7 +125,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Java region is duplicated and commented 1`() {
+    @Test
+    fun `Java region is duplicated and commented 1`() {
         myFixture.configureByText(
             FILE,
             """
@@ -144,7 +151,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Java region is duplicated and commented 2`() {
+    @Test
+    fun `Java region is duplicated and commented 2`() {
         myFixture.configureByText(
             FILE,
             """
@@ -167,7 +175,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Java region is duplicated and commented 3`() {
+    @Test
+    fun `Java region is duplicated and commented 3`() {
         myFixture.configureByText(
             FILE,
             """
@@ -189,7 +198,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Java region is duplicated and commented 4`() {
+    @Test
+    fun `Java region is duplicated and commented 4`() {
         myFixture.configureByText(
             FILE,
             """
@@ -211,7 +221,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test XML line is duplicated and commented`() {
+    @Test
+    fun `XML line is duplicated and commented`() {
         myFixture.configureByText(
             XmlFileType.INSTANCE,
             """
@@ -235,7 +246,8 @@ class DuplicateTest : EmacsJTestCase() {
         )
     }
 
-    fun `test XML region is duplicated and commented`() {
+    @Test
+    fun `XML region is duplicated and commented`() {
         myFixture.configureByText(
             XmlFileType.INSTANCE,
             """

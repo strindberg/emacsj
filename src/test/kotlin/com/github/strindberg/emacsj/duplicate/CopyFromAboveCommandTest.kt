@@ -2,12 +2,14 @@ package com.github.strindberg.emacsj.duplicate
 
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
+import org.junit.jupiter.api.Test
 
 private const val FILE = "copyfromabovefile.txt"
 
 class CopyFromAboveCommandTest : EmacsJTestCase() {
 
-    fun `test Whole line is duplicated from position 0`() {
+    @Test
+    fun `Whole line is duplicated from position 0`() {
         myFixture.configureByText(
             FILE,
             """
@@ -26,7 +28,8 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
         )
     }
 
-    fun `test First non-blank line is copied`() {
+    @Test
+    fun `First non-blank line is copied`() {
         myFixture.configureByText(
             FILE,
             """
@@ -49,7 +52,8 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Nothing is duplicated if on first line`() {
+    @Test
+    fun `Nothing is duplicated if on first line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -66,7 +70,8 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Nothing is duplicated if only blank lines above`() {
+    @Test
+    fun `Nothing is duplicated if only blank lines above`() {
         myFixture.configureByText(
             FILE,
             """
@@ -87,7 +92,8 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
         )
     }
 
-    fun `test With active selection no copy above command action is executed`() {
+    @Test
+    fun `With active selection no copy above command action is executed`() {
         myFixture.configureByText(
             FILE,
             """
@@ -106,7 +112,8 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Line is duplicated from caret position`() {
+    @Test
+    fun `Line is duplicated from caret position`() {
         myFixture.configureByText(
             FILE,
             """
@@ -125,7 +132,8 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Universal argument limits number of characters`() {
+    @Test
+    fun `Universal argument limits number of characters`() {
         myFixture.configureByText(
             FILE,
             """
@@ -145,7 +153,8 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Short previous line is handled`() {
+    @Test
+    fun `Short previous line is handled`() {
         myFixture.configureByText(
             FILE,
             """
@@ -164,7 +173,8 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Universal argument does not extend beyond line end`() {
+    @Test
+    fun `Universal argument does not extend beyond line end`() {
         myFixture.configureByText(
             FILE,
             """
@@ -185,7 +195,8 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Copy from above works with multiple carets`() {
+    @Test
+    fun `Copy from above works with multiple carets`() {
         myFixture.configureByText(
             FILE,
             """

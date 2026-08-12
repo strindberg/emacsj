@@ -3,12 +3,14 @@ package com.github.strindberg.emacsj.rectangle
 import java.awt.datatransfer.StringSelection
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.ide.CopyPasteManager
+import org.junit.jupiter.api.Test
 
 private const val FILE = "rectanglepastefile.txt"
 
 class RectanglePasteTest : EmacsJTestCase() {
 
-    fun `test Paste works 01`() {
+    @Test
+    fun `Paste works 01`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -17,7 +19,8 @@ class RectanglePasteTest : EmacsJTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `test Paste works 02`() {
+    @Test
+    fun `Paste works 02`() {
         myFixture.configureByText(
             FILE,
             """
@@ -47,7 +50,8 @@ class RectanglePasteTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Paste works 03`() {
+    @Test
+    fun `Paste works 03`() {
         myFixture.configureByText(
             FILE,
             """
@@ -81,7 +85,8 @@ class RectanglePasteTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Paste works 04`() {
+    @Test
+    fun `Paste works 04`() {
         myFixture.configureByText(
             FILE,
             """
@@ -112,7 +117,8 @@ class RectanglePasteTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Paste works 05`() {
+    @Test
+    fun `Paste works 05`() {
         myFixture.configureByText(
             FILE,
             """

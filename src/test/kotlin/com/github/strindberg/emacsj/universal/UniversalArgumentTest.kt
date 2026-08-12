@@ -9,19 +9,24 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEF
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_UNDO
 import com.intellij.testFramework.PlatformTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Test
 
 private const val FILE = "universalfile.txt"
 
 class UniversalArgumentTest : EmacsJTestCase() {
 
-    fun `test Universal argument before movement moves four steps`() {
+    @Test
+    fun `Universal argument before movement moves four steps`() {
         myFixture.configureByText(FILE, "<caret>foobar")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_RIGHT)
         checkResult("foob<caret>ar")
     }
 
-    fun `test Universal argument with '5' before movement moves five steps`() {
+    @Test
+    fun `Universal argument with '5' before movement moves five steps`() {
         myFixture.configureByText(FILE, "<caret>foobar")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.type("5")
@@ -29,7 +34,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("fooba<caret>r")
     }
 
-    fun `test First non-digit after Universal argument triggers action`() {
+    @Test
+    fun `First non-digit after Universal argument triggers action`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.type("5")
@@ -37,7 +43,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("aaaaa<caret>")
     }
 
-    fun `test Multiple digits are interpreted as number`() {
+    @Test
+    fun `Multiple digits are interpreted as number`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.type("1")
@@ -46,7 +53,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("aaaaaaaaaaaaaaa<caret>")
     }
 
-    fun `test Repeated Universal argument multiplies by four`() {
+    @Test
+    fun `Repeated Universal argument multiplies by four`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
@@ -54,7 +62,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("aaaaaaaaaaaaaaaa<caret>")
     }
 
-    fun `test Pressing 'Escape' aborts universal argument`() {
+    @Test
+    fun `Pressing 'Escape' aborts universal argument`() {
         myFixture.configureByText(FILE, "<caret>foobar")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         pressEscape()
@@ -62,7 +71,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("f<caret>oobar")
     }
 
-    fun `test Numeric universal arguments work`() {
+    @Test
+    fun `Numeric universal arguments work`() {
         [
             ACTION_UNIVERSAL_ARGUMENT1 to 1,
             ACTION_UNIVERSAL_ARGUMENT2 to 2,
@@ -88,7 +98,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         }
     }
 
-    fun `test Numeric universal argument 10 works 1`() {
+    @Test
+    fun `Numeric universal argument 10 works 1`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.type("0")
@@ -96,7 +107,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("aaaaaaaaaa<caret>")
     }
 
-    fun `test Numeric universal argument 10 works 2`() {
+    @Test
+    fun `Numeric universal argument 10 works 2`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
@@ -108,7 +120,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("<caret>aaaaaaaaaa")
     }
 
-    fun `test A repeat larger than the batch size runs every repetition`() {
+    @Test
+    fun `A repeat larger than the batch size runs every repetition`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
         myFixture.type("5")
@@ -117,7 +130,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("a".repeat(150) + "<caret>")
     }
 
-    fun `test Repeating is switched off once the repeat has finished`() {
+    @Test
+    fun `Repeating is switched off once the repeat has finished`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
         myFixture.type("a")
@@ -127,7 +141,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         assertFalse(EmacsJService.instance.isRepeating())
     }
 
-    fun `test Cancelling the repeat drops repetitions that have not run yet`() {
+    @Test
+    fun `Cancelling the repeat drops repetitions that have not run yet`() {
         myFixture.configureByText(FILE, "<caret>")
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT5)
         myFixture.type("a")
@@ -137,7 +152,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("<caret>")
     }
 
-    fun `test Universal argument repeat applies to every caret`() {
+    @Test
+    fun `Universal argument repeat applies to every caret`() {
         myFixture.configureByText(
             FILE,
             """
@@ -157,7 +173,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Universal argument before backspace deletes four characters`() {
+    @Test
+    fun `Universal argument before backspace deletes four characters`() {
         myFixture.configureByText(FILE, "abcdefgh<caret>ijkl")
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
@@ -166,7 +183,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("abcd<caret>ijkl")
     }
 
-    fun `test Universal argument before delete deletes four characters`() {
+    @Test
+    fun `Universal argument before delete deletes four characters`() {
         myFixture.configureByText(FILE, "abcdefgh<caret>ijkl")
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
@@ -175,7 +193,8 @@ class UniversalArgumentTest : EmacsJTestCase() {
         checkResult("abcdefgh<caret>")
     }
 
-    fun `test A repeated deletion is undone in one step`() {
+    @Test
+    fun `A repeated deletion is undone in one step`() {
         myFixture.configureByText(FILE, "abcdefgh<caret>ijkl")
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)

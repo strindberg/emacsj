@@ -10,12 +10,14 @@ import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT2
 import com.intellij.ide.ClientCopyPasteManager
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.ide.CopyPasteManager
+import org.junit.jupiter.api.Test
 
 private const val FILE = "pastefile.txt"
 
 class PasteTest : EmacsJTestCase() {
 
-    fun `test Paste works`() {
+    @Test
+    fun `Paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -27,7 +29,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret>bar")
     }
 
-    fun `test Paste works with selection`() {
+    @Test
+    fun `Paste works with selection`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -39,7 +42,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("BAR<caret>barBAZ")
     }
 
-    fun `test Prefix paste works 1`() {
+    @Test
+    fun `Prefix paste works 1`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -51,7 +55,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `test Prefix paste works 2`() {
+    @Test
+    fun `Prefix paste works 2`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -64,7 +69,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `test Prefix paste works with selection 1`() {
+    @Test
+    fun `Prefix paste works with selection 1`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -76,7 +82,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("BARbar<caret>BAZ")
     }
 
-    fun `test Prefix paste works with selection 2`() {
+    @Test
+    fun `Prefix paste works with selection 2`() {
         myFixture.configureByText(FILE, "BAR<selection>foo</selection>BAZ<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
 
@@ -89,7 +96,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("BARbar<caret>BAZ")
     }
 
-    fun `test Paste history after paste works`() {
+    @Test
+    fun `Paste history after paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("barbar"))
         CopyPasteManager.getInstance().setContents(StringSelection("baz"))
@@ -102,7 +110,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("foo<caret>barbar")
     }
 
-    fun `test Paste history after prefix paste works`() {
+    @Test
+    fun `Paste history after prefix paste works`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("barry"))
         CopyPasteManager.getInstance().setContents(StringSelection("baz"))
@@ -115,7 +124,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("foobarry<caret>")
     }
 
-    fun `test Paste history is cleared of duplicates`() {
+    @Test
+    fun `Paste history is cleared of duplicates`() {
         myFixture.configureByText(FILE, "foo<caret>")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
         CopyPasteManager.getInstance().setContents(StringSelection("baz"))
@@ -126,7 +136,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("foobar<caret>")
     }
 
-    fun `test Paste history is rotated`() {
+    @Test
+    fun `Paste history is rotated`() {
         myFixture.configureByText(FILE, "foo<caret>")
         ClientCopyPasteManager.getCurrentInstance().removeIf { true }
 
@@ -148,7 +159,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("foobaz<caret>")
     }
 
-    fun `test Paste history is not invoked after movement`() {
+    @Test
+    fun `Paste history is not invoked after movement`() {
         myFixture.configureByText(FILE, "foo<caret>BAZ")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
         CopyPasteManager.getInstance().setContents(StringSelection("baz"))
@@ -162,7 +174,8 @@ class PasteTest : EmacsJTestCase() {
         myFixture.checkResult("foobazB<caret>AZ")
     }
 
-    fun `test Paste with multiple carets works as expected`() {
+    @Test
+    fun `Paste with multiple carets works as expected`() {
         myFixture.configureByText(
             FILE,
             """
@@ -190,7 +203,8 @@ class PasteTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Prefix paste with multiple carets works as expected`() {
+    @Test
+    fun `Prefix paste with multiple carets works as expected`() {
         myFixture.configureByText(
             FILE,
             """
@@ -218,7 +232,8 @@ class PasteTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Paste history with multiple carets works as expected`() {
+    @Test
+    fun `Paste history with multiple carets works as expected`() {
         myFixture.configureByText(
             FILE,
             """
@@ -248,7 +263,8 @@ class PasteTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Paste history after prefix paste with multiple carets works as expected`() {
+    @Test
+    fun `Paste history after prefix paste with multiple carets works as expected`() {
         myFixture.configureByText(
             FILE,
             """
@@ -278,7 +294,8 @@ class PasteTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Paste after numeric universal argument works`() {
+    @Test
+    fun `Paste after numeric universal argument works`() {
         myFixture.configureByText(FILE, "foo<selection>one</selection><caret>")
         myFixture.performEditorAction(ACTION_CUT)
         myFixture.checkResult("foo<caret>")

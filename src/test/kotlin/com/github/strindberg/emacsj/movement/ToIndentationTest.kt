@@ -1,12 +1,14 @@
 package com.github.strindberg.emacsj.movement
 
 import com.github.strindberg.emacsj.EmacsJTestCase
+import org.junit.jupiter.api.Test
 
 private const val FILE = "indentationfile.txt"
 
 class ToIndentationTest : EmacsJTestCase() {
 
-    fun `test Caret is moved back to indentation`() {
+    @Test
+    fun `Caret is moved back to indentation`() {
         myFixture.configureByText(
             FILE,
             """
@@ -24,7 +26,8 @@ class ToIndentationTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Caret is moved forward to indentation`() {
+    @Test
+    fun `Caret is moved forward to indentation`() {
         myFixture.configureByText(
             FILE,
             """
@@ -42,7 +45,8 @@ class ToIndentationTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Caret is not moved if no non-whitespace on line`() {
+    @Test
+    fun `Caret is not moved if no non-whitespace on line`() {
         myFixture.configureByText(
             FILE,
             """
@@ -60,7 +64,8 @@ class ToIndentationTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Multiple carets are moved back to indentation`() {
+    @Test
+    fun `Multiple carets are moved back to indentation`() {
         myFixture.configureByText(
             FILE,
             """

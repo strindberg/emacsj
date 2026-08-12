@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.intellij.lang.annotations.Language
+import org.jetbrains.annotations.VisibleForTesting
 
 enum class XRefType { BACK, PUSH, FORWARD }
 
@@ -104,4 +105,10 @@ class UndoRedoStack<T> {
      * Steps forward one position: [current] becomes undoable, and the position after it is returned.
      */
     fun redo(current: T): T? = redoStack.pop()?.also { undoStack.push(current) }
+
+    @VisibleForTesting
+    fun clear() {
+        undoStack.clear()
+        redoStack.clear()
+    }
 }

@@ -1,12 +1,14 @@
 package com.github.strindberg.emacsj.duplicate
 
 import com.github.strindberg.emacsj.EmacsJTestCase
+import org.junit.jupiter.api.Test
 
 private const val FILE = "file.java"
 
 class CommentTest : EmacsJTestCase() {
 
-    fun `test Java line is commented`() {
+    @Test
+    fun `Java line is commented`() {
         myFixture.configureByText(
             FILE,
             """
@@ -27,7 +29,8 @@ class CommentTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Java region is commented 1`() {
+    @Test
+    fun `Java region is commented 1`() {
         myFixture.configureByText(
             FILE,
             """
@@ -50,7 +53,8 @@ class CommentTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Java region is commented 2`() {
+    @Test
+    fun `Java region is commented 2`() {
         myFixture.configureByText(
             FILE,
             """
@@ -71,7 +75,8 @@ class CommentTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Java region is commented 3`() {
+    @Test
+    fun `Java region is commented 3`() {
         myFixture.configureByText(
             FILE,
             """
@@ -92,7 +97,8 @@ class CommentTest : EmacsJTestCase() {
         )
     }
 
-    fun `test Java region is commented 4`() {
+    @Test
+    fun `Java region is commented 4`() {
         myFixture.configureByText(
             FILE,
             """
