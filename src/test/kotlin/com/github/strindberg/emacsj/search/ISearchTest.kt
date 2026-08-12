@@ -2559,6 +2559,43 @@ class ISearchTest : EmacsJTestCase() {
      * as it stands when the next action starts, so firing actions faster than the debounce would snapshot counts
      * that have not arrived yet -- something a user typing at the keyboard never does.
      */
+    fun `test Isearch keystroke handlers step aside while the search string is edited`() {
+        myFixture.configureByText(FILE, "<caret>foo fooz foo")
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+
+        val caret = myFixture.editor.caretModel.primaryCaret
+        val backspace = ISearchBackspaceHandler()
+        val paste = ISearchPasteHandler()
+        val pasteHistory = ISearchPasteHistoryHandler()
+
+        assertTrue(backspace.isEnabled(myFixture.editor, caret, DataContext.EMPTY_CONTEXT))
+        assertTrue(paste.isEnabled(myFixture.editor, caret, DataContext.EMPTY_CONTEXT))
+        assertTrue(pasteHistory.isEnabled(myFixture.editor, caret, DataContext.EMPTY_CONTEXT))
+
+        performEditorAction(ACTION_ISEARCH_EDIT)
+
+        // Disabled, so the keystroke reaches the popup's own editor and acts at its caret instead of the string end.
+        assertFalse(backspace.isEnabled(myFixture.editor, caret, DataContext.EMPTY_CONTEXT))
+        assertFalse(paste.isEnabled(myFixture.editor, caret, DataContext.EMPTY_CONTEXT))
+        assertFalse(pasteHistory.isEnabled(myFixture.editor, caret, DataContext.EMPTY_CONTEXT))
+    }
+
+    fun `test Typing no longer appends to the search string once it is being edited`() {
+        myFixture.configureByText(FILE, "<caret>foo fooz foo")
+
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+        type("foo")
+
+        performEditorAction(ACTION_ISEARCH_EDIT)
+
+        myFixture.type('x')
+
+        // The delegate keeps its hands off: what happens to the character is the popup editor's business.
+        assertEquals("foo", ISearchHandler.delegate?.text)
+    }
+
     private fun performEditorAction(actionId: String) {
         myFixture.performEditorAction(actionId)
         waitForHighlighting()

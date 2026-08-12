@@ -14,6 +14,9 @@ private val isearchPasteActionIds = setOf(ACTION_ISEARCH_PASTE, ACTION_ISEARCH_P
 
 internal class ISearchPasteHistoryHandler : EditorActionHandler() {
 
+    override fun isEnabledForCaret(editor: Editor, caret: Caret, dataContext: DataContext?): Boolean =
+        ISearchHandler.delegate?.isActive() == true
+
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         if (EmacsJService.instance.lastActionId() in isearchPasteActionIds) {
             ISearchHandler.delegate?.pasteNextInHistory()

@@ -26,7 +26,8 @@ internal class EmacsJTypedActionService : Disposable {
             originalHandler = setupRawHandler(object : WrappedTypedActionHandler(rawHandler) {
                 @Suppress("ReturnCount")
                 override fun execute(editor: Editor, charTyped: Char, dataContext: DataContext) {
-                    ISearchHandler.delegate?.let { delegate ->
+                    // Only while the search is running. Once its text is being edited the popup's own editor owns the keystroke.
+                    ISearchHandler.delegate?.takeIf { it.isActive() }?.let { delegate ->
                         delegate.handleChar(charTyped.toString())
                         return
                     }

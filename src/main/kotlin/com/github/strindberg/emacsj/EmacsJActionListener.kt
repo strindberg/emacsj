@@ -3,6 +3,7 @@ package com.github.strindberg.emacsj
 import com.github.strindberg.emacsj.actions.search.ISearchAction
 import com.github.strindberg.emacsj.actions.universal.UniversalArgumentAction
 import com.github.strindberg.emacsj.search.ISearchHandler
+import com.github.strindberg.emacsj.search.ISearchState
 import com.github.strindberg.emacsj.ui.EmacsJTypedActionService
 import com.github.strindberg.emacsj.universal.UniversalArgumentDelegate
 import com.github.strindberg.emacsj.universal.UniversalArgumentHandler
@@ -37,7 +38,7 @@ internal class EmacsJActionListener : AnActionListener {
             }
 
             ISearchHandler.delegate?.let { delegate ->
-                if (action !is ISearchAction) {
+                if (delegate.state != ISearchState.EDIT && action !is ISearchAction) {
                     delegate.hide()
                 }
             }
