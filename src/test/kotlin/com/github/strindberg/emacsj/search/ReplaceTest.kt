@@ -750,7 +750,7 @@ class ReplaceTest : EmacsJTestCase() {
     }
 
     fun `test Malformed search regexp matches nothing`() {
-        listOf("(", "[a", """a\""").forEach { malformed ->
+        ["(", "[a", """a\"""].forEach { malformed ->
             myFixture.configureByText(FILE, "<caret>aaa bbb")
             myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 
@@ -767,7 +767,7 @@ class ReplaceTest : EmacsJTestCase() {
     }
 
     fun `test Malformed replacement reports a failed replacement`() {
-        listOf("""\2""", """\9""", "$", "\$x", """y\""").forEach { malformed ->
+        ["""\2""", """\9""", "$", "\$x", """y\"""].forEach { malformed ->
             myFixture.configureByText(FILE, "<caret>aaa bbb")
             myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 

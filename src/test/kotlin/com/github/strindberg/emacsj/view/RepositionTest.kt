@@ -88,12 +88,10 @@ class RepositionTest : EmacsJTestCase() {
     fun `test Reposition reduces multiple carets to one`() {
         myFixture.configureByText(FILE, (1..LINE_COUNT).joinToString("\n") { "line $it" })
         EditorTestUtil.setEditorVisibleSize(myFixture.editor, 80, VISIBLE_LINES)
-        myFixture.editor.caretModel.setCaretsAndSelections(
-            listOf(
-                CaretState(LogicalPosition(10, 0), null, null),
-                CaretState(LogicalPosition(12, 0), null, null)
-            )
-        )
+        myFixture.editor.caretModel.caretsAndSelections = [
+            CaretState(LogicalPosition(10, 0), null, null),
+            CaretState(LogicalPosition(12, 0), null, null)
+        ]
         assertEquals(2, myFixture.editor.caretModel.caretCount)
 
         myFixture.performEditorAction(ACTION_REPOSITION)

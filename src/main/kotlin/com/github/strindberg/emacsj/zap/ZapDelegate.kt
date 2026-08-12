@@ -78,7 +78,7 @@ internal class ZapDelegate(editor: Editor, private val type: ZapType) : UIDelega
                         editor = editor,
                         textStartOffset = start,
                         textEndOffset = end,
-                        prepend = type in listOf(BACKWARD_TO, BACKWARD_UP_TO)
+                        prepend = type in [BACKWARD_TO, BACKWARD_UP_TO]
                     )
                 })
             } else {

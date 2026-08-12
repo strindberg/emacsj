@@ -49,7 +49,7 @@ kotlin {
     // one of its own. Without it a 2.4 compiler emits suspend-function debug metadata the older stdlib rejects at
     // runtime, and any stdlib API added after 2.1 would fail the same way.
     compilerOptions.apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1
-    compilerOptions.freeCompilerArgs.addAll("-Xjsr305=strict", "-Xreturn-value-checker=full")
+    compilerOptions.freeCompilerArgs.addAll("-Xjsr305=strict", "-Xreturn-value-checker=full", "-Xcollection-literals")
 }
 
 intellijPlatform {

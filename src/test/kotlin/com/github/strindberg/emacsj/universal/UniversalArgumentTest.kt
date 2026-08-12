@@ -63,7 +63,7 @@ class UniversalArgumentTest : EmacsJTestCase() {
     }
 
     fun `test Numeric universal arguments work`() {
-        listOf(
+        [
             ACTION_UNIVERSAL_ARGUMENT1 to 1,
             ACTION_UNIVERSAL_ARGUMENT2 to 2,
             ACTION_UNIVERSAL_ARGUMENT3 to 3,
@@ -73,7 +73,7 @@ class UniversalArgumentTest : EmacsJTestCase() {
             ACTION_UNIVERSAL_ARGUMENT7 to 7,
             ACTION_UNIVERSAL_ARGUMENT8 to 8,
             ACTION_UNIVERSAL_ARGUMENT9 to 9
-        ).forEach { (action, times) ->
+        ].forEach { (action, times) ->
             myFixture.configureByText(FILE, "<caret>")
 
             myFixture.performEditorAction(action)

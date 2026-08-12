@@ -850,13 +850,17 @@ class RectangleTest : EmacsJTestCase() {
     }
 
     fun `test Rectangle operation reduces multiple carets to one and uses the primary selection`() {
-        myFixture.configureByText(FILE, "fooX\nbarY")
-        myFixture.editor.caretModel.setCaretsAndSelections(
-            listOf(
-                CaretState(LogicalPosition(0, 3), LogicalPosition(0, 0), LogicalPosition(0, 3)),
-                CaretState(LogicalPosition(1, 3), LogicalPosition(1, 0), LogicalPosition(1, 3))
-            )
+        myFixture.configureByText(
+            FILE,
+            """
+                fooX
+                barY
+            """.trimIndent()
         )
+        myFixture.editor.caretModel.caretsAndSelections = [
+            CaretState(LogicalPosition(0, 3), LogicalPosition(0, 0), LogicalPosition(0, 3)),
+            CaretState(LogicalPosition(1, 3), LogicalPosition(1, 0), LogicalPosition(1, 3))
+        ]
         assertEquals(2, myFixture.editor.caretModel.caretCount)
 
         myFixture.performEditorAction(ACTION_COPY_RECTANGLE)

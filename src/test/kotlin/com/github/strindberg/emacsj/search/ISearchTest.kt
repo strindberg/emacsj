@@ -2421,12 +2421,12 @@ class ISearchTest : EmacsJTestCase() {
         ISearchHandler.searches.clear(SearchType.TEXT)
         ISearchHandler.searches.clear(SearchType.REGEXP)
 
-        listOf(
+        [
             ACTION_ISEARCH_FORWARD to "aaa",
             ACTION_ISEARCH_FORWARD to "bbb",
             ACTION_ISEARCH_REGEXP_FORWARD to "xxx",
             ACTION_ISEARCH_REGEXP_FORWARD to "yyy"
-        ).forEach { (action, searched) ->
+        ].forEach { (action, searched) ->
             performEditorAction(action)
             type(searched)
             pressEnter()
@@ -2459,7 +2459,7 @@ class ISearchTest : EmacsJTestCase() {
         type("b")
         myFixture.checkResult("foo <caret>bar baz")
 
-        listOf("(", "[", "\\").forEach { unfinished ->
+        ["(", "[", "\\"].forEach { unfinished ->
             type(unfinished)
             assertEquals(ISearchState.FAILED, ISearchHandler.delegate?.state)
             performEditorAction(ACTION_ISEARCH_BACKSPACE)
