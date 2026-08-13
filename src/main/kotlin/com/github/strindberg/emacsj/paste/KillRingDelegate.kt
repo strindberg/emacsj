@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_G
+import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.ui.KillRingUI
 import com.github.strindberg.emacsj.ui.UIDelegate
 import com.intellij.openapi.command.WriteCommandAction
@@ -14,8 +15,14 @@ import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.ex.util.EditorUtil
 import org.jetbrains.annotations.VisibleForTesting
 
-/** The kill ring offered as a list to choose from, shown when paste-history is invoked without a paste to cycle. */
-internal class KillRingDelegate(editor: Editor, private val entries: List<String>) : UIDelegate(editor) {
+/**
+ * The kill ring offered as a list to choose from, shown when paste-history is invoked without a paste to cycle.
+ *
+ * [asPrefix] mirrors prefix paste: a universal argument ahead of the command leaves the caret where it was, in
+ * front of the inserted text, rather than after it.
+ */
+internal class KillRingDelegate(editor: Editor, private val entries: List<String>, private val asPrefix: Boolean = false) :
+    UIDelegate(editor) {
 
     @VisibleForTesting
     override val ui = KillRingUI(
@@ -39,10 +46,18 @@ internal class KillRingDelegate(editor: Editor, private val entries: List<String
 
     private fun pasteSelected() {
         entries.getOrNull(selectedIndex)?.let { entry ->
+            val origin = editor.caretModel.offset
             hide()
             WriteCommandAction.runWriteCommandAction(editor.project, "Paste from Kill Ring", null, {
                 EditorModificationUtil.insertStringAtCaret(editor, entry)
             })
+            val end = editor.caretModel.offset
+
+            // The mark is left at whichever end of the pasted text the caret does not occupy.
+            editor.caretModel.moveToOffset(if (asPrefix) end else origin)
+            MarkHandler.pushPlaceInfo(editor)
+            editor.caretModel.moveToOffset(if (asPrefix) origin else end)
+
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
     }
