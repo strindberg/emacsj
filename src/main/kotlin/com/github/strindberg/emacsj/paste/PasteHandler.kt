@@ -78,7 +78,7 @@ internal class PasteHandler(private val type: PasteType) : EditorWriteActionHand
     private fun showKillRing(editor: Editor) {
         if (killRingDelegate == null) {
             clipboardHistoryTexts().take(CLIPBOARD_HISTORY_SIZE).takeIf { it.isNotEmpty() }?.let { entries ->
-                killRingDelegate = KillRingDelegate(editor, entries)
+                killRingDelegate = KillRingDelegate(editor, entries, EmacsJService.instance.isLastStrictUniversal())
             }
         }
     }

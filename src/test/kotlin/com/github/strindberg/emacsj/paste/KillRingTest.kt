@@ -11,6 +11,8 @@ import java.awt.event.KeyEvent.VK_G
 import java.awt.event.KeyEvent.VK_N
 import java.awt.event.KeyEvent.VK_P
 import com.github.strindberg.emacsj.EmacsJTestCase
+import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.intellij.ide.CopyPasteManagerEx
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_COPY
 import com.intellij.openapi.ide.CopyPasteManager
@@ -131,6 +133,63 @@ class KillRingTest : EmacsJTestCase() {
         assertFalse(consumed(VK_N, CTRL_DOWN_MASK))
         assertFalse(consumed(VK_P, CTRL_DOWN_MASK))
         assertFalse(consumed(VK_A, 0))
+    }
+
+    @Test
+    fun `A universal argument leaves the caret in front of the pasted entry`() {
+        resetClipboard("older", "newer")
+        myFixture.configureByText(FILE, "start<caret>end")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        PasteHandler.killRingDelegate!!.selectedIndex = 1
+        press(VK_ENTER)
+
+        assertNull(PasteHandler.killRingDelegate)
+        myFixture.checkResult("start<caret>olderend")
+    }
+
+    @Test
+    fun `Without a universal argument the caret follows the pasted entry`() {
+        resetClipboard("older", "newer")
+        myFixture.configureByText(FILE, "start<caret>end")
+
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        PasteHandler.killRingDelegate!!.selectedIndex = 1
+        press(VK_ENTER)
+
+        myFixture.checkResult("startolder<caret>end")
+    }
+
+    @Test
+    fun `A normal paste leaves the mark before the pasted entry`() {
+        resetClipboard("older", "newer")
+        myFixture.configureByText(FILE, "start<caret>end")
+
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        PasteHandler.killRingDelegate!!.selectedIndex = 1
+        press(VK_ENTER)
+        myFixture.checkResult("startolder<caret>end")
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+
+        myFixture.checkResult("start<caret>olderend")
+    }
+
+    @Test
+    fun `A prefix paste leaves the mark after the pasted entry`() {
+        resetClipboard("older", "newer")
+        myFixture.configureByText(FILE, "start<caret>end")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        PasteHandler.killRingDelegate!!.selectedIndex = 1
+        press(VK_ENTER)
+        myFixture.checkResult("start<caret>olderend")
+
+        myFixture.performEditorAction(ACTION_POP_MARK)
+
+        myFixture.checkResult("startolder<caret>end")
     }
 
     private fun press(keyCode: Int) {
