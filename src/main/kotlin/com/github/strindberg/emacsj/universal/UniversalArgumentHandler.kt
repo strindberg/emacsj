@@ -40,7 +40,7 @@ internal const val ACTION_UNIVERSAL_ARGUMENT9 = "com.github.strindberg.emacsj.ac
 @Language("devkit-action-id")
 internal const val ACTION_UNIVERSAL_ARGUMENT0 = "com.github.strindberg.emacsj.actions.universal.universalargument0"
 
-internal val universalActionIds = setOf(
+internal val universalActionIds = [
     ACTION_UNIVERSAL_ARGUMENT,
     ACTION_UNIVERSAL_ARGUMENT1,
     ACTION_UNIVERSAL_ARGUMENT2,
@@ -52,7 +52,7 @@ internal val universalActionIds = setOf(
     ACTION_UNIVERSAL_ARGUMENT8,
     ACTION_UNIVERSAL_ARGUMENT9,
     ACTION_UNIVERSAL_ARGUMENT0,
-)
+]
 
 internal class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 

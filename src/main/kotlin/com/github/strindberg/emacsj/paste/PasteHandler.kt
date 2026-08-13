@@ -28,7 +28,7 @@ internal const val ACTION_PREFIX_PASTE = "com.github.strindberg.emacsj.actions.p
 @Language("devkit-action-id")
 internal const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.paste.pastehistory"
 
-private val pasteActionIds = setOf(ACTION_PASTE, ACTION_PREFIX_PASTE, ACTION_HISTORY_PASTE)
+private val pasteActionIds = [ACTION_PASTE, ACTION_PREFIX_PASTE, ACTION_HISTORY_PASTE]
 
 internal class PasteHandler(private val type: PasteType) : EditorWriteActionHandler() {
 

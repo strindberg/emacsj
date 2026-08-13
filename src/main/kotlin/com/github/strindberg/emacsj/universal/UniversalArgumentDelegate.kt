@@ -32,10 +32,9 @@ import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionManager
 import com.intellij.openapi.editor.actionSystem.TypedActionHandler
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import org.jetbrains.annotations.VisibleForTesting
 
-internal val singleActions = setOf(
+internal val singleActions = [
     ACTION_ISEARCH_BACKWARD,
     ACTION_ISEARCH_FORWARD,
     ACTION_ISEARCH_REGEXP_FORWARD,
@@ -55,7 +54,7 @@ internal val singleActions = setOf(
     ACTION_TRANSPOSE_LINES,
     ACTION_TRANSPOSE_WORDS,
     ACTION_COPY_ABOVE_COMMAND,
-)
+]
 
 private const val BATCH_SIZE = 100
 
@@ -75,9 +74,6 @@ internal class UniversalArgumentDelegate(
     private var counter = 4
 
     init {
-        EditorUtil.disposeWithEditor(editor, this)
-
-        // Dead keys: the accent must not reach the document while it waits for its character.
         captureComposedInput { input -> handleChar(EmacsJTypedActionService.instance.originalHandler, input.first()) }
 
         ui.show()

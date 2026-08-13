@@ -12,7 +12,6 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import org.jetbrains.annotations.VisibleForTesting
 
 /**
@@ -33,8 +32,6 @@ internal class KillRingDelegate(editor: Editor, private val entries: List<String
     )
 
     init {
-        EditorUtil.disposeWithEditor(editor, this)
-
         ui.show()
     }
 

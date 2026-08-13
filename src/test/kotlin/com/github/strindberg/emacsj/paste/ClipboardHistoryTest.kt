@@ -20,7 +20,7 @@ class ClipboardHistoryTest : EmacsJTestCase() {
 
         history.restart()
 
-        assertEquals(listOf("newest", "middle", "oldest", "newest"), List(4) { history.next()?.asText() })
+        assertEquals(["newest", "middle", "oldest", "newest"], List(4) { history.next()?.asText() })
     }
 
     @Test
@@ -51,7 +51,7 @@ class ClipboardHistoryTest : EmacsJTestCase() {
 
         assertFalse(history.canContinue)
 
-        history.record(listOf(TextRange(0, 3)))
+        history.record([TextRange(0, 3)])
 
         assertTrue(history.canContinue)
 

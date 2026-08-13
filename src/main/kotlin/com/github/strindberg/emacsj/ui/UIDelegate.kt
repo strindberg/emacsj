@@ -6,21 +6,11 @@ import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.ui.UIUtil
 
-/**
- * A multi-keystroke command driven from a popup: incremental search, replace, zap, universal argument, goto line.
- *
- * Teardown is shared rather than repeated per feature, because three separate things have to be true at once and
- * getting any of them wrong is silent:
- *
- * - it must run when the editor or project closes mid-command, which is why every subclass parents itself to the
- *   editor with `EditorUtil.disposeWithEditor` and why [hide] goes through [Disposer] rather than calling
- *   [dispose] directly;
- * - it must be idempotent, because canceling the popup re-enters here through the popup's cancel callback;
- * - [release] must run *before* the popup is canceled, since some subclasses still read the popup's text.
- */
+/** A multi-keystroke command driven from a popup: incremental search, replace, zap, universal argument, goto line. */
 internal abstract class UIDelegate(val editor: Editor) : Disposable {
 
     private var isDisposed = false
@@ -33,6 +23,10 @@ internal abstract class UIDelegate(val editor: Editor) : Disposable {
     protected open fun release() {}
 
     protected abstract fun clearDelegate()
+
+    init {
+        EditorUtil.disposeWithEditor(editor, this)
+    }
 
     internal fun hide() {
         if (!isCancelInhibited) {

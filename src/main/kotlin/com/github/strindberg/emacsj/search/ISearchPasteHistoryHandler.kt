@@ -10,7 +10,7 @@ import org.intellij.lang.annotations.Language
 @Language("devkit-action-id")
 internal const val ACTION_ISEARCH_PASTE_HISTORY = "com.github.strindberg.emacsj.actions.search.isearchpastehistory"
 
-private val isearchPasteActionIds = setOf(ACTION_ISEARCH_PASTE, ACTION_ISEARCH_PASTE_HISTORY)
+private val isearchPasteActionIds = [ACTION_ISEARCH_PASTE, ACTION_ISEARCH_PASTE_HISTORY]
 
 internal class ISearchPasteHistoryHandler : EditorActionHandler() {
 

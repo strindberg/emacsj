@@ -37,7 +37,7 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
         val cancelRepeat = CancelRepeatAction()
         val replace = ReplaceNewLineAction()
 
-        val actions = setOf(isearch1, isearch2, cancelRepeat, replace, PushMarkAction(), ZapToCharAction())
+        val actions = [isearch1, isearch2, cancelRepeat, replace, PushMarkAction(), ZapToCharAction()]
 
         allPermutations(actions).forEach { actionList ->
             val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
@@ -60,7 +60,7 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
         val replace = ReplaceNewLineAction()
         val isearch = ISearchTextForwardAction()
         val cancelRepeat = CancelRepeatAction()
-        val actions = setOf(replace, isearch, cancelRepeat, PushMarkAction(), ZapToCharAction())
+        val actions = [replace, isearch, cancelRepeat, PushMarkAction(), ZapToCharAction()]
 
         allPermutations(actions).forEach { actionList ->
             val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
@@ -77,7 +77,7 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
         val cancel = CancelRepeatAction()
         val replace = ReplaceNewLineAction()
         val isearch = ISearchTextForwardAction()
-        val actions = setOf(cancel, replace, isearch, PushMarkAction(), ZapToCharAction())
+        val actions = [cancel, replace, isearch, PushMarkAction(), ZapToCharAction()]
 
         allPermutations(actions).forEach { actionList ->
             val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
@@ -95,7 +95,7 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
         val isearch = ISearchTextForwardAction()
         val push = PushMarkAction()
         val zap = ZapToCharAction()
-        val actions = setOf(cancel, replace, isearch, push, zap)
+        val actions = [cancel, replace, isearch, push, zap]
 
         allPermutations(actions).forEach { actionList ->
             val sorted = EmacsJActionsPromoter().promote(actionList, DataContext.EMPTY_CONTEXT)
@@ -105,13 +105,13 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
     }
 }
 
-private fun <T> allPermutations(set: Set<T>): Set<List<T>> {
-    if (set.isEmpty()) return []
+private fun <T> allPermutations(collection: Collection<T>): Set<List<T>> {
+    if (collection.isEmpty()) return []
 
     fun <T> permutations(list: List<T>): Set<List<T>> {
         if (list.isEmpty()) return []
 
-        val result: MutableSet<List<T>> = mutableSetOf()
+        val result: MutableSet<List<T>> = []
         for (i in list.indices) {
             permutations(list - list[i]).forEach { item ->
                 result.add(item + list[i])
@@ -120,5 +120,5 @@ private fun <T> allPermutations(set: Set<T>): Set<List<T>> {
         return result
     }
 
-    return permutations(set.toList())
+    return permutations(collection.toList())
 }
