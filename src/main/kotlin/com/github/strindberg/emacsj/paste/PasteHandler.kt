@@ -10,9 +10,10 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorCopyPasteHelper
+import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
-import com.intellij.openapi.util.Key
+import com.intellij.openapi.editor.impl.EditorCopyPasteHelperImpl
 import com.intellij.openapi.util.TextRange
 import org.intellij.lang.annotations.Language
 
@@ -27,18 +28,12 @@ internal const val ACTION_PREFIX_PASTE = "com.github.strindberg.emacsj.actions.p
 @Language("devkit-action-id")
 internal const val ACTION_HISTORY_PASTE = "com.github.strindberg.emacsj.actions.paste.pastehistory"
 
-private val LAST_PASTED_REGIONS = Key.create<List<TextRange>>("PasteHandler.LAST_PASTED_REGIONS")
-
 private val pasteActionIds = setOf(ACTION_PASTE, ACTION_PREFIX_PASTE, ACTION_HISTORY_PASTE)
-
-private const val CLIPBOARD_HISTORY_SIZE = 64
 
 internal class PasteHandler(private val type: PasteType) : EditorWriteActionHandler() {
 
     companion object {
-        private var clipboardHistory = emptyList<Transferable>()
-
-        private var clipboardHistoryPos = 0
+        private val walk = ClipboardHistory()
 
         private var pasteType = STANDARD
 
@@ -48,8 +43,7 @@ internal class PasteHandler(private val type: PasteType) : EditorWriteActionHand
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
         when (type) {
             STANDARD, PREFIX -> {
-                clipboardHistory = clipboardHistory().take(CLIPBOARD_HISTORY_SIZE)
-                clipboardHistoryPos = 0
+                walk.restart()
 
                 if (EmacsJService.instance.isLastStrictUniversal()) {
                     pasteType = PREFIX
@@ -62,9 +56,8 @@ internal class PasteHandler(private val type: PasteType) : EditorWriteActionHand
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
             HISTORY -> {
-                val regions = editor.getUserData(LAST_PASTED_REGIONS)
-                if (regions != null && EmacsJService.instance.lastActionId() in pasteActionIds) {
-                    regions.sortedByDescending { it.startOffset }.forEach { region ->
+                if (walk.canContinue && EmacsJService.instance.lastActionId() in pasteActionIds) {
+                    walk.lastPasted.sortedByDescending { it.startOffset }.forEach { region ->
                         editor.document.deleteString(region.startOffset, region.endOffset)
                     }
                     editor.pasteAndMove()
@@ -84,9 +77,9 @@ internal class PasteHandler(private val type: PasteType) : EditorWriteActionHand
     }
 
     private fun Editor.pasteAndMove(steps: Int = 0) {
-        nextHistoryClipboard(steps)?.let { contents ->
-            val ranges = pasteTransferable(contents)
-            putUserData(LAST_PASTED_REGIONS, ranges)
+        walk.next(steps)?.let { contents ->
+            val ranges = pasteContents(contents)
+            walk.record(ranges)
             ranges.forEach { range ->
                 caretModel.allCarets.firstOrNull { it.offset == range.endOffset }?.let { caret ->
                     if (caretModel.allCarets.size == 1) {
@@ -99,11 +92,20 @@ internal class PasteHandler(private val type: PasteType) : EditorWriteActionHand
         }
     }
 
-    private fun nextHistoryClipboard(steps: Int): Transferable? =
-        clipboardHistory.takeUnless { it.isEmpty() }?.let { history ->
-            clipboardHistoryPos += steps
-            history[clipboardHistoryPos++ % history.size]
+    private fun Editor.pasteContents(contents: Transferable): List<TextRange> =
+        if (caretModel.caretCount > 1 && !contents.isWholeLineCopy()) {
+            val text = contents.asText()
+            EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(this, text)
+            caretModel.allCarets.map { TextRange(it.offset - text.length, it.offset) }
+        } else {
+            pasteTransferable(contents)
         }
+
+    /** Whether this was copied with no selection, which is what makes the platform paste it as a line of its own. */
+    private fun Transferable.isWholeLineCopy(): Boolean =
+        runCatching {
+            EditorCopyPasteHelperImpl.CopyPasteOptionsTransferableData.valueFromTransferable(this).isCopiedFromEmptySelection
+        }.getOrDefault(true)
 
     private fun Editor.pasteTransferable(contents: Transferable): List<TextRange> =
         EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.toList().orEmpty()

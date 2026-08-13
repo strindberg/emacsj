@@ -8,6 +8,7 @@ import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT2
 import com.intellij.ide.ClientCopyPasteManager
+import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_COPY
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.ide.CopyPasteManager
 import org.junit.jupiter.api.Test
@@ -311,5 +312,60 @@ class PasteTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT2)
         myFixture.performEditorAction(ACTION_PASTE)
         myFixture.checkResult("footwo<caret>")
+    }
+
+    @Test
+    fun `A multi-line clipboard goes in whole at every caret, not a line each`() {
+        myFixture.configureByText(FILE, "a<caret>b\nc<caret>d")
+        CopyPasteManager.getInstance().setContents(StringSelection("X\nY"))
+
+        myFixture.performEditorAction(ACTION_PASTE)
+
+        myFixture.checkResult(
+            """
+                aX
+                Y<caret>b
+                cX
+                Y<caret>d
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `More clipboard lines than carets loses nothing`() {
+        myFixture.configureByText(FILE, "a<caret>b\nc<caret>d")
+        CopyPasteManager.getInstance().setContents(StringSelection("X\nY\nZ"))
+
+        myFixture.performEditorAction(ACTION_PASTE)
+
+        myFixture.checkResult(
+            """
+                aX
+                Y
+                Z<caret>b
+                cX
+                Y
+                Z<caret>d
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `A line copied whole still lands on its own line at every caret`() {
+        myFixture.configureByText(FILE, "alpha\nbe<caret>ta\ngamma")
+        myFixture.performEditorAction(ACTION_EDITOR_COPY)
+
+        myFixture.configureByText(FILE, "a<caret>b\nc<caret>d")
+        myFixture.performEditorAction(ACTION_PASTE)
+
+        // Left to the platform: a whole-line copy already reaches every caret intact, as a line of its own.
+        myFixture.checkResult(
+            """
+                beta
+                a<caret>b
+                beta
+                c<caret>d
+            """.trimIndent()
+        )
     }
 }

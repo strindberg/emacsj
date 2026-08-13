@@ -106,10 +106,10 @@ class EmacsJActionsPromoterTest : EmacsJTestCase() {
 }
 
 private fun <T> allPermutations(set: Set<T>): Set<List<T>> {
-    if (set.isEmpty()) return emptySet()
+    if (set.isEmpty()) return []
 
     fun <T> permutations(list: List<T>): Set<List<T>> {
-        if (list.isEmpty()) return setOf(emptyList())
+        if (list.isEmpty()) return []
 
         val result: MutableSet<List<T>> = mutableSetOf()
         for (i in list.indices) {

@@ -46,19 +46,34 @@ internal class KillRingDelegate(editor: Editor, private val entries: List<String
 
     private fun pasteSelected() {
         entries.getOrNull(selectedIndex)?.let { entry ->
-            val origin = editor.caretModel.offset
             hide()
             WriteCommandAction.runWriteCommandAction(editor.project, "Paste from Kill Ring", null, {
-                EditorModificationUtil.insertStringAtCaret(editor, entry)
+                EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, entry)
             })
-            val end = editor.caretModel.offset
-
-            // The mark is left at whichever end of the pasted text the caret does not occupy.
-            editor.caretModel.moveToOffset(if (asPrefix) end else origin)
-            MarkHandler.pushPlaceInfo(editor)
-            editor.caretModel.moveToOffset(if (asPrefix) origin else end)
-
+            placeCarets(entry.length)
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
+        }
+    }
+
+    /**
+     * Every caret ends up after its own copy of the text, or in front of it for [asPrefix].
+     *
+     * The mark is pushed only for a single caret, as in ordinary paste: there is one mark ring, and several carets
+     * have no single place to record. Offsets are derived from the length inserted, since a document cannot hold
+     * the line separators that would make the text arrive as something other than what was handed over.
+     */
+    private fun placeCarets(insertedLength: Int) {
+        if (editor.caretModel.caretCount == 1) {
+            val caret = editor.caretModel.primaryCaret
+            val end = caret.offset
+            val start = end - insertedLength
+
+            // Pushing records wherever the caret is, so it goes to the far end and then comes back.
+            caret.moveToOffset(if (asPrefix) end else start)
+            MarkHandler.pushPlaceInfo(editor)
+            caret.moveToOffset(if (asPrefix) start else end)
+        } else if (asPrefix) {
+            editor.caretModel.allCarets.forEach { caret -> caret.moveToOffset(caret.offset - insertedLength) }
         }
     }
 

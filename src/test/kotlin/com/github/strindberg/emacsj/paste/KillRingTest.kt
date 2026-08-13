@@ -192,6 +192,49 @@ class KillRingTest : EmacsJTestCase() {
         myFixture.checkResult("startolder<caret>end")
     }
 
+    @Test
+    fun `The chosen entry is pasted whole at every caret`() {
+        resetClipboard("older", "newer")
+        myFixture.configureByText(FILE, "a<caret>b\nc<caret>d")
+
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        PasteHandler.killRingDelegate!!.selectedIndex = 1
+        press(VK_ENTER)
+
+        myFixture.checkResult("aolder<caret>b\ncolder<caret>d")
+    }
+
+    @Test
+    fun `A prefix paste puts every caret in front of its own copy`() {
+        resetClipboard("older", "newer")
+        myFixture.configureByText(FILE, "a<caret>b\nc<caret>d")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        PasteHandler.killRingDelegate!!.selectedIndex = 1
+        press(VK_ENTER)
+
+        myFixture.checkResult("a<caret>olderb\nc<caret>olderd")
+    }
+
+    @Test
+    fun `A multi-line entry goes in whole at each caret rather than a line each`() {
+        resetClipboard("one\ntwo")
+        myFixture.configureByText(FILE, "a<caret>b\nc<caret>d")
+
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        press(VK_ENTER)
+
+        myFixture.checkResult(
+            """
+                aone
+                two<caret>b
+                cone
+                two<caret>d
+            """.trimIndent()
+        )
+    }
+
     private fun press(keyCode: Int) {
         dispatch(keyCode, 0)
     }
