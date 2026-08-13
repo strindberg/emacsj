@@ -16,15 +16,14 @@ internal class ISearchReplaceHandler(private val type: SearchType) : EditorActio
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         ISearchHandler.delegate?.takeIf { it.isActive() }?.let { searchDelegate ->
-            val replaceDelegate = ReplaceDelegate(editor = editor, project = searchDelegate.project, type = type)
-            replaceDelegate.text = searchDelegate.text
-            replaceDelegate.setReplaceState()
-
-            ReplaceHandler.delegate = replaceDelegate
             editor.caretModel.primaryCaret.run { moveToOffset(search.match.start) }
 
             searchDelegate.hide()
-            replaceDelegate.show()
+
+            ReplaceHandler.delegate = ReplaceDelegate(editor = editor, project = searchDelegate.project, type = type).apply {
+                text = searchDelegate.text
+                setReplaceState()
+            }
         }
     }
 }

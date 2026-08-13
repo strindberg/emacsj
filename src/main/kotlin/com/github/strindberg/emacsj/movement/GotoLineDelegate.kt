@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import org.jetbrains.annotations.VisibleForTesting
 
 internal class GotoLineDelegate(editor: Editor) : UIDelegate(editor) {
@@ -31,9 +30,8 @@ internal class GotoLineDelegate(editor: Editor) : UIDelegate(editor) {
     }
 
     init {
-        EditorUtil.disposeWithEditor(editor, this)
-
         editor.caretModel.removeSecondaryCarets()
+
         editor.caretModel.addCaretListener(caretListener, this)
 
         ui.show()

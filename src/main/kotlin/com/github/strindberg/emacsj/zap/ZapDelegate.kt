@@ -13,7 +13,6 @@ import com.github.strindberg.emacsj.zap.ZapType.FORWARD_UP_TO
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import org.jetbrains.annotations.VisibleForTesting
 
 internal class ZapDelegate(editor: Editor, private val type: ZapType) : UIDelegate(editor) {
@@ -29,9 +28,6 @@ internal class ZapDelegate(editor: Editor, private val type: ZapType) : UIDelega
     }
 
     init {
-        EditorUtil.disposeWithEditor(editor, this)
-
-        // Dead keys: the accent must not reach the document while it waits for its character.
         captureComposedInput { input -> doZap(input.first()) }
 
         ui.show()

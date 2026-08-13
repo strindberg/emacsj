@@ -32,11 +32,7 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
     companion object {
 
-        internal val xRefActionIds = setOf(
-            "GotoDeclaration",
-            "GotoDeclarationOnly",
-            "GotoTypeDeclaration",
-        )
+        internal val xRefActionIds = ["GotoDeclaration", "GotoDeclarationOnly", "GotoTypeDeclaration"]
 
         internal fun Project.pushPlace() {
             manager?.let { manager ->

@@ -34,7 +34,6 @@ import com.intellij.openapi.editor.colors.EditorColors.IDENTIFIER_UNDER_CARET_AT
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
 import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory
@@ -83,16 +82,11 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
     private val killRing = ISearchKillRingSupport()
 
     init {
-        EditorUtil.disposeWithEditor(editor, this)
-
-        // Dead keys: the accent must not reach the document while it waits for its character.
         captureComposedInput { input -> handleChar(input) }
 
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, NO_ATTRIBUTES)
 
         editor.caretModel.addCaretListener(caretListener, this)
-
-        initTitleText()
 
         if (editor.selectionModel.hasSelection()) {
             editor.caretModel.removeSecondaryCarets()
@@ -105,6 +99,8 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
                 it.search = CaretSearch(it.offset)
             }
         }
+
+        initTitleText()
 
         ui.show()
     }

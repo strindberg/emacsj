@@ -42,7 +42,7 @@ internal class RectangleHandler(private val type: RectangleType) : EditorWriteAc
                 val minColumn = minOf(startPosition.column, endPosition.column)
                 val maxColumn = maxOf(startPosition.column, endPosition.column)
 
-                val buffer = mutableListOf<String>()
+                val buffer: MutableList<String> = []
                 var lastTo: Int = -1
                 for (line in startPosition.line..endPosition.line) {
                     val from = minOf(editor.document.getLineStartOffset(line) + minColumn, editor.document.getLineEndOffset(line))

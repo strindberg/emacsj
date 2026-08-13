@@ -10,7 +10,7 @@ import com.intellij.openapi.editor.Editor
  */
 internal class ISearchBreadcrumbSupport(private val editor: Editor) {
 
-    private val crumbs = mutableListOf<EditorBreadcrumb>()
+    private val crumbs: MutableList<EditorBreadcrumb> = []
 
     fun push(crumb: EditorBreadcrumb) {
         val last = crumbs.lastOrNull()

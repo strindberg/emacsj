@@ -20,12 +20,7 @@ internal const val ACTION_ZAP_BACKWARD_TO = "com.github.strindberg.emacsj.action
 @Language("devkit-action-id")
 internal const val ACTION_ZAP_BACKWARD_UP_TO = "com.github.strindberg.emacsj.actions.zap.zapbackupto"
 
-internal val zapActionIds = setOf(
-    ACTION_ZAP_FORWARD_TO,
-    ACTION_ZAP_FORWARD_UP_TO,
-    ACTION_ZAP_BACKWARD_TO,
-    ACTION_ZAP_BACKWARD_UP_TO,
-)
+internal val zapActionIds = [ACTION_ZAP_FORWARD_TO, ACTION_ZAP_FORWARD_UP_TO, ACTION_ZAP_BACKWARD_TO, ACTION_ZAP_BACKWARD_UP_TO]
 
 internal class ZapHandler(private val type: ZapType) : EditorActionHandler() {
 

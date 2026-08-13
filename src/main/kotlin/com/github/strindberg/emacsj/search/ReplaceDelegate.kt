@@ -27,7 +27,6 @@ import com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE
 import com.intellij.openapi.editor.colors.EditorColors.IDENTIFIER_UNDER_CARET_ATTRIBUTES
 import com.intellij.openapi.editor.event.CaretEvent
 import com.intellij.openapi.editor.event.CaretListener
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.project.Project
@@ -87,8 +86,6 @@ internal class ReplaceDelegate(
     private var isReplaced = false
 
     init {
-        EditorUtil.disposeWithEditor(editor, this)
-
         lastSearch?.let { (search, replace) ->
             searchArg = search
             replaceArg = replace
@@ -96,15 +93,13 @@ internal class ReplaceDelegate(
             ui.selectText()
         }
 
-        ui.title = getReplaceTitle()
+        editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, NO_ATTRIBUTES)
 
         editor.caretModel.removeSecondaryCarets()
         editor.caretModel.addCaretListener(caretListener, this)
 
-        editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, NO_ATTRIBUTES)
-    }
+        ui.title = getReplaceTitle()
 
-    internal fun show() {
         ui.show()
     }
 

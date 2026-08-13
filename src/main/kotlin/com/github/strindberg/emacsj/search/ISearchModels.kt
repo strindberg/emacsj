@@ -16,7 +16,7 @@ internal var Caret.search: CaretSearch
 
 @Suppress("DoubleMutabilityForCollection")
 internal var Caret.breadcrumbs: MutableList<Match>
-    get() = getUserData(CARET_BREADCRUMBS_KEY) ?: mutableListOf<Match>().apply {
+    get() = (getUserData(CARET_BREADCRUMBS_KEY) ?: []).apply {
         putUserData(CARET_BREADCRUMBS_KEY, this)
     }
     set(breadcrumbs) {
