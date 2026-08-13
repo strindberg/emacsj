@@ -389,7 +389,8 @@ repeatedly pressing *Paste: Previous Item in Clipboard History* after use of *Pa
 at Point*, the pasted text is replaced by the next item in the list of previously killed texts.
 
 If *Paste: Previous Item in Clipboard History* is invoked on its own, i.e. without a previous paste command, a list containing the contents
-of the items in the kill ring is displayed. The selected item can be pasted by pressing `ENTER`.
+of the items in the kill ring is displayed. The selected item can be pasted by pressing `ENTER`. If invoking this dialog is preceded
+by [Universal Argument](#universal-argument), the cursor is left at its current location, i.e. before the pasted text.
 
 *Paste: Leave Caret at Point* is triggered when using *Paste: Leave Caret After Pasted Region*
 after [Universal Argument](#universal-argument). It can also be invoked explicitly with a dedicated key binding, but by default it is not

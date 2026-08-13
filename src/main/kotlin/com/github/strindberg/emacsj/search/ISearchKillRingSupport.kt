@@ -4,7 +4,7 @@ import com.github.strindberg.emacsj.paste.clipboardHistoryTexts
 
 internal class ISearchKillRingSupport {
 
-    private var history: List<String> = emptyList()
+    private var history: List<String> = []
 
     private var position = 0
 
