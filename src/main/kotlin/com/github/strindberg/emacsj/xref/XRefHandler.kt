@@ -50,7 +50,9 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
         private fun Editor.pushPlace() {
             project?.let { project ->
-                pushPlaceInfo(project, virtualFile)
+                virtualFile?.let { virtualFile ->
+                    pushPlaceInfo(project, virtualFile)
+                }
             }
         }
 

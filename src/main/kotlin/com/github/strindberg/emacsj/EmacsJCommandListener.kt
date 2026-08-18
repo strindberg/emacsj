@@ -11,11 +11,11 @@ import com.intellij.openapi.command.CommandListener
 internal class EmacsJCommandListener : CommandListener {
 
     override fun commandFinished(event: CommandEvent) {
-        if (EmacsJService.instance.isPerformingAction()) return
-
-        // Empty, "Undefined" or "Dummy" commands are present when running tests
-        if (!event.commandName.isNullOrBlank() && event.commandName !in ["Undefined", "Dummy"]) {
-            EmacsJService.instance.addAction(event.commandName)
+        if (!EmacsJService.instance.isPerformingAction()) {
+            // Empty, "Undefined" or "Dummy" commands are present when running tests
+            event.commandName?.takeUnless { it.isBlank() || it in ["Undefined", "Dummy"] }?.let { commandName ->
+                EmacsJService.instance.addAction(commandName)
+            }
         }
     }
 }
