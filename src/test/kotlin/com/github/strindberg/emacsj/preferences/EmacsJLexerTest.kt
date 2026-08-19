@@ -1,6 +1,7 @@
 package com.github.strindberg.emacsj.preferences
 
-import com.intellij.testFramework.LexerTestCase
+import com.intellij.lexer.Lexer
+import com.intellij.psi.tree.IElementType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -16,7 +17,7 @@ class EmacsJLexerTest {
                 |text ('bar')
                 |
             """.trimMargin(),
-            LexerTestCase.printTokens("foo bar", 0, EmacsJLexer())
+            EmacsJLexer().printTokens("foo bar")
         )
     }
 
@@ -31,7 +32,7 @@ class EmacsJLexerTest {
                 |text ('bar')
                 |
             """.trimMargin(),
-            LexerTestCase.printTokens("foo result bar", 0, EmacsJLexer())
+            EmacsJLexer().printTokens("foo result bar")
         )
     }
 
@@ -46,7 +47,7 @@ class EmacsJLexerTest {
                 |secondary ('result')
                 |
             """.trimMargin(),
-            LexerTestCase.printTokens("result and result", 0, EmacsJLexer())
+            EmacsJLexer().printTokens("result and result")
         )
     }
 
@@ -54,28 +55,26 @@ class EmacsJLexerTest {
     fun `Tokens cover the whole buffer without gaps or overlaps`() {
         val text = "Other results are indicated as a secondary result."
 
-        val tokens = LexerTestCase.printTokens(text, 0, EmacsJLexer())
+        val tokens = EmacsJLexer().printTokens(text)
 
         assertEquals(text, Regex("\\('(.*)'\\)").findAll(tokens).joinToString("") { it.groupValues[1] })
     }
 
     @Test
     fun `A word merely starting with the search word has its stem matched`() {
-        // Consequence of the prefix test in getNextEnd: "results" is split into "result" plus "s". This shows up in
-        // the settings page preview, which contains the word "results".
         assertEquals(
             """
                 |primary ('result')
                 |text ('s')
                 |
             """.trimMargin(),
-            LexerTestCase.printTokens("results", 0, EmacsJLexer())
+            EmacsJLexer().printTokens("results")
         )
     }
 
     @Test
     fun `The settings page preview has exactly one primary match`() {
-        val tokens = LexerTestCase.printTokens(EmacsJColorSettingsPage().demoText, 0, EmacsJLexer()).lines()
+        val tokens = EmacsJLexer().printTokens(EmacsJColorSettingsPage().demoText).lines()
 
         assertEquals(1, tokens.count { it.startsWith("primary ") })
         assertTrue(tokens.any { it.startsWith("secondary ") }, "Preview should also show a secondary match")
@@ -105,4 +104,18 @@ class EmacsJLexerTest {
 
         assertEquals(PRIMARY_TOKEN_TYPE, lexer.tokenType)
     }
+
+    private fun Lexer.printTokens(text: String): String {
+        start(text, 0, text.length)
+        return buildString {
+            while (tokenType != null) {
+                append(printToken(text, tokenType!!, IntRange(tokenStart, tokenEnd)))
+                advance()
+            }
+        }
+    }
+
+    private fun printToken(text: String, tokenType: IElementType, range: IntRange) = "$tokenType ('${tokenText(text, range)}')\n"
+
+    private fun tokenText(text: String, range: IntRange) = text.substring(range.first, range.last).replace("\n", "\\n")
 }
