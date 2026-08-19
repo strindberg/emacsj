@@ -23,13 +23,13 @@ repositories {
     }
 }
 
-dependencies {
-    testImplementation(platform(libs.junit5.bom))
-    testImplementation(libs.junit5.jupiter)
-    // com.intellij.testFramework.LexerTestCase extends junit.framework.TestCase, so JUnit 4 has to stay on the compile classpath.
-    testImplementation(libs.junit)
+testing.suites.named<JvmTestSuite>("test") {
+    useJUnitJupiter(libs.versions.jupiter)
+}
 
-    testRuntimeOnly(libs.junit5.platform.launcher)
+dependencies {
+    // No test uses JUnit 4, but the platform test framework touches junit.framework.TestCase.
+    testRuntimeOnly(libs.junit)
 
     intellijPlatform {
         create(IntelliJPlatformType.IntellijIdeaCommunity, providers.gradleProperty("platformVersion")) {}
@@ -37,16 +37,13 @@ dependencies {
         bundledPlugins(listOf("com.intellij.java", "org.jetbrains.kotlin"))
 
         testFramework(TestFrameworkType.Platform)
-        // Supplies com.intellij.testFramework.junit5 (@RunInEdt and friends).
         testFramework(TestFrameworkType.JUnit5)
     }
 }
 
 kotlin {
     jvmToolchain(21)
-    // Pinned to the Kotlin stdlib the IDE actually ships (2.1.21 in 2025.2), because the plugin does not bundle
-    // one of its own. Without it a 2.4 compiler emits suspend-function debug metadata the older stdlib rejects at
-    // runtime, and any stdlib API added after 2.1 would fail the same way.
+    // Pinned to the Kotlin stdlib the IDE actually ships (2.1.21 in 2025.2).
     compilerOptions.apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1
     compilerOptions.freeCompilerArgs.addAll("-Xjsr305=strict", "-Xreturn-value-checker=full", "-Xcollection-literals")
 }
@@ -106,10 +103,6 @@ intellijPlatform {
 }
 
 tasks {
-    test {
-        useJUnitPlatform()
-    }
-
     runIde {
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf(

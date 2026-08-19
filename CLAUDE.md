@@ -101,7 +101,7 @@ The plugin is expected to unload without an IDE restart, which constrains anythi
 
 ## Testing
 
-Tests are **JUnit 5 (Jupiter)**, on `useJUnitPlatform()`. Every test method needs `@Test`. Names are backticked prose and no longer carry the `test ` prefix that JUnit 3 discovery required. Assertions come from `org.junit.jupiter.api.Assertions` — note that Jupiter puts the message **last**, the reverse of JUnit 3.
+Tests are **JUnit 6 (Jupiter)**, configured through the JVM test suite DSL: `testing.suites.named<JvmTestSuite>("test") { useJUnitJupiter(libs.versions.jupiter) }` is the whole setup — it pulls in `junit-jupiter` and the platform launcher and puts the test task on the JUnit Platform, so there is no BOM, no explicit launcher and no `useJUnitPlatform()`. JUnit 6 aligned platform versions with Jupiter's, so `junit-platform-*` resolves to 6.x rather than 1.x. Every test method needs `@Test`. Names are backticked prose and no longer carry the `test ` prefix that JUnit 3 discovery required. Assertions come from `org.junit.jupiter.api.Assertions` — note that Jupiter puts the message **last**, the reverse of JUnit 3.
 
 Fixture tests extend **`EmacsJTestCase`**, which no longer inherits from `BasePlatformTestCase`. It builds `myFixture` the way `BasePlatformTestCase` does — `IdeaTestFixtureFactory` → `createLightFixtureBuilder` → `createCodeInsightFixture` — so the test bodies are unchanged from the JUnit 3 era. Three things in it are load-bearing:
 
@@ -109,7 +109,7 @@ Fixture tests extend **`EmacsJTestCase`**, which no longer inherits from `BasePl
 - `@BeforeEach setUpFixture` / `@AfterEach tearDownFixture`. A subclass's own `@AfterEach` runs *before* the base's, which is what the old `finally { super.tearDown() }` gave.
 - The teardown hides every delegate, clears the repeat flag and pushes two empty entries onto the action history — application-scoped state that would otherwise leak into the next test class. It also offers `pressKey(ui, keyCode)` for driving a delegate's popup.
 
-`junit:junit` is still on the compile classpath, but not for the tests: `com.intellij.testFramework.LexerTestCase`, which `EmacsJLexerTest` uses, extends `junit.framework.TestCase`. The vintage engine is gone. Four pure-logic classes (`WordUtilsTest`, `UndoRedoStackTest`, `EmacsJLexerTest`, `EllipsizeTest`) have no fixture and extend nothing; `WordUtilsTest` and `EllipsizeTest` use `@ParameterizedTest` with `@MethodSource`, whose factory methods **must be public** — Kotlin mangles `internal` names and Jupiter's reflection lookup then fails.
+`junit:junit` is `testRuntimeOnly`, and no test refers to it: the platform test framework registers `com.intellij.tests.JUnit5TestSessionListener` as a `LauncherSessionListener` via `ServiceLoader`, and that class touches `junit.framework.TestCase`, so without JUnit 4 on the runtime classpath the executor dies at startup with a `ServiceConfigurationError`. Keeping it off the compile classpath is what stops a JUnit 4 import creeping back in. The vintage engine is gone. Four pure-logic classes (`WordUtilsTest`, `UndoRedoStackTest`, `EmacsJLexerTest`, `EllipsizeTest`) have no fixture and extend nothing; `WordUtilsTest` and `EllipsizeTest` use `@ParameterizedTest` with `@MethodSource`, whose factory methods **must be public** — Kotlin mangles `internal` names and Jupiter's reflection lookup then fails.
 
 The typical pattern:
 

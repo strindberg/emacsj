@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 private const val FILE = "isearchfile.txt"
@@ -465,7 +466,7 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals(Pair(2, 3), searchCount)
     }
 
-    // This test is disabled b/c in this test, paste doesn't work with a reopened search popup.
+    @Disabled("This test is disabled b/c in this test, paste doesn't work with a reopened search popup.")
     fun `Text can be pasted into previous search`() {
         myFixture.configureByText(FILE, "<caret>foo fooz foobar")
         CopyPasteManager.getInstance().setContents(StringSelection("bar"))
