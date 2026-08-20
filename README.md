@@ -569,10 +569,10 @@ Commands:
 ### Move Caret to Indentation
 
 *Back to Indentation* moves each caret to the first non-whitespace character on its line. IntelliJ's standard keymap has the command *Move
-Caret to Line Start* which can also be configured (under Editor -> General -> Smart Keys -> "Home moves caret to first non-whitespace
-character") to move the caret to the first non-whitspace character. If you prefer to have different keys for moving to line start and
-moving to start of indentation, you can turn off the IntelliJ setting, and use `ctrl-a` for *Move Caret to Line Start* and `alt-m` for
-*Back to Indentation*, as Emacs does.
+Caret to Line Start* which can also be configured (under Editor → General → Smart Keys → "Home moves caret to first non-whitespace
+character") to move the caret to the first non-whitespace character. If you prefer to have different keys for moving to line start and
+moving to start of indentation, you can turn off the IntelliJ setting and use `ctrl-a` for *Move Caret to Line Start* and `alt-m` for *Back
+to Indentation*, as Emacs does.
 
 *Back to Indentation* works with multiple carets.
 
@@ -588,6 +588,5 @@ to the mark ring.
 
 Commands:
 
-- Goto Line (`alt-g`). move caret to specified line (and optionally column). If selection is not active, add mark at current caret position
-  before jump.
-
+- Goto Line (`alt-g`). move the caret to the specified line (and optionally column). If selection is not active, add mark at the current
+  caret position before jump.
