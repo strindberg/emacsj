@@ -18,20 +18,20 @@ internal class EmacsJSettingsConfigurable : Configurable {
     override fun getPreferredFocusedComponent(): JComponent = component.getPreferredFocusedComponent()
 
     override fun isModified(): Boolean =
-        component.getSearchWhitespaceRegexp() != EmacsJSettings.getInstance().getState().searchWhitespaceRegexp ||
-            component.getUseLaxISearch() != EmacsJSettings.getInstance().getState().useLaxISearch ||
-            component.getUseSelectionISearch() != EmacsJSettings.getInstance().getState().useSelectionISearch
+        component.getSearchWhitespaceRegexp() != EmacsJSettings.instance.getState().searchWhitespaceRegexp ||
+            component.getUseLaxISearch() != EmacsJSettings.instance.getState().useLaxISearch ||
+            component.getUseSelectionISearch() != EmacsJSettings.instance.getState().useSelectionISearch
 
     override fun reset() {
-        component.setSearchWhitespaceRegexp(EmacsJSettings.getInstance().getState().searchWhitespaceRegexp)
-        component.setUseLaxISearch(EmacsJSettings.getInstance().getState().useLaxISearch)
-        component.setUseSelectionISearch(EmacsJSettings.getInstance().getState().useSelectionISearch)
+        component.setSearchWhitespaceRegexp(EmacsJSettings.instance.getState().searchWhitespaceRegexp)
+        component.setUseLaxISearch(EmacsJSettings.instance.getState().useLaxISearch)
+        component.setUseSelectionISearch(EmacsJSettings.instance.getState().useSelectionISearch)
     }
 
     override fun apply() {
-        EmacsJSettings.getInstance().getState().searchWhitespaceRegexp = component.getSearchWhitespaceRegexp()
-        EmacsJSettings.getInstance().getState().useLaxISearch = component.getUseLaxISearch()
-        EmacsJSettings.getInstance().getState().useSelectionISearch = component.getUseSelectionISearch()
+        EmacsJSettings.instance.getState().searchWhitespaceRegexp = component.getSearchWhitespaceRegexp()
+        EmacsJSettings.instance.getState().useLaxISearch = component.getUseLaxISearch()
+        EmacsJSettings.instance.getState().useSelectionISearch = component.getUseSelectionISearch()
 
         ISearchHandler.isLax = component.getUseLaxISearch()
         ISearchHandler.isSelectionISearch = component.getUseSelectionISearch()

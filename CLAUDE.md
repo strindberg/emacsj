@@ -35,6 +35,8 @@ The default sandbox runs with `-Dide.plugins.snapshot.on.unload.fail=true`: when
 
 `instrumentCode` / `instrumentTestCode` occasionally fail with `1 >= 1` after classes are added or removed. It is stale incremental state, cleared by rerunning that task with `--rerun`.
 
+A change to a `main` signature that the tests call can leave `compileTestKotlin` restoring a **poisoned build-cache entry**: the tests still hold the old call site and every fixture test dies with `NoSuchMethodError`, and `clean` does not help because the stale output is in the cache, not the build directory. `./gradlew compileTestKotlin --rerun` recompiles and overwrites the entry. It bites hardest on `internal` members, whose JVM names carry a `$com_github_strindberg_emacsj_emacsj` module suffix, so a stale call site fails at run time rather than at compile time.
+
 ## Code style
 
 Beyond what ktlint and detekt enforce:
@@ -53,7 +55,7 @@ Every feature follows the same split:
 
 ### Action history
 
-`EmacsJService` / `EmacsJServiceImpl` is an application-level `@Service` holding global state:
+`EmacsJService` is an application-level `@Service` holding global state:
 
 - **Action history** (`lastActionIds`) — the two most recent things the user did, used by handlers that behave differently when repeated (recenter/reposition cycling, append-next-kill, paste history).
 - **Universal argument** — the numeric prefix argument, default 1.
@@ -87,6 +89,10 @@ All of them implement `UIDelegate : Disposable` and call `EditorUtil.disposeWith
 ### Settings
 
 User-configurable preferences (lax isearch whitespace, selection-based isearch start, custom whitespace regexp) live in `EmacsJSettings` / `EmacsJState`, persisted via `PersistentStateComponent`.
+
+### Services
+
+Every service is declared by `@Service` on the class, never in `plugin.xml`, and reached through an `instance` accessor on its companion (project-level `MarkPlaces` and `XRefPlaces` are reached with `service<T>()` at the call site instead). Keep it that way: `@Service` keys the service on the class, while a `plugin.xml` `<applicationService serviceInterface=... serviceImplementation=.../>` keys it on the interface, and a class carrying both is registered **twice** — two instances, each with its own state, handed out depending on which type the caller asks for. `EmacsJService` had exactly that split, which is why it is now one class rather than an interface and an impl.
 
 ### Dynamic plugin unloading
 
