@@ -65,7 +65,7 @@ internal class ISearchHandler(private val direction: SearchDirection, private va
         internal var isLax: Boolean = false
             get() {
                 if (!isLaxInitialized) {
-                    field = EmacsJSettings.getInstance().state.useLaxISearch // We can't access this value in constructor
+                    field = EmacsJSettings.instance.state.useLaxISearch // We can't access this value in constructor
                     isLaxInitialized = true
                 }
                 return field
@@ -82,7 +82,7 @@ internal class ISearchHandler(private val direction: SearchDirection, private va
         internal var isSelectionISearch: Boolean = false
             get() {
                 if (!isSelectionSearchInitialized) {
-                    field = EmacsJSettings.getInstance().state.useSelectionISearch // We can't access this value in constructor
+                    field = EmacsJSettings.instance.state.useSelectionISearch // We can't access this value in constructor
                     isSelectionSearchInitialized = true
                 }
                 return field

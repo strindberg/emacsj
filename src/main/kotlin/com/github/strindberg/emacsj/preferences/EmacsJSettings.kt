@@ -2,6 +2,7 @@ package com.github.strindberg.emacsj.preferences
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 
@@ -9,6 +10,7 @@ import com.intellij.openapi.components.Storage
     name = "com.github.strindberg.emacsj.EmacsJSettings",
     storages = [Storage("EmacsJSettings.xml")],
 )
+@Service
 internal class EmacsJSettings : PersistentStateComponent<EmacsJState> {
 
     private var state = EmacsJState()
@@ -20,7 +22,8 @@ internal class EmacsJSettings : PersistentStateComponent<EmacsJState> {
     }
 
     companion object {
-        fun getInstance(): EmacsJSettings = ApplicationManager.getApplication().getService(EmacsJSettings::class.java)
+        internal val instance: EmacsJSettings
+            get() = ApplicationManager.getApplication().getService(EmacsJSettings::class.java)
     }
 }
 

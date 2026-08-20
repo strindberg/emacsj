@@ -20,10 +20,6 @@
             id="com.github.strindberg.emacsj.preferences.EmacsJSettingsConfigurable"
             bundle="messages.EmacsJBundle"
             key="emacsj.display.name"/>
-        <applicationService serviceImplementation="com.github.strindberg.emacsj.preferences.EmacsJSettings"/>
-        <applicationService serviceInterface="com.github.strindberg.emacsj.EmacsJService"
-                            serviceImplementation="com.github.strindberg.emacsj.EmacsJServiceImpl"/>
-
         <errorHandler implementation="com.intellij.diagnostic.JetBrainsMarketplaceErrorReportSubmitter"/>
     </extensions>
 

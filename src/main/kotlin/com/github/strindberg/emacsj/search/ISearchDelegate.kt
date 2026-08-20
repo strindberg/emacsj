@@ -532,7 +532,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             Pair(
                 true,
                 text.split(Regex(" +")).filter { it.isNotBlank() }
-                    .joinToString(EmacsJSettings.getInstance().state.searchWhitespaceRegexp) { Pattern.quote(it) }
+                    .joinToString(EmacsJSettings.instance.state.searchWhitespaceRegexp) { Pattern.quote(it) }
             )
         } else {
             Pair(searchType == REGEXP, text)
