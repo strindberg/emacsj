@@ -53,7 +53,7 @@ internal class ZapDelegate(editor: Editor, private val type: ZapType) : UIDelega
                 )
             }
             if (start != null && end != null) {
-                WriteCommandAction.runWriteCommandAction(editor.project, "Zap ${type.name.lowercase()}", undoGroupId, {
+                WriteCommandAction.runWriteCommandAction(editor.project, type.description, undoGroupId, {
                     KillUtil.cut(
                         editor = editor,
                         textStartOffset = start,

@@ -8,14 +8,14 @@
 
 - New Paste functionality: "Paste: Previous Item in Clipboard History" (`alt-y`) invoked on its own displays the kill ring as selectable
   items. `ENTER` pastes the selected entry. 
-- When using Isearch, the search field now marks non-matching part of the search string in red.
-- When using Isearch, the kill ring can now be cycled with `alt-y/command-y` after pasting to search text.
+- When using Isearch, the search field now marks the non-matching part of the search string in red.
+- When using Isearch, the kill ring can now be cycled with `alt-y` (Mac: `command-y`) after pasting to search text.
 
 ### Fixed
 
 - XRef history now works regardless of the IDE's language setting.
 - Strange coloring artifacts on identifiers when using Isearch fixed.
-- Existing highlighters are restored wen exiting Isearch or Search/Replace.
+- Existing highlighters are restored when exiting Isearch or Search/Replace.
 
 ## [1.5.7] - 2026-07-31
 

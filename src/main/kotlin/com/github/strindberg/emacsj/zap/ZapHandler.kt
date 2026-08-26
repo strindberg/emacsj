@@ -6,7 +6,12 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import org.intellij.lang.annotations.Language
 
-enum class ZapType { FORWARD_TO, FORWARD_UP_TO, BACKWARD_TO, BACKWARD_UP_TO }
+enum class ZapType(val description: String) {
+    FORWARD_TO("Zap to Character"),
+    FORWARD_UP_TO("Zap up to Character"),
+    BACKWARD_TO("Zap Back to Character"),
+    BACKWARD_UP_TO("Zap Back up to Character")
+}
 
 @Language("devkit-action-id")
 internal const val ACTION_ZAP_FORWARD_TO = "com.github.strindberg.emacsj.actions.zap.zapto"
