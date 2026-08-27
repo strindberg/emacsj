@@ -23,16 +23,17 @@ internal class GotoLineDelegate(editor: Editor) : UIDelegate(editor) {
         title = "Go to line[:column] : "
     }
 
-    private val caretListener = object : CaretListener {
-        override fun caretAdded(e: CaretEvent) {
-            hide()
-        }
-    }
-
     init {
         editor.caretModel.removeSecondaryCarets()
 
-        editor.caretModel.addCaretListener(caretListener, this)
+        editor.caretModel.addCaretListener(
+            object : CaretListener {
+                override fun caretAdded(e: CaretEvent) {
+                    hide()
+                }
+            },
+            this
+        )
 
         ui.show()
     }

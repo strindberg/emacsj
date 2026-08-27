@@ -66,12 +66,6 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             ui.text = newText
         }
 
-    private val caretListener = object : CaretListener {
-        override fun caretAdded(e: CaretEvent) {
-            hide()
-        }
-    }
-
     private val identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
 
     private val breadcrumbs = ISearchBreadcrumbSupport(editor)
@@ -86,7 +80,14 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, NO_ATTRIBUTES)
 
-        editor.caretModel.addCaretListener(caretListener, this)
+        editor.caretModel.addCaretListener(
+            object : CaretListener {
+                override fun caretAdded(e: CaretEvent) {
+                    hide()
+                }
+            },
+            this
+        )
 
         if (editor.selectionModel.hasSelection()) {
             editor.caretModel.removeSecondaryCarets()
@@ -133,18 +134,6 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         state = SEARCH
         ui.makeReadonly(text, false)
         searchAllCarets(searchDirection = direction, newText = text.also { text = "" })
-    }
-
-    internal fun handleEnter() {
-        when (state) {
-            EDIT -> startEditedSearch()
-            SEARCH, FAILED -> hide()
-        }
-    }
-
-    /** Only ever reached while the search is running; the popup's editor handles backspace once text is edited. */
-    internal fun handleBackspace() {
-        popBreadcrumb()
     }
 
     internal fun findFirst() {
@@ -246,10 +235,27 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         hide()
     }
 
+    internal fun handleEnter() {
+        when (state) {
+            EDIT -> startEditedSearch()
+            SEARCH, FAILED -> hide()
+        }
+    }
+
+    /** Only ever reached while the search is running; the popup's editor handles backspace once text is edited. */
+    internal fun handleBackspace() {
+        popBreadcrumb()
+    }
+
     /** Only ever reached while the search is running; the popup's editor handles typing once text is edited. */
     internal fun handleChar(charTyped: String) {
         killRing.invalidate()
         searchAllCarets(searchDirection = direction, newText = charTyped)
+    }
+
+    /** Only ever reached while the search is running; the popup's editor handles pasting once text is edited. */
+    private fun addToSearch(newText: String) {
+        searchAllCarets(searchDirection = direction, newText = newText, forceFirstSearch = true)
     }
 
     private fun keyEventHandler(e: KeyEvent) {
@@ -265,11 +271,6 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             clearAllHighlights()
             if (e.keyCode == VK_ENTER && e.modifiersEx == 0) startEditedSearch() else refreshHighlights()
         }
-    }
-
-    /** Only ever reached while the search is running; the popup's editor handles pasting once text is edited. */
-    private fun addToSearch(newText: String) {
-        searchAllCarets(searchDirection = direction, newText = newText, forceFirstSearch = true)
     }
 
     private fun searchSelected() {
@@ -479,18 +480,19 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
         }
 
     private fun matchEnd(start: Int): Int =
-        start + if (searchType == TEXT) {
-            text.length
-        } else {
-            try {
-                Regex(text).matchAt(editor.text, start)?.run {
-                    value.length
-                } ?: 0
-            } catch (_: PatternSyntaxException) {
-                // Half-typed patterns such as "(" or "[" are normal while a regexp is being composed.
-                0
+        start +
+            if (searchType == TEXT) {
+                text.length
+            } else {
+                try {
+                    Regex(text).matchAt(editor.text, start)?.run {
+                        value.length
+                    } ?: 0
+                } catch (_: PatternSyntaxException) {
+                    // Half-typed patterns such as "(" or "[" are normal while a regexp is being composed.
+                    0
+                }
             }
-        }
 
     private fun refreshHighlightsAndCount(offset: Int?, highlight: Boolean) {
         refreshHighlights(highlight) { matches ->

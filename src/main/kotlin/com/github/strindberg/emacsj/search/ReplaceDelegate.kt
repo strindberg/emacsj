@@ -55,12 +55,6 @@ internal class ReplaceDelegate(
             ui.text = newText
         }
 
-    private val caretListener = object : CaretListener {
-        override fun caretAdded(e: CaretEvent) {
-            hide()
-        }
-    }
-
     private var searchArg: String = ""
 
     private var replaceArg: String = ""
@@ -96,7 +90,14 @@ internal class ReplaceDelegate(
         editor.colorsScheme.setAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES, NO_ATTRIBUTES)
 
         editor.caretModel.removeSecondaryCarets()
-        editor.caretModel.addCaretListener(caretListener, this)
+        editor.caretModel.addCaretListener(
+            object : CaretListener {
+                override fun caretAdded(e: CaretEvent) {
+                    hide()
+                }
+            },
+            this
+        )
 
         ui.title = getReplaceTitle()
 

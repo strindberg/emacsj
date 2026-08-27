@@ -125,7 +125,7 @@ internal class UniversalArgumentHandler(private val numeric: Int?) : EditorActio
             }
             EmacsJService.instance.registerUniversalArgument(current.getTimes())
         } else {
-            val newDelegate = UniversalArgumentDelegate(editor, numeric, caret, dataContext)
+            val newDelegate = UniversalArgumentDelegate(editor = editor, numeric = numeric, caret = caret, dataContext = dataContext)
             delegate = newDelegate
             EmacsJService.instance.registerUniversalArgument(newDelegate.getTimes())
         }

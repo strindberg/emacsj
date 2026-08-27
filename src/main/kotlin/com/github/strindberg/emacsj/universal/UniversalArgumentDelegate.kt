@@ -59,13 +59,13 @@ internal class UniversalArgumentDelegate(
     private val dataContext: DataContext,
 ) : UIDelegate(editor) {
 
+    private var counter = 4
+
     @VisibleForTesting
     override val ui = CommonUI(editor = editor, isWriteable = false, cancelCallback = ::hide).apply {
         title = "Argument: "
-        text = getTimes().toString()
+        text = getTimes().toString() // counter must have been initialized here, do not change the order
     }
-
-    private var counter = 4
 
     init {
         captureComposedInput { input -> handleChar(EmacsJTypedActionService.instance.originalHandler, input.first()) }
