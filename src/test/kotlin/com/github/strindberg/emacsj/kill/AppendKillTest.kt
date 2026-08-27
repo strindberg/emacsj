@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 
 private const val FILE = "appendkillfile.txt"
 
-private val THROTTLE_CLEARANCE_DURATION = 1000L.milliseconds
+private val THROTTLE_CLEARANCE_DURATION = 1000.milliseconds
 
 private val testTimeSource = TestTimeSource()
 

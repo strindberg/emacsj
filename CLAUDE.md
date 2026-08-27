@@ -74,7 +74,7 @@ Multi-keystroke features use a **delegate**: a stateful object held in a `compan
 
 - `ISearchDelegate` — one incremental search session: caret positions, match highlights, direction, search type, breadcrumb history for backspace, and the clipboard-history walk behind isearch paste.
 - `ReplaceDelegate` — a query-replace session.
-- `UniversalArgumentDelegate` — accumulates digits, then repeats the following command in batches so a long repeat stays interruptible.
+- `UniversalArgumentDelegate` — accumulates digits and shows the count. The repeat itself belongs to `UniversalArgumentHandler.startRepeat`, not to the delegate: `repeatCommand` calls `hide()` first, so the delegate is already disposed before the first repetition runs. That companion holds the `Job`, and `cancelRepeat()` is the one way to stop a repeat — used both by `CancelRepeatHandler` (Ctrl-G) and to keep the `isRepeating` flag honest. A repeat queued while another is still running `join()`s it rather than interleaving, which is what makes typed-ahead `Ctrl-U` commands run in order.
 - `ZapDelegate` — waits for the target character.
 - `GotoLineDelegate` — reads a `line[:column]`.
 
@@ -99,7 +99,7 @@ Every service is declared by `@Service` on the class, never in `plugin.xml`, and
 The plugin is expected to unload without an IDE restart, which constrains anything outliving a keystroke:
 
 - **No raw threads, and no executors either.** `kotlin.concurrent.thread { }` creates a `Thread` whose lambda pins the plugin classloader for as long as anything holds that `Thread` object — and the platform does hold them. All asynchronous work is coroutines; there is no longer any `AppExecutorUtil` or `ScheduledFuture` in the plugin.
-- **Coroutine scopes come from the platform**, so that unloading cancels them; a scope the plugin constructs itself pins the classloader instead. `CommonHighlighter` is a `@Service` with an injected `CoroutineScope`. Anything without a service of its own — `CommonUI.flashText`, `CopyRegionHandler`'s highlight — uses `EmacsJScope`.
+- **Coroutine scopes come from the platform**, so that unloading cancels them; a scope the plugin constructs itself pins the classloader instead. `CommonHighlighter` is a `@Service` with an injected `CoroutineScope`. Anything without a service of its own — `CommonUI.flashText`, `CopyRegionHandler`'s highlight, `UniversalArgumentHandler`'s repeat — uses `EmacsJScope`.
 - **Hand work back with `withContext(Dispatchers.EDT)`, not `invokeLater`.** With `invokeLater` the coroutine completes as soon as it has *queued* the work, so its `Job` stops meaning "this result is still wanted": cancelling an already completed job is a no-op and superseded work paints anyway. Keeping the EDT half inside the coroutine is what makes `job.cancel()` sufficient, and it is why neither `CommonHighlighter` nor `flashText` needs a generation counter or a cancellation token.
 - **Anything registered with the platform needs a parent disposable**: `IdeEventQueue` dispatchers, caret listeners, and so on. Delegates pass `this`.
 - **Swing listeners on long-lived components must be removed from the object they were added to.** `PopupBoundsListener` captures `editor.component` once for exactly this reason: re-deriving it at removal time can yield a different component, or null. It is shared by `CommonUI` and `KillRingUI`, and `detach()` is what the popups call on teardown.

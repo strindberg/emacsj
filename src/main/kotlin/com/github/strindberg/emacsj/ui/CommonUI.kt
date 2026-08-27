@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 
-private val FLASH_DURATION = 1500L.milliseconds
+private val FLASH_DURATION = 1500.milliseconds
 
 internal class CommonUI(
     private val editor: Editor,

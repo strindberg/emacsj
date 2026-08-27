@@ -461,9 +461,6 @@ class ReplaceTest : EmacsJTestCase() {
         typeChar('y')
 
         myFixture.checkResult("bar<caret>")
-
-        ReplaceHandler.delegate?.hide()
-        myFixture.performEditorAction(ACTION_EDITOR_MOVE_LINE_START)
     }
 
     @Test
@@ -805,7 +802,7 @@ class ReplaceTest : EmacsJTestCase() {
             pressEnter()
 
             assertEquals("Replaced 0 occurrences.", ReplaceHandler.delegate!!.ui.title)
-            assertEquals("aaa bbb", myFixture.editor.document.text)
+            myFixture.checkResult("aaa bbb")
 
             ReplaceHandler.delegate?.hide()
         }
@@ -825,7 +822,7 @@ class ReplaceTest : EmacsJTestCase() {
 
             assertEquals("Replacement failed. ", ReplaceHandler.delegate!!.ui.title)
             assertEquals(JBColor.RED, ReplaceHandler.delegate!!.ui.textColor)
-            assertEquals("aaa bbb", myFixture.editor.document.text)
+            myFixture.checkResult("aaa bbb")
 
             ReplaceHandler.delegate?.hide()
         }
@@ -891,12 +888,12 @@ class ReplaceTest : EmacsJTestCase() {
 
         // The recentering itself cannot be asserted headlessly -- the fixture reports a zero-sized viewport -- but
         // a missing action or a malformed AnActionEvent would surface here, and the session must survive either way.
-        assertEquals("foo foo", myFixture.editor.document.text)
+        myFixture.checkResult("foo foo")
         assertNotNull(ReplaceHandler.delegate)
 
         typeChar('y')
 
-        assertEquals("bar foo", myFixture.editor.document.text)
+        myFixture.checkResult("bar foo")
     }
 
     @Test
@@ -913,7 +910,7 @@ class ReplaceTest : EmacsJTestCase() {
         typeChar('q')
 
         assertNull(ReplaceHandler.delegate)
-        assertEquals("foo foo", myFixture.editor.document.text)
+        myFixture.checkResult("foo foo")
     }
 
     @Test

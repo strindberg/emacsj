@@ -10,7 +10,7 @@ enum class ZapType(val description: String) {
     FORWARD_TO("Zap to Character"),
     FORWARD_UP_TO("Zap up to Character"),
     BACKWARD_TO("Zap Back to Character"),
-    BACKWARD_UP_TO("Zap Back up to Character")
+    BACKWARD_UP_TO("Zap Back up to Character"),
 }
 
 @Language("devkit-action-id")

@@ -23,9 +23,9 @@ import org.jetbrains.annotations.VisibleForTesting
 @Language("devkit-action-id")
 internal const val ACTION_COPY = "com.github.strindberg.emacsj.actions.kill.copy"
 
-private val HIGHLIGHT_DURATION = 500L.milliseconds
+private val HIGHLIGHT_DURATION = 500.milliseconds
 
-internal val THROTTLE_DURATION = 200L.milliseconds
+internal val THROTTLE_DURATION = 200.milliseconds
 
 internal class CopyRegionHandler : EditorActionHandler() {
 

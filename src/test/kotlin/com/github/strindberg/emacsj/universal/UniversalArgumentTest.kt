@@ -9,7 +9,6 @@ import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_LEF
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_UNDO
 import com.intellij.testFramework.PlatformTestUtil
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 
@@ -203,8 +202,19 @@ class UniversalArgumentTest : EmacsJTestCase() {
 
         // The repetitions share one command group id, so they collapse into the single step the first press began.
         myFixture.performEditorAction(ACTION_UNDO)
-        runPendingRepeats()
-        assertEquals("abcdefghijkl", myFixture.editor.document.text)
+        checkResult("abcdefghijkl")
+    }
+
+    @Test
+    fun `A repeat queued while another is still pending runs after it, not interleaved with it`() {
+        myFixture.configureByText(FILE, "<caret>")
+
+        // More than one batch each, so that the two repeats would interleave at their yield points if the second
+        // one did not wait for the first.
+        repeatTimes150("a")
+        repeatTimes150("b")
+
+        checkResult("a".repeat(150) + "b".repeat(150) + "<caret>")
     }
 
     /** Repeats of more than one are queued rather than run inline, so let them finish before asserting. */
@@ -214,12 +224,19 @@ class UniversalArgumentTest : EmacsJTestCase() {
     }
 
     /**
-     * Runs whatever the universal-argument machinery has queued. Repeats are dispatched in batches through
-     * `invokeLater` so that a long repeat stays interruptible, which means they have not run yet by the time the
+     * Runs whatever the universal-argument machinery has queued. A repeat runs in a coroutine on the EDT that yields
+     * every batch, so that a long repeat stays interruptible, which means it has not run yet by the time the
      * triggering action returns.
      */
     private fun runPendingRepeats() {
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+    }
+
+    private fun repeatTimes150(text: String) {
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT1)
+        myFixture.type("5")
+        myFixture.type("0")
+        myFixture.type(text)
     }
 
     private fun pressEscape() {

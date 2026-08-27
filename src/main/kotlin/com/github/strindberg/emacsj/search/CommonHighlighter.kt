@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
 
-internal val HIGHLIGHT_DELAY = 50L.milliseconds
+internal val HIGHLIGHT_DELAY = 50.milliseconds
 
 private const val HIGHLIGHT_CHUNK_SIZE = 100
 

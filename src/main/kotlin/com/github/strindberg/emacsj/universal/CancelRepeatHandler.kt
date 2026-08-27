@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj.universal
 
-import com.github.strindberg.emacsj.EmacsJService
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Editor
@@ -13,6 +12,6 @@ internal const val ACTION_CANCEL_REPEAT = "com.github.strindberg.emacsj.actions.
 internal class CancelRepeatHandler : EditorActionHandler() {
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        EmacsJService.instance.setRepeating(false)
+        UniversalArgumentHandler.cancelRepeat()
     }
 }
