@@ -4,12 +4,14 @@
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-08-31
+
 ### Added
 
 - New Paste functionality: "Paste: Previous Item in Clipboard History" (`alt-y`, Mac: `command-y`) invoked on its own displays the kill
   ring as selectable items. `ENTER` pastes the selected entry.
-- When using Isearch, the search field now marks the non-matching part of the search string in red.
-- When using Isearch, the kill ring can now be cycled with `alt-y` (Mac: `command-y`) after pasting to search text.
+- When using Isearch the search field now marks the non-matching part of the search string in red.
+- When using Isearch the kill ring can now be cycled with `alt-y` (Mac: `command-y`) after pasting to the search text.
 
 ### Fixed
 
@@ -291,7 +293,8 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.5.7...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/strindberg/emacsj/compare/v1.5.7...v1.6.0
 [1.5.7]: https://github.com/strindberg/emacsj/compare/v1.5.6...v1.5.7
 [1.5.6]: https://github.com/strindberg/emacsj/compare/v1.5.5...v1.5.6
 [1.5.5]: https://github.com/strindberg/emacsj/compare/v1.5.4...v1.5.5
