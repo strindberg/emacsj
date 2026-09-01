@@ -12,9 +12,11 @@ import com.intellij.openapi.components.Service
  * Holds global action state. Most callers are on the EDT, but [com.github.strindberg.emacsj.ui.EmacsJActionsPromoter]
  * runs wherever the platform chooses to update actions, so the state here is made safe for any thread rather than
  * relying on an EDT-confinement invariant that nothing enforces.
+ *
+ * The class is used as a service in other plugins and cannot be made internal.
  */
 @Service
-internal class EmacsJService {
+class EmacsJService {
 
     private val lastActionIds = AtomicReference(ActionIds(null, null))
 
@@ -68,6 +70,7 @@ internal class EmacsJService {
 
     fun isPerformingAction() = isPerformingAction
 
+    /** Used by other plugins. */
     fun registerSingleAction(actionId: String) {
         registeredSingleActions.add(actionId)
     }
@@ -75,9 +78,9 @@ internal class EmacsJService {
     fun getSingleActions() = registeredSingleActions.toSet()
 
     companion object {
-        internal val instance: EmacsJService
+        val instance: EmacsJService
             get() = ApplicationManager.getApplication().getService(EmacsJService::class.java)
     }
 }
 
-internal data class ActionIds(val last: String?, val previous: String?)
+data class ActionIds(val last: String?, val previous: String?)
