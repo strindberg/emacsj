@@ -4,8 +4,13 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.VK_ENTER
 import java.util.UUID
 import com.github.strindberg.emacsj.search.ReplaceHandler.Companion.addPrevious
+import com.github.strindberg.emacsj.search.ReplaceState.EDIT_REPLACE_ARG
 import com.github.strindberg.emacsj.search.ReplaceState.GET_REPLACE_ARG
 import com.github.strindberg.emacsj.search.ReplaceState.GET_SEARCH_ARG
+import com.github.strindberg.emacsj.search.ReplaceState.REPLACE_DONE
+import com.github.strindberg.emacsj.search.ReplaceState.REPLACE_FAILED
+import com.github.strindberg.emacsj.search.ReplaceState.SEARCHING
+import com.github.strindberg.emacsj.search.ReplaceState.SEARCH_FOUND
 import com.github.strindberg.emacsj.search.SearchType.REGEXP
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.ui.UIDelegate
@@ -130,138 +135,142 @@ internal class ReplaceDelegate(
         }
     }
 
-    @Suppress("LongMethod", "CyclomaticComplexMethod")
     private fun keyEventHandler(e: KeyEvent) {
         when (state) {
             GET_SEARCH_ARG -> {
-                if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED && e.modifiersEx == 0) {
+                if (e.id == KeyEvent.KEY_RELEASED) {
                     clearHighlights()
-                    val matchResult = Regex("(^.*) -> (.*)$", RegexOption.DOT_MATCHES_ALL).matchEntire(ui.text)?.destructured
-                    if (matchResult != null) {
-                        searchArg = matchResult.component1()
-                        replaceArg = matchResult.component2()
-                        startSearch()
+                    if (e.keyCode == VK_ENTER && e.modifiersEx == 0) {
+                        val matchResult = Regex("(^.*) -> (.*)$", RegexOption.DOT_MATCHES_ALL).matchEntire(ui.text)?.destructured
+                        if (matchResult != null) {
+                            searchArg = matchResult.component1()
+                            replaceArg = matchResult.component2()
+                            startSearch(edited = false)
+                        } else {
+                            setReplaceState()
+                        }
                     } else {
-                        setReplaceState()
-                    }
-                } else if (e.id == KeyEvent.KEY_RELEASED) {
-                    clearHighlights()
-                    CommonHighlighter.instance.findAllAndHighlight(
-                        SearchRequest(
-                            editor = editor,
-                            project = project,
-                            searchArg = ui.text,
-                            useRegexp = type == REGEXP,
-                            useCase = type == REGEXP || caseSensitive(ui.text),
-                            range = selection
+                        CommonHighlighter.instance.findAllAndHighlight(
+                            SearchRequest(
+                                editor = editor,
+                                project = project,
+                                searchArg = ui.text,
+                                useRegexp = type == REGEXP,
+                                useCase = type == REGEXP || caseSensitive(ui.text),
+                                range = selection
+                            )
                         )
-                    )
+                    }
                 }
             }
             GET_REPLACE_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED) {
                     replaceArg = ui.text
-                    startSearch()
+                    startSearch(edited = false)
                 }
             }
-            ReplaceState.EDIT_REPLACE_ARG -> {
+            EDIT_REPLACE_ARG -> {
                 if (e.keyCode == VK_ENTER && e.id == KeyEvent.KEY_RELEASED) {
                     replaceArg = ui.text
-                    startEditedSearch()
+                    startSearch(edited = true)
                 }
             }
-            ReplaceState.SEARCHING -> {
+            SEARCHING -> {
             }
-            ReplaceState.SEARCH_FOUND -> {
+            SEARCH_FOUND -> {
                 if (e.id == KeyEvent.KEY_TYPED) {
-                    when (e.keyChar.lowercaseChar()) {
-                        '\u000c' -> { // Ctrl-L
-                            val recenterAction = ActionManager.getInstance().getAction(ACTION_RECENTER)
-                            ActionUtil.performAction(
-                                recenterAction,
-                                AnActionEvent.createEvent(
-                                    DataManager.getInstance().getDataContext(editor.component),
-                                    null,
-                                    "Recenter",
-                                    ActionUiKind.NONE,
-                                    e
-                                )
-                            )
-                        }
-                        'y', ' ' -> {
-                            try {
-                                replaceInEditor()
-                                searchForReplacement(true)
-                            } catch (e: FindManager.MalformedReplacementStringException) {
-                                handleReplacementError(e)
-                            }
-                        }
-                        ',' -> {
-                            try {
-                                replaceInEditor()
-                                isReplaced = true
-                            } catch (e: FindManager.MalformedReplacementStringException) {
-                                handleReplacementError(e)
-                            }
-                        }
-                        'n' -> {
-                            searchForReplacement(true)
-                        }
-                        'e' -> {
-                            state = ReplaceState.EDIT_REPLACE_ARG
-                            isInhibitCancel = true
-                            try {
-                                ui.makeWriteable(replaceArg)
-                            } finally {
-                                isInhibitCancel = false
-                            }
-                        }
-                        '.' -> {
-                            try {
-                                replaceInEditor()
-                            } catch (e: FindManager.MalformedReplacementStringException) {
-                                handleReplacementError(e)
-                            }
-                            hide()
-                        }
-                        '!' -> {
-                            try {
-                                do {
-                                    replaceInEditor()
-                                    searchForReplacement(false)
-                                } while (lastResult.isStringFound)
-                            } catch (e: FindManager.MalformedReplacementStringException) {
-                                handleReplacementError(e)
-                            }
-                            editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
-                        }
-                        'u' -> {
-                            val lastReplacement = replacements.removeLastOrNull()
-                            if (lastReplacement != null) {
-                                undoReplacement(lastReplacement)
-                            } else {
-                                ui.flashText("Nothing to undo")
-                            }
-                        }
-                        '^' -> {
-                            val lastReplacement = replacements.removeLastOrNull()
-                            if (lastReplacement != null) {
-                                visitReplacement(lastReplacement)
-                                isReplaced = true
-                            } else {
-                                ui.flashText("No previous match")
-                            }
-                        }
-                        else -> {
-                            hide()
-                        }
-                    }
+                    handleNextCommand(e)
                 }
             }
-            ReplaceState.REPLACE_DONE, ReplaceState.REPLACE_FAILED -> {
+            REPLACE_DONE, REPLACE_FAILED -> {
                 if (e.id == KeyEvent.KEY_PRESSED) {
                     hide()
                 }
+            }
+        }
+    }
+
+    private fun handleNextCommand(e: KeyEvent) {
+        when (e.keyChar.lowercaseChar()) {
+            '\u000c' -> { // Ctrl-L
+                val recenterAction = ActionManager.getInstance().getAction(ACTION_RECENTER)
+                ActionUtil.performAction(
+                    recenterAction,
+                    AnActionEvent.createEvent(
+                        DataManager.getInstance().getDataContext(editor.component),
+                        null,
+                        "Recenter",
+                        ActionUiKind.NONE,
+                        e
+                    )
+                )
+            }
+            'y', ' ' -> {
+                try {
+                    replaceInEditor()
+                    searchForReplacement(true)
+                } catch (e: FindManager.MalformedReplacementStringException) {
+                    handleReplacementError(e)
+                }
+            }
+            ',' -> {
+                try {
+                    replaceInEditor()
+                    isReplaced = true
+                } catch (e: FindManager.MalformedReplacementStringException) {
+                    handleReplacementError(e)
+                }
+            }
+            'n' -> {
+                searchForReplacement(true)
+            }
+            'e' -> {
+                state = EDIT_REPLACE_ARG
+                isInhibitCancel = true
+                try {
+                    ui.makeWriteable(replaceArg)
+                } finally {
+                    isInhibitCancel = false
+                }
+            }
+            '.' -> {
+                try {
+                    replaceInEditor()
+                } catch (e: FindManager.MalformedReplacementStringException) {
+                    handleReplacementError(e)
+                }
+                hide()
+            }
+            '!' -> {
+                try {
+                    do {
+                        replaceInEditor()
+                        searchForReplacement(false)
+                    } while (lastResult.isStringFound)
+                } catch (e: FindManager.MalformedReplacementStringException) {
+                    handleReplacementError(e)
+                }
+                editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
+            }
+            'u' -> {
+                val lastReplacement = replacements.removeLastOrNull()
+                if (lastReplacement != null) {
+                    undoReplacement(lastReplacement)
+                } else {
+                    ui.flashText("Nothing to undo")
+                }
+            }
+            '^' -> {
+                val lastReplacement = replacements.removeLastOrNull()
+                if (lastReplacement != null) {
+                    visitReplacement(lastReplacement)
+                    isReplaced = true
+                } else {
+                    ui.flashText("No previous match")
+                }
+            }
+            else -> {
+                hide()
             }
         }
     }
@@ -273,32 +282,24 @@ internal class ReplaceDelegate(
         ReplaceHandler.resetPos()
     }
 
-    private fun startSearch() {
-        state = ReplaceState.SEARCHING
-
-        addPrevious(searchArg, replaceArg, type)
-
-        ui.makeReadonly(getReplaceChoiceText(), true)
-        setupModel()
-
+    private fun startSearch(edited: Boolean) {
+        state = SEARCHING
         editor.selectionModel.removeSelection()
 
-        searchForReplacement(true)
-    }
-
-    private fun startEditedSearch() {
-        state = ReplaceState.SEARCHING
-
         addPrevious(searchArg, replaceArg, type)
 
         ui.makeReadonly(getReplaceChoiceText(), true)
         setupModel()
 
-        try {
-            replaceInEditor()
+        if (!edited) {
             searchForReplacement(true)
-        } catch (e: FindManager.MalformedReplacementStringException) {
-            handleReplacementError(e)
+        } else {
+            try {
+                replaceInEditor()
+                searchForReplacement(true)
+            } catch (e: FindManager.MalformedReplacementStringException) {
+                handleReplacementError(e)
+            }
         }
     }
 
@@ -356,10 +357,10 @@ internal class ReplaceDelegate(
         thisLogger().warn(e)
         ui.textColor = JBColor.RED
         clearHighlights()
-        state = ReplaceState.REPLACE_FAILED
+        state = REPLACE_FAILED
     }
 
-    /** Removes every highlight this session painted, and stops any search still on its way to painting more. */
+    /** Removes every highlight this session painted and stops any search still on its way to painting more. */
     private fun clearHighlights() {
         CommonHighlighter.instance.cancelPending()
         editor.removeHighlights(EMACSJ_PRIMARY, EMACSJ_SECONDARY)
@@ -368,10 +369,10 @@ internal class ReplaceDelegate(
     private fun getReplaceTitle() =
         when (state) {
             GET_SEARCH_ARG -> if (type == REGEXP) "Query replace regexp: " else "Query replace: "
-            GET_REPLACE_ARG, ReplaceState.SEARCHING, ReplaceState.EDIT_REPLACE_ARG -> "Replace $searchArg with: "
-            ReplaceState.SEARCH_FOUND -> "Replace? "
-            ReplaceState.REPLACE_DONE -> if (replaced == 1) "Replaced 1 occurrence." else "Replaced $replaced occurrences."
-            ReplaceState.REPLACE_FAILED -> "Replacement failed. "
+            GET_REPLACE_ARG, SEARCHING, EDIT_REPLACE_ARG -> "Replace $searchArg with: "
+            SEARCH_FOUND -> "Replace? "
+            REPLACE_DONE -> if (replaced == 1) "Replaced 1 occurrence." else "Replaced $replaced occurrences."
+            REPLACE_FAILED -> "Replacement failed. "
         }
 
     private fun getReplaceChoiceText(): String = "$searchArg -> $replaceArg"
@@ -392,10 +393,10 @@ internal class ReplaceDelegate(
                 editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
             }
 
-            state = ReplaceState.SEARCH_FOUND
+            state = SEARCH_FOUND
         } else {
             ui.text = ""
-            state = ReplaceState.REPLACE_DONE
+            state = REPLACE_DONE
         }
 
         lastResult = result

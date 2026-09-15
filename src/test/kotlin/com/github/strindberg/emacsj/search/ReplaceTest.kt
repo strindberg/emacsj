@@ -810,7 +810,7 @@ class ReplaceTest : EmacsJTestCase() {
 
     @Test
     fun `Malformed replacement reports a failed replacement`() {
-        ["""\2""", """\9""", "$", "\$x", """y\"""].forEach { malformed ->
+        ["""\2""", """\9""", "$", $$"$x", """y\"""].forEach { malformed ->
             myFixture.configureByText(FILE, "<caret>aaa bbb")
             myFixture.performEditorAction(ACTION_REPLACE_REGEXP)
 

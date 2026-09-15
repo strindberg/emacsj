@@ -1,9 +1,6 @@
 package com.github.strindberg.emacsj.search
 
 import java.awt.datatransfer.StringSelection
-import java.awt.event.KeyEvent
-import java.awt.event.KeyEvent.CHAR_UNDEFINED
-import java.awt.event.KeyEvent.VK_ENTER
 import java.awt.event.KeyEvent.VK_ESCAPE
 import java.awt.event.KeyEvent.VK_SHIFT
 import kotlin.time.Duration.Companion.milliseconds
@@ -34,14 +31,14 @@ private const val FILE = "isearchfile.txt"
 
 private const val HIGHLIGHT_TIMEOUT_SECONDS = 10
 
-@Suppress("LargeClass", "ReplaceSafeCallChainWithRun")
+@Suppress("LargeClass")
 class ISearchTest : EmacsJTestCase() {
 
     /** Match count as shown in the search UI, once debounced highlighting has reported it. */
     private val searchCount: Pair<Int, Int>?
         get() {
             waitForHighlighting()
-            return ISearchHandler.delegate?.ui?.count
+            return ISearchHandler.delegate?.run { ui.count }
         }
 
     @BeforeEach
@@ -390,7 +387,7 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_EDIT)
 
         setText("fooz")
-        pressPopupEnter()
+        pressEnter()
         myFixture.checkResult("foo fooz<caret> foo")
 
         assertEquals("fooz", ISearchHandler.delegate?.text)
@@ -411,7 +408,7 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_FORWARD)
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
 
-        pressPopupEnter()
+        pressEnter()
 
         myFixture.checkResult("foo foo<caret>")
         assertEquals("foo", ISearchHandler.delegate?.text)
@@ -437,7 +434,7 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
 
         setText("fooz")
-        pressPopupEnter()
+        pressEnter()
 
         myFixture.checkResult("foo fooz<caret> foo")
         assertEquals("fooz", ISearchHandler.delegate?.text)
@@ -459,7 +456,7 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
 
         setText("fo")
-        pressPopupEnter()
+        pressEnter()
 
         myFixture.checkResult("foo fo<caret>oz foo")
         assertEquals("fo", ISearchHandler.delegate?.text)
@@ -482,7 +479,7 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
         performEditorAction(ACTION_ISEARCH_PASTE)
 
-        performEditorAction(ACTION_ISEARCH_ENTER)
+        pressEnter()
         myFixture.checkResult("foo fooz foobar<caret>")
         assertEquals("foobar", ISearchHandler.delegate?.text)
         assertEquals(Pair(1, 1), searchCount)
@@ -549,7 +546,7 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_FORWARD)
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
 
-        pressPopupEnter()
+        pressEnter()
         assertEquals("baz", ISearchHandler.delegate?.text)
 
         pressEnter()
@@ -559,7 +556,7 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_FORWARD)
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
-        performEditorAction(ACTION_ISEARCH_ENTER)
+        pressEnter()
         performEditorAction(ACTION_ISEARCH_FORWARD)
         performEditorAction(ACTION_ISEARCH_FORWARD) // Wrap-around
         assertEquals("bar", ISearchHandler.delegate?.text)
@@ -572,7 +569,7 @@ class ISearchTest : EmacsJTestCase() {
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
         performEditorAction(ACTION_ISEARCH_PREVIOUS)
-        performEditorAction(ACTION_ISEARCH_ENTER)
+        pressEnter()
         performEditorAction(ACTION_ISEARCH_FORWARD)
         performEditorAction(ACTION_ISEARCH_FORWARD) // Wrap-around
         assertEquals("foo", ISearchHandler.delegate?.text)
@@ -2762,7 +2759,7 @@ class ISearchTest : EmacsJTestCase() {
         items.forEach { manager.setContents(StringSelection(it)) }
     }
 
-    private fun markup() = ISearchHandler.delegate?.ui?.markup
+    private fun markup() = ISearchHandler.delegate?.run { ui.markup }
 
     private fun markupOf(found: String, notFound: String) =
         """<html>$found<font color="${ColorUtil.toHtmlColor(JBColor.RED)}">$notFound</font></html>"""
@@ -2770,13 +2767,6 @@ class ISearchTest : EmacsJTestCase() {
     private fun pressEscape() {
         pressKey(ISearchHandler.delegate?.ui, VK_ESCAPE)
         ISearchHandler.delegate?.hide()
-    }
-
-    private fun pressPopupEnter() {
-        val textField = ISearchHandler.delegate!!.ui.textField
-        val popup = ISearchHandler.delegate!!.ui.popup
-        popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_PRESSED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
-        popup.dispatchKeyEvent(KeyEvent(textField, KeyEvent.KEY_RELEASED, 1234L, 0, VK_ENTER, CHAR_UNDEFINED))
     }
 
     /** Secondary highlights are the ones the debounced whole-file search paints; primary marks the current match. */

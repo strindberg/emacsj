@@ -26,16 +26,15 @@ private const val KEY_EVENT_TIME = 1234L
 /**
  * Base class for EmacsJ fixture tests.
  *
- * [RunInEdt] is inherited by every subclass, and `writeIntent = true` is load-bearing: without it any test that
+ * [RunInEdt] is inherited by every subclass, and `writeIntent = true` is load-bearing: without it, any test that
  * changes a document fails with "Write-unsafe context!".
  *
  * The interactive features keep their delegates in a companion-object field. All of it outlives a single test,
  * so cleanup has to happen centrally: doing it per class means the next test class added to the project silently
  * inherits what the previous one left.
  */
-@Suppress("AbstractClassCanBeConcreteClass")
 @RunInEdt(writeIntent = true)
-abstract class EmacsJTestCase {
+open class EmacsJTestCase {
 
     protected lateinit var myFixture: CodeInsightTestFixture
 
@@ -53,7 +52,7 @@ abstract class EmacsJTestCase {
     }
 
     /**
-     * Sends a key press and release to an interactive command's popup. While such a command is active the popup,
+     * Sends a key press and release to an interactive command's popup. While such a command is active, the popup,
      * not the editor, is what receives keystrokes, so tests have to drive it directly.
      */
     internal fun pressKey(ui: CommonUI?, keyCode: Int) {

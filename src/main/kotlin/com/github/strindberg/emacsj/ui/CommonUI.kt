@@ -164,7 +164,7 @@ internal class CommonUI(
     }
 
     override fun cancelUI() {
-        flash?.cancel() // Drop any pending flash so it cannot write to a closed popup.
+        flash?.cancel()
         popup.cancel()
         panel.cancel()
     }

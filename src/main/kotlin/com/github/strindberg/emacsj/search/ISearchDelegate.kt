@@ -267,9 +267,9 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
             editor.caretModel.runForEachCaret { caret -> if (caret.isValid) caret.moveToOffset(caret.search.origin) }
             editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
         }
-        if (state == EDIT && e.id == KeyEvent.KEY_RELEASED) {
+        if (state == EDIT && e.id == KeyEvent.KEY_RELEASED && e.keyCode != VK_ENTER) {
             clearAllHighlights()
-            if (e.keyCode == VK_ENTER && e.modifiersEx == 0) startEditedSearch() else refreshHighlights()
+            refreshHighlights()
         }
     }
 
