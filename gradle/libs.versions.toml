@@ -1,7 +1,7 @@
 [versions]
 changelog = "2.5.0"
 detekt = "2.0.0-alpha.6"
-intellij-platform = "2.18.1"
+intellij-platform = "2.19.0"
 junit = "4.13.2"
 jupiter = "6.1.3"
 kotlin = "2.4.20"

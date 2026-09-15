@@ -23,6 +23,7 @@ repositories {
     }
 }
 
+@Suppress("UnstableApiUsage")
 testing.suites.named<JvmTestSuite>("test") {
     useJUnitJupiter(libs.versions.jupiter)
 }
