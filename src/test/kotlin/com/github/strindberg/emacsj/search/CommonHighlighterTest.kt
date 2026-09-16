@@ -80,7 +80,7 @@ class CommonHighlighterTest : EmacsJTestCase() {
             searchArg = searchArg,
             useRegexp = false,
             useCase = false,
-            highlight = highlight
+            useHighlight = highlight
         )
 
     /** Pumps while waiting: with painting inside the coroutine, finishing needs the EDT to be free. */

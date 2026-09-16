@@ -20,13 +20,13 @@ internal abstract class UIDelegate(val editor: Editor) : Disposable {
     protected open val isCancelInhibited: Boolean
         get() = false
 
-    protected open fun release() {}
-
-    protected abstract fun clearDelegate()
-
     init {
         EditorUtil.disposeWithEditor(editor, this)
     }
+
+    protected open fun release() {}
+
+    protected abstract fun clearDelegate()
 
     internal fun hide() {
         if (!isCancelInhibited) {

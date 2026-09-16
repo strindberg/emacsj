@@ -29,12 +29,6 @@ internal val THROTTLE_DURATION = 200.milliseconds
 
 internal class CopyRegionHandler : EditorActionHandler() {
 
-    companion object {
-
-        @VisibleForTesting
-        internal var timeSource: TimeSource = TimeSource.Monotonic
-    }
-
     private var lastInvocation: TimeMark? = null
 
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
@@ -71,4 +65,10 @@ internal class CopyRegionHandler : EditorActionHandler() {
 
     // Avoid inadvertently running the command multiple times because of key repeat.
     private fun notThrottled() = lastInvocation?.run { elapsedNow() >= THROTTLE_DURATION } != false
+
+    companion object {
+
+        @VisibleForTesting
+        internal var timeSource: TimeSource = TimeSource.Monotonic
+    }
 }

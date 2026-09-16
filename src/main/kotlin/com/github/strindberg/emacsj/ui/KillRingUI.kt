@@ -59,7 +59,7 @@ internal class KillRingUI(
     private val standardFont =
         UIUtil.getLabelFont().deriveFont(
             (editor as? EditorEx)?.run {
-                colorsScheme.editorFontSize2D.times(1.1f)
+                colorsScheme.editorFontSize2D.times(STANDARD_FONT_SCALE)
             } ?: UIUtil.getLabelFont().size2D
         )
 

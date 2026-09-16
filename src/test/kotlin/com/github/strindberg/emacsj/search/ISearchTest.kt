@@ -2729,8 +2729,8 @@ class ISearchTest : EmacsJTestCase() {
     private fun type(text: String) {
         // One character at a time: each keystroke starts a search, and a breadcrumb records the count as it stands
         // when the next one starts. Typing a whole string inside one debounce window is faster than a user can type.
-        text.forEach {
-            myFixture.type(it)
+        text.forEach { char ->
+            myFixture.type(char)
             waitForHighlighting()
         }
     }

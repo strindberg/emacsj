@@ -25,6 +25,25 @@ internal const val ACTION_POP_MARK = "com.github.strindberg.emacsj.actions.mark.
 
 internal class MarkHandler(private val type: MarkType) : EditorActionHandler() {
 
+    override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
+        if (editor is EditorEx) {
+            editor.virtualFile?.let { virtualFile ->
+                if (type == POP || EmacsJService.instance.isLastStrictUniversal()) {
+                    editor.places()?.pop(virtualFile)?.restore(editor)
+                } else {
+                    val isPreviousSticky = editor.isStickySelection
+                    editor.isStickySelection = false
+                    virtualFile.placeInfo(editor)?.let { placeInfo ->
+                        if (placeInfo != peek(editor) || !isPreviousSticky) {
+                            editor.places()?.push(virtualFile, placeInfo)
+                            editor.isStickySelection = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     companion object {
 
         internal fun pushPlaceInfo(editor: Editor) {
@@ -57,33 +76,14 @@ internal class MarkHandler(private val type: MarkType) : EditorActionHandler() {
                 manager.setSelectedEditor(file, editorTypeId)
                 manager.getSelectedEditorWithProvider(file)?.takeIf {
                     it.provider.editorTypeId == editorTypeId
-                }?.let {
-                    it.fileEditor.setState(state)
+                }?.let { provider ->
+                    provider.fileEditor.setState(state)
                     editor.scrollingModel.scrollVertically(scrollOffset)
                 }
             }
         }
 
         private fun Editor.places(): MarkPlaces? = project?.service<MarkPlaces>()
-    }
-
-    override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        if (editor is EditorEx) {
-            editor.virtualFile?.let { virtualFile ->
-                if (type == POP || EmacsJService.instance.isLastStrictUniversal()) {
-                    editor.places()?.pop(virtualFile)?.restore(editor)
-                } else {
-                    val isPreviousSticky = editor.isStickySelection
-                    editor.isStickySelection = false
-                    virtualFile.placeInfo(editor)?.let { placeInfo ->
-                        if (placeInfo != peek(editor) || !isPreviousSticky) {
-                            editor.places()?.push(virtualFile, placeInfo)
-                            editor.isStickySelection = true
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 

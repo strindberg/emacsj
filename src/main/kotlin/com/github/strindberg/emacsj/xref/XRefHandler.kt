@@ -30,6 +30,16 @@ internal const val ACTION_XREF_FORWARD = "com.github.strindberg.emacsj.actions.x
 
 internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
 
+    override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
+        if (editor is EditorEx) {
+            when (type) {
+                XRefType.BACK -> editor.getPlaceForBackAction()?.restore(editor)
+                XRefType.FORWARD -> editor.getPlaceForForwardAction()?.restore(editor)
+                XRefType.PUSH -> editor.pushPlace()
+            }
+        }
+    }
+
     companion object {
 
         internal val xRefActionIds = ["GotoDeclaration", "GotoDeclarationOnly", "GotoTypeDeclaration"]
@@ -68,16 +78,6 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
             }
 
         private fun Project.xrefStack() = service<XRefPlaces>().stack
-    }
-
-    override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        if (editor is EditorEx) {
-            when (type) {
-                XRefType.BACK -> editor.getPlaceForBackAction()?.restore(editor)
-                XRefType.FORWARD -> editor.getPlaceForForwardAction()?.restore(editor)
-                XRefType.PUSH -> editor.pushPlace()
-            }
-        }
     }
 }
 

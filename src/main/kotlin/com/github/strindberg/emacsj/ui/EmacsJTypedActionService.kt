@@ -16,11 +16,6 @@ internal class EmacsJTypedActionService : Disposable {
 
     internal val originalHandler: TypedActionHandler
 
-    companion object {
-        val instance
-            get(): EmacsJTypedActionService = ApplicationManager.getApplication().getService(EmacsJTypedActionService::class.java)
-    }
-
     init {
         TypedAction.getInstance().apply {
             originalHandler = setupRawHandler(object : WrappedTypedActionHandler(rawHandler) {
@@ -42,6 +37,11 @@ internal class EmacsJTypedActionService : Disposable {
 
     override fun dispose() {
         TypedAction.getInstance().setupRawHandler(originalHandler)
+    }
+
+    companion object {
+        val instance
+            get(): EmacsJTypedActionService = ApplicationManager.getApplication().getService(EmacsJTypedActionService::class.java)
     }
 }
 

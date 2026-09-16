@@ -16,8 +16,8 @@ internal class EmacsJActionsPromoter : ActionPromoter {
         actions.toMutableList().apply {
             when {
                 ISearchHandler.delegate != null -> {
-                    sortByDescending {
-                        when (it) {
+                    sortByDescending { action ->
+                        when (action) {
                             is ISearchAction -> 1
                             is ReplaceAction, is RepeatAction -> -1
                             else -> 0
@@ -25,8 +25,8 @@ internal class EmacsJActionsPromoter : ActionPromoter {
                     }
                 }
                 ReplaceHandler.delegate != null -> {
-                    sortByDescending {
-                        when (it) {
+                    sortByDescending { action ->
+                        when (action) {
                             is ReplaceAction -> 1
                             is ISearchAction, is RepeatAction -> -1
                             else -> 0
@@ -34,8 +34,8 @@ internal class EmacsJActionsPromoter : ActionPromoter {
                     }
                 }
                 EmacsJService.instance.isRepeating() -> {
-                    sortByDescending {
-                        when (it) {
+                    sortByDescending { action ->
+                        when (action) {
                             is RepeatAction -> 1
                             is ISearchAction, is ReplaceAction -> -1
                             else -> 0

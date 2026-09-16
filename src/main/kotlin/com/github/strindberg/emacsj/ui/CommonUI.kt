@@ -35,6 +35,8 @@ import org.jetbrains.annotations.VisibleForTesting
 
 private val FLASH_DURATION = 1500.milliseconds
 
+const val STANDARD_FONT_SCALE = 1.1f
+
 internal class CommonUI(
     private val editor: Editor,
     private var isWriteable: Boolean,
@@ -45,7 +47,7 @@ internal class CommonUI(
     private val standardFont =
         UIUtil.getLabelFont().deriveFont(
             (editor as? EditorEx)?.run {
-                colorsScheme.editorFontSize2D.times(1.1f)
+                colorsScheme.editorFontSize2D.times(STANDARD_FONT_SCALE)
             } ?: UIUtil.getLabelFont().size2D
         )
 
@@ -95,21 +97,6 @@ internal class CommonUI(
             }
         }
 
-    internal fun showText(found: String, notFound: String = "") {
-        readonlyText = found + notFound
-        textLabel.text = if (notFound.isEmpty()) {
-            displayText(readonlyText)
-        } else {
-            buildString {
-                append("<html>")
-                append(escapeXmlEntities(displayText(found)))
-                append("""<font color="${ColorUtil.toHtmlColor(JBColor.RED)}">""")
-                append(escapeXmlEntities(displayText(notFound)))
-                append("</font></html>")
-            }
-        }
-    }
-
     internal val markup: String
         @VisibleForTesting get() = textLabel.text
 
@@ -124,6 +111,9 @@ internal class CommonUI(
         set(newColor) {
             if (isWriteable) textField.foreground = newColor else textLabel.foreground = newColor
         }
+
+    internal val anchor: JScrollPane
+        get() = editor.popupAnchor
 
     init {
         panel.background = HintUtil.getInformationColor()
@@ -143,6 +133,21 @@ internal class CommonUI(
         }
 
         popup = initPopup()
+    }
+
+    internal fun showText(found: String, notFound: String = "") {
+        readonlyText = found + notFound
+        textLabel.text = if (notFound.isEmpty()) {
+            displayText(readonlyText)
+        } else {
+            buildString {
+                append("<html>")
+                append(escapeXmlEntities(displayText(found)))
+                append("""<font color="${ColorUtil.toHtmlColor(JBColor.RED)}">""")
+                append(escapeXmlEntities(displayText(notFound)))
+                append("</font></html>")
+            }
+        }
     }
 
     internal fun flashText(message: String, finalText: String = "") {
@@ -168,9 +173,6 @@ internal class CommonUI(
         popup.cancel()
         panel.cancel()
     }
-
-    internal val anchor: JScrollPane
-        get() = editor.popupAnchor
 
     internal fun popupPoint(): RelativePoint = popupPointIn(anchor, panel.preferredSize.height)
 
@@ -271,11 +273,13 @@ internal class CommonUI(
     }
 }
 
+private const val PANEL_FONT_SCALE = 2.5
+
 private class UIPanel(private val commonUI: CommonUI, editor: Editor, private val baseFont: Font) : JPanel(GridBagLayout()) {
 
     private val boundsListener = PopupBoundsListener(editor) { commonUI.setPopupBounds(getNewBounds()) }
 
-    override fun getPreferredSize(): Dimension = Dimension(commonUI.anchor.width, (baseFont.size * 2.5).toInt())
+    override fun getPreferredSize(): Dimension = Dimension(commonUI.anchor.width, (baseFont.size * PANEL_FONT_SCALE).toInt())
 
     fun getNewBounds(): Rectangle = Rectangle(commonUI.popupPoint().screenPoint, preferredSize)
 

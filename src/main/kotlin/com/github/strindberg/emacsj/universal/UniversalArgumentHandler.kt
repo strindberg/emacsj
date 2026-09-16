@@ -70,6 +70,22 @@ private const val BATCH_SIZE = 100
 
 internal class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 
+    override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
+        val current = delegate
+        if (current != null) {
+            if (numeric == null) {
+                current.multiply()
+            } else {
+                current.addDigit(numeric)
+            }
+            EmacsJService.instance.registerUniversalArgument(current.getTimes())
+        } else {
+            val newDelegate = UniversalArgumentDelegate(editor = editor, numeric = numeric, caret = caret, dataContext = dataContext)
+            delegate = newDelegate
+            EmacsJService.instance.registerUniversalArgument(newDelegate.getTimes())
+        }
+    }
+
     companion object {
         internal var delegate: UniversalArgumentDelegate? = null
 
@@ -112,22 +128,6 @@ internal class UniversalArgumentHandler(private val numeric: Int?) : EditorActio
             repeatJob?.cancel()
             repeatJob = null
             EmacsJService.instance.setRepeating(false)
-        }
-    }
-
-    override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
-        val current = delegate
-        if (current != null) {
-            if (numeric == null) {
-                current.multiply()
-            } else {
-                current.addDigit(numeric)
-            }
-            EmacsJService.instance.registerUniversalArgument(current.getTimes())
-        } else {
-            val newDelegate = UniversalArgumentDelegate(editor = editor, numeric = numeric, caret = caret, dataContext = dataContext)
-            delegate = newDelegate
-            EmacsJService.instance.registerUniversalArgument(newDelegate.getTimes())
         }
     }
 }

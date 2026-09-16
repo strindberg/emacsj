@@ -17,10 +17,10 @@ import org.jetbrains.annotations.VisibleForTesting
 /**
  * The kill ring offered as a list to choose from, shown when paste-history is invoked without a paste to cycle.
  *
- * [asPrefix] mirrors prefix paste: a universal argument ahead of the command leaves the caret where it was, in
+ * [isPrefix] mirrors prefix paste: a universal argument ahead of the command leaves the caret where it was, in
  * front of the inserted text, rather than after it.
  */
-internal class KillRingDelegate(editor: Editor, private val entries: List<String>, private val asPrefix: Boolean = false) :
+internal class KillRingDelegate(editor: Editor, private val entries: List<String>, private val isPrefix: Boolean = false) :
     UIDelegate(editor) {
 
     @VisibleForTesting
@@ -53,7 +53,7 @@ internal class KillRingDelegate(editor: Editor, private val entries: List<String
     }
 
     /**
-     * Every caret ends up after its own copy of the text, or in front of it for [asPrefix].
+     * Every caret ends up after its own copy of the text, or in front of it for [isPrefix].
      *
      * The mark is pushed only for a single caret, as in ordinary paste: there is one mark ring, and several carets
      * have no single place to record. Offsets are derived from the length inserted, since a document cannot hold
@@ -66,10 +66,10 @@ internal class KillRingDelegate(editor: Editor, private val entries: List<String
             val start = end - insertedLength
 
             // Pushing records wherever the caret is, so it goes to the far end and then comes back.
-            caret.moveToOffset(if (asPrefix) end else start)
+            caret.moveToOffset(if (isPrefix) end else start)
             MarkHandler.pushPlaceInfo(editor)
-            caret.moveToOffset(if (asPrefix) start else end)
-        } else if (asPrefix) {
+            caret.moveToOffset(if (isPrefix) start else end)
+        } else if (isPrefix) {
             editor.caretModel.allCarets.forEach { caret -> caret.moveToOffset(caret.offset - insertedLength) }
         }
     }
@@ -80,15 +80,15 @@ internal class KillRingDelegate(editor: Editor, private val entries: List<String
 
     /** Reports whether the chooser used the key, which decides whether anything else gets to see it. */
     private fun keyEventHandler(e: KeyEvent): Boolean {
-        val ctrl = e.modifiersEx and CTRL_DOWN_MASK == CTRL_DOWN_MASK
-        val owned = e.keyCode == VK_ESCAPE || e.keyCode == VK_ENTER || (ctrl && e.keyCode == VK_G)
+        val isCtrlDown = e.modifiersEx and CTRL_DOWN_MASK == CTRL_DOWN_MASK
+        val isOwned = e.keyCode == VK_ESCAPE || e.keyCode == VK_ENTER || (isCtrlDown && e.keyCode == VK_G)
 
-        if (owned && e.id == KeyEvent.KEY_PRESSED) {
+        if (isOwned && e.id == KeyEvent.KEY_PRESSED) {
             when {
-                e.keyCode == VK_ESCAPE || (ctrl && e.keyCode == VK_G) -> hide()
+                e.keyCode == VK_ESCAPE || (isCtrlDown && e.keyCode == VK_G) -> hide()
                 e.keyCode == VK_ENTER -> pasteSelected()
             }
         }
-        return owned
+        return isOwned
     }
 }

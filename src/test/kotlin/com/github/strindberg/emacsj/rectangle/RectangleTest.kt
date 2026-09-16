@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 
 private const val FILE = "rectanglefile.txt"
 
+@Suppress("NullableToStringCall")
 class RectangleTest : EmacsJTestCase() {
 
     @Test

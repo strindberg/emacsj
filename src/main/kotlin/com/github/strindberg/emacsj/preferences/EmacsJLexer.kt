@@ -45,8 +45,7 @@ class EmacsJLexer : LexerBase() {
             if (currentState == STATE_OTHER) {
                 TEXT_TOKEN_TYPE
             } else {
-                val currentToken = buffer.substring(currentOffset, getNextEnd())
-                if (currentToken != SEARCH_WORD) {
+                if (buffer.substring(currentOffset, getNextEnd()) != SEARCH_WORD) {
                     TEXT_TOKEN_TYPE
                 } else {
                     if (firstMatchOffset == NO_MATCH) {

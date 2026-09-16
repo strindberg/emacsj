@@ -34,7 +34,7 @@ internal data class SearchRequest(
     val useCase: Boolean,
     val range: IntRange? = null,
     val callback: (List<FindResult>) -> Unit = {},
-    val highlight: Boolean = true,
+    val useHighlight: Boolean = true,
 )
 
 /** Runs a search off the EDT and paints its matches on it. */
@@ -66,7 +66,7 @@ internal class CommonHighlighter(private val scope: CoroutineScope) {
                 Pair(request.editor.document.modificationStamp, findAll(request))
             }
 
-            if (request.highlight) {
+            if (request.useHighlight) {
                 // A chunk at a time. Painting every match in one go blocks the editor for as long as it takes,
                 // which in a large file is long enough that the next keystroke has to wait.
                 matches.chunked(HIGHLIGHT_CHUNK_SIZE).forEach { chunk ->

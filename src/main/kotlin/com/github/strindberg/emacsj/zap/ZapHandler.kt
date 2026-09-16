@@ -29,11 +29,11 @@ internal val zapActionIds = [ACTION_ZAP_FORWARD_TO, ACTION_ZAP_FORWARD_UP_TO, AC
 
 internal class ZapHandler(private val type: ZapType) : EditorActionHandler() {
 
-    companion object {
-        internal var delegate: ZapDelegate? = null
-    }
-
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         delegate = ZapDelegate(editor, type)
+    }
+
+    companion object {
+        internal var delegate: ZapDelegate? = null
     }
 }

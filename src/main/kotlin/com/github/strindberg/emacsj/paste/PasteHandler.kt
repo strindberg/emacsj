@@ -32,14 +32,6 @@ private val pasteActionIds = [ACTION_PASTE, ACTION_PREFIX_PASTE, ACTION_HISTORY_
 
 internal class PasteHandler(private val type: PasteType) : EditorWriteActionHandler() {
 
-    companion object {
-        private val walk = ClipboardHistory()
-
-        private var pasteType = STANDARD
-
-        internal var killRingDelegate: KillRingDelegate? = null
-    }
-
     override fun executeWriteAction(editor: Editor, caret: Caret?, dataContext: DataContext) {
         when (type) {
             STANDARD, PREFIX -> {
@@ -109,4 +101,12 @@ internal class PasteHandler(private val type: PasteType) : EditorWriteActionHand
 
     private fun Editor.pasteTransferable(contents: Transferable): List<TextRange> =
         EditorCopyPasteHelper.getInstance().pasteTransferable(this, contents)?.toList().orEmpty()
+
+    companion object {
+        private val walk = ClipboardHistory()
+
+        private var pasteType = STANDARD
+
+        internal var killRingDelegate: KillRingDelegate? = null
+    }
 }

@@ -363,9 +363,8 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
 
     private fun popBreadcrumb() {
         breadcrumbs.pop()?.let { breadcrumb ->
-            val searchChanged =
-                breadcrumb.text != ui.text || breadcrumb.caseType != caseType || breadcrumb.searchType != searchType
-            if (searchChanged) clearAllHighlights() else clearCurrentMatchHighlights()
+            val isSearchChanged = breadcrumb.text != ui.text || breadcrumb.caseType != caseType || breadcrumb.searchType != searchType
+            if (isSearchChanged) clearAllHighlights() else clearCurrentMatchHighlights()
 
             state = breadcrumb.state
             caseType = breadcrumb.caseType
@@ -510,7 +509,7 @@ internal class ISearchDelegate(editor: Editor, val project: Project, var searchT
                 useRegexp = isRegexp,
                 useCase = caseSensitive(),
                 callback = callback,
-                highlight = highlight
+                useHighlight = highlight
             )
         )
     }

@@ -78,12 +78,12 @@ complexity:
   active: true
   CognitiveComplexMethod:
     active: false
-    allowedComplexity: 15
+    allowedComplexity: 25
   ComplexCondition:
     active: true
     allowedConditions: 8
   ComplexInterface:
-    active: false
+    active: true
     allowedDefinitions: 10
     includeStaticDeclarations: false
     includePrivateDeclarations: false
@@ -122,7 +122,7 @@ complexity:
     ignoreDataClasses: true
     ignoreAnnotatedParameter: []
   MethodOverloading:
-    active: false
+    active: true
     allowedOverloads: 6
   NamedArguments:
     active: true
@@ -133,18 +133,17 @@ complexity:
     active: true
     allowedDepth: 6
   NestedScopeFunctions:
-    active: false
-    allowedDepth: 1
+    active: true
+    allowedDepth: 3
     functions:
       - 'kotlin.apply'
       - 'kotlin.run'
       - 'kotlin.with'
-      - 'kotlin.let'
       - 'kotlin.also'
   ReplaceSafeCallChainWithRun:
     active: true
   StringLiteralDuplication:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
     allowedDuplications: 2
     ignoreAnnotation: true
@@ -167,9 +166,9 @@ complexity:
 coroutines:
   active: true
   CoroutineLaunchedInTestWithoutRunTest:
-    active: false
+    active: true
   GlobalCoroutineUsage:
-    active: false
+    active: true
   InjectDispatcher:
     active: true
     dispatcherNames:
@@ -181,11 +180,11 @@ coroutines:
   SleepInsteadOfDelay:
     active: true
   SuspendFunInFinallySection:
-    active: false
+    active: true
   SuspendFunSwallowedCancellation:
-    active: false
+    active: true
   SuspendFunWithCoroutineScopeReceiver:
-    active: false
+    active: true
     aliases: ['SuspendFunctionOnCoroutineScope']
   SuspendFunWithFlowReturnType:
     active: true
@@ -240,7 +239,7 @@ exceptions:
     active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
   NotImplementedDeclaration:
-    active: false
+    active: true
   ObjectExtendsThrowable:
     active: true
   PrintStackTrace:
@@ -261,7 +260,7 @@ exceptions:
   ThrowingExceptionFromFinally:
     active: true
   ThrowingExceptionInMain:
-    active: false
+    active: true
   ThrowingExceptionsWithoutMessageOrCause:
     active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
@@ -301,8 +300,8 @@ exceptions:
 naming:
   active: true
   BooleanPropertyNaming:
-    active: false
-    allowedPattern: '^(is|has|are|use)'
+    active: true
+    allowedPattern: '^(is|has|are|use|can)'
   ClassNaming:
     active: true
     aliases: ['ClassName']
@@ -324,7 +323,7 @@ naming:
     aliases: ['FunctionMaxNameLength']
     maximumFunctionNameLength: 30
   FunctionNameMinLength:
-    active: false
+    active: true
     aliases: ['FunctionMinNameLength']
     minimumFunctionNameLength: 3
   FunctionNaming:
@@ -382,11 +381,11 @@ naming:
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
     privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
   VariableMaxLength:
-    active: false
+    active: true
     maximumVariableNameLength: 64
   VariableMinLength:
     active: false
-    minimumVariableNameLength: 1
+    minimumVariableNameLength: 3
   VariableNaming:
     active: true
     aliases: ['PropertyName']
@@ -399,7 +398,7 @@ performance:
   ArrayPrimitive:
     active: true
   CouldBeSequence:
-    active: false
+    active: true
     allowedOperations: 2
   ForEachOnRange:
     active: true
@@ -430,7 +429,7 @@ potential-bugs:
   CharArrayToStringCall:
     active: true
   Deprecation:
-    active: false
+    active: true
     aliases: ['DEPRECATION']
   DontDowncastCollectionTypes:
     active: true
@@ -447,14 +446,14 @@ potential-bugs:
       - 'java.util.LinkedHashMap'
       - 'java.util.HashMap'
   ElseCaseInsteadOfExhaustiveWhen:
-    active: false
+    active: true
     ignoredSubjectTypes: []
   EqualsAlwaysReturnsTrueOrFalse:
     active: true
   EqualsWithHashCodeExist:
     active: true
   ExitOutsideMain:
-    active: false
+    active: true
   ExplicitGarbageCollectionCall:
     active: true
   HasPlatformType:
@@ -477,9 +476,9 @@ potential-bugs:
       - 'java.util.stream.*Stream'
     ignoreFunctionCall: []
   ImplicitDefaultLocale:
-    active: false
+    active: true
   ImplicitUnitReturnType:
-    active: false
+    active: true
     allowExplicitReturnType: true
   InvalidRange:
     active: true
@@ -497,16 +496,16 @@ potential-bugs:
     active: true
     excludes: ['**/*.kts']
   MissingSuperCall:
-    active: false
+    active: true
     mustInvokeSuperAnnotations:
       - 'androidx.annotation.CallSuper'
       - 'javax.annotation.OverridingMethodsMustInvokeSuper'
   MissingUseCall:
-    active: false
+    active: true
   NullCheckOnMutableProperty:
     active: true
   NullableToStringCall:
-    active: false
+    active: true
   PropertyUsedBeforeDeclaration:
     active: true
   UnconditionalJumpStatementInLoop:
@@ -528,7 +527,7 @@ potential-bugs:
   UnreachableCode:
     active: true
   UnsafeCallOnNullableType:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
   UnsafeCast:
     active: true
@@ -562,9 +561,9 @@ style:
     active: true
     includeElvis: true
   ClassOrdering:
-    active: false
+    active: true
   CollapsibleIfStatements:
-    active: false
+    active: true
   DataClassContainsFunctions:
     active: true
     conversionFunctionPrefix:
@@ -598,10 +597,10 @@ style:
   ExplicitItLambdaParameter:
     active: true
   ExpressionBodySyntax:
-    active: false
+    active: true
     includeLineWrapping: false
   ForbiddenAnnotation:
-    active: false
+    active: true
     annotations:
       - reason: 'it is a java annotation. Use `Suppress` instead.'
         value: 'java.lang.SuppressWarnings'
@@ -632,7 +631,7 @@ style:
     forbiddenImports: []
     allowedImports: []
   ForbiddenMethodCall:
-    active: false
+    active: true
     methods:
       - reason: 'print does not allow you to configure the output stream. Use a logger instead.'
         value: 'kotlin.io.print'
@@ -666,13 +665,21 @@ style:
     active: true
     maxJumpCount: 1
   MagicNumber:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/*.kts']
     ignoreNumbers:
       - '-1'
       - '0'
       - '1'
       - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - '10'
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: false
     ignoreLocalVariableDeclaration: false
@@ -700,7 +707,7 @@ style:
   ModifierOrder:
     active: true
   MultilineLambdaItParameter:
-    active: false
+    active: true
   MultilineRawStringIndentation:
     active: true
     indentSize: 4
@@ -786,7 +793,7 @@ style:
     active: true
   UnnecessaryParentheses:
     active: false
-    allowForUnclearPrecedence: false
+    allowForUnclearPrecedence: true
   UnnecessaryReversed:
     active: true
   UnusedImport:

@@ -11,13 +11,13 @@ internal const val ACTION_GOTO_LINE = "com.github.strindberg.emacsj.actions.move
 
 internal class GotoLineHandler : EditorActionHandler() {
 
-    companion object {
-        internal var delegate: GotoLineDelegate? = null
-    }
-
     override fun doExecute(editor: Editor, caret: Caret?, dataContext: DataContext) {
         if (delegate == null) {
             delegate = GotoLineDelegate(editor)
         }
+    }
+
+    companion object {
+        internal var delegate: GotoLineDelegate? = null
     }
 }
