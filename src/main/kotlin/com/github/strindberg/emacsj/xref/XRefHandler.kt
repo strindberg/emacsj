@@ -52,11 +52,9 @@ internal class XRefHandler(private val type: XRefType) : EditorActionHandler() {
             }
         }
 
-        private fun Editor.getPlaceForBackAction(): PlaceInfo? =
-            getPlaceUsingHistory { current -> undo(current) }
+        private fun Editor.getPlaceForBackAction(): PlaceInfo? = getPlaceUsingHistory { current -> undo(current) }
 
-        private fun Editor.getPlaceForForwardAction(): PlaceInfo? =
-            getPlaceUsingHistory { current -> redo(current) }
+        private fun Editor.getPlaceForForwardAction(): PlaceInfo? = getPlaceUsingHistory { current -> redo(current) }
 
         private fun Editor.pushPlace() {
             project?.let { project ->
