@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-09-30
+
+### Fixed
+
+- Make EmacsJService available from other plugins.
+
 ## [1.6.0] - 2026-08-31
 
 ### Added
@@ -293,7 +299,8 @@ independent commands if you for some reason prefer not to use *Universal Argumen
 
 - Initial release.
 
-[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/strindberg/emacsj/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/strindberg/emacsj/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/strindberg/emacsj/compare/v1.5.7...v1.6.0
 [1.5.7]: https://github.com/strindberg/emacsj/compare/v1.5.6...v1.5.7
 [1.5.6]: https://github.com/strindberg/emacsj/compare/v1.5.5...v1.5.6
