@@ -6,7 +6,7 @@ junit = "4.13.2"
 jupiter = "6.1.3"
 kotlin = "2.4.20"
 kotlinter = "5.7.0"
-kover = "0.9.10"
+kover = "0.9.11"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
