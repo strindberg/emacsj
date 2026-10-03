@@ -1,6 +1,5 @@
 package com.github.strindberg.emacsj
 
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicReference
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
 import com.github.strindberg.emacsj.universal.singleActions
@@ -12,11 +11,9 @@ import com.intellij.openapi.components.Service
  * Holds global action state. Most callers are on the EDT, but [com.github.strindberg.emacsj.ui.EmacsJActionsPromoter]
  * runs wherever the platform chooses to update actions, so the state here is made safe for any thread rather than
  * relying on an EDT-confinement invariant that nothing enforces.
- *
- * The class is used as a service in other plugins and cannot be made internal.
  */
 @Service
-class EmacsJService {
+internal class EmacsJService {
 
     private val lastActionIds = AtomicReference(ActionIds(null, null))
 
@@ -24,19 +21,26 @@ class EmacsJService {
     private var lastArgument = 1
 
     @Volatile
+    private var isNumericArgument = false
+
+    @Volatile
     private var isRepeating = false
 
     @Volatile
     private var isPerformingAction = false
 
-    private val registeredSingleActions = ConcurrentHashMap.newKeySet<String>().apply { addAll(singleActions) }
-
     fun addAction(actionId: String) {
         lastActionIds.updateAndGet { ActionIds(last = actionId, previous = it.last) }
     }
 
-    fun registerUniversalArgument(lastArgument: Int) {
+    /**
+     * [isNumeric] tells a count typed as digits from one built by pressing Universal argument alone: Emacs gives a bare
+     * `Ctrl-U` a meaning of its own, see [isLastStrictUniversal].
+     */
+    @JvmOverloads
+    fun registerUniversalArgument(lastArgument: Int, isNumeric: Boolean = false) {
         this.lastArgument = lastArgument
+        this.isNumericArgument = isNumeric
     }
 
     fun universalArgument() = if (isLastUniversal()) lastArgument else 1
@@ -50,7 +54,8 @@ class EmacsJService {
 
     fun lastActionId() = lastActionIds.get().last
 
-    fun isLastStrictUniversal() = lastActionIds.get().last == ACTION_UNIVERSAL_ARGUMENT
+    /** Whether the last action was Universal argument, pressed without digits. */
+    fun isLastStrictUniversal() = lastActionIds.get().last == ACTION_UNIVERSAL_ARGUMENT && !isNumericArgument
 
     fun isLastUniversal() = lastActionIds.get().last in universalActionIds
 
@@ -70,12 +75,7 @@ class EmacsJService {
 
     fun isPerformingAction() = isPerformingAction
 
-    /** Used by other plugins. */
-    fun registerSingleAction(actionId: String) {
-        registeredSingleActions.add(actionId)
-    }
-
-    fun getSingleActions() = registeredSingleActions.toSet()
+    fun getSingleActions() = singleActions.toSet()
 
     companion object {
         val instance: EmacsJService
@@ -83,4 +83,4 @@ class EmacsJService {
     }
 }
 
-data class ActionIds(val last: String?, val previous: String?)
+internal data class ActionIds(val last: String?, val previous: String?)

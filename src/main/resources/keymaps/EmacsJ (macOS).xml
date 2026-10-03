@@ -489,6 +489,9 @@
     <action id="com.github.strindberg.emacsj.actions.line.transposelines">
         <keyboard-shortcut first-keystroke="control X" second-keystroke="control T"/>
     </action>
+    <action id="com.github.strindberg.emacsj.actions.macro.runlastmacro">
+        <keyboard-shortcut first-keystroke="control X" second-keystroke="E"/>
+    </action>
 
     <!-- Conflicting shortcuts -->
     <action id="Debug">

@@ -3,6 +3,7 @@ package com.github.strindberg.emacsj.universal
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.duplicate.ACTION_COPY_ABOVE_COMMAND
 import com.github.strindberg.emacsj.line.ACTION_TRANSPOSE_LINES
+import com.github.strindberg.emacsj.macro.ACTION_RUN_LAST_MACRO
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.paste.ACTION_HISTORY_PASTE
@@ -50,6 +51,7 @@ internal val singleActions = [
     ACTION_TRANSPOSE_LINES,
     ACTION_TRANSPOSE_WORDS,
     ACTION_COPY_ABOVE_COMMAND,
+    ACTION_RUN_LAST_MACRO,
 ]
 
 internal class UniversalArgumentDelegate(
@@ -70,6 +72,7 @@ internal class UniversalArgumentDelegate(
     init {
         captureComposedInput { input -> handleChar(EmacsJTypedActionService.instance.originalHandler, input.first()) }
 
+        registerTimes()
         ui.show()
     }
 
@@ -93,18 +96,23 @@ internal class UniversalArgumentDelegate(
 
     internal fun multiply() {
         counter *= 4
-        ui.text = getTimes().toString()
+        registerTimes()
     }
 
     internal fun addDigit(digit: Int) {
         numeric = numeric?.let { 10 * it + digit } ?: digit
-        ui.text = getTimes().toString()
+        registerTimes()
     }
 
     internal fun getTimes(): Int = numeric ?: counter
 
     override fun clearDelegate() {
         UniversalArgumentHandler.delegate = null
+    }
+
+    private fun registerTimes() {
+        ui.text = getTimes().toString()
+        EmacsJService.instance.registerUniversalArgument(getTimes(), isNumeric = numeric != null)
     }
 
     private fun repeatCommand(times: Int, action: () -> Unit) {
