@@ -611,3 +611,19 @@ Commands:
 
 - Goto Line (`alt-g`). move the caret to the specified line (and optionally column). If selection is not active, add mark at the current
   caret position before jump.
+
+### Select Occurrences
+
+IntelliJ's *Select Next Occurrence* and *Select All Occurrences* leave sticky selection switched on, so after selecting the occurrences
+started from a mark (`ctrl-space`), the next caret movement overwrites them (see
+[IJPL-207535](https://youtrack.jetbrains.com/issue/IJPL-207535/SelectNextOccurrence-does-not-reset-sticky-selection)). EmacsJ's versions
+of the two commands switch sticky selection off first and otherwise behave like IntelliJ's.
+
+The commands have no default key bindings; bind them in the keymap settings, for example in place of IntelliJ's own commands.
+
+*Select Next Occurrence* can be repeated with [Universal Argument](#universal-argument) to select several occurrences at once.
+
+Commands:
+
+- Select Next Occurrence. Select the next occurrence of the selected text, or the word at the caret if nothing is selected.
+- Select All Occurrences. Select all occurrences of the selected text, or of the word at the caret if nothing is selected.

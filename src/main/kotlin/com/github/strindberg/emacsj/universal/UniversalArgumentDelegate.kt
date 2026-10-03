@@ -15,6 +15,7 @@ import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_BACKWARD
 import com.github.strindberg.emacsj.search.ACTION_ISEARCH_REGEXP_FORWARD
 import com.github.strindberg.emacsj.search.ACTION_REPLACE_REGEXP
 import com.github.strindberg.emacsj.search.ACTION_REPLACE_TEXT
+import com.github.strindberg.emacsj.selection.ACTION_SELECT_ALL_OCCURRENCES
 import com.github.strindberg.emacsj.space.ACTION_DELETE_SPACE
 import com.github.strindberg.emacsj.ui.CommonUI
 import com.github.strindberg.emacsj.ui.EmacsJTypedActionService
@@ -52,6 +53,7 @@ internal val singleActions = [
     ACTION_TRANSPOSE_WORDS,
     ACTION_COPY_ABOVE_COMMAND,
     ACTION_RUN_LAST_MACRO,
+    ACTION_SELECT_ALL_OCCURRENCES,
 ]
 
 internal class UniversalArgumentDelegate(
