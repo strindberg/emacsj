@@ -419,6 +419,13 @@
                 class="com.github.strindberg.emacsj.actions.macro.RunLastMacroAction">
             <keyboard-shortcut first-keystroke="control X" second-keystroke="E" keymap="Emacs"/>
         </action>
+
+        <action id="com.github.strindberg.emacsj.actions.selection.selectnextoccurrence"
+                class="com.github.strindberg.emacsj.actions.selection.SelectNextOccurrenceAction">
+        </action>
+        <action id="com.github.strindberg.emacsj.actions.selection.selectalloccurrences"
+                class="com.github.strindberg.emacsj.actions.selection.SelectAllOccurrencesAction">
+        </action>
     </actions>
 
 </idea-plugin>
