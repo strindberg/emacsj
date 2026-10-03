@@ -1,9 +1,12 @@
 package com.github.strindberg.emacsj.universal
 
 import java.util.UUID
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 import com.github.strindberg.emacsj.EmacsJScope
 import com.github.strindberg.emacsj.EmacsJService
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.thisLogger
@@ -12,12 +15,17 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.project.Project
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.CoroutineStart.DEFAULT
+import kotlinx.coroutines.CoroutineStart.UNDISPATCHED
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.job
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.intellij.lang.annotations.Language
+import org.jetbrains.annotations.VisibleForTesting
 
 @Language("devkit-action-id")
 internal const val ACTION_UNIVERSAL_ARGUMENT = "com.github.strindberg.emacsj.actions.universal.universalargument"
@@ -66,7 +74,7 @@ internal val universalActionIds = [
     ACTION_UNIVERSAL_ARGUMENT0,
 ]
 
-private const val BATCH_SIZE = 100
+internal val REPEAT_BATCH_DURATION = 200.milliseconds
 
 internal class UniversalArgumentHandler(private val numeric: Int?) : EditorActionHandler() {
 
@@ -78,56 +86,73 @@ internal class UniversalArgumentHandler(private val numeric: Int?) : EditorActio
             } else {
                 current.addDigit(numeric)
             }
-            EmacsJService.instance.registerUniversalArgument(current.getTimes())
         } else {
-            val newDelegate = UniversalArgumentDelegate(editor = editor, numeric = numeric, caret = caret, dataContext = dataContext)
-            delegate = newDelegate
-            EmacsJService.instance.registerUniversalArgument(newDelegate.getTimes())
+            delegate = UniversalArgumentDelegate(editor = editor, numeric = numeric, caret = caret, dataContext = dataContext)
         }
     }
 
     companion object {
         internal var delegate: UniversalArgumentDelegate? = null
 
+        @VisibleForTesting
+        internal var timeSource: TimeSource = TimeSource.Monotonic
+
         private var repeatJob: Job? = null
 
-        /** Runs [action] [times] times, off the delegate that asked for it. */
-        @Suppress("TooGenericExceptionCaught")
+        private var macroJob: Job? = null
+
         internal fun startRepeat(project: Project?, times: Int, action: () -> Unit) {
             val groupId = UUID.randomUUID().toString()
 
-            val previous = repeatJob
-            EmacsJService.instance.setRepeating(true)
-            repeatJob = EmacsJScope.instance.scope.launch(Dispatchers.EDT) {
-                try {
-                    // A repeat queued while another is still running waits for it, rather than interleaving with it.
-                    previous?.join()
-                    repeat(times) { index ->
-                        CommandProcessor.getInstance().executeCommand(project, action, null, groupId)
-                        // Hand the EDT back every batch, so a long repeat stays interruptible.
-                        if ((index + 1) % BATCH_SIZE == 0) {
-                            yield()
-                        }
-                    }
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    thisLogger().warn(e)
-                } finally {
-                    // Only if no newer repeat has taken over; clearing then would cancel that one instead.
-                    if (coroutineContext.job === repeatJob) {
-                        repeatJob = null
-                        EmacsJService.instance.setRepeating(false)
+            launchRepeat {
+                var batch = timeSource.markNow()
+                repeat(times) {
+                    CommandProcessor.getInstance().executeCommand(project, action, null, groupId)
+                    // Hand the EDT back every batch, so a long repeat stays interruptible.
+                    if (batch.elapsedNow() >= REPEAT_BATCH_DURATION) {
+                        yield()
+                        batch = timeSource.markNow()
                     }
                 }
             }
         }
 
-        /** Drops the repetitions of a running repeat that have not run yet. */
+        internal fun launchRepeat(block: suspend () -> Unit) {
+            val start = if (repeatJob == null && ApplicationManager.getApplication().isDispatchThread) UNDISPATCHED else DEFAULT
+            val job = launchAfter(listOfNotNull(repeatJob), start, block) { job -> if (job === repeatJob) repeatJob = null }
+            if (!job.isCompleted) {
+                repeatJob = job
+            }
+        }
+
+        internal fun launchMacroRepeat(block: suspend () -> Unit) {
+            macroJob = launchAfter(listOfNotNull(repeatJob, macroJob), DEFAULT, block) { job -> if (job === macroJob) macroJob = null }
+        }
+
         internal fun cancelRepeat() {
             repeatJob?.cancel()
             repeatJob = null
+            macroJob?.cancel()
+            macroJob = null
             EmacsJService.instance.setRepeating(false)
+        }
+
+        @Suppress("TooGenericExceptionCaught")
+        private fun launchAfter(previous: List<Job>, start: CoroutineStart, block: suspend () -> Unit, release: (Job) -> Unit): Job {
+            EmacsJService.instance.setRepeating(true)
+            return EmacsJScope.instance.scope.launch(Dispatchers.EDT, start) {
+                try {
+                    previous.joinAll()
+                    block()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    thisLogger().warn(e)
+                } finally {
+                    release(coroutineContext.job)
+                    EmacsJService.instance.setRepeating(repeatJob != null || macroJob != null)
+                }
+            }
         }
     }
 }
