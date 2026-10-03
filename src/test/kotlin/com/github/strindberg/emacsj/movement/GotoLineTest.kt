@@ -291,7 +291,7 @@ class GotoLineTest : EmacsJTestCase() {
     }
 
     private fun setText(text: String) {
-        GotoLineHandler.delegate!!.ui.text = (text)
+        GotoLineHandler.delegate!!.ui.text = text
     }
 
     private fun pressEnter() {
