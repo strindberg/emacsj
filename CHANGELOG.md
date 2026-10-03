@@ -7,6 +7,8 @@
 ### Added
 
 - Run Last Macro (`ctrl-x e`): run the last recorded macro, repeated the number of times given by Universal argument.
+- Select Next Occurrence and Select All Occurrences: works as IntelliJ's commands of the same names, but switching off
+  sticky selection first. They have no default key bindings.
 
 ### Fixed
 
