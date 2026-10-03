@@ -801,7 +801,7 @@ class ReplaceTest : EmacsJTestCase() {
             setText("x")
             pressEnter()
 
-            assertEquals("Replaced 0 occurrences.", ReplaceHandler.delegate!!.ui.title)
+            assertEquals("Replaced 0 occurrences.", ReplaceHandler.delegate?.run { ui.title })
             myFixture.checkResult("aaa bbb")
 
             ReplaceHandler.delegate?.hide()
@@ -820,8 +820,8 @@ class ReplaceTest : EmacsJTestCase() {
             pressEnter()
             typeChar('y')
 
-            assertEquals("Replacement failed. ", ReplaceHandler.delegate!!.ui.title)
-            assertEquals(JBColor.RED, ReplaceHandler.delegate!!.ui.textColor)
+            assertEquals("Replacement failed. ", ReplaceHandler.delegate?.run { ui.title })
+            assertEquals(JBColor.RED, ReplaceHandler.delegate?.run { ui.textColor })
             myFixture.checkResult("aaa bbb")
 
             ReplaceHandler.delegate?.hide()
@@ -932,6 +932,29 @@ class ReplaceTest : EmacsJTestCase() {
         pressKey(ReplaceHandler.delegate?.ui, KeyEvent.VK_A)
 
         assertNull(ReplaceHandler.delegate)
+    }
+
+    @Test
+    fun `Next item in replace history past the newest one empties the prompt`() {
+        myFixture.configureByText(FILE, "<caret>foo")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("foo")
+        pressEnter()
+        setText("bar")
+        pressEnter()
+        typeChar('y')
+
+        ReplaceHandler.delegate?.hide()
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+        setText("typed")
+
+        myFixture.performEditorAction(ACTION_REPLACE_PREVIOUS)
+        assertEquals("foo", ReplaceHandler.delegate?.text)
+
+        // Back past the newest entry there is nothing to show, so the prompt is left empty rather than unchanged.
+        myFixture.performEditorAction(ACTION_REPLACE_NEXT)
+        assertEquals("", ReplaceHandler.delegate?.text)
     }
 
     private fun setText(text: String) {

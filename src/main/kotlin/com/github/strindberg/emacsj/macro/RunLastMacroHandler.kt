@@ -60,24 +60,18 @@ internal class RunLastMacroHandler : EditorActionHandler() {
     private fun wrapper(): AnAction = ActionManager.getInstance().getAction(ACTION_RUN_LAST_MACRO)
 }
 
-/**
- * Whether the action reports itself as enabled in [editor].
- *
- * [AnAction.update] is `@ApiStatus.OverrideOnly` - the platform reserves the call for itself - so it is never invoked
- * directly here; [ActionUtil] makes the call.
- */
-private fun AnAction.isEnabledIn(editor: Editor): Boolean {
-    val event = event(editor)
-    ActionUtil.updateAction(this, event)
-    return event.presentation.isEnabled
-}
-
 private suspend fun AnAction.awaitPlaybackFinished(editor: Editor) {
     // The delegate stays disabled for as long as a macro is playing, but also if the last macro is removed meanwhile.
     // Such a wait never ends on its own; delay() is where cancelling the repeat breaks it.
     while (!isEnabledIn(editor) && !editor.isDisposed) {
         delay(PLAYBACK_POLL)
     }
+}
+
+private fun AnAction.isEnabledIn(editor: Editor): Boolean {
+    val event = event(editor)
+    ActionUtil.updateAction(this, event)
+    return event.presentation.isEnabled
 }
 
 private fun AnAction.event(editor: Editor): AnActionEvent =
