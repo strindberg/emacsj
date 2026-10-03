@@ -368,4 +368,24 @@ class PasteTest : EmacsJTestCase() {
             """.trimIndent()
         )
     }
+
+    @Test
+    fun `Paste after typed universal argument digit works`() {
+        myFixture.configureByText(FILE, "foo<selection>one</selection><caret>")
+        myFixture.performEditorAction(ACTION_CUT)
+        myFixture.checkResult("foo<caret>")
+
+        myFixture.configureByText(FILE, "foo<selection>two</selection><caret>")
+        myFixture.performEditorAction(ACTION_CUT)
+        myFixture.checkResult("foo<caret>")
+
+        myFixture.configureByText(FILE, "foo<selection>three</selection><caret>")
+        myFixture.performEditorAction(ACTION_CUT)
+        myFixture.checkResult("foo<caret>")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
+        myFixture.type("3")
+        myFixture.performEditorAction(ACTION_PASTE)
+        myFixture.checkResult("fooone<caret>")
+    }
 }

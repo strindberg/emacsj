@@ -24,7 +24,7 @@ The main features are:
 - Word commands: transpose, upper-case, lower-case, capitalize, move, delete.
 - Easy access to clipboard history à la Emacs (kill ring).
 - A mark history with the ability to pop mark (mark ring), and exchange point and mark.
-- Universal argument: repeat commands a specified number of times.
+- Universal argument: repeat commands, recorded macros included, a specified number of times.
 - Append-next-kill: append copied/cut text to previous kill.
 - Rectangle commands: copy, open, clear, keep, paste.
 - Zap to character.
@@ -218,7 +218,7 @@ Colors used by Search/replace can be configured as described under Isearch [abov
 *Universal Argument* can be used to repeat any subsequent command. The argument can be specified as described below, and the following
 command will be executed the specified number of times.
 
-Note that *Universal argument* cannot be used to repeat recorded macros because of a limitation in the IntelliJ platform.
+To repeat a recorded macro, use [Run Last Macro](#run-last-macro) after *Universal Argument*.
 
 *Universal Argument* can be invoked in one of three ways:
 
@@ -241,6 +241,19 @@ Commands:
 - Universal Argument\[0,1,...,9] (`ctrl-alt-[0,1,...,9]`). Use the key value as the first digit in the specified argument. Further digits
   can be typed before the command to be repeated.
 - Cancel Repeating Action (`ctrl-g`). Stop the current action from repeating.
+
+### Run Last Macro
+
+*Run Last Macro* plays back the last macro recorded with IntelliJ's macro recording (Edit → Macros → Start Macro Recording). Used after
+[Universal Argument](#universal-argument), the macro is run the specified number of times, each run starting when the previous one has
+finished. Like other repeated commands, the repetitions can be interrupted by pressing `ctrl-g`.
+
+The speed of macro playback can be configured in the IntelliJ registry, they key is `actionSystem.playback.typecommand.delay`. The lower
+this value is, the faster the macro playback will be.
+
+Commands:
+
+- Run Last Macro (`ctrl-x e`). Run the last recorded macro once, or the number of times given by *Universal Argument*.
 
 ### Word Movement
 

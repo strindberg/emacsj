@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### Added
+
+- Run Last Macro (`ctrl-x e`): run the last recorded macro, repeated the number of times given by Universal argument.
+
+### Fixed
+
+- Digits typed after Universal argument (`ctrl-u 3`) were ignored by commands that read the argument themselves rather than
+  being repeated: Paste, Transpose Lines, Transpose Words and Copy From Above Command.
+
 ## [1.6.1] - 2026-09-30
 
 ### Fixed

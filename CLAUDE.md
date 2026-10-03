@@ -74,7 +74,7 @@ Multi-keystroke features use a **delegate**: a stateful object held in a `compan
 
 - `ISearchDelegate` — one incremental search session: caret positions, match highlights, direction, search type, breadcrumb history for backspace, and the clipboard-history walk behind isearch paste.
 - `ReplaceDelegate` — a query-replace session.
-- `UniversalArgumentDelegate` — accumulates digits and shows the count. The repeat itself belongs to `UniversalArgumentHandler.startRepeat`, not to the delegate: `repeatCommand` calls `hide()` first, so the delegate is already disposed before the first repetition runs. That companion holds the `Job`, and `cancelRepeat()` is the one way to stop a repeat — used both by `CancelRepeatHandler` (Ctrl-G) and to keep the `isRepeating` flag honest. A repeat queued while another is still running `join()`s it rather than interleaving, which is what makes typed-ahead `Ctrl-U` commands run in order.
+- `UniversalArgumentDelegate` — accumulates digits and shows the count. The repeat itself belongs to `UniversalArgumentHandler.startRepeat`, not to the delegate: `repeatCommand` calls `hide()` first, so the delegate is already disposed before the first repetition runs. That companion holds the `Job`, and `cancelRepeat()` is the one way to stop a repeat — used both by `CancelRepeatHandler` (Ctrl-G) and to keep the `isRepeating` flag honest. A repeat queued while another is still running `join()`s it rather than interleaving, which is what makes typed-ahead `Ctrl-U` commands run in order. With nothing queued ahead, `launchRepeat` instead starts the coroutine undispatched, so the first batch runs before the triggering keystroke returns: macro playback types a recorded string in a single EDT event, and a queued repeat would land after the characters that follow it. Such a repeat may complete inside `launch`, before it could be stored, so it is only stored in `repeatJob` if it is still running. `startRepeat` is built on `launchRepeat`. `RunLastMacroHandler` launches its macro runs through `launchMacroRepeat`, which keeps them in a separate `macroJob`: a macro can play a `Ctrl-U` repeat of its own, and if that repeat `join()`ed the macro job it would run only after the whole macro. A macro repeat still waits for earlier repeats, `cancelRepeat()` cancels both jobs, and the flag stays set while either is live, so the two kinds of repeat never clear each other's flag.
 - `ZapDelegate` — waits for the target character.
 - `GotoLineDelegate` — reads a `line[:column]`.
 
@@ -132,10 +132,11 @@ myFixture.checkResult("foo <caret>bar")
 
 ### Test seams
 
-Four pieces of production state exist so tests can be deterministic, rather than to switch behavior off:
+Five pieces of production state exist so tests can be deterministic, rather than to switch behavior off:
 
 - `CommonHighlighter.delay` — the debounce before a search highlights. `ISearchTest` and `ReplaceTest` set it to 0 in `@BeforeEach` and restore it, otherwise the suite pays the delay on every keystroke; they wait on `CommonHighlighter.isIdle`.
-- `CopyRegionHandler.clock` — the key-repeat throttle reads it, so `AppendKillTest` can move time explicitly and test the throttle instead of disabling it.
+- `CopyRegionHandler.timeSource` — the key-repeat throttle reads it, so `AppendKillTest` can move time explicitly and test the throttle instead of disabling it.
+- `UniversalArgumentHandler.timeSource` — a repeat hands the EDT back once a batch has run for `REPEAT_BATCH_DURATION`. `UniversalArgumentTest` installs a source that ticks on every reading, so a batch is exactly 100 repetitions whatever the machine's speed, and a test that needs the whole repeat in one batch uses a `TestTimeSource` that never moves.
 - `MarkPlaces.clear()` and `UndoRedoStack.clear()` — the mark ring and the xref history are project-scoped, but the light fixture hands the same project to every test in a class, so both carry over. `EmacsJTestCase` empties them in teardown. Without this, a test that assumes an empty history passes or fails depending on where it lands in Jupiter's method order.
 
 Some things cannot be asserted headlessly. Popups are suppressed in unit-test mode, so anything depending on a popup being genuinely on screen (its position, whether it follows a window resize) needs `runIde`. Clipboard history is application-scoped and is polluted by other test classes, so a test that walks it must pin it first.
