@@ -42,7 +42,7 @@ internal class DeleteSpaceHandler(private val type: SpaceType) : EditorWriteActi
 
     private fun previousNonWhiteSpace(text: CharSequence, startOffset: Int): Int {
         tailrec fun previous(offset: Int): Int =
-            if (offset <= 0) {
+            if (offset < 0) {
                 0
             } else if (text[offset].isTrueWhitespace()) {
                 previous(offset - 1)

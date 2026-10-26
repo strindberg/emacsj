@@ -14,6 +14,7 @@
 
 - Digits typed after Universal argument (`ctrl-u 3`) were ignored by commands that read the argument themselves rather than
   being repeated: Paste, Transpose Lines, Transpose Words and Copy From Above Command.
+- Several minor edge-case bugs fixed.
 
 ## [1.6.1] - 2026-09-30
 

@@ -957,6 +957,72 @@ class ReplaceTest : EmacsJTestCase() {
         assertEquals("", ReplaceHandler.delegate?.text)
     }
 
+    @Test
+    fun `Skipping a match in a selection moves on to the next one`() {
+        myFixture.configureByText(FILE, "<caret><selection>foo foo</selection> foo")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("foo")
+        pressEnter()
+
+        setText("bar")
+        pressEnter()
+
+        typeChar('n')
+        typeChar('y')
+
+        myFixture.checkResult("foo bar<caret> foo")
+    }
+
+    @Test
+    fun `A shorter replacement stays within the selection`() {
+        myFixture.configureByText(FILE, "<caret><selection>aaa aaa aaa</selection> aaa")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("aaa")
+        pressEnter()
+
+        setText("b")
+        pressEnter()
+
+        typeChar('!')
+
+        myFixture.checkResult("b b b<caret> aaa")
+    }
+
+    @Test
+    fun `A longer replacement containing the search string covers the whole selection once`() {
+        myFixture.configureByText(FILE, "<caret><selection>a a</selection> a")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("a")
+        pressEnter()
+
+        setText("aa")
+        pressEnter()
+
+        typeChar('!')
+
+        myFixture.checkResult("aa aa<caret> a")
+    }
+
+    @Test
+    fun `Replacing in a selection starts at its start whichever end the caret is at`() {
+        myFixture.configureByText(FILE, "foo <selection>foo foo<caret></selection> foo")
+        myFixture.performEditorAction(ACTION_REPLACE_TEXT)
+
+        setText("foo")
+        pressEnter()
+
+        setText("bar")
+        pressEnter()
+
+        typeChar('y')
+
+        // The first match in the selection is replaced, and the caret has moved on to the second.
+        myFixture.checkResult("foo bar foo<caret> foo")
+    }
+
     private fun setText(text: String) {
         ReplaceHandler.delegate!!.ui.text = text
     }

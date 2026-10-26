@@ -6,8 +6,10 @@ import com.github.strindberg.emacsj.kill.ACTION_CUT
 import com.github.strindberg.emacsj.mark.ACTION_POP_MARK
 import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT
+import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT0
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT2
 import com.intellij.ide.ClientCopyPasteManager
+import com.intellij.ide.CopyPasteManagerEx
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_COPY
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT
 import com.intellij.openapi.ide.CopyPasteManager
@@ -387,5 +389,26 @@ class PasteTest : EmacsJTestCase() {
         myFixture.type("3")
         myFixture.performEditorAction(ACTION_PASTE)
         myFixture.checkResult("fooone<caret>")
+    }
+
+    @Test
+    fun `Paste after universal argument 0 wraps around to the oldest entry`() {
+        resetClipboard("one", "two", "three")
+        myFixture.configureByText(FILE, "foo<caret>")
+
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
+        myFixture.performEditorAction(ACTION_PASTE)
+        myFixture.checkResult("fooone<caret>")
+
+        // Stepping on from there wraps the other way, back to the newest.
+        myFixture.performEditorAction(ACTION_HISTORY_PASTE)
+        myFixture.checkResult("foothree<caret>")
+    }
+
+    /** Clipboard history is application-scoped, so it has to be pinned for a test that walks through it. */
+    private fun resetClipboard(vararg items: String) {
+        val manager = CopyPasteManagerEx.getInstanceEx()
+        manager.allContents.forEach { manager.removeContent(it) }
+        items.forEach { manager.setContents(StringSelection(it)) }
     }
 }

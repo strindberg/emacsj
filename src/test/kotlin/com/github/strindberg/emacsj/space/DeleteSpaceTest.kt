@@ -124,4 +124,25 @@ class DeleteSpaceTest : EmacsJTestCase() {
             """.trimMargin()
         )
     }
+
+    @Test
+    fun `First character of the file is kept when there is no space to delete`() {
+        myFixture.configureByText(FILE, "f<caret>oo")
+        myFixture.performEditorAction(ACTION_DELETE_SPACE)
+        myFixture.checkResult("f<caret>oo")
+    }
+
+    @Test
+    fun `First character of the file is kept when deleting space after it`() {
+        myFixture.configureByText(FILE, "f  <caret>oo")
+        myFixture.performEditorAction(ACTION_DELETE_SPACE)
+        myFixture.checkResult("f<caret>oo")
+    }
+
+    @Test
+    fun `Space at the start of the file is deleted`() {
+        myFixture.configureByText(FILE, "  <caret>foo")
+        myFixture.performEditorAction(ACTION_DELETE_SPACE)
+        myFixture.checkResult("<caret>foo")
+    }
 }

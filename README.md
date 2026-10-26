@@ -218,7 +218,8 @@ Colors used by Search/replace can be configured as described under Isearch [abov
 *Universal Argument* can be used to repeat any subsequent command. The argument can be specified as described below, and the following
 command will be executed the specified number of times.
 
-To repeat a recorded macro, use [Run Last Macro](#run-last-macro) after *Universal Argument*.
+To repeat a recorded macro, use [Run Last Macro](#run-last-macro) after *Universal Argument*. Note that the standard IntelliJ command
+*Play Back Last Macro* is not affected by *Universal Argument*.
 
 *Universal Argument* can be invoked in one of three ways:
 

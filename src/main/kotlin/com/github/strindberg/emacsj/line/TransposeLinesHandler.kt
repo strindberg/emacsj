@@ -3,9 +3,9 @@ package com.github.strindberg.emacsj.line
 import com.github.strindberg.emacsj.EmacsJService
 import com.github.strindberg.emacsj.mark.MarkHandler
 import com.github.strindberg.emacsj.word.substring
-import com.github.strindberg.emacsj.word.text
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import org.intellij.lang.annotations.Language
@@ -34,18 +34,23 @@ internal class TransposeLinesHandler : EditorWriteActionHandler() {
         if (replaceLineNumber >= 0) {
             editor.caretModel.removeSecondaryCarets()
 
-            val replaceLineStart = document.getLineStartOffset(replaceLineNumber)
-            val replaceLineEnd = document.getLineEndOffset(replaceLineNumber)
-            val currentLineStart = document.getLineStartOffset(currentLineNumber)
-            val currentLineEnd = document.getLineEndOffset(currentLineNumber)
+            val upperLineNumber = minOf(currentLineNumber, replaceLineNumber)
+            val lowerLineNumber = maxOf(currentLineNumber, replaceLineNumber)
 
-            val replaceLine = document.substring(replaceLineStart, replaceLineEnd)
-            val currentLine = document.substring(currentLineStart, currentLineEnd)
+            val upperLine = document.lineText(upperLineNumber)
+            val lowerLine = document.lineText(lowerLineNumber)
 
-            document.replaceString(currentLineStart, minOf(editor.text.length, currentLineEnd + 1), replaceLine + "\n")
-            document.replaceString(replaceLineStart, replaceLineEnd + 1, currentLine + "\n")
+            document.replaceLine(lowerLineNumber, upperLine)
+            document.replaceLine(upperLineNumber, lowerLine)
 
-            editor.caretModel.moveToOffset(currentLineEnd + 1)
+            editor.caretModel.moveToOffset(document.getLineStartOffset(currentLineNumber + 1))
         }
+    }
+
+    private fun Document.lineText(lineNumber: Int): String = substring(getLineStartOffset(lineNumber), getLineEndOffset(lineNumber))
+
+    /** Replaces a line together with its line break, giving the last line one if it had none. */
+    private fun Document.replaceLine(lineNumber: Int, newText: String) {
+        replaceString(getLineStartOffset(lineNumber), minOf(textLength, getLineEndOffset(lineNumber) + 1), newText + "\n")
     }
 }

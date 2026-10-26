@@ -42,7 +42,7 @@ internal class ReplaceDelegate(
     editor: Editor,
     private val project: Project,
     val type: SearchType,
-    private val selection: IntRange? = null,
+    selection: IntRange? = null,
     lastSearch: Replace? = null,
 ) : UIDelegate(editor) {
 
@@ -73,6 +73,8 @@ internal class ReplaceDelegate(
     private var replaced = 0
 
     private val replacements = ArrayDeque<Replaced>()
+
+    private var selection: IntRange? = selection
 
     private val identifierAttributes = editor.colorsScheme.getAttributes(IDENTIFIER_UNDER_CARET_ATTRIBUTES)
 
@@ -292,6 +294,8 @@ internal class ReplaceDelegate(
         setupModel()
 
         if (!edited) {
+            // Searching continues from the caret, so a selection is only entered from its start, wherever the caret was.
+            selection?.let { editor.caretModel.moveToOffset(it.first) }
             searchForReplacement(true)
         } else {
             try {
@@ -378,8 +382,9 @@ internal class ReplaceDelegate(
     private fun getReplaceChoiceText(): String = "$searchArg -> $replaceArg"
 
     private fun searchForReplacement(highlight: Boolean) {
-        val result = if (selection != null) {
-            FindManager.getInstance(project).findString(editor.text.substring(0, selection.last), selection.first, replaceModel)
+        val range = selection
+        val result = if (range != null) {
+            FindManager.getInstance(project).findString(editor.text.substring(0, range.last), editor.caretModel.offset, replaceModel)
         } else {
             FindManager.getInstance(project).findString(editor.text, editor.caretModel.offset, replaceModel)
         }
@@ -416,6 +421,8 @@ internal class ReplaceDelegate(
 
             editor.caretModel.moveToOffset(lastResult.startOffset + replacement.length)
 
+            moveSelectionEnd(replacement.length - foundString.length)
+
             replaced++
         }
     }
@@ -428,9 +435,15 @@ internal class ReplaceDelegate(
         editor.caretModel.moveToOffset(item.startOffset)
         editor.scrollingModel.scrollToCaret(MAKE_VISIBLE)
 
+        moveSelectionEnd(item.original.length - item.replacement.length)
+
         replaced--
 
         searchForReplacement(true)
+    }
+
+    private fun moveSelectionEnd(delta: Int) {
+        selection = selection?.let { it.first..it.last + delta }
     }
 
     private fun visitReplacement(item: Replaced) {

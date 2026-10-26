@@ -5,6 +5,7 @@ import com.github.strindberg.emacsj.mark.ACTION_PUSH_MARK
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT0
 import com.github.strindberg.emacsj.universal.ACTION_UNIVERSAL_ARGUMENT2
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
+import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_UP
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -153,6 +154,71 @@ class TransposeLinesTest : EmacsJTestCase() {
                 baz
                 bar
                 <caret>baf
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `Transpose lines with prefix 0 and mark below lines of different length`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                a<caret>
+                line2
+                longer line3
+                line4
+            """.trimIndent()
+        )
+
+        repeat(2) {
+            myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_DOWN)
+        }
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        repeat(2) {
+            myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_UP)
+        }
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
+        myFixture.performEditorAction(ACTION_TRANSPOSE_LINES)
+
+        myFixture.checkResult(
+            """
+                longer line3
+                <caret>line2
+                a
+                line4
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `Transpose lines with prefix 0 and mark on a last line without line break`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                short<caret>
+                middle
+                last line
+            """.trimIndent()
+        )
+
+        repeat(2) {
+            myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_DOWN)
+        }
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        myFixture.performEditorAction(ACTION_PUSH_MARK)
+        repeat(2) {
+            myFixture.performEditorAction(ACTION_EDITOR_MOVE_CARET_UP)
+        }
+        myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT0)
+        myFixture.performEditorAction(ACTION_TRANSPOSE_LINES)
+
+        myFixture.checkResult(
+            """
+                last line
+                <caret>middle
+                short
+
             """.trimIndent()
         )
     }

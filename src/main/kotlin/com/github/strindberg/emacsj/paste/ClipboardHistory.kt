@@ -45,7 +45,7 @@ internal class ClipboardHistory {
     fun next(steps: Int = 0): Transferable? =
         history.takeUnless { it.isEmpty() }?.let { entries ->
             position += steps
-            entries[position++ % entries.size]
+            entries[position++.mod(entries.size)]
         }
 
     fun record(pasted: List<TextRange>) {
