@@ -3,6 +3,7 @@ package com.github.strindberg.emacsj.rectangle
 import java.awt.datatransfer.StringSelection
 import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.testFramework.EditorTestUtil
 import org.junit.jupiter.api.Test
 
 private const val FILE = "rectanglepastefile.txt"
@@ -149,5 +150,26 @@ class RectanglePasteTest : EmacsJTestCase() {
                 |  bbb<caret>
             """.trimMargin()
         )
+    }
+
+    @Test
+    fun `Paste counts a tab as the columns it is displayed with`() {
+        myFixture.configureByText(FILE, "\t<caret>foo\nabcdefg")
+        CopyPasteManager.getInstance().setContents(StringSelection("X\nY"))
+
+        myFixture.performEditorAction(ACTION_PASTE_RECTANGLE)
+
+        myFixture.checkResult("\tXfoo\nabcdY<caret>efg")
+    }
+
+    @Test
+    fun `Paste goes into document lines when a line above is soft wrapped`() {
+        myFixture.configureByText(FILE, "aaaa bbbb cccc dddd eeee\n<caret>x\ny")
+        EditorTestUtil.configureSoftWraps(myFixture.editor, 10)
+        CopyPasteManager.getInstance().setContents(StringSelection("1\n2"))
+
+        myFixture.performEditorAction(ACTION_PASTE_RECTANGLE)
+
+        myFixture.checkResult("aaaa bbbb cccc dddd eeee\n1x\n2<caret>y")
     }
 }

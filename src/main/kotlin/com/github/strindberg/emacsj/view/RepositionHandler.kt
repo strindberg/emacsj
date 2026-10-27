@@ -25,9 +25,9 @@ internal class RepositionHandler : EditorActionHandler() {
         val viewOffset = editor.scrollingModel.verticalScrollOffset
         val viewHeight = editor.scrollingModel.visibleArea.height
 
-        val topPos = VisualPosition(viewOffset / editor.lineHeight + 1, 0)
-        val middlePos = VisualPosition((viewOffset + viewHeight / 2) / editor.lineHeight, 0)
-        val bottomPos = VisualPosition((viewOffset + viewHeight) / editor.lineHeight - 1, 0)
+        val topPos = VisualPosition(editor.yToVisualLine(viewOffset) + 1, 0)
+        val middlePos = VisualPosition(editor.yToVisualLine(viewOffset + viewHeight / 2), 0)
+        val bottomPos = VisualPosition(editor.yToVisualLine(viewOffset + viewHeight) - 1, 0)
 
         when (EmacsJService.instance.lastActionId()) {
             ACTION_REPOSITION if lastPosition == MIDDLE -> {

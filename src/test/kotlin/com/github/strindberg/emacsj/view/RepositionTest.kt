@@ -4,6 +4,8 @@ import com.github.strindberg.emacsj.EmacsJTestCase
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN
 import com.intellij.openapi.actionSystem.IdeActions.ACTION_EDITOR_MOVE_CARET_UP
 import com.intellij.openapi.editor.CaretState
+import com.intellij.openapi.editor.EditorCustomElementRenderer
+import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.testFramework.EditorTestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -106,6 +108,32 @@ class RepositionTest : EmacsJTestCase() {
         myFixture.performEditorAction(ACTION_REPOSITION)
 
         assertEquals(1, myFixture.editor.caretModel.caretCount)
+    }
+
+    @Test
+    fun `Caret stays within the visible area when block inlays make lines taller`() {
+        myFixture.configureByText(FILE, (1..LINE_COUNT).joinToString("\n") { "line $it" })
+        val editor = myFixture.editor
+        val renderer = object : EditorCustomElementRenderer {
+            override fun calcWidthInPixels(inlay: Inlay<*>): Int = 1
+
+            override fun calcHeightInPixels(inlay: Inlay<*>): Int = 4 * editor.lineHeight
+        }
+        // Inlays above the lines scrolled past, so the scroll offset is no longer a multiple of the visual line count.
+        (0 until 10).forEach { line ->
+            editor.inlayModel.addBlockElement(editor.document.getLineStartOffset(line), false, true, 0, renderer)
+        }
+        EditorTestUtil.setEditorVisibleSize(editor, 80, VISIBLE_LINES)
+        editor.caretModel.moveToLogicalPosition(LogicalPosition(CARET_LINE, 0))
+        myFixture.performEditorAction(ACTION_RECENTER)
+
+        repeat(3) {
+            myFixture.performEditorAction(ACTION_REPOSITION)
+            val caretY = editor.visualPositionToXY(editor.caretModel.primaryCaret.visualPosition).y
+            val relativeY = caretY - editor.scrollingModel.verticalScrollOffset
+            assertTrue(relativeY >= 0, "Caret above the viewport: $relativeY")
+            assertTrue(relativeY <= editor.scrollingModel.visibleArea.height, "Caret below the viewport: $relativeY")
+        }
     }
 
     private fun configure(caretLine: Int = CARET_LINE) {

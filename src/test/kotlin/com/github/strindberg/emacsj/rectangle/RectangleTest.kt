@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 
 private const val FILE = "rectanglefile.txt"
 
-@Suppress("NullableToStringCall")
+@Suppress("LargeClass", "NullableToStringCall")
 class RectangleTest : EmacsJTestCase() {
 
     @Test
@@ -912,5 +912,44 @@ class RectangleTest : EmacsJTestCase() {
 
         assertEquals(1, myFixture.editor.caretModel.caretCount)
         assertEquals("bar", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor))
+    }
+
+    @Test
+    fun `Copy counts a tab as the columns it is displayed with`() {
+        myFixture.configureByText(FILE, "\t<selection>foo\nabcdbar</selection><caret>")
+
+        myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
+
+        assertEquals("foo\nbar", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString())
+        myFixture.checkResult("\tfoo\nabcdbar<caret>")
+    }
+
+    @Test
+    fun `Clear replaces a tab with the columns it is displayed with`() {
+        myFixture.configureByText(FILE, "<selection>\tfooX\nabcdefg</selection><caret>Y")
+
+        myFixture.performEditorAction(ACTION_CLEAR_RECTANGLE)
+
+        myFixture.checkResult("<caret>       X\n       Y")
+    }
+
+    @Test
+    fun `Copy acts on document lines when lines above are folded`() {
+        myFixture.configureByText(
+            FILE,
+            """
+                |a
+                |b
+                |c
+                |<selection>xx
+                |yy</selection><caret>
+            """.trimMargin()
+        )
+        val foldingModel = myFixture.editor.foldingModel
+        foldingModel.runBatchFoldingOperation { foldingModel.addFoldRegion(0, 5, "...")?.isExpanded = false }
+
+        myFixture.performEditorAction(ACTION_COPY_RECTANGLE)
+
+        assertEquals("xx\nyy", CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor).toString())
     }
 }

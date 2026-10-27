@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Caret
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.actionSystem.EditorWriteActionHandler
 import com.intellij.util.DocumentUtil
 import org.intellij.lang.annotations.Language
@@ -20,9 +21,11 @@ internal class CopyFromAboveCommandHandler : EditorWriteActionHandler.ForEachCar
         val previousLineNumber = findNonEmptyPrecedingLine(document, document.getLineNumber(caret.offset))
         if (previousLineNumber != null && !caret.hasSelection()) {
             val previousEnd = document.getLineEndOffset(previousLineNumber)
-            val column = editor.offsetToVisualPosition(caret.offset).column
+            // A logical column counts a tab as the width it is displayed with, so the text copied is the text above the
+            // caret even when the two lines are indented differently, or the line is folded or soft wrapped.
+            val column = caret.logicalPosition.column
 
-            val start = document.getLineStartOffset(previousLineNumber) + column
+            val start = editor.logicalPositionToOffset(LogicalPosition(previousLineNumber, column))
             val end = if (EmacsJService.instance.isLastUniversal()) start + EmacsJService.instance.universalArgument() else previousEnd
 
             val copiedString = document.substring(minOf(start, previousEnd), minOf(end, previousEnd))

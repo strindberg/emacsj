@@ -218,4 +218,13 @@ class CopyFromAboveCommandTest : EmacsJTestCase() {
             """.trimMargin()
         )
     }
+
+    @Test
+    fun `A tab above counts as the columns it is displayed with`() {
+        myFixture.configureByText(FILE, "\tfoo bar\nabcd<caret>")
+
+        myFixture.performEditorAction(ACTION_COPY_ABOVE_COMMAND)
+
+        myFixture.checkResult("\tfoo bar\nabcdfoo bar<caret>")
+    }
 }
