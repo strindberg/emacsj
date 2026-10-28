@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.VisibleForTesting
@@ -48,17 +49,28 @@ internal class CommonHighlighter(private val scope: CoroutineScope) {
     @VisibleForTesting
     internal var delay = HIGHLIGHT_DELAY
 
-    // At most one search is ever in flight: every new one supersedes the last. Painting happens inside the job, so
+    // At most one search is ever current: every new one supersedes the last. Painting happens inside the job, so
     // the job being active is what "this search still matters" means -- cancelling it stops the painting too.
     private var search: Job? = null
 
+    // The search painting the current highlights, while it is still at it. It differs from [search] only when a search
+    // that paints nothing, such as the count after a repeated C-s, has superseded it.
+    private var painting: Pair<Job, SearchRequest>? = null
+
     internal val isIdle: Boolean
-        @VisibleForTesting get() = search?.isActive != true
+        @VisibleForTesting get() = search?.isActive != true && painting?.run { first.isActive } != true
 
     internal fun findAllAndHighlight(request: SearchRequest) {
-        cancelPending()
+        // A search that paints nothing relies on the highlights of the one before. Cancelling that one before it has
+        // painted them would leave the matches unhighlighted, so it is left to finish.
+        val stillPainting = painting?.takeIf { (job, painted) -> job.isActive && !request.useHighlight && painted.isSameSearch(request) }
+        if (stillPainting != null) {
+            search?.takeIf { it !== stillPainting.first }?.cancel()
+        } else {
+            cancelPending()
+        }
 
-        search = scope.launch {
+        val job = scope.launch {
             delay(delay)
 
             // An edit after the scan, e.g. a replace shortening the text, moves every offset, and painting matches could be out of range.
@@ -73,13 +85,21 @@ internal class CommonHighlighter(private val scope: CoroutineScope) {
                     onEdt(request, stamp) { chunk.forEach { addHighlight(request.editor, it) } }
                 }
             }
-            onEdt(request, stamp) { request.callback(matches) }
+            // A search left to finish its painting has been superseded, and the results reported are the newer ones.
+            val self = coroutineContext.job
+            onEdt(request, stamp) { if (search === self) request.callback(matches) }
+        }
+        search = job
+        if (request.useHighlight) {
+            painting = Pair(job, request)
         }
     }
 
     internal fun cancelPending() {
         search?.cancel()
         search = null
+        painting?.run { first.cancel() }
+        painting = null
     }
 
     private fun findAll(request: SearchRequest): List<FindResult> =
@@ -120,6 +140,10 @@ internal class CommonHighlighter(private val scope: CoroutineScope) {
             }
         }
     }
+
+    private fun SearchRequest.isSameSearch(other: SearchRequest): Boolean =
+        editor == other.editor && searchArg == other.searchArg && useRegexp == other.useRegexp && useCase == other.useCase &&
+            range == other.range
 
     private fun addHighlight(editor: Editor, match: FindResult) {
         if (!match.isEmpty) {

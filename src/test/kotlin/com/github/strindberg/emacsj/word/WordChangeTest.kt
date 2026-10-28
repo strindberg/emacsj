@@ -509,4 +509,25 @@ class WordChangeTest : EmacsJTestCase() {
             """.trimMargin()
         )
     }
+
+    @Test
+    fun `Capitalizing a region leaves the word after it alone`() {
+        myFixture.configureByText(FILE, "<selection>foo </selection><caret>bar")
+        myFixture.performEditorAction(ACTION_CAPITAL_CASE)
+        myFixture.checkResult("Foo <caret>bar")
+    }
+
+    @Test
+    fun `Capitalizing a region ending inside a word leaves the rest of the word alone`() {
+        myFixture.configureByText(FILE, "<selection>foo BA</selection><caret>RBAZ")
+        myFixture.performEditorAction(ACTION_CAPITAL_CASE)
+        myFixture.checkResult("Foo Ba<caret>RBAZ")
+    }
+
+    @Test
+    fun `Capitalizing a region starting with space capitalizes its first word`() {
+        myFixture.configureByText(FILE, "<selection> foo</selection><caret> bar")
+        myFixture.performEditorAction(ACTION_CAPITAL_CASE)
+        myFixture.checkResult(" Foo<caret> bar")
+    }
 }

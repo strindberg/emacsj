@@ -101,21 +101,20 @@ internal class WordChangeHandler(private val type: ChangeType) : EditorWriteActi
     }
 
     private fun capitalizeRegion(editor: Editor, regionStart: Int, regionEnd: Int, caret: Caret) {
-        tailrec fun capitalizeWord(document: Document, start: Int, end: Int) {
+        // Every word is cut off at the region end, and one that only starts after it is left alone.
+        tailrec fun capitalizeWord(document: Document, start: Int) {
+            val end = minOf(currentWordEnd(editor.text, start, editor.isCamel), regionEnd)
             document.replaceString(
                 start,
                 end,
                 document.substring(start, end).lowercase().replaceFirstChar { it.titlecase(Locale.getDefault()) }
             )
-            if (end < regionEnd) {
-                capitalizeWord(
-                    document,
-                    firstLetterOrDigit(editor.text, end) ?: regionEnd,
-                    currentWordEnd(editor.text, end, editor.isCamel)
-                )
+            val next = firstLetterOrDigit(editor.text, end)
+            if (next != null && next < regionEnd) {
+                capitalizeWord(document, next)
             }
         }
-        capitalizeWord(editor.document, regionStart, currentWordEnd(editor.text, regionStart, editor.isCamel))
+        firstLetterOrDigit(editor.text, regionStart)?.takeIf { it < regionEnd }?.let { capitalizeWord(editor.document, it) }
         caret.moveToOffset(regionEnd)
     }
 

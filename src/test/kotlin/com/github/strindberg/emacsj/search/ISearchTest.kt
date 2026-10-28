@@ -2721,6 +2721,20 @@ class ISearchTest : EmacsJTestCase() {
         assertEquals("foo", ISearchHandler.delegate?.text)
     }
 
+    @Test
+    fun `Repeating a search before its highlights are painted keeps them`() {
+        myFixture.configureByText(FILE, "<caret>foo foo foo foo")
+        performEditorAction(ACTION_ISEARCH_FORWARD)
+
+        // No waiting in between: the repeated search arrives while the first is still on its way to painting.
+        "foo".forEach { myFixture.type(it) }
+        myFixture.performEditorAction(ACTION_ISEARCH_FORWARD)
+        waitForHighlighting()
+
+        assertEquals(4, secondaryHighlightCount())
+        assertEquals(Pair(2, 4), searchCount)
+    }
+
     private fun performEditorAction(actionId: String) {
         myFixture.performEditorAction(actionId)
         waitForHighlighting()
