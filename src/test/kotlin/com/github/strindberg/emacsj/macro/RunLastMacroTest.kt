@@ -121,13 +121,18 @@ class RunLastMacroTest : EmacsJTestCase() {
     @Test
     fun `Cancelling the repeat stops the remaining runs of the macro`() {
         myFixture.configureByText(FILE, "<caret>")
-        installPlayback()
+        // Ctrl-G while the first run plays. Waiting for that run from the test instead is not reliable: since 2025.3
+        // all five runs can finish within one pass over the event queue, with no point in between to cancel at.
+        installPlayback {
+            myFixture.type("x")
+            if (playback.runs == 1) {
+                myFixture.performEditorAction(ACTION_CANCEL_REPEAT)
+            }
+        }
 
         myFixture.performEditorAction(ACTION_UNIVERSAL_ARGUMENT)
         myFixture.type("5")
         myFixture.performEditorAction(ACTION_RUN_LAST_MACRO)
-        PlatformTestUtil.waitWithEventsDispatching("The macro never started", { playback.runs == 1 }, TIMEOUT_SECONDS)
-        myFixture.performEditorAction(ACTION_CANCEL_REPEAT)
         settle()
 
         assertEquals(1, playback.runs)
@@ -136,8 +141,8 @@ class RunLastMacroTest : EmacsJTestCase() {
         myFixture.checkResult("x<caret>")
     }
 
-    private fun installPlayback(): FakePlayback {
-        playback = FakePlayback { myFixture.type("x") }
+    private fun installPlayback(play: () -> Unit = { myFixture.type("x") }): FakePlayback {
+        playback = FakePlayback(play)
         ActionManager.getInstance().replaceAction(PLAYBACK_LAST_MACRO, playback)
         return playback
     }

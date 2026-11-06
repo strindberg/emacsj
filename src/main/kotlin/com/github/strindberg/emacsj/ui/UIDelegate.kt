@@ -1,9 +1,11 @@
 package com.github.strindberg.emacsj.ui
 
+import java.awt.AWTEvent
 import java.awt.Component
 import java.awt.event.InputMethodEvent
 import com.intellij.ide.IdeEventQueue
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.WriteIntentReadAction
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.util.EditorUtil
@@ -57,16 +59,18 @@ internal abstract class UIDelegate(val editor: Editor) : Disposable {
      */
     protected fun captureComposedInput(handle: (String) -> Unit) {
         IdeEventQueue.getInstance().addDispatcher(
-            { event ->
-                val composed = (event as? InputMethodEvent)?.takeIf { isAimedAtEditor(it) }
-                if (composed == null) {
-                    false
-                } else {
-                    // Consumed even when nothing was committed yet: that is the half-finished accent being kept
-                    // out of the document.
-                    composed.committedText()?.let(handle)
-                    composed.consume()
-                    true
+            object : IdeEventQueue.NonLockedEventDispatcher {
+                override fun dispatch(e: AWTEvent): Boolean {
+                    val composed = (e as? InputMethodEvent)?.takeIf { isAimedAtEditor(it) }
+                    return if (composed == null) {
+                        false
+                    } else {
+                        // Consumed even when nothing was committed yet: that is the half-finished accent being kept
+                        // out of the document.
+                        composed.committedText()?.let { text -> WriteIntentReadAction.run { handle(text) } }
+                        composed.consume()
+                        true
+                    }
                 }
             },
             this

@@ -2,6 +2,8 @@ import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
+import org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask
 
 plugins {
     alias(libs.plugins.changelog)
@@ -33,7 +35,7 @@ dependencies {
     testRuntimeOnly(libs.junit)
 
     intellijPlatform {
-        create(IntelliJPlatformType.IntellijIdeaCommunity, providers.gradleProperty("platformVersion")) {}
+        create(IntelliJPlatformType.IntellijIdea, providers.gradleProperty("platformVersion")) {}
 
         bundledPlugins(listOf("com.intellij.java", "org.jetbrains.kotlin"))
 
@@ -44,8 +46,8 @@ dependencies {
 
 kotlin {
     jvmToolchain(21)
-    // Pinned to the Kotlin stdlib the IDE actually ships (2.1.21 in 2025.2).
-    compilerOptions.apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1
+    // Pinned to the Kotlin stdlib the IDE actually ships.
+    compilerOptions.apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
     compilerOptions.freeCompilerArgs.addAll("-Xjsr305=strict", "-Xreturn-value-checker=full", "-Xcollection-literals")
 }
 
@@ -104,7 +106,7 @@ intellijPlatform {
 }
 
 tasks {
-    runIde {
+    withType<RunIdeTask>().configureEach {
         jvmArgumentProviders += CommandLineArgumentProvider {
             listOf(
                 "-Dide.show.tips.on.startup.default.value=false",
@@ -115,7 +117,7 @@ tasks {
         }
     }
 
-    prepareSandbox {
+    withType<PrepareSandboxTask>().matching { it.name.startsWith("prepareSandbox_runIde") }.configureEach {
         doLast {
             sandboxConfigDirectory.file("options/keymap.xml").get().asFile.writeText(
                 """
@@ -139,11 +141,6 @@ tasks {
     }
 }
 
-intellijPlatformTesting.runIde.register("runIde53") {
-    type = IntelliJPlatformType.IntellijIdea
-    version = "2025.3.6.1"
-}
-
 intellijPlatformTesting.runIde.register("runIde61") {
     type = IntelliJPlatformType.IntellijIdea
     version = "2026.1.4"
@@ -151,7 +148,12 @@ intellijPlatformTesting.runIde.register("runIde61") {
 
 intellijPlatformTesting.runIde.register("runIde62") {
     type = IntelliJPlatformType.IntellijIdea
-    version = "2026.2.0.1"
+    version = "2026.2.4"
+}
+
+intellijPlatformTesting.runIde.register("runIde63") {
+    type = IntelliJPlatformType.IntellijIdea
+    version = "2026.3"
 }
 
 changelog {

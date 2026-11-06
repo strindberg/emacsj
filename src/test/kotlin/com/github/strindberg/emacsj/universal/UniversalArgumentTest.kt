@@ -25,6 +25,8 @@ private const val FILE = "universalfile.txt"
 /** How many repetitions make up a batch under [TickingTimeSource]. */
 private const val REPETITIONS_PER_BATCH = 100
 
+private const val REPEAT_TIMEOUT_SECONDS = 10
+
 class UniversalArgumentTest : EmacsJTestCase() {
 
     @BeforeEach
@@ -388,8 +390,16 @@ class UniversalArgumentTest : EmacsJTestCase() {
      * Runs whatever the universal-argument machinery has queued. A repeat runs in a coroutine on the EDT that yields
      * every batch, so that a long repeat stays interruptible: past its first batch, or when queued behind another
      * repeat, it has not finished by the time the triggering action returns.
+     *
+     * One pass over the event queue is not enough: since 2025.3 a coroutine resuming on the EDT after a yield may not
+     * be queued yet when the pass ends. The repeat flag stays set until every repeat has run, so that is what to wait on.
      */
     private fun runPendingRepeats() {
+        PlatformTestUtil.waitWithEventsDispatching(
+            "Repeat did not finish",
+            { !EmacsJService.instance.isRepeating() },
+            REPEAT_TIMEOUT_SECONDS
+        )
         PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
 
